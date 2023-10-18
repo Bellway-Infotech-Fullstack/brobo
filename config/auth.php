@@ -35,9 +35,22 @@ return [
     |
     */
 
+    'defaults' => [
+        'guard' => 'api',
+        'passwords' => 'users',
+    ],
+
     'guards' => [
         'web' => [
             'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'api' => [
+            'driver' => 'jwt',
             'provider' => 'users',
         ],
     ],
@@ -64,6 +77,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        
 
         // 'users' => [
         //     'driver' => 'database',
