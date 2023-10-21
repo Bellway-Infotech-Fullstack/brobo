@@ -11,7 +11,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
     });
     /*authentication*/
 
-    Route::group([], function () {
+    Route::group(['middleware' => ['admin']], function () {
 
         Route::get('settings', 'SystemController@settings')->name('settings');
         Route::post('settings', 'SystemController@settings_update');

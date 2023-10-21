@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DeliveryMan;
 use App\Models\DMReview;
-#use App\Models\Zone;
+use App\Models\Zone;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -26,7 +26,7 @@ class DeliveryManController extends Controller
         $delivery_men = DeliveryMan::when(is_numeric($zone_id), function($query) use($zone_id){
             return $query->where('zone_id', $zone_id);           
         })->with('zone')->where('type','zone_wise')->latest()->paginate(config('default_pagination'));
-        //$zone = is_numeric($zone_id)?Zone::findOrFail($zone_id):null;
+        $zone = is_numeric($zone_id)?Zone::findOrFail($zone_id):null;
         return view('admin-views.delivery-man.list', compact('delivery_men', 'zone'));
     }
 

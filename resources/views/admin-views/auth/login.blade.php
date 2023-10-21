@@ -14,20 +14,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
     <!-- CSS Implementing Plugins -->
     <link rel="stylesheet" href="{{asset('assets/admin')}}/css/vendor.min.css">
-    <link rel="stylesheet" href="{{asset('assets/admin')}}/vendor/icon-set/style.css">
+    <link rel="stylesheet" href="{{asset('public/assets/admin')}}/vendor/icon-set/style.css">
     <!-- CSS Front Template -->
-    <link rel="stylesheet" href="{{asset('assets/admin')}}/css/theme.minc619.css?v=1.0">
-    <link rel="stylesheet" href="{{asset('assets/admin')}}/css/toastr.css">
+    <link rel="stylesheet" href="{{asset('public/assets/admin')}}/css/theme.minc619.css?v=1.0">
+    <link rel="stylesheet" href="{{asset('public/assets/admin')}}/css/toastr.css">
 </head>
 
 <body>
 <!-- ========== MAIN CONTENT ========== -->
 <main id="content" role="main" class="main">
     <div class="position-fixed top-0 right-0 left-0 bg-img-hero"
-        {{--  style="height: 100%; background-image: url({{asset('assets/admin')}}/svg/components/login-background.png);"> --}}
+        {{--  style="height: 100%; background-image: url({{asset('public/assets/admin')}}/svg/components/login-background.png);"> --}}
          style="height: 100%; background: #01853A;">
     </div>
-    @php($systemlogo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first())
+    @php($systemLogo)
     <!-- Content -->
     <div class="container py-5 py-sm-7">
         <label class="badge badge-soft-success float-right" style="z-index: 9;position: absolute;right: 0.5rem;top: 0.5rem;">
@@ -35,8 +35,8 @@
         </label>
         <a class="d-flex justify-content-center mb-5" href="javascript:">
             <img class="z-index-2"
-            onerror="this.src='{{asset('assets/admin/img/160x160/img2.jpg')}}'"
-                         src="{{asset('storage/app/public/business/'.$systemlogo)}}"
+            onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                         src="{{asset('storage/app/public/business/'.$systemLogo)}}"
                   alt="Image Description" style="max-height: 100px; max-width: 300px">
         </a>
 
@@ -50,12 +50,13 @@
                             @csrf
                             <div class="text-center">
                                 <div class="mb-5">
-                                   
+                                    <h2 class="text-capitalize">{{__('messages.signin')}}</h2>
+                                    <span class="badge badge-soft-info">( {{__('messages.admin_or_employee_signin')}} )</span>
                                 </div>
                                 {{--<a class="btn btn-lg btn-block btn-white mb-4" href="#">
                                     <span class="d-flex justify-content-center align-items-center">
                                       <img class="avatar avatar-xss mr-2"
-                                           src="{{asset('assets/admin')}}/svg/brands/google.svg" alt="Image Description">
+                                           src="{{asset('public/assets/admin')}}/svg/brands/google.svg" alt="Image Description">
                                       Sign in with Google
                                     </span>
                                 </a>
@@ -113,7 +114,21 @@
                             <!-- End Checkbox -->
 
                             {{-- recaptcha --}}
-                          
+                           {{--  @php($recaptcha = \App\CentralLogics\Helpers::get_business_settings('recaptcha'))
+                            @if(isset($recaptcha) && $recaptcha['status'] == 1)
+                                <div id="recaptcha_element" style="width: 100%;" data-type="image"></div>
+                                <br/>
+                            @else
+                                <div class="row p-2">
+                                    <div class="col-6 pr-0">
+                                        <input type="text" class="form-control form-control-lg" name="custome_recaptcha"
+                                               id="custome_recaptcha" required placeholder="{{\__('Enter recaptcha value')}}" style="border: none" autocomplete="off">
+                                    </div>
+                                    <div class="col-6" style="background-color: #FFFFFF; border-radius: 5px;">
+                                        <img src="<?php echo $custome_recaptcha->inline(); ?>" style="width: 100%; border-radius: 4px;"/>
+                                    </div>
+                                </div>
+                            @endif --}}
 
                             <button type="submit" class="btn btn-lg btn-block btn-primary">{{__('messages.sign_in')}}</button>
                         </form>
@@ -144,11 +159,11 @@
 
 
 <!-- JS Implementing Plugins -->
-<script src="{{asset('assets/admin')}}/js/vendor.min.js"></script>
+<script src="{{asset('public/assets/admin')}}/js/vendor.min.js"></script>
 
 <!-- JS Front -->
-<script src="{{asset('assets/admin')}}/js/theme.min.js"></script>
-<script src="{{asset('assets/admin')}}/js/toastr.js"></script>
+<script src="{{asset('public/assets/admin')}}/js/theme.min.js"></script>
+<script src="{{asset('public/assets/admin')}}/js/toastr.js"></script>
 {!! Toastr::message() !!}
 
 @if ($errors->any())

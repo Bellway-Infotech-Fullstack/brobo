@@ -3,7 +3,7 @@
 @section('title','Add new campaign')
 
 @push('css_or_js')
-    <link href="{{asset('assets/admin/css/tags-input.min.css')}}" rel="stylesheet">
+    <link href="{{asset('public/assets/admin/css/tags-input.min.css')}}" rel="stylesheet">
 @endpush
 
 @section('content')
@@ -217,7 +217,7 @@
 
                         <center id="image-viewer-section" class="pt-2">
                             <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 src="{{asset('assets/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                 src="{{asset('public/assets/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
                         </center>
                     </div>
                     <hr>
@@ -230,7 +230,7 @@
 @endsection
 
 @push('script_2')
-    <script src="{{asset('assets/admin')}}/js/tags-input.min.js"></script>
+    <script src="{{asset('public/assets/admin')}}/js/tags-input.min.js"></script>
     <script>
         $('#choice_attributes').on('change', function () {
             $('#customer_choice_options').html(null);
