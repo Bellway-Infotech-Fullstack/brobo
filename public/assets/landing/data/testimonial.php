@@ -2,7 +2,7 @@
 
 return [
     [
-        'image' => asset('assets/landing') . "/image/img-1.png",
+        'image' => asset('public/assets/landing') . "/image/img-1.png",
         'name' => 'Barry Allen',
         'position' => 'Web Designer',
         'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A
@@ -12,7 +12,7 @@ return [
                     exercitationem id ipsa ipsum laboriosam perferendis temporibus!'
     ],
     [
-        'image' => asset('assets/landing') . "/image/img-2.png",
+        'image' => asset('public/assets/landing') . "/image/img-2.png",
         'name' => 'Sophia Martino',
         'position' => 'Web Designer',
         'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A
@@ -22,7 +22,7 @@ return [
                     exercitationem id ipsa ipsum laboriosam perferendis temporibus!'
     ],
     [
-        'image' => asset('assets/landing') . "/image/img-3.png",
+        'image' => asset('public/assets/landing') . "/image/img-3.png",
         'name' => 'Alan Turing',
         'position' => 'Web Designer',
         'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A
@@ -32,7 +32,7 @@ return [
                     exercitationem id ipsa ipsum laboriosam perferendis temporibus!'
     ],
     [
-        'image' => asset('assets/landing') . "/image/img-4.png",
+        'image' => asset('public/assets/landing') . "/image/img-4.png",
         'name' => 'Ann Marie',
         'position' => 'Web Designer',
         'detail' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. A

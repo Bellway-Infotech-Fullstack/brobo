@@ -14,16 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 
 Route::group(['namespace' => 'API'], function () {
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
         Route::controller(CustomerAuthController::class)->group(function () {
             Route::post('register', 'register');
             Route::post('login', 'login');
-
+            Route::post('forget-password', 'forgotPassword');            
+            Route::post('verify-otp', 'verifyOTP');
+            Route::post('resend-otp', 'resendOTP');
+            Route::put('reset-password', 'resetPassword');
         });        
     });
 });
@@ -31,10 +32,7 @@ Route::group(['namespace' => 'API'], function () {
 Route::group(['namespace' => 'API'], function () {
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth','middleware' => 'custom.jwt'], function () {
         Route::controller(CustomerAuthController::class)->group(function () {
-            Route::post('forget-password', 'forgotPassword');            
-            Route::post('verify-otp', 'verifyOTP');
-            Route::post('resend-otp', 'resendOTP');
-            Route::put('reset-password', 'resetPassword');
+
             Route::get('view-profile', 'getCustomerDetails');
             Route::put('update-profile', 'updateCustomerDetails');
             Route::put('change-password', 'changePassword');

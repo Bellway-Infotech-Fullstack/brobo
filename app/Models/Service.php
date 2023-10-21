@@ -81,12 +81,12 @@ class Service extends Model
 
     protected static function booted()
     {
-       /* if(auth('vendor')->check())
+        if(auth('vendor')->check())
         {
             static::addGlobalScope(new VendorScope);
-        }*/
+        }
 
-       // static::addGlobalScope(new ZoneScope);
+        static::addGlobalScope(new ZoneScope);
     }
 
 

@@ -65,7 +65,7 @@
                         <hr>
                         <center>
                             <img style="width: 30%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 src="{{asset('assets/admin/img/900x400/img1.jpg')}}" alt="image"/>
+                                 src="{{asset('public/assets/admin/img/900x400/img1.jpg')}}" alt="image"/>
                         </center>
                     </div>
                     <hr>

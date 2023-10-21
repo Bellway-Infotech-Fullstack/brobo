@@ -12,7 +12,7 @@ use App\Models\Vendor;
 use App\Models\Review;
 use App\Models\User;
 use App\Models\Wishlist;
-
+use App\Models\Zone;
 use App\Models\OrderTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,10 +30,10 @@ class DashboardController extends Controller
             'business_overview' => $request['business_overview'] ?? 'overall',
         ];
         session()->put('dash_params', $params);
-        $data = array('total_sell' => 2,'commission' => 3,'params' => 3);
+        $data = self::dashboard_data();
         $total_sell = $data['total_sell'];
         $commission = $data['commission'];
-        return view('admin-views.dashboard', compact('total_sell', 'commission', 'params'));
+        return view('admin-views.dashboard', compact('data', 'total_sell', 'commission', 'params'));
     }
 
     public function order(Request $request)
@@ -107,7 +107,7 @@ class DashboardController extends Controller
             $zone_ids = [$params['zone_id']];
             $user_ids = CustomerAddress::whereIn('zone_id', $zone_ids)->pluck('user_id')->toArray();
         } else {
-            //$zone_ids = Zone::pluck('id')->toArray();
+            $zone_ids = Zone::pluck('id')->toArray();
             $vendor_ids = Vendor::pluck('id')->toArray();
             $user_ids = CustomerAddress::whereIn('zone_id', $zone_ids)->pluck('user_id')->toArray();
         }
@@ -190,8 +190,150 @@ class DashboardController extends Controller
 
     public function user_overview_calc($vendor_ids, $zone_ids, $user_ids)
     {
-       
+        $params = session('dash_params');
+        //user overview
+        if ($params['user_overview'] == 'overall') {
+            $customer = User::whereIn('id', $user_ids)->count();
+            $vendors = Vendor::whereIn('id', $vendor_ids)->count();
+            // $delivery_man = DeliveryMan::whereIn('zone_id', $zone_ids)->count();
+            
+        } else {
+            $customer = User::whereIn('id', $user_ids)->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))->count();
+            $vendors = Vendor::whereIn('id', $vendor_ids)->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))->count();
+            // $delivery_man = DeliveryMan::whereIn('zone_id', $zone_ids)->whereMonth('created_at', date('m'))
+            //     ->whereYear('created_at', date('Y'))->count();
 
-        return array();
+        }
+        $data = [
+            'customer' => $customer,
+            'vendors' => $vendors,
+            // 'delivery_man' => $delivery_man
+        ];
+        return $data;
+    }
+
+    public function business_overview_calc($vendor_ids)
+    {
+        $params = session('dash_params');
+        //business overview
+        if ($params['business_overview'] == 'overall') {
+            $services = Service::whereIn('vendor_id', $vendor_ids)->count();
+            $services_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
+            $reviews = Review::whereIn('service_id', $services_ids)->count();
+            $wishlist = Wishlist::whereIn('service_id', $services_ids)->count();
+        } else {
+            $services = Service::whereIn('vendor_id', $vendor_ids)->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))->count();
+            $services_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
+            $reviews = Review::whereIn('service_id', $services_ids)->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))->count();
+            $wishlist = Wishlist::whereIn('service_id', $services_ids)->whereMonth('created_at', date('m'))
+                ->whereYear('created_at', date('Y'))->count();
+        }
+
+        $data['service'] = $services;
+        $data['reviews'] = $reviews;
+        $data['wishlist'] = $wishlist;
+
+        return $data;
+    }
+
+    public function dashboard_data()
+    {
+        $params = session('dash_params');
+        if ($params['zone_id'] != 'all') {
+            // $vendor_ids = Vendor::where(['zone_id' => $params['zone_id']])->pluck('id')->toArray();
+            // $zone_ids = [$params['zone_id']];
+            // $user_ids = CustomerAddress::whereIn('zone_id', $zone_ids)->pluck('user_id')->toArray();
+            // $vendor_ids = Vendor::whereIn('id', $vendor_ids)->pluck('id')->toArray();
+            // $service_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
+        } else {
+            $zone_ids = Zone::pluck('id')->toArray();
+            $vendor_ids = Vendor::pluck('id')->toArray();
+            $user_ids = CustomerAddress::whereIn('zone_id', $zone_ids)->pluck('user_id')->toArray();
+            $vendor_ids = Vendor::pluck('id')->toArray();
+            $service_ids = Service::pluck('id')->toArray();
+        }
+
+        $data_os = self::order_stats_calc(array_unique($vendor_ids));
+        $data_uo = self::user_overview_calc(array_unique($vendor_ids), array_unique($zone_ids), array_unique($user_ids));
+        $data_bo = self::business_overview_calc(array_unique($vendor_ids));
+
+        $popular = Wishlist::with(['vendor'])->whereIn('vendor_id', $vendor_ids)->select('vendor_id', DB::raw('COUNT(vendor_id) as count'))->groupBy('vendor_id')->orderBy('count', 'DESC')->limit(6)->get();
+        $top_sell = OrderDetail::with(['service'])->whereIn('service_id', $service_ids)
+            ->select('service_id', DB::raw('COUNT(service_id) as count'))
+            ->groupBy('service_id')
+            ->orderBy("count", 'desc')
+            ->take(6)
+            ->get();
+        $top_rated_services = Service::rightJoin('reviews', 'reviews.service_id', '=', 'services.id')
+            ->whereIn('service_id', $service_ids)
+            ->groupBy('service_id')
+            ->select(['service_id',
+                DB::raw('AVG(reviews.rating) as ratings_average'),
+                DB::raw('count(*) as total')
+            ])
+            ->orderBy('total', 'desc')
+            ->take(6)
+            ->get();
+        $top_deliveryman = Order::with(['delivery_man'])->whereIn('vendor_id', $vendor_ids)
+            ->select('delivery_man_id', DB::raw('COUNT(delivery_man_id) as count'))
+            ->groupBy('delivery_man_id')
+            ->orderBy("count", 'desc')
+            ->take(6)
+            ->get();
+
+        $top_customer = Order::with(['customer'])->whereIn('vendor_id', $vendor_ids)
+            ->notpos()
+            ->select('user_id', DB::raw('COUNT(user_id) as count'))
+            ->groupBy('user_id')
+            ->orderBy("count", 'desc')
+            ->take(6)
+            ->get();
+
+        // $top_restaurants = Order::with(['restaurant'])->Delivered()
+        //     ->whereIn('vendor_id', $vendor_ids)
+        //     ->select('vendor_id', DB::raw('COUNT(vendor_id) as count'))
+        //     ->groupBy('vendor_id')
+        //     ->orderBy("count", 'desc')
+        //     ->take(6)
+        //     ->get();
+
+            // dd($vendor_ids);
+
+        $top_restaurants = Order::with(['vendor'])->Delivered()
+            ->whereIn('vendor_id', $vendor_ids)
+            ->select('vendor_id', DB::raw('COUNT(vendor_id) as count'))
+            ->groupBy('vendor_id')
+            ->orderBy("count", 'desc')
+            ->take(6)
+            ->get();
+
+        $total_sell = [];
+        $commission = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $from = date('Y-' . $i . '-01');
+            $to = date('Y-' . $i . '-30');
+            $total_sell[$i] = OrderTransaction::NotRefunded()
+                ->whereIn('vendor_id', $vendor_ids)
+                ->whereBetween('created_at', [$from, $to])->sum('order_amount');
+            $commission[$i] = OrderTransaction::NotRefunded()
+                ->whereIn('vendor_id', $vendor_ids)
+                ->whereBetween('created_at', [$from, $to])->sum('admin_commission');
+        }
+
+        $dash_data = array_merge($data_os, $data_uo, $data_bo);
+        $dash_data['popular'] = $popular;
+        $dash_data['top_sell'] = $top_sell;
+        $dash_data['top_rated_services'] = $top_rated_services;
+        $dash_data['top_deliveryman'] = $top_deliveryman;
+        $dash_data['top_customer'] = $top_customer;
+        $dash_data['top_restaurants'] = $top_restaurants;
+        $dash_data['total_sell'] = $total_sell;
+        $dash_data['commission'] = $commission;
+
+        return $dash_data;
     }
 }
