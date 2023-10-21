@@ -89,7 +89,7 @@
                                     </div>
 
                             <div class="avatar avatar-xxl avatar-border-lg">
-                                    <img class="avatar-img" onerror="this.src='{{asset('assets/admin/img/160x160/img1.jpg')}}'"
+                                    <img class="avatar-img" onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
                                         src="{{asset('storage/app/public/restaurant/identity/')}}/{{$vendor->aadhaar_front_image}}" alt="Image Description" id="AadhaarFrontImageCoverImageViewer" />
                             </div>
                             </div>
@@ -103,7 +103,7 @@
                                     </div>
 
                                     <div class="avatar avatar-xxl avatar-border-lg">
-                                    <img class="avatar-img" onerror="this.src='{{asset('assets/admin/img/160x160/img1.jpg')}}'"
+                                    <img class="avatar-img" onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
                                         src="{{asset('storage/app/public/restaurant/identity/')}}/{{$vendor->aadhaar_back_image}}" alt="Image Description" id="AadhaarBackImageCoverImageViewer">
                             </div>
                             </div>
@@ -117,7 +117,7 @@
                                     </div>
 
                                     <div class="avatar avatar-xxl avatar-border-lg">
-                                    <img id="panCardCoverImageViewer" class="avatar-img" onerror="this.src='{{asset('assets/admin/img/160x160/img1.jpg')}}'"
+                                    <img id="panCardCoverImageViewer" class="avatar-img" onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
                                         src="{{asset('storage/app/public/restaurant/identity/')}}/{{$vendor->pan_card_image}}" alt="Image Description">
                             </div>
                             </div>
@@ -273,7 +273,7 @@
                     </div> 
                     <center>
                         <img style="max-width: 100%;border: 1px solid; border-radius: 10px; max-height:200px;" id="coverImageViewer"
-                        onerror="this.src='{{asset('assets/admin/img/900x400/img1.jpg')}}'"
+                        onerror="this.src='{{asset('public/assets/admin/img/900x400/img1.jpg')}}'"
                         src="{{asset('storage/app/public/restaurant/cover/'.$vendor->cover_photo)}}" alt="Product thumbnail"/>
                     </center>  
                     

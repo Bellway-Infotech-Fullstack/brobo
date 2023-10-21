@@ -5,7 +5,7 @@
             <div style="height: 60px; width: 60px; overflow-x: hidden;overflow-y: hidden">
                 <a href="{{route('admin.vendor.view', $dm->id)}}" alt="view restaurant">
                 <img width="60" style="border-radius: 50%; height:100%;"
-                        onerror="this.src='{{asset('assets/admin/img/160x160/img1.jpg')}}'"
+                        onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
                         src="{{asset('storage/app/public/restaurant')}}/{{$dm['logo']}}"></a>
             </div>
         </td>

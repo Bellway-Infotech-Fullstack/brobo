@@ -4,7 +4,7 @@
 
 @push('css_or_js')
     <!-- Custom styles for this page -->
-    <link href="{{asset('assets/admin/css/croppie.css')}}" rel="stylesheet">
+    <link href="{{asset('public/assets/admin/css/croppie.css')}}" rel="stylesheet">
 
 @endpush
 
@@ -111,7 +111,7 @@
                                         <td>
                                             <a class="media align-items-center" href="{{route('admin.service.view',[$review->service['id']])}}">
                                                 <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/product')}}/{{$review->service['image']}}" 
-                                                    onerror="this.src='{{asset('assets/admin/img/160x160/img2.jpg')}}'" alt="{{$review->service->name}} image">
+                                                    onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'" alt="{{$review->service->name}} image">
                                                 <div class="media-body">
                                                     <h5 class="text-hover-primary mb-0">{{Str::limit($review->service['name'],10)}}</h5>
                                                 </div>
@@ -122,7 +122,7 @@
                                             href="{{route('admin.customer.view',[$review['user_id']])}}">
                                                 <div class="avatar avatar-circle">
                                                     <img class="avatar-img" width="75" height="75"
-                                                        onerror="this.src='{{asset('assets/admin/img/160x160/img1.jpg')}}'"
+                                                        onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
                                                         src="{{asset('storage/app/public/profile/'.$review->customer->image)}}"
                                                         alt="Image Description">
                                                 </div>
