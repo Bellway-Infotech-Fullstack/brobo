@@ -1,0 +1,8 @@
+Step.1 When vendor accepts the order, customer will receive OTP
+Step.2 When order status is processing, then they should be an input field to insert OTP
+Step.3 If Otp is not correct then order status cannot be changed to service ongoing
+
+6333e2e05b412e150c36a026
+
+381752AKZDxYXGt2i6317ae3eP1
+381752AYRiJj82M6333f2b8P1

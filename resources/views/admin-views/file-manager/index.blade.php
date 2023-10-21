@@ -58,7 +58,7 @@
                         <div class="col-sm-2">
                             @if($file['type']=='folder')
                             <a class="btn"  href="{{route('admin.file-manager.index', base64_encode($file['path']))}}">
-                                <img class="img-thumbnail" src="{{asset('assets/admin/img/folder.png')}}" alt="">
+                                <img class="img-thumbnail" src="{{asset('public/assets/admin/img/folder.png')}}" alt="">
                                 <p>{{Str::limit($file['name'],10) == 'restaurant' ? 'Vendor' : Str::limit($file['name'],10) }}</p>
                             </a>
                             @elseif($file['type']=='file')

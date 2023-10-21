@@ -31,7 +31,7 @@
                         <div class="d-flex align-items-center">
                             <img class="avatar avatar-xxl avatar-4by3 mr-4"
                                  src="{{asset('storage/app/public/campaign')}}/{{$campaign->image}}"
-                                 onerror="this.src='{{asset('assets/admin/img/160x160/img2.jpg')}}'"
+                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
                                  alt="Image Description">
                             <div class="d-block">
                                 
@@ -124,7 +124,7 @@
                                     <td>
                                         <div style="height: 60px; width: 60px; overflow-x: hidden;overflow-y: hidden">
                                             <img width="60" style="border-radius: 50%"
-                                                 onerror="this.src='{{asset('assets/admin/img/160x160/img1.jpg')}}'"
+                                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
                                                  src="{{asset('storage/app/public/restaurant')}}/{{$dm['logo']}}">
                                         </div>
                                     </td>
