@@ -81,7 +81,7 @@
                         <div class="card-header">
                             {{__('messages.products')}} {{$vendor->services->count()}}
                             
-                            <a href="{{route('admin.service.add-new')}}" class="btn btn-primary pull-right"><i
+                            <a href="{{route('admin.product.add-new')}}" class="btn btn-primary pull-right"><i
                                         class="tio-add-circle"></i> {{__('messages.add')}} {{__('messages.new')}} {{__('messages.service')}}</a>
                         </div>
                         <div class="table-responsive datatable-custom">

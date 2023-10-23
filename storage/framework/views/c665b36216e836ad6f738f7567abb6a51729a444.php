@@ -1,9 +1,7 @@
-@extends('layouts.admin.app')
+<?php $__env->startSection('title','Booking List'); ?>
 
-@section('title','Booking List')
-
-@push('css_or_js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+<?php $__env->startPush('css_or_js'); ?>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <style>
         .select2-container--default.select2-container--focus .select2-selection--multiple {
             border-color: transparent;
@@ -13,21 +11,22 @@
             padding: 0 .875rem;
         }
     </style>
-@endpush
-@php
+<?php $__env->stopPush(); ?>
+<?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphp
-@section('content')
+?>
+<?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center mb-3">
                 <div class="col-9">
-                    <h1 class="page-header-title text-capitalize">{{str_replace('_',' ',$status)}}
+                    <h1 class="page-header-title text-capitalize"><?php echo e(str_replace('_',' ',$status)); ?>
 
-                    @if(!Request::is('admin/order/list/service_ongoing')) {{__('messages.orders')}} @endIf<span
-                            class="badge badge-soft-dark ml-2">{{$total}}</span></h1>
+
+                    <?php if(!Request::is('admin/order/list/service_ongoing')): ?> <?php echo e(__('messages.orders')); ?> <?php endif; ?><span
+                            class="badge badge-soft-dark ml-2"><?php echo e($total); ?></span></h1>
                 </div>
 
                 <div class="col-3">
@@ -54,9 +53,9 @@
                                     </div>
                                 </div>
                                 <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                       placeholder="{{__('messages.search')}}" aria-label="{{__('messages.search')}}" required>
-                                       <input type="hidden" name="status" value="{{ request('status') }}" />
-                                <button type="submit" class="btn btn-light">{{__('messages.search')}}</button>
+                                       placeholder="<?php echo e(__('messages.search')); ?>" aria-label="<?php echo e(__('messages.search')); ?>" required>
+                                       <input type="hidden" name="status" value="<?php echo e(request('status')); ?>" />
+                                <button type="submit" class="btn btn-light"><?php echo e(__('messages.search')); ?></button>
 
                             </div>
                             <!-- End Search -->
@@ -70,11 +69,10 @@
                                 <div class="d-flex align-items-center">
                                       <span class="font-size-sm mr-3">
                                         <span id="datatableCounter">0</span>
-                                        {{__('messages.selected')}}
+                                        <?php echo e(__('messages.selected')); ?>
+
                                       </span>
-                                    {{--<a class="btn btn-sm btn-outline-danger" href="javascript:;">
-                                        <i class="tio-delete-outlined"></i> Delete
-                                    </a>--}}
+                                    
                                 </div>
                             </div>
                             <!-- End Datatable Info -->
@@ -86,43 +84,49 @@
                                      "target": "#usersExportDropdown",
                                      "type": "css-animation"
                                    }'>
-                                    <i class="tio-download-to mr-1"></i> {{__('messages.export')}}
+                                    <i class="tio-download-to mr-1"></i> <?php echo e(__('messages.export')); ?>
+
                                 </a>
 
                                 <div id="usersExportDropdown"
                                      class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm-right">
-                                    <span class="dropdown-header">{{__('messages.options')}}</span>
+                                    <span class="dropdown-header"><?php echo e(__('messages.options')); ?></span>
                                     <a id="export-copy" class="dropdown-item" href="javascript:;">
                                         <img class="avatar avatar-xss avatar-4by3 mr-2"
-                                             src="{{asset($assetPrefixPath . '/admin')}}/svg/illustrations/copy.svg"
+                                             src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/svg/illustrations/copy.svg"
                                              alt="Image Description">
-                                        {{__('messages.copy')}}
+                                        <?php echo e(__('messages.copy')); ?>
+
                                     </a>
                                     <a id="export-print" class="dropdown-item" href="javascript:;">
                                         <img class="avatar avatar-xss avatar-4by3 mr-2"
-                                             src="{{asset($assetPrefixPath . '/admin')}}/svg/illustrations/print.svg"
+                                             src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/svg/illustrations/print.svg"
                                              alt="Image Description">
-                                        {{__('messages.print')}}
+                                        <?php echo e(__('messages.print')); ?>
+
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <span class="dropdown-header">{{__('messages.download')}} {{__('messages.options')}}</span>
+                                    <span class="dropdown-header"><?php echo e(__('messages.download')); ?> <?php echo e(__('messages.options')); ?></span>
                                     <a id="export-excel" class="dropdown-item" href="javascript:;">
                                         <img class="avatar avatar-xss avatar-4by3 mr-2"
-                                             src="{{asset($assetPrefixPath . '/admin')}}/svg/components/excel.svg"
+                                             src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/svg/components/excel.svg"
                                              alt="Image Description">
-                                        {{__('messages.excel')}}
+                                        <?php echo e(__('messages.excel')); ?>
+
                                     </a>
                                     <a id="export-csv" class="dropdown-item" href="javascript:;">
                                         <img class="avatar avatar-xss avatar-4by3 mr-2"
-                                             src="{{asset($assetPrefixPath . '/admin')}}/svg/components/placeholder-csv-format.svg"
+                                             src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/svg/components/placeholder-csv-format.svg"
                                              alt="Image Description">
-                                        .{{__('messages.csv')}}
+                                        .<?php echo e(__('messages.csv')); ?>
+
                                     </a>
                                     <a id="export-pdf" class="dropdown-item" href="javascript:;">
                                         <img class="avatar avatar-xss avatar-4by3 mr-2"
-                                             src="{{asset($assetPrefixPath . '/admin')}}/svg/components/pdf.svg"
+                                             src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/svg/components/pdf.svg"
                                              alt="Image Description">
-                                        {{__('messages.pdf')}}
+                                        <?php echo e(__('messages.pdf')); ?>
+
                                     </a>
                                 </div>
                             </div>
@@ -142,7 +146,8 @@
                                      "target": "#showHideDropdown",
                                      "type": "css-animation"
                                    }'>
-                                    <i class="tio-table mr-1"></i> {{__('messages.columns')}}
+                                    <i class="tio-table mr-1"></i> <?php echo e(__('messages.columns')); ?>
+
                                 </a>
 
                                 <div id="showHideDropdown"
@@ -151,7 +156,7 @@
                                     <div class="card card-sm">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">{{__('messages.order')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.order')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_order">
@@ -165,7 +170,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">{{__('messages.date')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.date')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_date">
@@ -179,7 +184,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">{{__('messages.customer')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.customer')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm"
@@ -193,7 +198,7 @@
                                                 <!-- End Checkbox Switch -->
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">{{__('messages.vendor')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.vendor')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm"
@@ -208,7 +213,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2 text-capitalize">{{__('messages.payment')}} {{__('messages.status')}}</span>
+                                                <span class="mr-2 text-capitalize"><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.status')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm"
@@ -223,7 +228,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">{{__('messages.total')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.total')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_total">
@@ -236,7 +241,7 @@
                                                 <!-- End Checkbox Switch -->
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">{{__('messages.order')}} {{__('messages.status')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.status')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_order_status">
@@ -250,7 +255,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <span class="mr-2">{{__('messages.actions')}}</span>
+                                                <span class="mr-2"><?php echo e(__('messages.actions')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm"
@@ -298,114 +303,115 @@
                     <thead class="thead-light">
                     <tr>
                         <th class="">
-                            {{__('messages.#')}}
+                            <?php echo e(__('messages.#')); ?>
+
                         </th>
-                        <th class="table-column-pl-0">{{__('messages.order')}}</th>
-                        <th>{{__('messages.date')}}</th>
-                        <th>{{__('messages.customer')}}</th>
-                        <th>{{__('messages.vendor')}}</th>
-                        <th>{{__('messages.payment')}} {{__('messages.status')}}</th>
-                        <th>{{__('messages.total')}}</th>
-                        <th>{{__('messages.wallet')}}</th>
+                        <th class="table-column-pl-0"><?php echo e(__('messages.order')); ?></th>
+                        <th><?php echo e(__('messages.date')); ?></th>
+                        <th><?php echo e(__('messages.customer')); ?></th>
+                        <th><?php echo e(__('messages.vendor')); ?></th>
+                        <th><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.status')); ?></th>
+                        <th><?php echo e(__('messages.total')); ?></th>
+                        <th><?php echo e(__('messages.wallet')); ?></th>
                         <th>Due Amount</th>
-                        <th>{{__('messages.order')}} {{__('messages.status')}}</th>
-                        {{-- <th>{{__('messages.order')}} {{__('messages.type')}}</th> --}}
-                        <th>{{__('messages.actions')}}</th>
+                        <th><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.status')); ?></th>
+                        
+                        <th><?php echo e(__('messages.actions')); ?></th>
                     </tr>
                     </thead>
 
                     <tbody id="set-rows">
-                    @foreach($orders as $key=>$order)
+                    <?php $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                        <tr class="status-{{$order['order_status']}} class-all">
+                        <tr class="status-<?php echo e($order['order_status']); ?> class-all">
                             <td class="">
-                                {{$key+$orders->firstItem()}}
+                                <?php echo e($key+$orders->firstItem()); ?>
+
                             </td>
                             <td class="table-column-pl-0">
-                                <a href="{{route('admin.order.details',['id'=>$order['id']])}}">{{$order['id']}}</a>
+                                <a href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><?php echo e($order['id']); ?></a>
                             </td>
-                            <td>{{date('d M Y',strtotime($order['created_at']))}}</td>
+                            <td><?php echo e(date('d M Y',strtotime($order['created_at']))); ?></td>
                             <td>
-                                @if($order->customer)
+                                <?php if($order->customer): ?>
                                     <a class="text-body text-capitalize"
-                                       href="{{route('admin.customer.view',[$order['user_id']])}}">{{$order->customer['f_name'].' '.$order->customer['l_name']}}</a>
-                                @else
-                                    <label class="badge badge-danger">{{__('messages.invalid')}} {{__('messages.customer')}} {{__('messages.data')}}</label>
-                                @endif
+                                       href="<?php echo e(route('admin.customer.view',[$order['user_id']])); ?>"><?php echo e($order->customer['f_name'].' '.$order->customer['l_name']); ?></a>
+                                <?php else: ?>
+                                    <label class="badge badge-danger"><?php echo e(__('messages.invalid')); ?> <?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.data')); ?></label>
+                                <?php endif; ?>
                             </td>
                             <td>
 
-                                   <label class="badge badge-soft-primary"><a href="{{route('admin.vendor.view', $order->vendor_id)}}" alt="view vendor">{{$order->vendor?$order->vendor->names() :'Vendor deleted!'}}</a></label> 
+                                   <label class="badge badge-soft-primary"><a href="<?php echo e(route('admin.vendor.view', $order->vendor_id)); ?>" alt="view vendor"><?php echo e($order->vendor?$order->vendor->names() :'Vendor deleted!'); ?></a></label> 
 
                             </td>
                             <td>
-                                @if($order->payment_status=='paid')
+                                <?php if($order->payment_status=='paid'): ?>
                                     <span class="badge badge-soft-success">
-                                      <span class="legend-indicator bg-success"></span>{{__('messages.paid')}}
+                                      <span class="legend-indicator bg-success"></span><?php echo e(__('messages.paid')); ?>
+
                                     </span>
-                                @else
+                                <?php else: ?>
                                     <span class="badge badge-soft-danger">
-                                      <span class="legend-indicator bg-danger"></span>{{__('messages.unpaid')}}
+                                      <span class="legend-indicator bg-danger"></span><?php echo e(__('messages.unpaid')); ?>
+
                                     </span>
-                                @endif
+                                <?php endif; ?>
                             </td>
-                            <td>{{\App\CentralLogics\Helpers::format_currency($order->order_amount)}}</td>
-                            <td>{{\App\CentralLogics\Helpers::format_currency($order->wallet_amount)}}</td>
-                            <td>{{\App\CentralLogics\Helpers::format_currency($order->due_amount)}}</td>
+                            <td><?php echo e(\App\CentralLogics\Helpers::format_currency($order->order_amount)); ?></td>
+                            <td><?php echo e(\App\CentralLogics\Helpers::format_currency($order->wallet_amount)); ?></td>
+                            <td><?php echo e(\App\CentralLogics\Helpers::format_currency($order->due_amount)); ?></td>
                             <td class="text-capitalize">
-                                @if($order['order_status']=='pending')
+                                <?php if($order['order_status']=='pending'): ?>
                                     <span class="badge badge-soft-info ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-info"></span>{{__('messages.pending')}}
+                                      <span class="legend-indicator bg-info"></span><?php echo e(__('messages.pending')); ?>
+
                                     </span>
-                                @elseif($order['order_status']=='confirmed')
+                                <?php elseif($order['order_status']=='confirmed'): ?>
                                     <span class="badge badge-soft-info ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-info"></span>{{__('messages.confirmed')}}
+                                      <span class="legend-indicator bg-info"></span><?php echo e(__('messages.confirmed')); ?>
+
                                     </span>
-                                 @elseif($order['order_status']=='accepted')
+                                 <?php elseif($order['order_status']=='accepted'): ?>
                                     <span class="badge badge-soft-info ml-2 ml-sm-3">
                                       <span class="legend-indicator bg-info"></span>Accepted
                                     </span>
-                                @elseif($order['order_status']=='processing')
+                                <?php elseif($order['order_status']=='processing'): ?>
                                     <span class="badge badge-soft-warning ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-warning"></span>{{__('messages.processing')}}
+                                      <span class="legend-indicator bg-warning"></span><?php echo e(__('messages.processing')); ?>
+
                                     </span>
-                                @elseif($order['order_status']=='picked_up')
+                                <?php elseif($order['order_status']=='picked_up'): ?>
                                     <span class="badge badge-soft-warning ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-warning"></span>{{__('messages.out_for_delivery')}}
+                                      <span class="legend-indicator bg-warning"></span><?php echo e(__('messages.out_for_delivery')); ?>
+
                                     </span>
-                                @elseif($order['order_status']=='delivered')
+                                <?php elseif($order['order_status']=='delivered'): ?>
                                     <span class="badge badge-soft-success ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-success"></span>{{__('messages.delivered')}}
+                                      <span class="legend-indicator bg-success"></span><?php echo e(__('messages.delivered')); ?>
+
                                     </span>
-                                @elseif($order['order_status']=='failed')
+                                <?php elseif($order['order_status']=='failed'): ?>
                                     <span class="badge badge-soft-danger ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-danger text-capitalize"></span>{{__('messages.payment')}}  {{__('messages.failed')}}
+                                      <span class="legend-indicator bg-danger text-capitalize"></span><?php echo e(__('messages.payment')); ?>  <?php echo e(__('messages.failed')); ?>
+
                                     </span>
-                                @else
+                                <?php else: ?>
                                     <span class="badge badge-soft-danger ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-danger"></span>{{str_replace('_',' ',$order['order_status'])}}
+                                      <span class="legend-indicator bg-danger"></span><?php echo e(str_replace('_',' ',$order['order_status'])); ?>
+
                                     </span>
-                                @endif
+                                <?php endif; ?>
                             </td>
-                           {{--  <td class="text-capitalize">
-                                @if($order['order_type']=='take_away')
-                                    <span class="badge badge-soft-dark ml-2 ml-sm-3">
-                                        <span class="legend-indicator bg-dark"></span>{{__('messages.take_away')}}
-                                    </span>
-                                @else
-                                    <span class="badge badge-soft-success ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-success"></span>{{__('messages.delivery')}}
-                                    </span>
-                                @endif
-                            </td> --}}
+                           
                             <td>
                                 <a class="btn btn-sm btn-white"
-                                           href="{{route('admin.order.details',['id'=>$order['id']])}}"><i
-                                                class="tio-visible"></i> {{__('messages.view')}}</a>
+                                           href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><i
+                                                class="tio-visible"></i> <?php echo e(__('messages.view')); ?></a>
                             </td>
                         </tr>
 
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
             </div>
@@ -418,7 +424,8 @@
                     <div class="col-sm-auto">
                         <div class="d-flex justify-content-center justify-content-sm-end">
                             <!-- Pagination -->
-                            {!! $orders->appends($_GET)->links() !!}
+                            <?php echo $orders->appends($_GET)->links(); ?>
+
                         </div>
                     </div>
                 </div>
@@ -431,7 +438,7 @@
         <div id="datatableFilterSidebar" class="hs-unfold-content_ sidebar sidebar-bordered sidebar-box-shadow" style="display: none">
             <div class="card card-lg sidebar-card sidebar-footer-fixed">
                 <div class="card-header">
-                    <h4 class="card-header-title">{{__('messages.order')}} {{__('messages.filter')}}</h4>
+                    <h4 class="card-header-title"><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.filter')); ?></h4>
 
                     <!-- Toggle Button -->
                     <a class="js-hs-unfold-invoker_ btn btn-icon btn-xs btn-ghost-dark ml-2" href="javascript:;"
@@ -455,104 +462,97 @@
                 
                 ?>
                 <!-- Body -->
-                <form class="card-body sidebar-body sidebar-scrollbar" action="{{route('admin.order.filter')}}" method="POST" id="order_filter_form">
-                    @csrf
-                    <small class="text-cap mb-3">{{__('messages.zone')}}</small>
+                <form class="card-body sidebar-body sidebar-scrollbar" action="<?php echo e(route('admin.order.filter')); ?>" method="POST" id="order_filter_form">
+                    <?php echo csrf_field(); ?>
+                    <small class="text-cap mb-3"><?php echo e(__('messages.zone')); ?></small>
 
                     <div class="mb-2" style="border: 1px solid #8080803d;border-radius: 5px">
                         <select name="zone[]" id="zone_ids" class="form-control js-select2-custom" multiple="multiple">
-                        @foreach(\App\Models\Zone::all() as $zone)
-                            <option value="{{$zone->id}}" {{isset($zone_ids)?(in_array($zone->id, $zone_ids)?'selected':''):''}}>{{$zone->name}}</option>
-                        @endforeach
+                        <?php $__currentLoopData = \App\Models\Zone::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $zone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($zone->id); ?>" <?php echo e(isset($zone_ids)?(in_array($zone->id, $zone_ids)?'selected':''):''); ?>><?php echo e($zone->name); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
                     <hr class="my-4">
-                    <small class="text-cap mb-3">{{__('messages.vendor')}}</small>
+                    <small class="text-cap mb-3"><?php echo e(__('messages.vendor')); ?></small>
                     <div class="mb-2" style="border: 1px solid #8080803d;border-radius: 5px">
                         <select name="vendor[]" id="vendor_ids" class="form-control js-select2-custom" multiple="multiple">
-                        @foreach(\App\Models\Restaurant::whereIn('id', $vendor_ids)->get() as $restaurant)
-                            <option value="{{$restaurant->id}}" selected >{{$restaurant->name}}</option>
-                        @endforeach
+                        <?php $__currentLoopData = \App\Models\Restaurant::whereIn('id', $vendor_ids)->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $restaurant): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($restaurant->id); ?>" selected ><?php echo e($restaurant->name); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
 
                     <hr class="my-4">
-                    @if($status == 'all')
-                    <small class="text-cap mb-3">{{__('messages.order')}} {{__('messages.status')}}</small>
+                    <?php if($status == 'all'): ?>
+                    <small class="text-cap mb-3"><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.status')); ?></small>
 
                     <!-- Custom Checkbox -->
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus2" name="orderStatus[]" class="custom-control-input" {{isset($orderstatus)?(in_array('pending', $orderstatus)?'checked':''):''}} value="pending">
-                        <label class="custom-control-label" for="orderStatus2">{{__('messages.pending')}}</label>
+                        <input type="checkbox" id="orderStatus2" name="orderStatus[]" class="custom-control-input" <?php echo e(isset($orderstatus)?(in_array('pending', $orderstatus)?'checked':''):''); ?> value="pending">
+                        <label class="custom-control-label" for="orderStatus2"><?php echo e(__('messages.pending')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus1" name="orderStatus[]" class="custom-control-input" value="confirmed" {{isset($orderstatus)?(in_array('confirmed', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus1">{{__('messages.confirmed')}}</label>
+                        <input type="checkbox" id="orderStatus1" name="orderStatus[]" class="custom-control-input" value="confirmed" <?php echo e(isset($orderstatus)?(in_array('confirmed', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus1"><?php echo e(__('messages.confirmed')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus3" name="orderStatus[]" class="custom-control-input" value="processing" {{isset($orderstatus)?(in_array('processing', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus3">{{__('messages.processing')}}</label>
+                        <input type="checkbox" id="orderStatus3" name="orderStatus[]" class="custom-control-input" value="processing" <?php echo e(isset($orderstatus)?(in_array('processing', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus3"><?php echo e(__('messages.processing')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus4" name="orderStatus[]" class="custom-control-input" value="picked_up" {{isset($orderstatus)?(in_array('picked_up', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus4">{{__('messages.out_for_delivery')}}</label>
+                        <input type="checkbox" id="orderStatus4" name="orderStatus[]" class="custom-control-input" value="picked_up" <?php echo e(isset($orderstatus)?(in_array('picked_up', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus4"><?php echo e(__('messages.out_for_delivery')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus5" name="orderStatus[]" class="custom-control-input" value="delivered" {{isset($orderstatus)?(in_array('delivered', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus5">{{__('messages.delivered')}}</label>
+                        <input type="checkbox" id="orderStatus5" name="orderStatus[]" class="custom-control-input" value="delivered" <?php echo e(isset($orderstatus)?(in_array('delivered', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus5"><?php echo e(__('messages.delivered')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus6" name="orderStatus[]" class="custom-control-input" value="returned" {{isset($orderstatus)?(in_array('returned', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus6">{{__('messages.returned')}}</label>
+                        <input type="checkbox" id="orderStatus6" name="orderStatus[]" class="custom-control-input" value="returned" <?php echo e(isset($orderstatus)?(in_array('returned', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus6"><?php echo e(__('messages.returned')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus7" name="orderStatus[]" class="custom-control-input" value="failed" {{isset($orderstatus)?(in_array('failed', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus7">{{__('messages.failed')}}</label>
+                        <input type="checkbox" id="orderStatus7" name="orderStatus[]" class="custom-control-input" value="failed" <?php echo e(isset($orderstatus)?(in_array('failed', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus7"><?php echo e(__('messages.failed')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus8" name="orderStatus[]" class="custom-control-input" value="canceled" {{isset($orderstatus)?(in_array('canceled', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus8">{{__('messages.canceled')}}</label>
+                        <input type="checkbox" id="orderStatus8" name="orderStatus[]" class="custom-control-input" value="canceled" <?php echo e(isset($orderstatus)?(in_array('canceled', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus8"><?php echo e(__('messages.canceled')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus9" name="orderStatus[]" class="custom-control-input" value="refund_requested" {{isset($orderstatus)?(in_array('refund_requested', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus9">{{__('messages.refundRequest')}}</label>
+                        <input type="checkbox" id="orderStatus9" name="orderStatus[]" class="custom-control-input" value="refund_requested" <?php echo e(isset($orderstatus)?(in_array('refund_requested', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus9"><?php echo e(__('messages.refundRequest')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus10" name="orderStatus[]" class="custom-control-input" value="refunded" {{isset($orderstatus)?(in_array('refunded', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus10">{{__('messages.refunded')}}</label>
+                        <input type="checkbox" id="orderStatus10" name="orderStatus[]" class="custom-control-input" value="refunded" <?php echo e(isset($orderstatus)?(in_array('refunded', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus10"><?php echo e(__('messages.refunded')); ?></label>
                     </div>
 
                     <hr class="my-4">
 
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="scheduled" name="scheduled" class="custom-control-input" value="1" {{isset($scheduled)?($scheduled==1?'checked':''):''}}>
-                        <label class="custom-control-label text-uppercase" for="scheduled">{{__('messages.scheduled')}}</label>
+                        <input type="checkbox" id="scheduled" name="scheduled" class="custom-control-input" value="1" <?php echo e(isset($scheduled)?($scheduled==1?'checked':''):''); ?>>
+                        <label class="custom-control-label text-uppercase" for="scheduled"><?php echo e(__('messages.scheduled')); ?></label>
                     </div>
-                    @endif
-                   {{--  <hr class="my-4">
-                    <small class="text-cap mb-3">{{__('messages.order')}} {{__('messages.type')}}</small> --}}
-                   {{--  <div class="custom-control custom-radio mb-2">
-                        <input type="radio" id="take_away" name="order_type" class="custom-control-input" value="take_away" {{isset($order_type)?($order_type=='take_away'?'checked':''):''}}>
-                        <label class="custom-control-label text-uppercase" for="take_away">{{__('messages.take_away')}}</label>
-                    </div> --}}
-                    {{-- <div class="custom-control custom-radio mb-2">
-                        <input type="radio" id="delivery" name="order_type" class="custom-control-input" value="service" {{isset($order_type)?($order_type=='service'?'checked':''):''}}>
-                        <label class="custom-control-label text-uppercase" for="delivery">{{__('messages.service')}}</label>
-                    </div> --}}
+                    <?php endif; ?>
+                   
+                   
+                    
                     <hr class="my-4">
 
-                    <small class="text-cap mb-3">{{__('messages.date')}} {{__('messages.between')}}</small>
+                    <small class="text-cap mb-3"><?php echo e(__('messages.date')); ?> <?php echo e(__('messages.between')); ?></small>
 
                     <div class="row">
                         <div class="col-12">
                             <div class="form-group" style="margin:0;">
-                                <input type="date" name="from_date" class="form-control" id="date_from" value="{{isset($from_date)?$from_date:''}}">
+                                <input type="date" name="from_date" class="form-control" id="date_from" value="<?php echo e(isset($from_date)?$from_date:''); ?>">
                             </div>
                         </div>
                         <div class="col-12 text-center">----TO----</div>
                         <div class="col-12">
                             <div class="form-group">
-                                <input type="date" name="to_date" class="form-control" id="date_to" value="{{isset($to_date)?$to_date:''}}">
+                                <input type="date" name="to_date" class="form-control" id="date_to" value="<?php echo e(isset($to_date)?$to_date:''); ?>">
                             </div>
                         </div>
                     </div>
@@ -573,15 +573,15 @@
             </div>
         </div>
         <!-- End Order Filter Modal -->
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
-    <!-- <script src="{{asset($assetPrefixPath . '/admin')}}/js/bootstrap-select.min.js"></script> -->
+<?php $__env->startPush('script_2'); ?>
+    <!-- <script src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/js/bootstrap-select.min.js"></script> -->
     <script>
         $(document).on('ready', function () {
-            @if($filter_count>0)
-            $('#filter_count').html({{$filter_count}});
-            @endif
+            <?php if($filter_count>0): ?>
+            $('#filter_count').html(<?php echo e($filter_count); ?>);
+            <?php endif; ?>
             // INITIALIZATION OF SELECT2
             // =======================================================
             $('.js-select2-custom').each(function () {
@@ -603,7 +603,7 @@
 
             $('#vendor_ids').select2({
                 ajax: {
-                    url: '{{url('/')}}/admin/vendor/get-restaurants',
+                    url: '<?php echo e(url('/')); ?>/admin/vendor/get-restaurants',
                     data: function (params) {
                         return {
                             q: params.term, // search term
@@ -664,7 +664,7 @@
                 },
                 language: {
                     zeroRecords: '<div class="text-center p-4">' +
-                        '<img class="mb-3" src="{{asset($assetPrefixPath . '/admin')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
+                        '<img class="mb-3" src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
                         '<p class="mb-0">No data to show</p>' +
                         '</div>'
                 }
@@ -753,7 +753,7 @@
 
         $('#reset').on('click', function(){
             // e.preventDefault();
-            location.href = '{{url('/')}}/admin/order/filter/reset';
+            location.href = '<?php echo e(url('/')); ?>/admin/order/filter/reset';
         });
     </script>
 
@@ -770,7 +770,7 @@
             });
 
             $.get({
-                url: '{{route('admin.order.search')}}',
+                url: '<?php echo e(route('admin.order.search')); ?>',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -788,4 +788,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/order/list.blade.php ENDPATH**/ ?>

@@ -8,32 +8,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Service extends Model
+class Product extends Model
 {
     protected $casts = [
         'tax' => 'float',
         'price' => 'float',
         'status' => 'integer',
         'discount' => 'float',
-        'set_menu' => 'integer',
         'category_id' => 'integer',
         'reviews_count' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'veg'=>'integer',
-        // 'category_ids' => 'json',
-        // 'variations' => 'json',
-        // 'add_ons' => 'json',
-        // 'attributes' => 'json',
-        // 'choice_options' => 'json'
     ];
 
-    public function scopeActive($query)
-    {
-        return $query->where('status', 1)->whereHas('vendor', function($query){
-            return $query->where('status', 1);
-        });
-    }
 
     public function scopePopular($query)
     {
@@ -79,30 +66,9 @@ class Service extends Model
         return $category?$category->name:trans('messages.uncategorize');
     }
 
-    protected static function booted()
-    {
-        if(auth('vendor')->check())
-        {
-            static::addGlobalScope(new VendorScope);
-        }
-
-        static::addGlobalScope(new ZoneScope);
-    }
 
 
-    public function scopeType($query, $type)
-    {
-        if($type == 'veg')
-        {
-            return $query->where('veg', true);
-        }
-        else if($type == 'non_veg')
-        {
-            return $query->where('veg', false);
-        }
 
-        return $query;
-    }
     
 
 }
