@@ -16,13 +16,13 @@ class CategoryController extends Controller
 {
     function index()
     {
-        $categories=Category::where(['position'=>0])->latest()->paginate(config('default_pagination'));
+        $categories=Category::latest()->paginate(config('default_pagination'));
         return view('admin-views.category.index',compact('categories'));
     }
 
     function sub_index()
     {
-        $categories=Category::with(['parent'])->where(['position'=>1])->latest()->paginate(config('default_pagination'));
+        $categories=Category::with(['parent'])->latest()->paginate(config('default_pagination'));
         return view('admin-views.category.sub-index',compact('categories'));
     }
 

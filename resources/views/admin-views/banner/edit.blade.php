@@ -9,7 +9,10 @@
     }
 </style>
 @endpush
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @section('content')
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -28,85 +31,10 @@
                         <form action="{{route('admin.banner.update', [$banner->id])}}" method="post" id="banner_form">
                             @csrf
                             <div class="row">
+                               
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.title')}}</label>
-                                        <input type="text" name="title" class="form-control" placeholder="{{__('messages.new_banner')}}" value="{{$banner->title}}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="input-label" for="title">{{__('messages.zone')}}</label>
-                                        <select name="zone_id" id="zone" class="form-control js-select2-custom" onchange="getRequest('{{url('/')}}/admin/food/get-foods?zone_id='+this.value,'choice_item')">
-                                            <option  disabled selected>---{{__('messages.select')}}---</option>
-                                            @php($zones=\App\Models\Zone::all())
-                                            @foreach($zones as $zone)
-                                                @if(isset(auth('admin')->user()->zone_id))
-                                                    @if(auth('admin')->user()->zone_id == $zone->id)
-                                                        <option value="{{$zone['id']}}" {{$zone->id == $banner->zone_id?'selected':''}}>{{$zone['name']}}</option>
-                                                    @endif
-                                                @else
-                                                <option value="{{$zone['id']}}" {{$zone->id == $banner->zone_id?'selected':''}}>{{$zone['name']}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.banner')}} {{__('messages.type')}}</label>
-                                        <select name="banner_type" class="form-control" onchange="banner_type_change(this.value)">
-
-                                            <option value="vendor_wise" {{$banner->type == 'vendor_wise'? 'selected':'' }}>{{__('messages.vendor')}} {{__('messages.wise')}}</option>
-                                            <option value="service_wise" {{$banner->type == 'service_wise'? 'selected':'' }}>{{__('messages.service')}} {{__('messages.wise')}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="restaurant_wise">
-                                        <label class="input-label" for="exampleFormControlSelect1">{{__('messages.restaurant')}}<span
-                                                class="input-label-secondary"></span></label>
-
-                                         <select name="vendor_id" class="form-control"  title="Select Vendor">
-                                              <option value="">Vendor</option>
-                                              {{-- @if($banner->type=='vendor_wise') --}}
-                                                @foreach ($vendors as $vendor)
-                                                        @if($vendor->id == $banner->data)
-                                                            <option value="{{$vendor->id}}" selected>{{ $vendor->names() }}</option>
-                                                        @else
-                                                            <option value="{{$vendor->id}}">{{ $vendor->names() }}</option>
-                                                        @endif
-                                                @endforeach
-                                              {{-- @endIf --}}
-                                        </select>
-
-                                    </div>
-
-{{-- 
-                                    <div class="form-group" id="restaurant_wise">
-                                        <label class="input-label" for="exampleFormControlSelect1">{{__('messages.vendor')}}<span
-                                                class="input-label-secondary"></span></label>
-                                        <select name="vendor_id" class="form-control"  title="Select Vendor">
-                                              <option value="">Vendor</option>
-                                                @foreach ($vendors as $vendor)
-                                                    <option value="{{$vendor->id}}">{{ $vendor->names() }}</option>
-                                                @endforeach
-                                        </select>
-                                    </div> --}}
-                                   {{--  <div class="form-group" id="item_wise">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.select')}} {{__('messages.service')}}</label>
-                                        <select name="service_id" id="choice_item" class="form-control js-select2-custom" placeholder="{{__('messages.select').__('messages.service')}}">
-                                             <option value="">--Select Service--</option>
-                                                @foreach ($services as $service)
-                                                    <option value="{{$service->id}}">{{ $service->name }}</option>
-                                                @endforeach
-                                        </select>
-                                    </div> --}}
-
-                                    <div class="form-group" id="item_wise">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.select')}} {{__('messages.service')}}</label>
-                                        <select name="service_id" id="choice_item" class="form-control js-select2-custom" placeholder="{{__('messages.select').__('messages.service')}}">
-                                            
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>{{__('messages.campaign')}} {{__('messages.image')}}</label>
+                                        <label>{{__('messages.banner')}} {{__('messages.image')}}</label>
                                         <small style="color: red">* ( {{__('messages.ratio')}} 3:1 )</small>
                                         <div class="custom-file">
                                             <input type="file" name="image" id="customFileEg1" class="custom-file-input"

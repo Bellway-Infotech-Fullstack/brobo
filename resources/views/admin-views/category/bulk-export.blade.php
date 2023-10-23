@@ -5,7 +5,10 @@
 @push('css_or_js')
 
 @endpush
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @section('content')
     <div class="content container-fluid">
         <nav aria-label="breadcrumb">

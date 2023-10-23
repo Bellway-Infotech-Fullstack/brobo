@@ -48,6 +48,20 @@ Route::group(['namespace' => 'API'], function () {
         Route::post('manage-delivery-address', 'manageAddress');
         Route::get('get-delivery-address', 'getAddress');
     }); 
+
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('get-all-subcategories', 'getAllSubCategories');
+        Route::get('get-popular-services', 'getPopularServices');
+    }); 
+
+    Route::controller(BannerController::class)->group(function () {
+        Route::get('get-all-banners', 'index');
+    }); 
+
+    Route::controller(SettingController::class)->group(function () {
+        Route::get('get-setting-data', 'index');
+    }); 
 });
+
 
 

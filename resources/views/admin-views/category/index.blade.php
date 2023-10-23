@@ -5,7 +5,10 @@
 @push('css_or_js')
 
 @endpush
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @section('content')
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -21,42 +24,7 @@
         </div>
         <!-- End Page Header -->
 
-        <div class="card">
-            <div class="card-header"><h5>{{isset($category)?__('messages.update'):__('messages.add').' '.__('messages.new')}} {{__('messages.category')}}</h5></div>
-            <div class="card-body">
-                <form action="{{isset($category)?route('admin.category.update',[$category['id']]):route('admin.category.store')}}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.name')}}</label>
-                        <input type="text" name="name" value="{{isset($category)?$category['name']:''}}" class="form-control" placeholder="New Category" required>
-                    </div>
-                    <input name="position" value="0" style="display: none">
-                    <div class="form-group">
-                        <label>{{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1)</small>
-                        <div class="custom-file">
-                            <input type="file" name="image" id="customFileEg1" class="custom-file-input"
-                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" required>
-                            <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-bottom:0%;">
-                        <center>
-                            <img style="width: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                @if(isset($category))
-                                src="{{asset('storage/app/public/category')}}/{{$category['image']}}"
-                                @else
-                                src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}"
-                                @endif
-                                alt="image"/>
-                        </center>
-                    </div>
-                    <div class="form-group pt-2">
-                        <button type="submit" class="btn btn-primary">{{isset($category)?__('messages.update'):__('messages.save')}}</button>
-                    </div>
-                    
-                </form>
-            </div>
-        </div>
+      
 
         <div class="card mt-3">
             <div class="card-header pb-0">
@@ -91,8 +59,6 @@
                                 <th style="width: 10%">{{__('messages.id')}}</th>
                                 <th style="width: 30%">{{__('messages.name')}}</th>
                                 <th style="width: 10%">{{__('messages.status')}}</th>
-                                <th style="width: 20%">{{__('messages.priority')}}</th>
-                                <th style="width: 25%">{{__('messages.action')}}</th>
                             </tr>
                         </thead>
 
@@ -114,26 +80,8 @@
                                         </span>
                                     </label>
                                 </td>
-                                <td>
-                                    <form action="{{route('admin.category.priority',$category->id)}}">
-                                    <select name="priority" id="priority" class="w-100" onchange="this.form.submit()"> 
-                                        <option value="0" {{$category->priority == 0?'selected':''}}>{{__('messages.normal')}}</option>
-                                        <option value="1" {{$category->priority == 1?'selected':''}}>{{__('messages.medium')}}</option>
-                                        <option value="2" {{$category->priority == 2?'selected':''}}>{{__('messages.high')}}</option>
-                                    </select>
-                                    </form>
-                                </td>
-                                <td>
-                                    <a class="btn btn-sm btn-white"
-                                        href="{{route('admin.category.edit',[$category['id']])}}" title="{{__('messages.edit')}} {{__('messages.category')}}"><i class="tio-edit"></i>
-                                    </a>
-                                    <a class="btn btn-sm btn-white" href="javascript:"
-                                    onclick="form_alert('category-{{$category['id']}}','Want to delete this category')" title="{{__('messages.delete')}} {{__('messages.category')}}"><i class="tio-delete-outlined"></i>
-                                    </a>
-                                    <form action="{{route('admin.category.delete',[$category['id']])}}" method="post" id="category-{{$category['id']}}">
-                                        @csrf @method('delete')
-                                    </form>
-                                </td>
+
+                               
                             </tr>
                         @endforeach
                         </tbody>

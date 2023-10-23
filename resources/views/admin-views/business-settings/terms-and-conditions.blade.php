@@ -22,7 +22,7 @@
                 <form action="{{route('admin.business-settings.terms-and-conditions')}}" method="post" id="tnc-form">
                     @csrf
                     <div class="form-group">
-                        <textarea class="ckeditor form-control" name="tnc">{!! $tnc['value'] !!}</textarea>
+                        <textarea class="ckeditor form-control" name="tnc">{!! @$tnc['value'] !!}</textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
