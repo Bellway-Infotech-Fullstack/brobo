@@ -1153,7 +1153,7 @@
                         <hr>
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                                  src="{{asset('storage/app/public/business/'.$logo)}}" alt="logo image"/>
                         </center>
                     </div>

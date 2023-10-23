@@ -116,7 +116,7 @@
                                     </div>
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
-                                            <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer" onerror="this.src='{{asset('public/assets/admin/img/900x400/img1.jpg')}}'" src="{{asset('storage/app/public/banner')}}/{{$banner['image']}}" alt="campaign image"/>
+                                            <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer" onerror="this.src='{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}'" src="{{asset('storage/app/public/banner')}}/{{$banner['image']}}" alt="campaign image"/>
                                         </center>
                                     </div>
                                 </div>

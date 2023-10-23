@@ -24,7 +24,7 @@
                     <label class="label_1">Bookings : {{$item['count']}}</label>
                     <center class="mt-6">
                         <img style="border-radius: 50%;width: 60px;height: 60px"
-                             onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                             onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img1.jpg')}}'"
                              src="{{asset('storage/app/public/profile/'.$item->customer->image??'')}}">
                     </center>
                     <div class="text-center mt-2">

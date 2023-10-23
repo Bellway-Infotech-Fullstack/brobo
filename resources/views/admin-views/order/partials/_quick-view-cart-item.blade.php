@@ -45,7 +45,7 @@
         <div class="d-flex align-items-center justify-content-center active" style="height:9.5rem;">
             <img class="img-responsive" style="height:100%;width:auto;overflow:hidden;border-radius: 5%;"
                 src="{{asset($item_type=='food'?'storage/app/public/product':'storage/app/public/campaign')}}/{{$product['image']}}" 
-                onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                     alt="Product image" width="">
             <div class="cz-image-zoom-pane"></div>
         </div>

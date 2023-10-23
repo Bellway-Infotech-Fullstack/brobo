@@ -4,7 +4,7 @@
 
 @push('css_or_js')
     <!-- Custom styles for this page -->
-    <link href="{{asset('public/assets/admin/css/croppie.css')}}" rel="stylesheet">
+    <link href="{{asset($assetPrefixPath . '/admin/css/croppie.css')}}" rel="stylesheet">
 
 @endpush
 
