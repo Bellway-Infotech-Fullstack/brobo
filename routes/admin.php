@@ -52,30 +52,30 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::delete('delete/{id}', 'EmployeeController@distroy')->name('delete');
             Route::post('search', 'EmployeeController@search')->name('search');
         });
-        Route::post('food/variant-price', 'ServiceController@variant_price')->name('food.variant-price');
+        Route::post('food/variant-price', 'ProductController@variant_price')->name('food.variant-price');
 
-        Route::group(['prefix' => 'service', 'as' => 'service.', 'middleware' => ['module:service']], function () {
-            Route::get('add-new', 'ServiceController@index')->name('add-new');
-            Route::post('variant-combination', 'ServiceController@variant_combination')->name('variant-combination');
-            Route::post('store', 'ServiceController@store')->name('store');
-            Route::get('edit/{id}', 'ServiceController@edit')->name('edit');
-            Route::post('update/{id}', 'ServiceController@update')->name('update');
-            Route::get('list', 'ServiceController@list')->name('list');
-            Route::delete('delete/{id}', 'ServiceController@delete')->name('delete');
-            Route::get('status/{id}/{status}', 'ServiceController@status')->name('status');
-            Route::get('review-status/{id}/{status}', 'ServiceController@reviews_status')->name('reviews.status');
-            Route::post('search', 'ServiceController@search')->name('search');
+        Route::group(['prefix' => 'product', 'as' => 'product.'], function () {
+            Route::get('add-new', 'ProductController@index')->name('add-new');
+            Route::post('variant-combination', 'ProductController@variant_combination')->name('variant-combination');
+            Route::post('store', 'ProductController@store')->name('store');
+            Route::get('edit/{id}', 'ProductController@edit')->name('edit');
+            Route::post('update/{id}', 'ProductController@update')->name('update');
+            Route::get('list', 'ProductController@list')->name('list');
+            Route::delete('delete/{id}', 'ProductController@delete')->name('delete');
+            Route::get('status/{id}/{status}', 'ProductController@status')->name('status');
+            Route::get('review-status/{id}/{status}', 'ProductController@reviews_status')->name('reviews.status');
+            Route::post('search', 'ProductController@search')->name('search');
 
-            Route::get('view/{id}', 'ServiceController@view')->name('view');
+            Route::get('view/{id}', 'ProductController@view')->name('view');
             //ajax request
-            Route::get('get-categories', 'ServiceController@get_categories')->name('get-categories');
-            Route::get('get-foods', 'ServiceController@get_foods')->name('getfoods');
+            Route::get('get-categories', 'ProductController@get_categories')->name('get-categories');
+            Route::get('get-foods', 'ProductController@get_foods')->name('getfoods');
             
             //Import and export
-            Route::get('bulk-import', 'ServiceController@bulk_import_index')->name('bulk-import');
-            Route::post('bulk-import', 'ServiceController@bulk_import_data');
-            Route::get('bulk-export', 'ServiceController@bulk_export_index')->name('bulk-export-index');
-            Route::post('bulk-export', 'ServiceController@bulk_export_data')->name('bulk-export');
+            Route::get('bulk-import', 'ProductController@bulk_import_index')->name('bulk-import');
+            Route::post('bulk-import', 'ProductController@bulk_import_data');
+            Route::get('bulk-export', 'ProductController@bulk_export_index')->name('bulk-export-index');
+            Route::post('bulk-export', 'ProductController@bulk_export_data')->name('bulk-export');
         });
 
         Route::group(['prefix' => 'banner', 'as' => 'banner.', 'middleware' => ['module:banner']], function () {

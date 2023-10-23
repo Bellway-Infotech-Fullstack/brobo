@@ -9,7 +9,7 @@ $footerText = (isset($businessSetting) && !empty($businessSetting)) ? $businessS
                 {{-- &copy; {!!\App\Models\BusinessSetting::where(['key'=>'business_name'])->first()->value}}.  --}}
 
                 <span
-                    class="d-none d-sm-inline-block">{!!!!}</span>
+                    class="d-none d-sm-inline-block">Copyright © 2023 Brobo, All Rights Reserved</span>
             </p>
         </div>
         <div class="col-auto">

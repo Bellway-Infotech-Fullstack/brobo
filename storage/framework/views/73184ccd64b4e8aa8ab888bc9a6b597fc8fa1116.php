@@ -3,7 +3,10 @@
 <?php $__env->startPush('css_or_js'); ?>
 
 <?php $__env->stopPush(); ?>
-
+<?php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+?>
 <?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -22,57 +25,10 @@
                         <form action="<?php echo e(route('admin.banner.store')); ?>" method="post" id="banner_form">
                             <?php echo csrf_field(); ?>
                             <div class="row">
-                                <div class="col-md-6">
+                               
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.title')); ?></label>
-                                        <input type="text" name="title" class="form-control" placeholder="<?php echo e(__('messages.new_banner')); ?>" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="input-label" for="title"><?php echo e(__('messages.zone')); ?></label>
-                                        <select name="zone_id" id="zone" class="form-control js-select2-custom" onchange="getRequest('<?php echo e(url('/')); ?>/admin/food/get-foods?zone_id='+this.value,'choice_item')">
-                                            <option disabled selected>---<?php echo e(__('messages.select')); ?>---</option>
-                                            <?php ($zones=\App\Models\Zone::all()); ?>
-                                            <?php $__currentLoopData = $zones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $zone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <?php if(isset(auth('admin')->user()->zone_id)): ?>
-                                                    <?php if(auth('admin')->user()->zone_id == $zone->id): ?>
-                                                        <option value="<?php echo e($zone->id); ?>" selected><?php echo e($zone->name); ?></option>
-                                                    <?php endif; ?>
-                                                <?php else: ?>
-                                                    <option value="<?php echo e($zone['id']); ?>"><?php echo e($zone['name']); ?></option>
-                                                <?php endif; ?>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.banner')); ?> <?php echo e(__('messages.type')); ?></label>
-                                        <select name="banner_type" class="form-control" onchange="banner_type_change(this.value)">
-                                            <option value="vendor_wise"><?php echo e(__('messages.vendor')); ?> <?php echo e(__('messages.wise')); ?></option>
-                                            <option value="service_wise"><?php echo e(__('messages.service')); ?> <?php echo e(__('messages.wise')); ?></option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="restaurant_wise">
-                                        <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.vendor')); ?><span
-                                                class="input-label-secondary"></span></label>
-                                        <select name="vendor_id" class="form-control"  title="Select Vendor">
-                                              <option value="">Vendor</option>
-                                                <?php $__currentLoopData = $vendors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $vendor): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($vendor->id); ?>"><?php echo e($vendor->names()); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="item_wise">
-                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.select')); ?> <?php echo e(__('messages.service')); ?></label>
-                                        <select name="service_id" id="choice_item" class="form-control js-select2-custom" placeholder="<?php echo e(__('messages.select_food')); ?>">
-                                             <option value="">--Select Service--</option>
-                                                <?php $__currentLoopData = $services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($service->id); ?>"><?php echo e($service->name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label><?php echo e(__('messages.campaign')); ?> <?php echo e(__('messages.image')); ?></label>
+                                        <label><?php echo e(__('messages.banner')); ?> <?php echo e(__('messages.image')); ?></label>
                                         <small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 3:1 )</small>
                                         <div class="custom-file">
                                             <input type="file" name="image" id="customFileEg1" class="custom-file-input"
@@ -83,7 +39,7 @@
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
                                             <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                                src="<?php echo e(asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')); ?>" alt="campaign image"/>
+                                                src="<?php echo e(asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')); ?>" alt="banner image"/>
                                         </center>
                                     </div>
                                 </div>
@@ -91,10 +47,8 @@
                             <button type="submit" class="btn btn-primary"><?php echo e(__('messages.submit')); ?></button>
                         </form>
                     </div>
-                </div>
-                
+                </div>                
             </div>
-
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <div class="card">
                     <div class="card-header">
@@ -130,8 +84,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th><?php echo e(__('messages.#')); ?></th>
-                                    <th><?php echo e(__('messages.title')); ?></th>
-                                    <th><?php echo e(__('messages.type')); ?></th>
+                                    <th><?php echo e(__('messages.image')); ?></th>
                                     <th><?php echo e(__('messages.status')); ?></th>
                                     <th><?php echo e(__('messages.action')); ?></th>
                                 </tr>
@@ -143,8 +96,8 @@
                                     <td><?php echo e($key+$banners->firstItem()); ?></td>
                                     <td>
                                         <span class="media align-items-center">
-                                            <img class="avatar avatar-lg mr-3" src="<?php echo e(asset('storage/app/public/banner')); ?>/<?php echo e($banner['image']); ?>" 
-                                                 onerror="this.src='<?php echo e(asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')); ?>'" alt="<?php echo e($banner->name); ?> image">
+                                            <img class="avatar avatar-lg mr-3" src="<?php echo e(asset($assetPrefixPath . '/storage/app/public/banner')); ?>/<?php echo e($banner['image']); ?>" 
+                                                  alt="<?php echo e($banner->name); ?> image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0"><?php echo e($banner['title']); ?></h5>
                                             </div>
@@ -153,7 +106,6 @@
                                         
                                     </span>
                                     </td>
-                                    <td><?php echo e($banner['type']); ?></td>
                                     <td>
                                         <label class="toggle-switch toggle-switch-sm" for="statusCheckbox<?php echo e($banner->id); ?>">
                                             <input type="checkbox" onclick="location.href='<?php echo e(route('admin.banner.status',[$banner['id'],$banner->status?0:1])); ?>'" class="toggle-switch-input" id="statusCheckbox<?php echo e($banner->id); ?>" <?php echo e($banner->status?'checked':''); ?>>

@@ -5,7 +5,10 @@
 @push('css_or_js')
 
 @endpush
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @section('content')
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -24,57 +27,10 @@
                         <form action="{{route('admin.banner.store')}}" method="post" id="banner_form">
                             @csrf
                             <div class="row">
-                                <div class="col-md-6">
+                               
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.title')}}</label>
-                                        <input type="text" name="title" class="form-control" placeholder="{{__('messages.new_banner')}}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="input-label" for="title">{{__('messages.zone')}}</label>
-                                        <select name="zone_id" id="zone" class="form-control js-select2-custom" onchange="getRequest('{{url('/')}}/admin/food/get-foods?zone_id='+this.value,'choice_item')">
-                                            <option disabled selected>---{{__('messages.select')}}---</option>
-                                            @php($zones=\App\Models\Zone::all())
-                                            @foreach($zones as $zone)
-                                                @if(isset(auth('admin')->user()->zone_id))
-                                                    @if(auth('admin')->user()->zone_id == $zone->id)
-                                                        <option value="{{$zone->id}}" selected>{{$zone->name}}</option>
-                                                    @endif
-                                                @else
-                                                    <option value="{{$zone['id']}}">{{$zone['name']}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.banner')}} {{__('messages.type')}}</label>
-                                        <select name="banner_type" class="form-control" onchange="banner_type_change(this.value)">
-                                            <option value="vendor_wise">{{__('messages.vendor')}} {{__('messages.wise')}}</option>
-                                            <option value="service_wise">{{__('messages.service')}} {{__('messages.wise')}}</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="restaurant_wise">
-                                        <label class="input-label" for="exampleFormControlSelect1">{{__('messages.vendor')}}<span
-                                                class="input-label-secondary"></span></label>
-                                        <select name="vendor_id" class="form-control"  title="Select Vendor">
-                                              <option value="">Vendor</option>
-                                                @foreach ($vendors as $vendor)
-                                                    <option value="{{$vendor->id}}">{{ $vendor->names() }}</option>
-                                                @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group" id="item_wise">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.select')}} {{__('messages.service')}}</label>
-                                        <select name="service_id" id="choice_item" class="form-control js-select2-custom" placeholder="{{__('messages.select_food')}}">
-                                             <option value="">--Select Service--</option>
-                                                @foreach ($services as $service)
-                                                    <option value="{{$service->id}}">{{ $service->name }}</option>
-                                                @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>{{__('messages.campaign')}} {{__('messages.image')}}</label>
+                                        <label>{{__('messages.banner')}} {{__('messages.image')}}</label>
                                         <small style="color: red">* ( {{__('messages.ratio')}} 3:1 )</small>
                                         <div class="custom-file">
                                             <input type="file" name="image" id="customFileEg1" class="custom-file-input"
@@ -85,7 +41,7 @@
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
                                             <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                                src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="campaign image"/>
+                                                src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="banner image"/>
                                         </center>
                                     </div>
                                 </div>
@@ -93,10 +49,8 @@
                             <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
                         </form>
                     </div>
-                </div>
-                
+                </div>                
             </div>
-
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <div class="card">
                     <div class="card-header">
@@ -132,8 +86,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>{{__('messages.#')}}</th>
-                                    <th>{{__('messages.title')}}</th>
-                                    <th>{{__('messages.type')}}</th>
+                                    <th>{{__('messages.image')}}</th>
                                     <th>{{__('messages.status')}}</th>
                                     <th>{{__('messages.action')}}</th>
                                 </tr>
@@ -145,8 +98,8 @@
                                     <td>{{$key+$banners->firstItem()}}</td>
                                     <td>
                                         <span class="media align-items-center">
-                                            <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/banner')}}/{{$banner['image']}}" 
-                                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$banner->name}} image">
+                                            <img class="avatar avatar-lg mr-3" src="{{asset($assetPrefixPath . '/storage/app/public/banner')}}/{{$banner['image']}}" 
+                                                  alt="{{$banner->name}} image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0">{{$banner['title']}}</h5>
                                             </div>
@@ -155,7 +108,6 @@
                                         
                                     </span>
                                     </td>
-                                    <td>{{$banner['type']}}</td>
                                     <td>
                                         <label class="toggle-switch toggle-switch-sm" for="statusCheckbox{{$banner->id}}">
                                             <input type="checkbox" onclick="location.href='{{route('admin.banner.status',[$banner['id'],$banner->status?0:1])}}'" class="toggle-switch-input" id="statusCheckbox{{$banner->id}}" {{$banner->status?'checked':''}}>

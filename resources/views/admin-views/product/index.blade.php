@@ -1,6 +1,9 @@
 @extends('layouts.admin.app')
-
-@section('title','Add new service')
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
+@section('title','Add new product')
 
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -13,7 +16,7 @@
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"><i class="tio-add-circle-outlined"></i> {{__('messages.add')}} {{__('messages.new')}} {{__('messages.service')}}</h1>
+                    <h1 class="page-header-title"><i class="tio-add-circle-outlined"></i> {{__('messages.add')}} {{__('messages.new')}} {{__('messages.product')}}</h1>
                 </div>
             </div>
         </div>
@@ -22,7 +25,7 @@
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <form 
                     action="javascript:"
-                     {{-- action="{{route('admin.service.store')}}" --}}
+                     {{-- action="{{route('admin.product.store')}}" --}}
                      method="post" 
                      id="food_form"
                       enctype="multipart/form-data">
@@ -31,38 +34,22 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.vendor')}}<span
-                                        class="input-label-secondary"></span></label>
-                              {{--   <select name="vendor_id" data-placeholder="{{__('messages.select')}} {{__('messages.vendor')}}" class="js-data-example-ajax form-control" onchange="getRestaurantData('{{url('/')}}/admin/vendor/get-addons?data[]=0&vendor_id=',this.value,'add_on')" oninvalid="this.setCustomValidity('{{__('messages.please_select_restaurant')}}')">
-                                                        
-                                </select> --}}
-
-                                 <select name="vendor_id" data-placeholder="{{__('messages.select')}} {{__('messages.vendor')}}" 
-                                 class="form-control">
-                                                <option value="">Vendor</option>
-                                            @foreach ($vendors as $vendor)
-                                                <option value="{{$vendor->id}}">{{ $vendor->names() }}</option>
-                                            @endforeach
-                                </select>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.name')}} <small style="color: red">* </small></label>
+                                <input type="text" name="name" class="form-control" placeholder="{{__('messages.product')}} {{__('messages.name')}}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.service')}} {{__('messages.name')}}</label>
-                                <input type="text" name="name" class="form-control" placeholder="{{__('messages.service')}} {{__('messages.name')}}" required>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.price')}}</label>
+                                <input type="number" min="0" max="9999999999999999999999" step="0.01"  name="price" class="form-control"
+                                       placeholder="Ex : 100" required>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3 col-6">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.price')}}</label>
-                                <input type="number" min="0" max="9999999999999999999999" step="0.01" value="1" name="price" class="form-control"
-                                       placeholder="Ex : 100" required>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
+                       
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}} {{__('messages.type')}}</label>
                                 <select name="discount_type" class="form-control js-select2-custom">
@@ -71,22 +58,14 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}}</label>
                                 <input type="number" min="0" max="9999999999999999999999" value="0" name="discount" class="form-control"
                                        placeholder="Ex : 100" >
                             </div>
                         </div>
-                       {{--  <div class="col-md-3 col-6">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.item_type')}}</label>
-                                <select name="veg" class="form-control js-select2-custom">
-                                    <option value="1">{{__('messages.veg')}}</option>
-                                    <option value="0">{{__('messages.non_veg')}}</option>
-                                </select>
-                            </div>
-                        </div> --}}
+
                     </div>
 
                     <div class="row">
@@ -95,7 +74,7 @@
                                 <label class="input-label" for="exampleFormControlSelect1">{{__('messages.category')}}<span
                                         class="input-label-secondary">*</span></label>
                                 <select name="category_id" class="form-control js-select2-custom"
-                                        onchange="getRequest('{{url('/')}}/admin/service/get-categories?parent_id='+this.value,'sub-categories')">
+                                        onchange="getRequest('{{url('/')}}/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     <option value="">---{{__('messages.select')}}---</option>
                                     @foreach($categories as $category)
                                         <option value="{{$category['id']}}">{{$category['name']}}</option>
@@ -114,92 +93,43 @@
                             </div>
                         </div>
                         
-                        {{--<div class="col-md-4 col-6">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">Sub Sub Category<span
-                                        class="input-label-secondary"></span></label>
-                                <select name="sub_sub_category_id" id="sub-sub-categories"
-                                        class="form-control js-select2-custom">
-
-                                </select>
-                            </div>
-                        </div>--}}
+  
                     </div>
 
-                   {{--  <div class="row" style="border: 1px solid #80808045; border-radius: 10px;padding-top: 10px;margin: 1px">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.attribute')}}<span
-                                        class="input-label-secondary"></span></label>
-                                <select name="attribute_id[]" id="choice_attributes"
-                                        class="form-control js-select2-custom"
-                                        multiple="multiple">
-                                    @foreach(\App\Models\Attribute::orderBy('name')->get() as $attribute)
-                                        <option value="{{$attribute['id']}}">{{$attribute['name']}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+            
 
-                        <div class="col-md-12 mt-2 mb-2">
-                            <div class="customer_choice_options" id="customer_choice_options">
-
-                            </div>
-                        </div>
-                        <div class="col-md-12 mt-2 mb-2">
-                            <div class="variant_combination" id="variant_combination">
-
-                            </div>
-                        </div>
-                    </div> --}}
-
-                   {{--  <div class="row mt-2">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.addon')}}<span
-                                        class="input-label-secondary" title="{{__('messages.restaurant_required_warning')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.restaurant_required_warning')}}"></span></label>                                
-                                <select name="addon_ids[]" class="form-control js-select2-custom" multiple="multiple" id="add_on">
-                                   
-                                </select>
-                            </div>
-                        </div>
-                    </div> --}}
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.available')}} {{__('messages.time')}} {{__('messages.starts')}}</label>
-                                <input type="time" name="available_time_starts" class="form-control" id="available_time_starts"
-                                       placeholder="Ex : 10:30 am" required>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.available')}} {{__('messages.time')}} {{__('messages.ends')}}</label>
-                                <input type="time" name="available_time_ends" class="form-control"  id="available_time_ends" placeholder="5:45 pm"
-                                       required>
-                            </div>
-                        </div>
-                    </div>
+                   
 
                     <div class="form-group">
                         <label class="input-label" for="exampleFormControlInput1">{{__('messages.short')}} {{__('messages.description')}}</label>
                         <textarea type="text" name="description" class="form-control ckeditor"></textarea>
                     </div>
-
-                    <div class="form-group">
-                        <label>{{__('messages.service')}} {{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
-                        <div class="custom-file">
-                            <input type="file" name="image" id="customFileEg1" class="custom-file-input"
-                                   accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" required>
-                            <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{__('messages.product')}} {{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
+                                <div class="custom-file">
+                                    <input type="file" name="image" id="customFileEg1" class="custom-file-input"
+                                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" required>
+                                    <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                                </div>
+        
+                                <center style="display: none" id="image-viewer-section" class="pt-2">
+                                    <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
+                                         src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                </center>
+                            </div>
+    
                         </div>
-
-                        <center style="display: none" id="image-viewer-section" class="pt-2">
-                            <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
-                        </center>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1">Total Stock <small style="color: red">* </small></label>
+                                <input type="text" name="total_stock" class="form-control" placeholder="Total Stock" required>
+                            </div>
+                        </div>
                     </div>
+                   
                     <hr>
                     <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
                 </form>
@@ -317,31 +247,7 @@
             $("input[data-role=tagsinput], select[multiple][data-role=tagsinput]").tagsinput();
         }
 
-        function combination_update() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            $.ajax({
-                type: "POST",
-                url: '{{route('admin.service.variant-combination')}}',
-                data: $('#food_form').serialize(),
-                beforeSend: function () {
-                    $('#loading').show();
-                },
-                success: function (data) {
-                    $('#loading').hide();
-                    $('#variant_combination').html(data.view);
-                    if (data.length > 1) {
-                        $('#quantity').hide();
-                    } else {
-                        $('#quantity').show();
-                    }
-                }
-            });
-        }
+       
     </script>
 
     <script>
@@ -354,7 +260,7 @@
                 }
             });
             $.post({
-                url: '{{route('admin.service.store')}}',
+                url: '{{route('admin.product.store')}}',
                 data: $('#food_form').serialize(),
                 data: formData,
                 cache: false,
@@ -373,12 +279,12 @@
                             });
                         }
                     } else {
-                        toastr.success('Service uploaded successfully!', {
+                        toastr.success('product uploaded successfully!', {
                             CloseButton: true,
                             ProgressBar: true
                         });
                         setTimeout(function () {
-                            location.href = '{{\Request::server('HTTP_REFERER')??route('admin.service.list')}}';
+                            location.href = '{{\Request::server('HTTP_REFERER')??route('admin.product.list')}}';
                         }, 2000);
                     }
                 }

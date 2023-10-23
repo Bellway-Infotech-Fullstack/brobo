@@ -43,7 +43,7 @@
         @php($most_reviewed_foods=$most_reviewed_foods?$most_reviewed_foods->value:null)
     
         <div class="row">
-            <div class="col-md-6 col-sm-6 col-12">
+            <div class="col-md-6 col-sm-6 col-12 d-none">
                 <div class="form-group">
                     <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="popular_food">
                         <span class="pr-2">{{__('messages.popular_Services')}}:</span> 
@@ -54,7 +54,7 @@
                     </label>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6 col-12">
+            <div class="col-md-6 col-sm-6 col-12 d-none">
                 <div class="form-group">
                     <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="popular_restaurant">
                         <span class="pr-2">{{__('messages.popular_vendors')}}:</span> 
@@ -65,7 +65,7 @@
                     </label>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6 col-12">
+            <div class="col-md-6 col-sm-6 col-12 d-none">
                 <div class="form-group">
                     <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="new_restaurant">
                         <span class="pr-2 text-capitalize">{{__('messages.new_vendors')}}:</span> 
@@ -76,7 +76,7 @@
                     </label>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6 col-12">
+            <div class="col-md-6 col-sm-6 col-12 d-none">
                 <div class="form-group">
                     <label class="toggle-switch toggle-switch-sm d-flex justify-content-between border border-secondary rounded px-4 form-control" for="most_reviewed_foods">
                         <span class="pr-2 text-capitalize">{{__('messages.most_reviewed_services')}}:</span> 
