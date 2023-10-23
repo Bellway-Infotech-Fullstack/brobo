@@ -4,7 +4,7 @@
 
 @push('css_or_js')
     <!-- Custom styles for this page -->
-    <link href="{{asset('public/assets/admin/css/croppie.css')}}" rel="stylesheet">
+    <link href="{{asset($assetPrefixPath . '/admin/css/croppie.css')}}" rel="stylesheet">
     <style>
         .flex-item{
             padding: 10px;
@@ -87,7 +87,7 @@
 
                     <center style="display: none" id="image-viewer-section" class="pt-2">
                         <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                src="{{asset('public/assets/admin/img/400x400/img2.jpg')}}" alt=""/>
+                                src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt=""/>
                     </center>
                 </div>
 
@@ -112,8 +112,8 @@
                                 <th scope="row">{{$key + 1}}</th>
                                 <td>
                                     <div class="media align-items-center">
-                                        <img class="avatar avatar-lg mr-3" src="{{asset('public/assets/landing/image')}}/{{$sp['img']}}" 
-                                                onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'" alt="{{$sp['title']}}">
+                                        <img class="avatar avatar-lg mr-3" src="{{asset($assetPrefixPath . '/landing/image')}}/{{$sp['img']}}" 
+                                                onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$sp['title']}}">
                                     </div>
                                 </td>
                                 <td>{{$sp['title']}}</td>

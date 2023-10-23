@@ -140,7 +140,7 @@
                             <td>
                                 <a class="media align-items-center" href="{{route('admin.food.view',[$food['id']])}}">
                                     <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/product')}}/{{$food['image']}}" 
-                                            onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'" alt="{{$food->name}} image">
+                                            onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$food->name}} image">
                                     <div class="media-body">
                                         <h5 class="text-hover-primary mb-0">{{$food['name']}}</h5>
                                     </div>
@@ -188,10 +188,10 @@
 
 @push('script_2')
 
-    <script src="{{asset('public/assets/admin')}}/vendor/chart.js/dist/Chart.min.js"></script>
+    <script src="{{asset($assetPrefixPath . '/admin')}}/vendor/chart.js/dist/Chart.min.js"></script>
     <script
-        src="{{asset('public/assets/admin')}}/vendor/chartjs-chart-matrix/dist/chartjs-chart-matrix.min.js"></script>
-    <script src="{{asset('public/assets/admin')}}/js/hs.chartjs-matrix.js"></script>
+        src="{{asset($assetPrefixPath . '/admin')}}/vendor/chartjs-chart-matrix/dist/chartjs-chart-matrix.min.js"></script>
+    <script src="{{asset($assetPrefixPath . '/admin')}}/js/hs.chartjs-matrix.js"></script>
 
     <script>
         $(document).on('ready', function () {

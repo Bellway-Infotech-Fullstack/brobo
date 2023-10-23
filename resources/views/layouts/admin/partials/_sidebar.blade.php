@@ -1,3 +1,7 @@
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 <style>
     .nav-sub{
         background: #019842 !important;
@@ -10,14 +14,14 @@
         <div class="navbar-vertical-container">
             <div class="navbar-brand-wrapper justify-content-between">
                 <!-- Logo -->
-                @php($restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value)
+                @php(@$restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value)
                 <a class="navbar-brand" href="{{route('admin.dashboard')}}" aria-label="Front">
                     <img class="navbar-brand-logo" style="max-height: 55px; max-width: 100%!important;"
-                         onerror="this.src='{{asset('public/assets/admin/img/160x160/logo2.png')}}'"
+                         onerror="this.src='{{asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')}}'"
                          src="{{asset('storage/app/public/business/'.$restaurant_logo)}}"
                          alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 55px; max-width: 100%!important;"
-                         onerror="this.src='{{asset('public/assets/admin/img/160x160/logo2.png')}}'"
+                         onerror="this.src='{{asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')}}'"
                          src="{{asset('storage/app/public/business/'.$restaurant_logo)}}" alt="Logo">
                 </a>
                 <!-- End Logo -->
@@ -100,7 +104,7 @@
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                href="javascript:" title="{{__('messages.order')}}">
                                 {{-- <i class="tio-shopping-cart nav-icon"></i> --}}
-                                <img src="{{asset('public/assets/admin/img/booking.png')}}" style="width: 20px; height: auto;filter: invert(100%);" /> &nbsp; &nbsp;
+                                <img src="{{asset($assetPrefixPath . '/assets/admin/img/booking.png')}}" style="width: 20px; height: auto;filter: invert(100%);" /> &nbsp; &nbsp;
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
                                     {{__('messages.bookings')}}
                                 </span>

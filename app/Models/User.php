@@ -69,4 +69,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    // Define a relationship method to associate users with other related models, if necessary.
+
+    public function isAdmin()
+    {
+        return $this->role_id === '1';
+    }
 }
