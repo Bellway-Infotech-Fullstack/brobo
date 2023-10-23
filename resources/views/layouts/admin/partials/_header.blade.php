@@ -4,13 +4,13 @@
         <div class="navbar-nav-wrap">
             <div class="navbar-brand-wrapper">
                 <!-- Logo -->
-                @php($restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value)
+                @php(@$restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value)
                 <a class="navbar-brand" href="{{route('admin.dashboard')}}" aria-label="">
                     <img class="navbar-brand-logo" style="max-height: 48px; border-radius: 8px"
-                         onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                         onerror="this.src='{{asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')}}'"
                          src="{{asset('storage/app/public/business/'.$restaurant_logo)}}" alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 48px; border-radius: 8px"
-                         onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                         onerror="this.src='{{asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')}}'"
                          src="{{asset('storage/app/public/business/'.$restaurant_logo)}}" alt="Logo">
                 </a>
                 <!-- End Logo -->
@@ -55,7 +55,7 @@
                                href="{{route('admin.order.list',['status'=>'pending'])}}">
                                 {{-- <i class="tio-shopping-cart-outlined"></i> --}}
                                 {{-- <i class="tio-B"></i> --}}
-                                <img src="{{asset('public/assets/admin/img/booking.png')}}" style="width: 20px; height: auto;" />
+                                <img src="{{asset($assetPrefixPath . 'assets/admin/img/booking.png')}}" style="width: 20px; height: auto;" />
                                 {{--<span class="btn-status btn-sm-status btn-status-danger"></span>--}}
                             </a>
                         </div>
@@ -73,8 +73,8 @@
                                    }'>
                                 <div class="avatar avatar-sm avatar-circle">
                                     <img class="avatar-img"
-                                         onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
-                                         src="{{asset('storage/app/public/admin')}}/{{auth('admin')->user()->image}}"
+                                         onerror="this.src='{{asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')}}'"
+                                         src="{{asset('storage/app/public/admin')}}/{{auth()->user()->id}}"
                                          alt="Image Description">
                                     <span class="avatar-status avatar-sm-status avatar-status-success"></span>
                                 </div>
@@ -87,13 +87,13 @@
                                     <div class="media align-items-center">
                                         <div class="avatar avatar-sm avatar-circle mr-2">
                                             <img class="avatar-img"
-                                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
-                                                 src="{{asset('storage/app/public/admin')}}/{{auth('admin')->user()->image}}"
+                                                 onerror="this.src='{{asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')}}'"
+                                                 src="{{asset('storage/app/public/admin')}}/{{auth()->user()->image}}"
                                                  alt="Image Description">
                                         </div>
                                         <div class="media-body">
-                                            <span class="card-title h5">{{auth('admin')->user()->f_name}}</span>
-                                            <span class="card-text">{{auth('admin')->user()->email}}</span>
+                                            <span class="card-title h5">{{auth()->user()->name}}</span>
+                                            <span class="card-text">{{auth()->user()->email}}</span>
                                         </div>
                                     </div>
                                 </div>

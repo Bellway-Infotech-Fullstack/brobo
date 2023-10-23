@@ -41,10 +41,13 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('logout', 'logout');           
         });      
         
-        Route::controller(UsersAddressController::class)->group(function () {
-            Route::post('manage-delivery-address', 'managaeAddress');
-        });  
+         
     });
+
+    Route::controller(UsersAddressController::class)->group(function () {
+        Route::post('manage-delivery-address', 'manageAddress');
+        Route::get('get-delivery-address', 'getAddress');
+    }); 
 });
 
 

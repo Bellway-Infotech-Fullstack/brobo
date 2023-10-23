@@ -49,7 +49,7 @@
                     <div class="card mt-2 rest-part">
                         <div class="card-header">
                             <h4>Import vendors File</h4>
-                            <a href="{{asset('public/assets/vendors_bulk_format.xlsx')}}" download=""
+                            <a href="{{asset($assetPrefixPath . '/vendors_bulk_format.xlsx')}}" download=""
                                class="btn btn-secondary">Download Format</a>
                         </div>
                         <div class="card-body">

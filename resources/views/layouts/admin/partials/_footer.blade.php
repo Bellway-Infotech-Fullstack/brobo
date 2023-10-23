@@ -1,3 +1,7 @@
+@php
+$businessSetting = \App\Models\BusinessSetting::where(['key'=>'footer_text'])->first();
+$footerText = (isset($businessSetting) && !empty($businessSetting)) ? $businessSetting->value : '';
+@endphp
 <div class="footer">
     <div class="row justify-content-between align-items-center">
         <div class="col">
@@ -5,7 +9,7 @@
                 {{-- &copy; {!!\App\Models\BusinessSetting::where(['key'=>'business_name'])->first()->value}}.  --}}
 
                 <span
-                    class="d-none d-sm-inline-block">{!!\App\Models\BusinessSetting::where(['key'=>'footer_text'])->first()->value!!}</span>
+                    class="d-none d-sm-inline-block">{!!!!}</span>
             </p>
         </div>
         <div class="col-auto">

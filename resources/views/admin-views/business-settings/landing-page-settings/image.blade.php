@@ -4,7 +4,7 @@
 
 @push('css_or_js')
     <!-- Custom styles for this page -->
-    <link href="{{asset('public/assets/admin/css/croppie.css')}}" rel="stylesheet">
+    <link href="{{asset($assetPrefixPath . '/admin/css/croppie.css')}}" rel="stylesheet">
     <style>
         .flex-item{
             padding: 10px;
@@ -83,8 +83,8 @@
 
                     <center id="image-viewer-section" class="pt-2">
                         <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                src="{{asset('public/assets/landing')}}/image/{{isset($landing_page_images)?$landing_page_images['top_content_image']:'double_screen_image.png'}}" 
-                                onerror="this.src='{{asset('public/assets/admin/img/400x400/img2.jpg')}}'"
+                                src="{{asset($assetPrefixPath . '/landing')}}/image/{{isset($landing_page_images)?$landing_page_images['top_content_image']:'double_screen_image.png'}}" 
+                                onerror="this.src='{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}'"
                                 alt=""/>
                     </center>
                 </div>
@@ -99,8 +99,8 @@
 
                     <center id="image-viewer-section2" class="pt-2">
                         <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer2"
-                                src="{{asset('public/assets/landing')}}/image/{{isset($landing_page_images)?$landing_page_images['about_us_image']:'about_us_image.png'}}"
-                                onerror="this.src='{{asset('public/assets/admin/img/400x400/img2.jpg')}}'"
+                                src="{{asset($assetPrefixPath . '/landing')}}/image/{{isset($landing_page_images)?$landing_page_images['about_us_image']:'about_us_image.png'}}"
+                                onerror="this.src='{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}'"
                                 alt=""/>
                     </center>
                 </div>

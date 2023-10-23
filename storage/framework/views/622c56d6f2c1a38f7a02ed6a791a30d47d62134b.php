@@ -1,3 +1,7 @@
+<?php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '/' : 'public/';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,16 +12,16 @@
     <title><?php echo e(__('messages.admin')); ?> | <?php echo e(__('messages.login')); ?></title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="<?php echo e(asset('favicon.ico')); ?>">
+    <link rel="shortcut icon" href="<?php echo e(asset($assetPrefixPath . 'favicon.ico')); ?>">
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
     <!-- CSS Implementing Plugins -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/admin')); ?>/css/vendor.min.css">
-    <link rel="stylesheet" href="<?php echo e(asset('assets/admin')); ?>/vendor/icon-set/style.css">
+    <link rel="stylesheet" href="<?php echo e(asset($assetPrefixPath . 'assets/admin')); ?>/vendor/icon-set/style.css">
     <!-- CSS Front Template -->
-    <link rel="stylesheet" href="<?php echo e(asset('assets/admin')); ?>/css/theme.minc619.css?v=1.0">
-    <link rel="stylesheet" href="<?php echo e(asset('assets/admin')); ?>/css/toastr.css">
+    <link rel="stylesheet" href="<?php echo e(asset($assetPrefixPath . 'assets/admin')); ?>/css/theme.minc619.css?v=1.0">
+    <link rel="stylesheet" href="<?php echo e(asset($assetPrefixPath . 'assets/admin')); ?>/css/toastr.css">
 </head>
 
 <body>
@@ -36,7 +40,7 @@
         </label>
         <a class="d-flex justify-content-center mb-5" href="javascript:">
             <img class="z-index-2"
-            onerror="this.src='<?php echo e(asset('assets/admin/img/160x160/img2.jpg')); ?>'"
+            onerror="this.src='<?php echo e(asset($assetPrefixPath . 'assets/admin/img/160x160/img2.jpg')); ?>'"
                          src="<?php echo e(asset('storage/app/public/business/'.$systemLogo)); ?>"
                   alt="Image Description" style="max-height: 100px; max-width: 300px">
         </a>
@@ -141,11 +145,11 @@
 
 
 <!-- JS Implementing Plugins -->
-<script src="<?php echo e(asset('assets/admin')); ?>/js/vendor.min.js"></script>
+<script src="<?php echo e(asset($assetPrefixPath . 'assets/admin')); ?>/js/vendor.min.js"></script>
 
 <!-- JS Front -->
-<script src="<?php echo e(asset('assets/admin')); ?>/js/theme.min.js"></script>
-<script src="<?php echo e(asset('assets/admin')); ?>/js/toastr.js"></script>
+<script src="<?php echo e(asset($assetPrefixPath . 'assets/admin')); ?>/js/theme.min.js"></script>
+<script src="<?php echo e(asset($assetPrefixPath . 'assets/admin')); ?>/js/toastr.js"></script>
 <?php echo Toastr::message(); ?>
 
 
@@ -217,7 +221,7 @@
 
 <!-- IE Support -->
 <script>
-    if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) document.write('<script src="<?php echo e(asset('/assets/admin')); ?>/vendor/babel-polyfill/polyfill.min.js"><\/script>');
+    if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) document.write('<script src="<?php echo e(asset($assetPrefixPath . '/assets/admin')); ?>/vendor/babel-polyfill/polyfill.min.js"><\/script>');
 </script>
 </body>
 </html>

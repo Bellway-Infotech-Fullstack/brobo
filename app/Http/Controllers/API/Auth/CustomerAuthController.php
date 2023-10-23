@@ -33,16 +33,26 @@ class CustomerAuthController extends Controller
                 'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users',
                 'password' => [
                     'required',
-                     Password::min(8)
-                        ->mixedCase() // allows both uppercase and lowercase
-                        ->letters() //accepts letter
-                        ->numbers() //accepts numbers
-                        ->symbols() //accepts special character
+                    Password::min(8)
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
                 ],
                 'address' => 'required',
+            ], [
+                'name.required' => 'Please enter a name.',
+                'name.regex' => 'Name should only contain letters and spaces.',
+                'mobile_number.required' => 'Please enter mobile number.',
+                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
+                'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
+                'password.required' => 'Please enter a password.',
+                'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
+                'address.required' => 'Please enter an address.',
             ]);
+            
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Hash the password and set other request attributes
@@ -105,21 +115,33 @@ class CustomerAuthController extends Controller
         try {
             // Validate the input data
             $validation = Validator::make($request->all(), [
-                'mobile_number' => 'required',
+                'name' => 'required|regex:/^[A-Za-z\s]+$/',
+                'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users',
                 'password' => [
                     'required',
-                     Password::min(8)
-                        ->mixedCase() // allows both uppercase and lowercase
-                        ->letters() //accepts letter
-                        ->numbers() //accepts numbers
-                        ->symbols() //accepts special character
+                    Password::min(8)
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
                 ],
-                'role_id' => 'required|integer' // Make sure to validate role_id
+                'address' => 'required',
+            ], [
+                'name.required' => 'Please enter a name.',
+                'name.regex' => 'Name should only contain letters and spaces.',
+                'mobile_number.required' => 'Please enter mobile number.',
+                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
+                'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
+                'password.required' => 'Please enter a password.',
+                'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
+                'address.required' => 'Please enter an address.',
             ]);
+            
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Get credentials from the request
@@ -139,7 +161,7 @@ class CustomerAuthController extends Controller
             }
 
             // If the user's role is correct, return the token
-            return response()->json(['status' => 'success', 'code' => 200, 'token' => $token, 'data' => $userData, 'message' => 'Login successfully']);
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Login successfully']);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
@@ -161,12 +183,16 @@ class CustomerAuthController extends Controller
 
             // Validate the input data
             $validation = Validator::make($request->all(), [
-                'mobile_number' => 'required',
+                'mobile_number' => 'required|regex:/\+91[0-9]{10}/',
+            ], [
+                'mobile_number.required' => 'Please enter a mobile number.',
+                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by mobile_number
@@ -182,7 +208,7 @@ class CustomerAuthController extends Controller
                 event(new SendSMS($mobileNumber,$message));
 
 
-                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'OTP has been sent to your mobile number to reset password']);
+                return response()->json(['status' => 'success', 'code' => 200, 'data' => $userData, 'message' => 'OTP has been sent to your mobile number to reset password']);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User does not exist']);
             }
@@ -210,11 +236,15 @@ class CustomerAuthController extends Controller
             $validation = Validator::make($request->all(), [
                 'customer_id' => 'required',
                 'verification_code' => 'required',
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
+                'verification_code.required' => 'Please enter a verification code.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -247,11 +277,14 @@ class CustomerAuthController extends Controller
             // Validate the input data
             $validation = Validator::make($request->all(), [
                 'customer_id' => 'required',
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -264,6 +297,7 @@ class CustomerAuthController extends Controller
                 $userData->save();
                 // send verification code to user's mobile number
                 $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
+                
                 return response()->json(['status' => 'success', 'code' => 200, 'message' => 'OTP has been sent to your mobile number to reset password']);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User not found']);
@@ -295,17 +329,24 @@ class CustomerAuthController extends Controller
                 'new_password' => [
                     'required',
                     Password::min(8)
-                        ->mixedCase() // allows both uppercase and lowercase
-                        ->letters() // accepts letters
-                        ->numbers() // accepts numbers
-                        ->symbols() // accepts special characters
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
                 ],
-                'confirm_password' => 'required|same:new_password'
+                'confirm_password' => 'required|same:new_password',
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
+                'new_password.required' => 'Please enter a new password.',
+                'new_password.*' => 'The new password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
+                'confirm_password.required' => 'Please confirm the new password.',
+                'confirm_password.same' => 'The confirm password must match the new password.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -370,11 +411,14 @@ class CustomerAuthController extends Controller
             // Validate the input data
             $validation = Validator::make($request->all(), [
                 'customer_id' => 'required',
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -423,11 +467,23 @@ class CustomerAuthController extends Controller
                 'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users,mobile_number,'.$customerId,
                 'email' => $emailValidation,
                 'gender' => $genderValidation
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
+                'name.required' => 'Please enter a name.',
+                'name.regex' => 'Name should only contain letters and spaces.',
+                'mobile_number.required' => 'Please enter a mobile number.',
+                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
+                'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
+                'email.required' => 'Please enter an email address.',
+                'email.*' => 'The email address is invalid. Please provide a valid email.',
+                'gender.required' => 'Please select a gender.',
+                'gender.*' => 'Invalid gender selection. Please choose a valid gender option.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -472,25 +528,34 @@ class CustomerAuthController extends Controller
                 'old_password' => [
                     'required',
                     Password::min(8)
-                        ->mixedCase() // allows both uppercase and lowercase
-                        ->letters() // accepts letters
-                        ->numbers() // accepts numbers
-                        ->symbols() // accepts special characters
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
                 ],
                 'new_password' => [
                     'required',
                     Password::min(8)
-                        ->mixedCase() // allows both uppercase and lowercase
-                        ->letters() // accepts letters
-                        ->numbers() // accepts numbers
-                        ->symbols() // accepts special characters
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
                 ],
-                'confirm_password' => 'required|same:new_password'
+                'confirm_password' => 'required|same:new_password',
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
+                'old_password.required' => 'Please enter the old password.',
+                'old_password.*' => 'The old password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
+                'new_password.required' => 'Please enter a new password.',
+                'new_password.*' => 'The new password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
+                'confirm_password.required' => 'Please confirm the new password.',
+                'confirm_password.same' => 'The confirm password must match the new password.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -562,16 +627,21 @@ class CustomerAuthController extends Controller
                 'current_password' => [
                     'required',
                     Password::min(8)
-                        ->mixedCase() // allows both uppercase and lowercase
-                        ->letters() // accepts letters
-                        ->numbers() // accepts numbers
-                        ->symbols() // accepts special characters
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
                 ],
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
+                'current_password.required' => 'Please enter the current password.',
+                'current_password.*' => 'The current password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id
@@ -613,11 +683,14 @@ class CustomerAuthController extends Controller
             // Validate the input data
             $validation = Validator::make($request->all(), [
                 'customer_id' => 'required',
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
             ]);
+            
 
             // Check for validation errors and return error response if any
             if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'errors' => $validation->errors()->all()]);
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
             // Find the user by customer_id

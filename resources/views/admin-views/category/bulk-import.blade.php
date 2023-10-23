@@ -47,7 +47,7 @@
                     <div class="card mt-2 rest-part">
                         <div class="card-header">
                             <h4>Import Categories File</h4>
-                            <a href="{{asset('public/assets/categories_bulk_format.xlsx')}}" download=""
+                            <a href="{{asset($assetPrefixPath . '/categories_bulk_format.xlsx')}}" download=""
                                class="btn btn-secondary">Download Format</a>
                         </div>
                         <div class="card-body">
