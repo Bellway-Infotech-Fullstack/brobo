@@ -1,7 +1,10 @@
 @extends('layouts.admin.app')
 
 @section('title',__('messages.landing_page_settings'))
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @push('css_or_js')
     <!-- Custom styles for this page -->
     <link href="{{asset($assetPrefixPath . '/admin/css/croppie.css')}}" rel="stylesheet">

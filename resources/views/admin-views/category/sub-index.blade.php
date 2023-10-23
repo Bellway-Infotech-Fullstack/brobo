@@ -5,7 +5,10 @@
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @section('content')
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -33,7 +36,7 @@
                                     for="exampleFormControlSelect1">{{__('messages.main')}} {{__('messages.category')}}
                                     <span class="input-label-secondary">*</span></label>
                                 <select id="exampleFormControlSelect1" name="parent_id" class="form-control" required>
-                                    @foreach(\App\Models\Category::where(['position'=>0])->get() as $cat)
+                                    @foreach(\App\Models\Category::where('parent_id',0)->get() as $cat)
                                         <option value="{{$cat['id']}}" {{isset($category)?($category['parent_id']==$cat['id']?'selected':''):''}} >{{$cat['name']}}</option>
                                     @endforeach
                                 </select>
@@ -87,7 +90,6 @@
                                         <th>{{__('messages.main')}} {{__('messages.category')}}</th>
                                         <th>{{__('messages.sub_category')}}</th>
                                         <th >{{__('messages.status')}}</th>
-                                        <th >{{__('messages.priority')}}</th>
                                         <th >{{__('messages.action')}}</th>
                                     </tr>
                                 </thead>
@@ -99,7 +101,11 @@
                                         <td>{{$category->id}}</td>
                                         <td>
                                             <span class="d-block font-size-sm text-body">
-                                                {{$category->parent['name']}}
+                                               
+
+
+
+                                                {{$category->parent->name ?? 'N/A'}}
                                             </span>
                                         </td>
                                         <td>
@@ -115,15 +121,7 @@
                                                 </span>
                                             </label>
                                         </td>
-                                        <td style="width:max-content;">
-                                            <form action="{{route('admin.category.priority',$category->id)}}">
-                                            <select name="priority" id="priority" onchange="this.form.submit()"> 
-                                                <option value="0" {{$category->priority == 0?'selected':''}}>{{__('messages.normal')}}</option>
-                                                <option value="1" {{$category->priority == 1?'selected':''}}>{{__('messages.medium')}}</option>
-                                                <option value="2" {{$category->priority == 2?'selected':''}}>{{__('messages.high')}}</option>
-                                            </select>
-                                            </form>
-                                        </td>
+                                      
                                         <td>
                                             <a class="btn btn-sm btn-white"
                                                 href="{{route('admin.category.edit',[$category['id']])}}" title="{{__('messages.edit')}} {{__('messages.category')}}"><i class="tio-edit"></i>

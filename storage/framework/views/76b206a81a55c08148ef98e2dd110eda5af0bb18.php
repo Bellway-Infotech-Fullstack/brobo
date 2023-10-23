@@ -339,34 +339,34 @@
                             >
                                 <i class="tio-premium-outlined nav-icon"></i>
                                 <span
-                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate"><?php echo e(__('messages.services')); ?></span>
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate"><?php echo e(__('messages.products')); ?></span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: <?php echo e(Request::is('admin/service*')?'block':'none'); ?>">
+                                style="display: <?php echo e(Request::is('admin/product*')?'block':'none'); ?>">
                                 <li class="nav-item <?php echo e(Request::is('admin/service/add-new')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.service.add-new')); ?>"
+                                    <a class="nav-link " href="<?php echo e(route('admin.product.add-new')); ?>"
                                        title="<?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span
                                             class="text-truncate"><?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?></span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/service/list')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.service.list')); ?>"
+                                <li class="nav-item <?php echo e(Request::is('admin/product/list')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.product.list')); ?>"
                                        title="<?php echo e(__('messages.service')); ?> <?php echo e(__('messages.list')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate"><?php echo e(__('messages.list')); ?></span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/service/bulk-import')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.service.bulk-import')); ?>"
+                                <li class="nav-item <?php echo e(Request::is('admin/product/bulk-import')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.product.bulk-import')); ?>"
                                        title="<?php echo e(__('messages.bulk_import')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate text-capitalize"><?php echo e(__('messages.bulk_import')); ?></span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/service/bulk-export')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.service.bulk-export-index')); ?>"
+                                <li class="nav-item <?php echo e(Request::is('admin/product/bulk-export')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.product.bulk-export-index')); ?>"
                                        title="<?php echo e(__('messages.bulk_export')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate text-capitalize"><?php echo e(__('messages.bulk_export')); ?></span>
@@ -511,7 +511,7 @@
                                     class="text-truncate"><?php echo e(__('messages.app_settings')); ?></span>
                             </a>
                         </li>
-                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/business-settings/landing-page-settings*')?'active':''); ?>">
+                        <li class="d-none navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/business-settings/landing-page-settings*')?'active':''); ?>">
                             <a class="nav-link " href="<?php echo e(route('admin.business-settings.landing-page-settings', 'index')); ?>"
                                title="<?php echo e(__('messages.landing_page_settings')); ?>"
                             >
@@ -562,7 +562,7 @@
                             </ul>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/file-manager*')?'active':''); ?>">
+                        <li class="d-none navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/file-manager*')?'active':''); ?>">
                             <a class="nav-link " href="<?php echo e(route('admin.file-manager.index')); ?>"
                                title="<?php echo e(__('messages.third_party_apis')); ?>"
                             >

@@ -1,21 +1,19 @@
-@extends('layouts.admin.app')
-
-@section('title','Product List')
-@php
+<?php $__env->startSection('title','Product List'); ?>
+<?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphp
-@push('css_or_js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-@endpush
+?>
+<?php $__env->startPush('css_or_js'); ?>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"> {{__('messages.product')}} {{__('messages.list')}}<span class="badge badge-soft-dark ml-2" id="foodCount">{{$products->total()}}</span></h1>
+                    <h1 class="page-header-title"> <?php echo e(__('messages.product')); ?> <?php echo e(__('messages.list')); ?><span class="badge badge-soft-dark ml-2" id="foodCount"><?php echo e($products->total()); ?></span></h1>
                 </div>
             
             </div>
@@ -31,7 +29,7 @@
                         <div class="row justify-content-between align-items-center flex-grow-1">
                             <div class="col-md-4 mb-3 mb-md-0">
                                 <form id="search-form">
-                                @csrf
+                                <?php echo csrf_field(); ?>
                                 <!-- Search -->
                                 <div class="input-group input-group-merge input-group-flush">
                                     <div class="input-group-prepend">
@@ -39,8 +37,8 @@
                                         <i class="tio-search"></i>
                                     </div>
                                     </div>
-                                    <input id="datatableSearch" name="search" type="search" class="form-control" placeholder="{{__('messages.search_here')}}" aria-label="{{__('messages.search_here')}}">
-                                    <button type="submit" class="btn btn-light">{{__('messages.search')}}</button>
+                                    <input id="datatableSearch" name="search" type="search" class="form-control" placeholder="<?php echo e(__('messages.search_here')); ?>" aria-label="<?php echo e(__('messages.search_here')); ?>">
+                                    <button type="submit" class="btn btn-light"><?php echo e(__('messages.search')); ?></button>
                                 </div>
                                 <!-- End Search -->
                                 </form>
@@ -49,12 +47,12 @@
                             <div class="col-auto">
                                 <!-- Unfold -->
                                 <div class="hs-unfold mr-2" style="width: 306px;">
-                                    <select name="category_id" id="category" onchange="set_filter('{{url()->full()}}',this.value, 'category_id')" data-placeholder="{{__('messages.select_category')}}" class="js-data-example-ajax form-control">
-                                        @if($category)    
-                                            <option value="{{$category->id}}" selected>{{$category->name}} ({{$category->position == 0?__('messages.main'):__('messages.sub')}})</option>
-                                        @else
-                                            <option value="all" selected>{{__('messages.all_categories')}}</option>
-                                        @endif
+                                    <select name="category_id" id="category" onchange="set_filter('<?php echo e(url()->full()); ?>',this.value, 'category_id')" data-placeholder="<?php echo e(__('messages.select_category')); ?>" class="js-data-example-ajax form-control">
+                                        <?php if($category): ?>    
+                                            <option value="<?php echo e($category->id); ?>" selected><?php echo e($category->name); ?> (<?php echo e($category->position == 0?__('messages.main'):__('messages.sub')); ?>)</option>
+                                        <?php else: ?>
+                                            <option value="all" selected><?php echo e(__('messages.all_categories')); ?></option>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                                 <!-- End Unfold -->
@@ -191,36 +189,37 @@
                             }'>
                             <thead class="thead-light">
                             <tr>
-                                <th>{{__('messages.#')}}</th>
-                                <th style="width: 20%">{{__('messages.name')}}</th>
-                                <th style="width: 20%">{{__('messages.category')}}</th>
-                                <th>{{__('messages.price')}}</th>
-                                <th>{{__('messages.status')}}</th>
-                                <th>{{__('messages.action')}}</th>
+                                <th><?php echo e(__('messages.#')); ?></th>
+                                <th style="width: 20%"><?php echo e(__('messages.name')); ?></th>
+                                <th style="width: 20%"><?php echo e(__('messages.category')); ?></th>
+                                <th><?php echo e(__('messages.price')); ?></th>
+                                <th><?php echo e(__('messages.status')); ?></th>
+                                <th><?php echo e(__('messages.action')); ?></th>
                             </tr>
                             </thead>
 
                             <tbody id="set-rows">
-                            @foreach($products as $key=>$food)
+                            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$food): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <td>{{$key+$products->firstItem()}}</td>
+                                    <td><?php echo e($key+$products->firstItem()); ?></td>
                                     <td>
-                                        <a class="media align-items-center" href="{{route('admin.product.view',[$food['id']])}}">
-                                            <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/product')}}/{{$food['image']}}" 
-                                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$food->name}} image">
+                                        <a class="media align-items-center" href="<?php echo e(route('admin.product.view',[$food['id']])); ?>">
+                                            <img class="avatar avatar-lg mr-3" src="<?php echo e(asset('storage/app/public/product')); ?>/<?php echo e($food['image']); ?>" 
+                                                 onerror="this.src='<?php echo e(asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')); ?>'" alt="<?php echo e($food->name); ?> image">
                                             <div class="media-body">
-                                                <h5 class="text-hover-primary mb-0">{{Str::limit($food['name'],20,'...')}}</h5>
+                                                <h5 class="text-hover-primary mb-0"><?php echo e(Str::limit($food['name'],20,'...')); ?></h5>
                                             </div>
                                         </a>
                                     </td>
                                     <td>
-                                    {{Str::limit($food->category,20,'...')}}
+                                    <?php echo e(Str::limit($food->category,20,'...')); ?>
+
                                     </td>
                                     
-                                    <td>{{\App\CentralLogics\Helpers::format_currency($food['price'])}}</td>
+                                    <td><?php echo e(\App\CentralLogics\Helpers::format_currency($food['price'])); ?></td>
                                     <td>
-                                        <label class="toggle-switch toggle-switch-sm" for="stocksCheckbox{{$food->id}}">
-                                            <input type="checkbox" onclick="location.href='{{route('admin.product.status',[$food['id'],$food->status?0:1])}}'"class="toggle-switch-input" id="stocksCheckbox{{$food->id}}" {{$food->status?'checked':''}}>
+                                        <label class="toggle-switch toggle-switch-sm" for="stocksCheckbox<?php echo e($food->id); ?>">
+                                            <input type="checkbox" onclick="location.href='<?php echo e(route('admin.product.status',[$food['id'],$food->status?0:1])); ?>'"class="toggle-switch-input" id="stocksCheckbox<?php echo e($food->id); ?>" <?php echo e($food->status?'checked':''); ?>>
                                             <span class="toggle-switch-label">
                                                 <span class="toggle-switch-indicator"></span>
                                             </span>
@@ -228,25 +227,26 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-sm btn-white"
-                                            href="{{route('admin.product.edit',[$food['id']])}}" title="{{__('messages.edit')}} {{__('messages.product')}}"><i class="tio-edit"></i>
+                                            href="<?php echo e(route('admin.product.edit',[$food['id']])); ?>" title="<?php echo e(__('messages.edit')); ?> <?php echo e(__('messages.product')); ?>"><i class="tio-edit"></i>
                                         </a>
                                         <a class="btn btn-sm btn-white" href="javascript:"
-                                            onclick="form_alert('food-{{$food['id']}}','{{__('messages.Want_to_delete_this_item')}}')" title="{{__('messages.delete')}} {{__('messages.product')}}"><i class="tio-delete-outlined"></i>
+                                            onclick="form_alert('food-<?php echo e($food['id']); ?>','<?php echo e(__('messages.Want_to_delete_this_item')); ?>')" title="<?php echo e(__('messages.delete')); ?> <?php echo e(__('messages.product')); ?>"><i class="tio-delete-outlined"></i>
                                         </a>
-                                        <form action="{{route('admin.product.delete',[$food['id']])}}"
-                                                method="post" id="food-{{$food['id']}}">
-                                            @csrf @method('delete')
+                                        <form action="<?php echo e(route('admin.product.delete',[$food['id']])); ?>"
+                                                method="post" id="food-<?php echo e($food['id']); ?>">
+                                            <?php echo csrf_field(); ?> <?php echo method_field('delete'); ?>
                                         </form>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
                         <hr>
                         <div class="page-area">
                             <table>
                                 <tfoot class="border-top">
-                                {!! $products->withQueryString()->links() !!}
+                                <?php echo $products->withQueryString()->links(); ?>
+
                                 </tfoot>
                             </table>
                         </div>
@@ -258,9 +258,9 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
     <script>
         $(document).on('ready', function () {
             // INITIALIZATION OF DATATABLES
@@ -276,7 +276,7 @@
           },
           language: {
             zeroRecords: '<div class="text-center p-4">' +
-                '<img class="mb-3" src="{{asset($assetPrefixPath . '/admin/svg/illustrations/sorry.svg')}}" alt="Image Description" style="width: 7rem;">' +
+                '<img class="mb-3" src="<?php echo e(asset($assetPrefixPath . '/admin/svg/illustrations/sorry.svg')); ?>" alt="Image Description" style="width: 7rem;">' +
                 '<p class="mb-0">No data to show</p>' +
                 '</div>'
           }
@@ -332,7 +332,7 @@
 
         $('#restaurant').select2({
             ajax: {
-                url: '{{url('/')}}/admin/vendor/get-restaurants',
+                url: '<?php echo e(url('/')); ?>/admin/vendor/get-restaurants',
                 data: function (params) {
                     return {
                         q: params.term, // search term
@@ -358,7 +358,7 @@
 
         $('#category').select2({
             ajax: {
-                url: '{{route("admin.category.get-all")}}',
+                url: '<?php echo e(route("admin.category.get-all")); ?>',
                 data: function (params) {
                     return {
                         q: params.term, // search term
@@ -391,7 +391,7 @@
                 }
             });
             $.post({
-                url: '{{route('admin.product.search')}}',
+                url: '<?php echo e(route('admin.product.search')); ?>',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -410,4 +410,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/product/list.blade.php ENDPATH**/ ?>

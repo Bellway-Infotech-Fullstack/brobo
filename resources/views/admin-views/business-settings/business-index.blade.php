@@ -156,7 +156,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-sm-6 col-12">
-                            @php($country=\App\Models\BusinessSetting::where('key','country')->first()->value)
+                            @php
+                              $countryData =    \App\Models\BusinessSetting::where('key','country')->first();   
+                              $country = (isset($countryData) && !empty($countryData)) ?? $countryData->value ;
+                               echo "country".$country;
+                               die; 
+                            @endphp
                             <div class="form-group">
                                 <label class="input-label text-capitalize d-inline" for="country">{{__('messages.country')}}</label>
                                 <select id="country" name="country" class="form-control  js-select2-custom">

@@ -298,7 +298,7 @@ class CustomerAuthController extends Controller
                 // send verification code to user's mobile number
                 $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
                 
-                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'OTP has been sent to your mobile number to reset password']);
+                return response()->json(['status' => 'success', 'code' => 200, 'data' => $userData, 'message' => 'OTP has been sent to your mobile number to reset password']);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User not found']);
             }
