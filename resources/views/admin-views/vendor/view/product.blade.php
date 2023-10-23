@@ -4,7 +4,7 @@
 
 @push('css_or_js')
     <!-- Custom styles for this page -->
-    <link href="{{asset('public/assets/admin/css/croppie.css')}}" rel="stylesheet">
+    <link href="{{asset($assetPrefixPath . '/admin/css/croppie.css')}}" rel="stylesheet">
 
 @endpush
 
@@ -118,7 +118,7 @@
                                         <td>
                                             <div style="height: 100px; width: 100px; overflow-x: hidden;overflow-y: hidden">
                                                 <img src="{{asset('storage/app/public/product')}}/{{$service['image']}}" style="width: 100px"
-                                                        onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'">
+                                                        onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'">
                                             </div>
                                         </td>
                                         <td>
@@ -165,7 +165,7 @@
                                     <td>
                                         <a class="media align-items-center" href="{{route('admin.service.view',[$service['id']])}}">
                                             <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/product')}}/{{$service['image']}}" 
-                                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'" alt="{{$service->name}} image">
+                                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$service->name}} image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0">{{$service['name']}}</h5>
                                             </div>

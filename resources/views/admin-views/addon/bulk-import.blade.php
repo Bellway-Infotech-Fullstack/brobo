@@ -41,7 +41,7 @@
                     <div class="card mt-2 rest-part">
                         <div class="card-header">
                             <h4>Import Addons File</h4>
-                            <a href="{{asset('public/assets/addons_bulk_format.xlsx')}}" download=""
+                            <a href="{{asset($assetPrefixPath . '/addons_bulk_format.xlsx')}}" download=""
                                class="btn btn-secondary">Download Format</a>
                         </div>
                         <div class="card-body">

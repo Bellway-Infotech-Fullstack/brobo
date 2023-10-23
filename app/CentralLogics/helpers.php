@@ -439,18 +439,24 @@ class Helpers
 
     public static function currency_code()
     {
-        return BusinessSetting::where(['key' => 'currency'])->first()->value;
+        $settingData = BusinessSetting::where(['key' => 'currency'])->first();
+        $currency = (isset($settingData) && !empty($settingData)) ? $settingData->value : '';
+        return $currency;
     }
 
     public static function currency_symbol()
     {
-        $currency_symbol = Currency::where(['currency_code' => Helpers::currency_code()])->first()->currency_symbol;
+        $currencyData = Currency::where(['currency_code' => Helpers::currency_code()])->first();
+        $currency_symbol = (isset($currencyData) && !empty($currencyData)) ? $currencyData->currency_symbol : '';
         return $currency_symbol;
+
     }
 
     public static function format_currency($value)
     {
-        $currency_symbol_position = BusinessSetting::where(['key' => 'currency_symbol_position'])->first()->value;
+        $settingData = BusinessSetting::where(['key' => 'currency_symbol_position'])->first();
+
+        $currency_symbol_position = (isset($settingData) && !empty($settingData)) ? $settingData->value : '';
 
         return $currency_symbol_position=='right'?$value.' '.self::currency_symbol():self::currency_symbol().' '.$value;
     }
@@ -1097,22 +1103,22 @@ class Helpers
 
     public static function module_permission_check($mod_name)
     {
-        if(!auth('admin')->user()->role)
+        if(!auth()->user()->role_id)
         {
             return false;
         }
 
-        if($mod_name == 'zone' && auth('admin')->user()->zone_id)
+        if($mod_name == 'zone' && auth()->user()->zone_id)
         {
             return false;
         }
 
-        $permission = auth('admin')->user()->role->modules;
+     /*   $permission = auth()->user()->role->modules;
         if (isset($permission) && in_array($mod_name, (array)json_decode($permission)) == true) {
             return true;
-        }
+        }*/
 
-        if (auth('admin')->user()->role_id == 1) {
+        if (auth()->user()->role_id == 1) {
             return true;
         }
         return false;

@@ -341,14 +341,14 @@
                                         <span class="avatar-status avatar-lg-status avatar-status-dark"><i class="tio-edit"></i></span>
                                         <img class="img-fluid"
                                              src="{{asset('storage/app/public/product')}}/{{$detail->service['image']}}"
-                                             onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                                             onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                                              alt="Image Description">
                                     </div>
                                 @else
                                     <a class="avatar avatar-xl mr-3" href="{{route('admin.service.view', $detail->service['id'])}}">
                                         <img class="img-fluid"
                                              src="{{asset('storage/app/public/product')}}/{{$detail->service['image']}}"
-                                             onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                                             onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                                              alt="Image Description">
                                     </a>
                                 @endif
@@ -407,14 +407,14 @@
                                         <span class="avatar-status avatar-lg-status avatar-status-dark"><i class="tio-edit"></i></span>    
                                         <img class="img-fluid"
                                              src="{{asset('storage/app/public/campaign')}}/{{$detail->campaign['image']}}"
-                                             onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                                             onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                                              alt="Image Description">
                                     </div>
                                     @else
                                     <a class="avatar avatar-xl mr-3" href="{{route('admin.campaign.view', ['item', $detail->campaign['id']])}}">
                                         <img class="img-fluid"
                                              src="{{asset('storage/app/public/campaign')}}/{{$detail->campaign['image']}}"
-                                             onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'"
+                                             onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                                              alt="Image Description">
                                     </a>
                                     @endif
@@ -594,7 +594,7 @@
                             <div class="avatar avatar-circle mr-3">
     
                                     <img class="avatar-img" style="width: 75px"
-                                    onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                                    onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img1.jpg')}}'"
                                     src="{{asset('storage/app/public/delivery-man/'.$order->delivery_man->image)}}"
                                     alt="Image Description">
                             </div>
@@ -672,7 +672,7 @@
                                 <div class="avatar avatar-circle mr-3">
                                     
                                     <img class="avatar-img" style="width: 75px"
-                                    onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                                    onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img1.jpg')}}'"
                                     src="{{asset('storage/app/public/profile/'.$order->customer->image)}}"
                                     alt="Image Description">
 
@@ -760,7 +760,7 @@
                             <div class="avatar avatar-circle mr-3">
                                 <img
                                     class="avatar-img" style="width: 75px"
-                                    onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                                    onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img1.jpg')}}'"
                                     src="{{asset('storage/app/public/restaurant/'.$order->vendor->logo)}}"
                                     alt="Image Description">
                             </div>
@@ -953,7 +953,7 @@
                                 @foreach ($deliveryMen as $dm)
                                     <li class="list-group-item"> 
                                         <span class="dm_list" role='button' data-id="{{$dm['id']}}">
-                                            <img class="avatar avatar-sm avatar-circle mr-1" onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'" src="{{asset('storage/app/public/delivery-man')}}/{{$dm['image']}}" alt="{{$dm['name']}}">
+                                            <img class="avatar avatar-sm avatar-circle mr-1" onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img1.jpg')}}'" src="{{asset('storage/app/public/delivery-man')}}/{{$dm['image']}}" alt="{{$dm['name']}}">
                                             {{$dm['name']}}
                                         </span>    
 
@@ -1387,7 +1387,7 @@
                 position: 6,{{--new google.maps.LatLng({{$order->restaurant->latitude}}, {{$order->restaurant->longitude}}),--}}
                 map: map,
                 title: "{{$order->vendor->names()}}",
-                icon: "{{asset('public/assets/admin/img/restaurant_map.png')}}"
+                icon: "{{asset($assetPrefixPath . '/admin/img/restaurant_map.png')}}"
             });
 
             google.maps.event.addListener(Restaurantmarker, 'click', (function(Restaurantmarker) {
@@ -1408,7 +1408,7 @@
                         position: point,
                         map: map,
                         title: deliveryMan[i].location,
-                        icon: "{{asset('public/assets/admin/img/delivery_boy_map.png')}}"
+                        icon: "{{asset($assetPrefixPath . '/admin/img/delivery_boy_map.png')}}"
                     });
                     dmMarkers[deliveryMan[i].id]=marker;
                     google.maps.event.addListener(marker, 'click', (function(marker, i) {
@@ -1448,7 +1448,7 @@
                     position: new google.maps.LatLng({{$address['latitude']}}, {{$address['longitude']}}),
                     map: map,
                     title: "{{$order->customer->f_name}} {{$order->customer->l_name}}",
-                    icon: "{{asset('public/assets/admin/img/customer_location.png')}}"
+                    icon: "{{asset($assetPrefixPath . '/admin/img/customer_location.png')}}"
                 });
 
                 google.maps.event.addListener(marker, 'click', (function(marker) {
@@ -1464,7 +1464,7 @@
                     position: new google.maps.LatLng({{$order->dm_last_location['latitude']}}, {{$order->dm_last_location['longitude']}}),
                     map: map,
                     title: "{{$order->delivery_man->f_name}}  {{$order->delivery_man->l_name}}",
-                    icon: "{{asset('public/assets/admin/img/delivery_boy_map.png')}}"
+                    icon: "{{asset($assetPrefixPath . '/admin/img/delivery_boy_map.png')}}"
                 });
 
                 google.maps.event.addListener(dmmarker, 'click', (function(dmmarker) {
@@ -1481,7 +1481,7 @@
                     position: new google.maps.LatLng({{$order->vendor->latitude}}, {{$order->vendor->longitude}}),
                     map: map,
                     title: "{{$order->vendor->names()}}",
-                    icon: "{{asset('public/assets/admin/img/restaurant_map.png')}}"
+                    icon: "{{asset($assetPrefixPath . '/admin/img/restaurant_map.png')}}"
                 });
 
                 google.maps.event.addListener(Retaurantmarker, 'click', (function(Retaurantmarker) {

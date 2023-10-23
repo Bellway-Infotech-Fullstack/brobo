@@ -91,7 +91,7 @@
 
                                     <center>
                                         <img style="max-width: 100%;border: 1px solid; border-radius: 10px; max-height:100px;" id="AadhaarFrontImageCoverImageViewer"
-                                        src="{{asset('public/assets/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
+                                        src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
                                     </center>  
                             </div>
 
@@ -105,7 +105,7 @@
 
                                     <center>
                                         <img style="max-width: 100%;border: 1px solid; border-radius: 10px; max-height:100px;" id="AadhaarBackImageCoverImageViewer"
-                                        src="{{asset('public/assets/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
+                                        src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
                                     </center>  
                             </div>
 
@@ -119,7 +119,7 @@
 
                                     <center>
                                         <img style="max-width: 100%;border: 1px solid; border-radius: 10px; max-height:100px;" id="panCardCoverImageViewer"
-                                        src="{{asset('public/assets/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
+                                        src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
                                     </center>  
                             </div>
 
@@ -206,7 +206,7 @@
                             <div class="form-group" style="margin-bottom:0%;">                       
                                 <center>
                                     <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                        src="{{asset('public/assets/admin/img/400x400/img2.jpg')}}" />
+                                        src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" />
                                 </center>
                             </div>
                         </div>
@@ -260,7 +260,7 @@
                     </div> 
                     <center>
                         <img style="max-width: 100%;border: 1px solid; border-radius: 10px; max-height:200px;" id="coverImageViewer"
-                        src="{{asset('public/assets/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
+                        src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="Product thumbnail"/>
                     </center>  
                     {{-- <br>
                     <small class="nav-subtitle text-secondary border-bottom">{{__('messages.owner')}} {{__('messages.info')}}</small> --}}
@@ -397,7 +397,7 @@
 
     </script>
 
-    <script src="{{asset('public/assets/admin/js/spartan-multi-image-picker.js')}}"></script>
+    <script src="{{asset($assetPrefixPath . '/admin/js/spartan-multi-image-picker.js')}}"></script>
     <script type="text/javascript">
         $(function () {
             $("#coba").spartanMultiImagePicker({
@@ -407,7 +407,7 @@
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset('public/assets/admin/img/400x400/img2.jpg')}}',
+                    image: '{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",

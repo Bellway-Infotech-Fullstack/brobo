@@ -24,7 +24,7 @@
                         style="cursor: pointer">
                         <td scope="row">
                             <img height="35" style="border-radius: 5px"
-                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img1.jpg')}}'"
+                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img1.jpg')}}'"
                                  src="{{asset('storage/app/public/restaurant')}}/{{$item->vendor['logo']}}">
                             <span class="ml-2">
                                                        {{$item->vendor->names()??'Not exist!'}}

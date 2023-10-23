@@ -85,7 +85,7 @@
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
                                             <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                                src="{{asset('public/assets/admin/img/900x400/img1.jpg')}}" alt="campaign image"/>
+                                                src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="campaign image"/>
                                         </center>
                                     </div>
                                 </div>
@@ -146,7 +146,7 @@
                                     <td>
                                         <span class="media align-items-center">
                                             <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/banner')}}/{{$banner['image']}}" 
-                                                 onerror="this.src='{{asset('public/assets/admin/img/160x160/img2.jpg')}}'" alt="{{$banner->name}} image">
+                                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$banner->name}} image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0">{{$banner['title']}}</h5>
                                             </div>
@@ -274,7 +274,7 @@
                 },
                 language: {
                     zeroRecords: '<div class="text-center p-4">' +
-                    '<img class="mb-3" src="{{asset('public/assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description" style="width: 7rem;">' +
+                    '<img class="mb-3" src="{{asset($assetPrefixPath . '/admin/svg/illustrations/sorry.svg')}}" alt="Image Description" style="width: 7rem;">' +
                     '<p class="mb-0">No data to show</p>' +
                     '</div>'
                 }

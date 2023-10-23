@@ -22,7 +22,6 @@ class DashboardController extends Controller
 {
     public function dashboard(Request $request)
     {
-
         $params = [
             'zone_id' => $request['zone_id'] ?? 'all',
             'statistics_type' => $request['statistics_type'] ?? 'overall',
@@ -260,8 +259,8 @@ class DashboardController extends Controller
         $data_os = self::order_stats_calc(array_unique($vendor_ids));
         $data_uo = self::user_overview_calc(array_unique($vendor_ids), array_unique($zone_ids), array_unique($user_ids));
         $data_bo = self::business_overview_calc(array_unique($vendor_ids));
-
-        $popular = Wishlist::with(['vendor'])->whereIn('vendor_id', $vendor_ids)->select('vendor_id', DB::raw('COUNT(vendor_id) as count'))->groupBy('vendor_id')->orderBy('count', 'DESC')->limit(6)->get();
+/*
+        $popular = Wishlist::with(['vendor'])->select('vendor_id', DB::raw('COUNT(vendor_id) as count'))->groupBy('vendor_id')->orderBy('count', 'DESC')->limit(6)->get();
         $top_sell = OrderDetail::with(['service'])->whereIn('service_id', $service_ids)
             ->select('service_id', DB::raw('COUNT(service_id) as count'))
             ->groupBy('service_id')
@@ -291,7 +290,7 @@ class DashboardController extends Controller
             ->groupBy('user_id')
             ->orderBy("count", 'desc')
             ->take(6)
-            ->get();
+            ->get();*/
 
         // $top_restaurants = Order::with(['restaurant'])->Delivered()
         //     ->whereIn('vendor_id', $vendor_ids)
@@ -303,14 +302,20 @@ class DashboardController extends Controller
 
             // dd($vendor_ids);
 
-        $top_restaurants = Order::with(['vendor'])->Delivered()
+        /*$top_restaurants = Order::with(['vendor'])->Delivered()
             ->whereIn('vendor_id', $vendor_ids)
             ->select('vendor_id', DB::raw('COUNT(vendor_id) as count'))
             ->groupBy('vendor_id')
             ->orderBy("count", 'desc')
             ->take(6)
-            ->get();
+            ->get();*/
 
+            $popular = [];
+            $top_rated_services = [];
+            $top_deliveryman = [];
+            $top_customer = [];
+            $top_restaurants = [];
+            $top_sell = [];
         $total_sell = [];
         $commission = [];
         for ($i = 1; $i <= 12; $i++) {
