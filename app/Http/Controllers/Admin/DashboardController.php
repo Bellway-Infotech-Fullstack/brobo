@@ -217,22 +217,22 @@ class DashboardController extends Controller
     {
         $params = session('dash_params');
         //business overview
+        $services_ids = [];
         if ($params['business_overview'] == 'overall') {
-            $services = Service::whereIn('vendor_id', $vendor_ids)->count();
-            $services_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
+           // $services = Service::whereIn('vendor_id', $vendor_ids)->count();
+          //  $services_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
             $reviews = Review::whereIn('service_id', $services_ids)->count();
             $wishlist = Wishlist::whereIn('service_id', $services_ids)->count();
         } else {
-            $services = Service::whereIn('vendor_id', $vendor_ids)->whereMonth('created_at', date('m'))
-                ->whereYear('created_at', date('Y'))->count();
-            $services_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
+           // $services = Service::whereIn('vendor_id', $vendor_ids)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
+           // $services_ids = Service::whereIn('vendor_id', $vendor_ids)->pluck('id')->toArray();
             $reviews = Review::whereIn('service_id', $services_ids)->whereMonth('created_at', date('m'))
                 ->whereYear('created_at', date('Y'))->count();
             $wishlist = Wishlist::whereIn('service_id', $services_ids)->whereMonth('created_at', date('m'))
                 ->whereYear('created_at', date('Y'))->count();
         }
 
-        $data['service'] = $services;
+        $data['service'] = [];
         $data['reviews'] = $reviews;
         $data['wishlist'] = $wishlist;
 
@@ -253,7 +253,7 @@ class DashboardController extends Controller
             $vendor_ids = Vendor::pluck('id')->toArray();
             $user_ids = CustomerAddress::whereIn('zone_id', $zone_ids)->pluck('user_id')->toArray();
             $vendor_ids = Vendor::pluck('id')->toArray();
-            $service_ids = Service::pluck('id')->toArray();
+           // $service_ids = Service::pluck('id')->toArray();
         }
 
         $data_os = self::order_stats_calc(array_unique($vendor_ids));
