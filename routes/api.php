@@ -61,6 +61,10 @@ Route::group(['namespace' => 'API'], function () {
     Route::controller(SettingController::class)->group(function () {
         Route::get('get-setting-data', 'index');
     }); 
+
+    Route::controller(ProductController::class)->group(function () {
+        Route::get('manage-item-in-whishlist', 'manageItemInWishList');
+    }); 
 });
 
 
