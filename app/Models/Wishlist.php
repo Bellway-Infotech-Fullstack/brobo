@@ -6,24 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Wishlist extends Model
 {
+    protected $fillable = ['item_id','user_id'];
     protected $casts = [
-        'food_id' => 'integer',
+        'item_id' => 'integer',
         'user_id' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
-
-    public function food()
-    {
-        return $this->belongsTo(Food::class);
-    }
-    public function restaurant()
-    {
-        return $this->belongsTo(Restaurant::class);
-    }
-
-    public function vendor()
-    {
-        return $this->belongsTo(Vendor::class);
-    }
 }

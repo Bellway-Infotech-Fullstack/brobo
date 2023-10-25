@@ -115,8 +115,7 @@ class CustomerAuthController extends Controller
         try {
             // Validate the input data
             $validation = Validator::make($request->all(), [
-                'name' => 'required|regex:/^[A-Za-z\s]+$/',
-                'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users',
+                'mobile_number' => 'required|regex:/\+91[0-9]{10}/',
                 'password' => [
                     'required',
                     Password::min(8)
@@ -125,16 +124,12 @@ class CustomerAuthController extends Controller
                         ->numbers()
                         ->symbols()
                 ],
-                'address' => 'required',
             ], [
-                'name.required' => 'Please enter a name.',
-                'name.regex' => 'Name should only contain letters and spaces.',
                 'mobile_number.required' => 'Please enter mobile number.',
                 'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
                 'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
-                'address.required' => 'Please enter an address.',
             ]);
             
             
