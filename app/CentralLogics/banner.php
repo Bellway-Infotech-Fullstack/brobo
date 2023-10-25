@@ -3,7 +3,6 @@
 namespace App\CentralLogics;
 
 use App\Models\Banner;
-use App\Models\Service;
 use App\Models\Vendor;
 use App\CentralLogics\Helpers;
 
