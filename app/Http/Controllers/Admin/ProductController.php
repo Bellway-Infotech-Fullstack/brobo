@@ -28,7 +28,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unqiue:products',
+            'name' => 'required|unqiue:products,name',
             'category_id' => 'required',
             'image' => 'required',
             'price' => 'required|numeric|min:.01',
@@ -48,9 +48,9 @@ class ProductController extends Controller
             $validator->getMessageBag()->add('unit_price', 'Discount can not be more or equal to the price!');
         }
 
-        if ($request['price'] <= $dis || $validator->fails()) {
+      /*  if ($request['price'] <= $dis || $validator->fails()) {
             return response()->json(['errors' => Helpers::error_processor($validator)]);
-        }
+        }*/
 
         $Product = new Product;
         $Product->name = $request->name;
