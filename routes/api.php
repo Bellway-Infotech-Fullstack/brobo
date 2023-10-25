@@ -63,7 +63,9 @@ Route::group(['namespace' => 'API'], function () {
     }); 
 
     Route::controller(ProductController::class)->group(function () {
+        Route::get('get-product-list', 'getProductList');
         Route::get('manage-item-in-whishlist', 'manageItemInWishList');
+        Route::get('get-item-in-whishlist', 'getItemInWishList');
     }); 
 });
 

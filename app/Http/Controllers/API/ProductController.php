@@ -5,12 +5,84 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Wishlist;
+use App\Models\Product;
 use App\Models\User;
+use App\Models\Wishlist;
+
 
 class ProductController extends Controller
 {
     //
+
+     /**
+     * It will get items .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    
+     public function getProductList(Request $request)
+     {
+         try {
+             // Get requested data
+             
+             $cateogyId = $request->post('category_id');
+             $page = $request->post('page');
+             $orderBy = $request->post('order_by');
+             $orderColumn = $request->post('order_column');
+             $isDefaultSort = $request->post('is_default_sort');  
+             $isHideOutOfStockItem = $request->post('is_hide_out_of_stock_items');   
+             $perPage = 10; // Number of items to load per page
+            
+             // Define the validation rules
+             $validationRules = [
+                 'page' => 'required',
+                 'category_id' => 'required',
+             ]; 
+         
+             // Validate the input data
+             $validation = Validator::make($request->all(), $validationRules, [
+                 'page.required' => 'page is required.',
+                 'category_id.required' => 'category ID is required.',
+             ]);
+             
+ 
+             // Check for validation errors and return error response if any
+             if ($validation->fails()) {
+                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+             }
+ 
+           
+            // Query to retrieve items
+
+
+            if($isDefaultSort == '1'){
+                 $orderBy = 'desc';
+                 $orderColumn = 'created_at';   
+            }
+            $stockCondition = '';
+            if($isHideOutOfStockItem == '1'){
+                $stockCondition = 'total_stock=0';
+            }
+            $items =  Product::whereHas('category', function ($query) use ($cateogyId) {
+                            $query->where('parent_id', $cateogyId);
+                        })->where($stockCondition)
+                        ->orderBy($orderColumn, $orderBy)
+                        ->paginate($perPage, ['*'], 'page', $page);
+
+           
+            
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+             
+         } catch (\Exception $e) {
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+         }
+     }
+
+
+
+
 
      /**
      * It will add and remove item from wish list.
@@ -79,6 +151,65 @@ class ProductController extends Controller
                  ]);
                  return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Item is added to wishlist']);
              }
+         } catch (\Exception $e) {
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+         }
+     }
+
+
+     /**
+     * It will get wishlist items of login user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    
+     public function getItemInWishList(Request $request)
+     {
+         try {
+             // Get requested data
+             
+             $customerId = $request->post('customer_id');
+             $page = $request->post('page');
+             $perPage = 10; // Number of items to load per page
+             // Define the validation rules
+             $validationRules = [
+                 'customer_id' => 'required',
+             ]; 
+         
+             // Validate the input data
+             $validation = Validator::make($request->all(), $validationRules, [
+                 'customer_id.required' => 'customer ID is required.',
+             ]);
+             
+ 
+             // Check for validation errors and return error response if any
+             if ($validation->fails()) {
+                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+             }
+ 
+ 
+             // Retrieve wishlist items with their associated products for a specific user.
+            // Query to retrieve wishlist items with associated products for the specific user
+            $wishlistItems = Wishlist::where('user_id', $customerId)
+            ->with('product')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+            // Loop through the wishlist items and access the associated product details.
+
+            $productImages = [];
+            if(isset($wishlistItems) && !empty($wishlistItems)){
+                foreach ($wishlistItems as $wishlistItem) {
+                    $product = $wishlistItem->product;
+                    $productImage = $product->image;
+                    array_push($productImages,$productImage);
+                }
+            }
+            
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $productImages]);
+             
          } catch (\Exception $e) {
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
