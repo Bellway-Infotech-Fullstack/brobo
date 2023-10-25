@@ -51,6 +51,7 @@ class CouponLogic
                     $q->whereIn('zone_id', json_decode($coupon->data, true));
 
                 })->where('id', $service_id)->first();
+                $data = [];
                 if(!$data)
                 {
                     return 404;
