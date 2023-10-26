@@ -32,16 +32,13 @@ Route::group(['namespace' => 'API'], function () {
 Route::group(['namespace' => 'API'], function () {
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth','middleware' => 'custom.jwt'], function () {
         Route::controller(CustomerAuthController::class)->group(function () {
-
             Route::get('view-profile', 'getCustomerDetails');
             Route::put('update-profile', 'updateCustomerDetails');
             Route::put('change-password', 'changePassword');
             Route::delete('delete-account', 'deleteAccount');
             Route::post('verify-password', 'verifyPassword');
             Route::post('logout', 'logout');           
-        });      
-        
-         
+        });     
     });
 
     Route::controller(UsersAddressController::class)->group(function () {
@@ -60,12 +57,14 @@ Route::group(['namespace' => 'API'], function () {
 
     Route::controller(SettingController::class)->group(function () {
         Route::get('get-setting-data', 'index');
+        Route::get('update-notification-setting', 'updateNotificationSetting');
     }); 
 
     Route::controller(ProductController::class)->group(function () {
         Route::get('get-product-list', 'getProductList');
         Route::get('manage-item-in-whishlist', 'manageItemInWishList');
         Route::get('get-item-in-whishlist', 'getItemInWishList');
+        Route::get('get-product-recommendation-list', 'getProductRecommendationList');        
     }); 
 });
 
