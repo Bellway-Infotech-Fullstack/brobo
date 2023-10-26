@@ -214,4 +214,60 @@ class ProductController extends Controller
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
      }
+
+
+     /**
+     * It will get items of recommendation list .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    
+     public function getProductRecommendationList(Request $request)
+     {
+         try {
+             // Get requested data
+             
+             $cateogyId = $request->post('category_id');
+             $productId = $request->post('product_id');
+
+             $page = $request->post('page');
+  
+             $perPage = 10; // Number of items to load per page
+            
+             // Define the validation rules
+             $validationRules = [
+                 'page' => 'required',
+                 'category_id' => 'required',
+             ]; 
+         
+             // Validate the input data
+             $validation = Validator::make($request->all(), $validationRules, [
+                 'page.required' => 'page is required.',
+                 'category_id.required' => 'category ID is required.',
+             ]);
+             
+ 
+             // Check for validation errors and return error response if any
+             if ($validation->fails()) {
+                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+             }
+ 
+           
+            // Query to retrieve items         
+           
+            $items =  Product::whereHas('category', function ($query) use ($cateogyId) {
+                            $query->where('parent_id', $cateogyId);
+                        })->where('id','!=',$productId)
+                        ->paginate($perPage, ['*'], 'page', $page);
+
+           
+            
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+             
+         } catch (\Exception $e) {
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+         }
+     }
 }

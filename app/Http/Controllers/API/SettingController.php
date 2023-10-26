@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BusinessSetting;
+use App\Models\User;
 
 class SettingController extends Controller
 {
@@ -54,4 +55,53 @@ class SettingController extends Controller
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
          }
      }
+
+
+      /**
+     * Update status of notification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function updateNotificationSetting(Request $request)
+    {
+        // Try to update customer details
+        try {
+            // Get customer_id from the request
+            $customerId = $request->post('customer_id');           
+            $isNotificationSettingOn = $request->post('is_notification_setting_on');  
+            
+
+            // Validate the input data
+            $validation = Validator::make($request->all(), [
+                'customer_id' => 'required',
+                'is_notification_setting_on' => 'required',
+
+            ], [
+                'customer_id.required' => 'Please enter a customer id.',
+                'is_notification_setting_on.required' => 'Please enter a starus.',
+            ]);
+            
+
+            // Check for validation errors and return error response if any
+            if ($validation->fails()) {
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+            }
+
+            $userData   = User::find($customerId);
+             
+             if ($userData) {
+                 // Update notification setting details
+                 $userData->is_notification_setting_on = $isNotificationSettingOn; 
+                 $userData->save();
+             }          
+            
+             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Setting updated successfully']);
+            
+        } catch (\Exception $e) {
+            // Handle exceptions, if any
+            return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+        }
+    }
 }
