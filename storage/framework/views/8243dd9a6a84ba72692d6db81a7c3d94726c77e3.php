@@ -7,10 +7,10 @@
                 <?php (@$restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value); ?>
                 <a class="navbar-brand" href="<?php echo e(route('admin.dashboard')); ?>" aria-label="">
                     <img class="navbar-brand-logo" style="max-height: 48px; border-radius: 8px"
-                         onerror="this.src='<?php echo e(asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')); ?>'"
+                         onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
                          src="<?php echo e(asset('storage/app/public/business/'.$restaurant_logo)); ?>" alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 48px; border-radius: 8px"
-                         onerror="this.src='<?php echo e(asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')); ?>'"
+                         onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
                          src="<?php echo e(asset('storage/app/public/business/'.$restaurant_logo)); ?>" alt="Logo">
                 </a>
                 <!-- End Logo -->
