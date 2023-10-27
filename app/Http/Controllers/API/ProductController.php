@@ -61,15 +61,20 @@ class ProductController extends Controller
                  $orderBy = 'desc';
                  $orderColumn = 'created_at';   
             }
-            $stockCondition = '';
-            if($isHideOutOfStockItem == '1'){
-                $stockCondition = 'total_stock=0';
-            }
-            $items =  Product::whereHas('category', function ($query) use ($cateogyId) {
-                            $query->where('parent_id', $cateogyId);
-                        })->where($stockCondition)
-                        ->orderBy($orderColumn, $orderBy)
-                        ->paginate($perPage, ['*'], 'page', $page);
+            
+            $items = Product::whereHas('category', function ($query) use ($cateogyId) {
+                $query->where('parent_id', $cateogyId);
+            })
+            ->when($isHideOutOfStockItem == '1', function ($query) {
+                $query->where('total_stock', '>', 0);
+            })
+
+            ->unless($isHideOutOfStockItem == '1', function ($query) {
+                $query->where('total_stock', '=', 0);
+            })
+            ->orderBy($orderColumn, $orderBy)
+            ->get();
+            
 
            
             
