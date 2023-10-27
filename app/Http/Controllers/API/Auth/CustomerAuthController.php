@@ -54,7 +54,7 @@ class CustomerAuthController extends Controller
             if ($validation->fails()) {
                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
-
+            $token  =  Str::random(10);
             // Hash the password and set other request attributes
             $password = Hash::make($request->password);
             $request['password'] = $password ;
@@ -63,9 +63,9 @@ class CustomerAuthController extends Controller
             $request['name'] = $request->name;
             $request['mobile_number'] = $request->mobile_number;
             $request['remember_token'] = Str::random(10);
-            $request['auth_token'] = Str::random(10);
+             $request['auth_token'] =  $token;
 
-           
+         
 
 
 
@@ -73,12 +73,12 @@ class CustomerAuthController extends Controller
             $user = User::create($request->toArray());
 
             // Generate a token for the user
-            $token = JWTAuth::fromUser($user);
+         //   $token = JWTAuth::fromUser($user);
 
             // update auth token
-            $userData = User::where('mobile_number',$request->mobile_number)->first();
-            $userData->auth_token =  $token;
-            $userData->save();
+         /*  $userData = User::where('mobile_number',$request->mobile_number)->first();
+           $userData->auth_token =  $token;
+           $userData->save();*/
 
              // Save password in user's password table
 
@@ -89,7 +89,7 @@ class CustomerAuthController extends Controller
             ]);
 
             $message = "Hello $request->name,Welcome to brobo.You are registered successfully.";
-
+         //  dd($messsage);
             // send verification code to user's mobile number
             event(new SendSMS($request->mobile_number,$message));
 
@@ -97,6 +97,7 @@ class CustomerAuthController extends Controller
             $response = ['status' => 'success', 'code' => 201, 'message' => 'User registered successfully','token' => $token];
             return response()->json($response);
         } catch (\Exception $e) {
+          //  dd($e);
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
