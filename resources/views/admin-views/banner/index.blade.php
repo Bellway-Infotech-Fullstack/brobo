@@ -41,7 +41,7 @@
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
                                             <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                                src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="banner image"/>
+                                                src="{{asset($assetPrefixPath . '/assets/admin/img/900x400/img1.jpg')}}" alt="banner image"/>
                                         </center>
                                     </div>
                                 </div>
@@ -98,7 +98,7 @@
                                     <td>{{$key+$banners->firstItem()}}</td>
                                     <td>
                                         <span class="media align-items-center">
-                                            <img class="avatar avatar-lg mr-3" src="{{asset($assetPrefixPath . '/storage/app/public/banner')}}/{{$banner['image']}}" 
+                                            <img class="avatar avatar-lg mr-3" src="{{asset($assetPrefixPath . '/storage/banner')}}/{{$banner['image']}}" 
                                                   alt="{{$banner->name}} image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0">{{$banner['title']}}</h5>

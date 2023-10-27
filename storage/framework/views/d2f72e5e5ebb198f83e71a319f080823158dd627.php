@@ -1,25 +1,23 @@
-@extends('layouts.admin.app')
+<?php $__env->startSection('title','Update Banner'); ?>
 
-@section('title','Update Banner')
-
-@push('css_or_js')
+<?php $__env->startPush('css_or_js'); ?>
 <style>
     .select2 .select2-container .select2-container--default .select2-container--above .select2-container--focus{
         width:100% !important;
     }
 </style>
-@endpush
-@php
+<?php $__env->stopPush(); ?>
+<?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphp
-@section('content')
+?>
+<?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"><i class="tio-edit"></i>{{__('messages.update')}} {{__('messages.banner')}}</h1>
+                    <h1 class="page-header-title"><i class="tio-edit"></i><?php echo e(__('messages.update')); ?> <?php echo e(__('messages.banner')); ?></h1>
                 </div>
             </div>
         </div>
@@ -28,28 +26,28 @@
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{route('admin.banner.update', [$banner->id])}}" method="post" id="banner_form">
-                            @csrf
+                        <form action="<?php echo e(route('admin.banner.update', [$banner->id])); ?>" method="post" id="banner_form">
+                            <?php echo csrf_field(); ?>
                             <div class="row">
                                
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>{{__('messages.banner')}} {{__('messages.image')}}</label>
-                                        <small style="color: red">* ( {{__('messages.ratio')}} 3:1 )</small>
+                                        <label><?php echo e(__('messages.banner')); ?> <?php echo e(__('messages.image')); ?></label>
+                                        <small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 3:1 )</small>
                                         <div class="custom-file">
                                             <input type="file" name="image" id="customFileEg1" class="custom-file-input"
                                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                            <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                                            <label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
                                         </div>
                                     </div>
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
-                                            <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer" onerror="this.src='{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}'" src="{{asset('storage/banner')}}/{{$banner['image']}}" alt="campaign image"/>
+                                            <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer" onerror="this.src='<?php echo e(asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')); ?>'" src="<?php echo e(asset('storage/banner')); ?>/<?php echo e($banner['image']); ?>" alt="campaign image"/>
                                         </center>
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
+                            <button type="submit" class="btn btn-primary"><?php echo e(__('messages.submit')); ?></button>
                         </form>
                     </div>
                 </div>
@@ -58,9 +56,9 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
 <script>
     function getRequest(route, id) {
         $.get({
@@ -88,8 +86,8 @@
 </script>
 <script>
     $(document).on('ready', function () {
-        var zone_id = {{$banner->zone_id}};
-        banner_type_change('{{$banner->type}}');
+        var zone_id = <?php echo e($banner->zone_id); ?>;
+        banner_type_change('<?php echo e($banner->type); ?>');
 
         $('#zone').on('change', function(){
             if($(this).val())
@@ -104,7 +102,7 @@
 
         $('.js-data-example-ajax').select2({
             ajax: {
-                url: '{{url('/')}}/admin/vendor/get-restaurants',
+                url: '<?php echo e(url('/')); ?>/admin/vendor/get-restaurants',
                 data: function (params) {
                     return {
                         q: params.term, // search term
@@ -151,9 +149,9 @@
                 $('#restaurant_wise').hide();
             }
         }
-        @if($banner->type == 'service_wise')
-        getRequest('{{url('/')}}/admin/service/get-foods?zone_id={{$banner->zone_id}}&data[]={{$banner->data}}','choice_item');
-        @endif 
+        <?php if($banner->type == 'service_wise'): ?>
+        getRequest('<?php echo e(url('/')); ?>/admin/service/get-foods?zone_id=<?php echo e($banner->zone_id); ?>&data[]=<?php echo e($banner->data); ?>','choice_item');
+        <?php endif; ?> 
         $('#banner_form').on('submit', function (e) {
             e.preventDefault();
             var formData = new FormData(this);
@@ -163,7 +161,7 @@
                 }
             });
             $.post({
-                url: '{{route('admin.banner.update', [$banner['id']])}}',
+                url: '<?php echo e(route('admin.banner.update', [$banner['id']])); ?>',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -182,11 +180,13 @@
                             ProgressBar: true
                         });
                         setTimeout(function () {
-                            location.href = '{{route('admin.banner.add-new')}}';
+                            location.href = '<?php echo e(route('admin.banner.add-new')); ?>';
                         }, 2000);
                     }
                 }
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/banner/edit.blade.php ENDPATH**/ ?>

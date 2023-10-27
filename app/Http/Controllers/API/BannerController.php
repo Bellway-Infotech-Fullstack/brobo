@@ -25,9 +25,21 @@ class BannerController extends Controller
              // get banner data 
              
              $bannerData   = Banner::where(['status' => 1])->get();
+         
              
              if (count($bannerData) > 0) {
-                 return response()->json(['status' => 'success', 'code' => 200,'data' => $bannerData,
+                 $data = [];   
+                 foreach($bannerData as $key => $value){
+                    array_push($data,
+                    array('id' => $value->id,
+                           'image' => asset('storage/banner/' . $value->image), 
+                           'status' => $value->status,
+                           'created_at' => $value->created_at,
+                           'updated_at'=> $value->updated_at
+                        ));                
+                 }
+
+                 return response()->json(['status' => 'success', 'code' => 200,'data' => $data,
              ]);
              } else {
                  return response()->json(['status' => 'error', 'code' => 404, 'message' => 'No data found'], 404);
