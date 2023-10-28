@@ -96,7 +96,7 @@
                                     <td><?php echo e($key+$banners->firstItem()); ?></td>
                                     <td>
                                         <span class="media align-items-center">
-                                            <img class="avatar avatar-lg mr-3" src="<?php echo e(asset($assetPrefixPath . '/storage/banner')); ?>/<?php echo e($banner['image']); ?>" 
+                                            <img class="avatar avatar-lg mr-3" src="<?php echo e(asset('/storage/banner')); ?>/<?php echo e($banner['image']); ?>" 
                                                   alt="<?php echo e($banner->name); ?> image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0"><?php echo e($banner['title']); ?></h5>

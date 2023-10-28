@@ -74,7 +74,14 @@ class ProductController extends Controller
             })
             ->orderBy($orderColumn, $orderBy)
             ->get();
-            
+            // Use the map method to modify the collection
+            $items = $items->map(function ($item) {
+                $item->image = $item->images->pluck('path')->map(function ($path) {
+                    $imagePath = (env('APP_ENV') == 'local') ?  asset('storage/banner/' . $path) : asset('storage/app/public/banner/' . $path);
+                    return $imagePath;
+                });            
+                return $item;
+            });         
 
            
             

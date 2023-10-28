@@ -32,7 +32,7 @@ class BannerController extends Controller
                  foreach($bannerData as $key => $value){
                     array_push($data,
                     array('id' => $value->id,
-                           'image' => asset('storage/banner/' . $value->image), 
+                           'image' => (env('APP_ENV') == 'local') ?  asset('storage/banner/' . $value->image) : asset('storage/app/public/banner/' . $value->image), 
                            'status' => $value->status,
                            'created_at' => $value->created_at,
                            'updated_at'=> $value->updated_at
