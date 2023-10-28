@@ -75,13 +75,19 @@ class ProductController extends Controller
             ->orderBy($orderColumn, $orderBy)
             ->get();
             // Use the map method to modify the collection
+            // Use the map method to modify the collection
             $items = $items->map(function ($item) {
-                $item->image = $item->images->pluck('path')->map(function ($path) {
-                    $imagePath = (env('APP_ENV') == 'local') ?  asset('storage/banner/' . $path) : asset('storage/app/public/banner/' . $path);
-                    return $imagePath;
-                });            
+                // Assuming $item is an instance of the 'product' model
+                $imagePath = (env('APP_ENV') == 'local') ? asset('storage/banner/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+            
+                // Add the image path to the $item object
+                $item->image = $imagePath;
+            
+                // Remove this line if you don't need the images property from the 'product' model
+               // unset($item->images);
+            
                 return $item;
-            });         
+            });     
 
            
             
