@@ -18,11 +18,11 @@
                 <a class="navbar-brand" href="<?php echo e(route('admin.dashboard')); ?>" aria-label="Front">
                     <img class="navbar-brand-logo" style="max-height: 55px; max-width: 100%!important;"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')); ?>'"
-                         src="<?php echo e(asset('storage/app/public/business/'.$restaurant_logo)); ?>"
+                         src="<?php echo e(asset('storage/business/'.$restaurant_logo)); ?>"
                          alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 55px; max-width: 100%!important;"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')); ?>'"
-                         src="<?php echo e(asset('storage/app/public/business/'.$restaurant_logo)); ?>" alt="Logo">
+                         src="<?php echo e(asset('storage/business/'.$restaurant_logo)); ?>" alt="Logo">
                 </a>
                 <!-- End Logo -->
 
