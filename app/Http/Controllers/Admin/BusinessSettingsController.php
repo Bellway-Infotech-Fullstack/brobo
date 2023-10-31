@@ -20,7 +20,9 @@ class BusinessSettingsController extends Controller
 
     public function business_index()
     {
-        return view('admin-views.business-settings.business-index');
+        $country = BusinessSetting::where('key','country')->first();
+
+        return view('admin-views.business-settings.business-index',array('country' => $country));
     }
 
     public function business_setup(Request $request)
@@ -57,8 +59,9 @@ class BusinessSettingsController extends Controller
         ]);
         
         $curr_logo = BusinessSetting::where(['key' => 'logo'])->first();
+
         if ($request->has('logo')) {
-            $image_name = Helpers::update('business/', $curr_logo->value, 'png', $request->file('logo'));
+            $image_name = Helpers::update('business/', $request->file('logo')->getClientOriginalName(), 'png', $request->file('logo'));
         } else {
             $image_name = $curr_logo['value'];
         }

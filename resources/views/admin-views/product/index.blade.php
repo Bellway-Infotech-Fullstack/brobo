@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.price')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.price')}} <small style="color: red">* </small></label>
                                 <input type="number" min="0" max="9999999999999999999999" step="0.01"  name="price" class="form-control"
                                        placeholder="Ex : 100" required>
                             </div>
@@ -51,7 +51,7 @@
                        
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}} {{__('messages.type')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}} {{__('messages.type')}} <small style="color: red">* </small></label>
                                 <select name="discount_type" class="form-control js-select2-custom">
                                     <option value="percent">{{__('messages.percent')}}</option>
                                     <option value="amount">{{__('messages.amount')}}</option>
@@ -71,8 +71,7 @@
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.category')}}<span
-                                        class="input-label-secondary">*</span></label>
+                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.category')}}<small style="color: red">* </small></label>
                                 <select name="category_id" class="form-control js-select2-custom"
                                         onchange="getRequest('{{url('/')}}/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     <option value="">---{{__('messages.select')}}---</option>
@@ -129,7 +128,32 @@
                             </div>
                         </div>
                     </div>
-                   
+
+                    <div class="row" id="colored_image_section">                       
+                       <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1">Color Name</label>
+                                <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{__('messages.product')}} {{__('messages.image')}}</label>
+                                <div class="custom-file">
+                                    <input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input"
+                                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                    <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                                </div>
+        
+                                <center style="display: none" id="image-viewer-section" class="pt-2">
+                                    <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
+                                         src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                </center>
+                            </div>    
+                        </div>                        
+                    </div>
+                    <a href="javascript:void(0)" style="float:right" title="Add More" id="add_more">Add More + </a>
+                    <br>
                     <hr>
                     <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
                 </form>
@@ -141,7 +165,50 @@
 
 
 @push('script_2')
+<script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.ckeditor').ckeditor();
+    });
+</script>
     <script>
+        $(document).ready(function(){
+            var i = 1;
+            $("#add_more").on("click",function(){
+               
+                var htmlData = '<div class="col-md-6 colored-image-section'+i+'">'+
+                                '<div class="form-group">'+
+                                    '<label class="input-label" for="exampleFormControlInput1">Color Name</label>'+
+                                    '<input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div class="col-md-6 colored-image-section'+i+'">'+
+                                    '<div class="form-group">'+
+                                        '<label>{{__('messages.product')}} {{__('messages.image')}}</label>'+
+                                        '<div class="custom-file">'+
+                                        '<input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
+                                            '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
+                                            '</div>'+        
+                                            '<center style="display: none" id="image-viewer-section" class="pt-2">'+
+'<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '</center>'+
+
+                                            '<a href="javascript:void(0)" class="remove-section" data-row-id="'+i+'" style="float:right">Remove</a>'+
+                                        '</div>'+    
+                                    '</div>'+
+                                '</div>';
+                                 i++;          
+
+                                $("#colored_image_section").append(htmlData);
+
+            });
+        });
+
+        $(document).on("click",".remove-section",function(){
+            var row_id = $(this).attr("data-row-id");
+            $(".colored-image-section"+row_id).remove();
+        });
+
         function getRestaurantData(route, vendor_id , id) {
             $.get({
                 url: route+vendor_id,

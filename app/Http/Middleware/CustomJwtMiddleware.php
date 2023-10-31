@@ -16,9 +16,13 @@ class CustomJwtMiddleware
     {
         try {
             $tokenFromHeader = JWTAuth::getToken();
+
+
+            $user = JWTAuth::toUser($tokenFromHeader);
+            $customerId = $user->id;
             
             // Get the user's token from the database
-            $userData = User::where('id',$request->customer_id)->orWhere('mobile_number',$request->mobile_number)->first();
+            $userData = User::where('id',$customerId)->orWhere('mobile_number',$request->mobile_number)->first();
             if($userData){
                 $authTokenFromDB = $userData->auth_token;
                 if ($tokenFromHeader == $authTokenFromDB) {                

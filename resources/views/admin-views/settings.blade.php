@@ -1,7 +1,10 @@
 @extends('layouts.admin.app')
 
 @section('title',__('messages.profile_settings'))
-
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+@endphp
 @push('css_or_js')
 
 @endpush
