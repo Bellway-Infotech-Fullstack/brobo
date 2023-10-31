@@ -148,7 +148,6 @@
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-3">
                                                 <span class="mr-2">Action</span>
-
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_action">
                                                     <input type="checkbox" class="toggle-switch-input" id="toggleColumn_action" checked>
@@ -206,8 +205,8 @@
                                     <td>{{$key+$products->firstItem()}}</td>
                                     <td>
                                         <a class="media align-items-center" href="{{route('admin.product.view',[$food['id']])}}">
-                                            <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/product')}}/{{$food['image']}}" 
-                                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$food->name}} image">
+                                            <img class="avatar avatar-lg mr-3" src="{{asset('/storage/public/product')}}/{{$food['image']}}" 
+                                                  alt="{{$food->name}} image">
                                             <div class="media-body">
                                                 <h5 class="text-hover-primary mb-0">{{Str::limit($food['name'],20,'...')}}</h5>
                                             </div>

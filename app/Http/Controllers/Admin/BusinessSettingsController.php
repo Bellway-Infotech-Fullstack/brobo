@@ -20,7 +20,9 @@ class BusinessSettingsController extends Controller
 
     public function business_index()
     {
-        return view('admin-views.business-settings.business-index');
+        $country = BusinessSetting::where('key','country')->first();
+
+        return view('admin-views.business-settings.business-index',array('country' => $country));
     }
 
     public function business_setup(Request $request)

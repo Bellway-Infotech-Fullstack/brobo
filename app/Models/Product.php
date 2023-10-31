@@ -7,6 +7,7 @@ use App\Scopes\VendorScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\ProductColoredImage;
 
 class Product extends Model
 {
@@ -65,6 +66,13 @@ class Product extends Model
         $category=Category::find(json_decode($this->category_ids)[0]->id);
         return $category?$category->name:trans('messages.uncategorize');
     }
+
+    // Product.php (Product model)
+    public function coloredImages()
+    {
+        return $this->hasMany(ProductColoredImage::class,'product_id');
+    }
+
 
 
 
