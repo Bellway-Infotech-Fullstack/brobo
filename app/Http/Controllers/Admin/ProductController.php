@@ -96,11 +96,14 @@ class ProductController extends Controller
 
         if(count($request->input('colored_name')) > 0){
             for($i = 0; $i < count($request->input('colored_name')); $i++){
-                $productColoredImage = new ProductColoredImage();
-                $productColoredImage->product_id = $productId;
-                $productColoredImage->color_name = $request->input('colored_name')[$i];           
-                $productColoredImage->image = Helpers::upload('product/colored_images', 'png', $request->file('colored_image')[$i]);
-                $productColoredImage->save();
+                if(!empty($request->input('colored_name')[$i]) && !empty($request->file('colored_image')[$i])){
+                     $productColoredImage = new ProductColoredImage();
+                    $productColoredImage->product_id = $productId;
+                    $productColoredImage->color_name = $request->input('colored_name')[$i];           
+                    $productColoredImage->image = Helpers::upload('product/colored_images', 'png', $request->file('colored_image')[$i]);
+                    $productColoredImage->save();
+                }
+               
             }
         }
            
