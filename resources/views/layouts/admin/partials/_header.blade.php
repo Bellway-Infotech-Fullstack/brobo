@@ -55,7 +55,7 @@
                                href="{{route('admin.order.list',['status'=>'pending'])}}">
                                 {{-- <i class="tio-shopping-cart-outlined"></i> --}}
                                 {{-- <i class="tio-B"></i> --}}
-                                <img src="{{asset($assetPrefixPath . 'assets/admin/img/booking.png')}}" style="width: 20px; height: auto;" />
+                                <img src="{{asset($assetPrefixPath . '/assets/admin/img/booking.png')}}" style="width: 20px; height: auto;" />
                                 {{--<span class="btn-status btn-sm-status btn-status-danger"></span>--}}
                             </a>
                         </div>
@@ -73,7 +73,7 @@
                                    }'>
                                 <div class="avatar avatar-sm avatar-circle">
                                     <img class="avatar-img"
-                                         onerror="this.src='{{asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')}}'"
+                                         onerror="this.src='{{asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')}}'"
                                          src="{{asset('storage/app/public/admin')}}/{{auth()->user()->id}}"
                                          alt="Image Description">
                                     <span class="avatar-status avatar-sm-status avatar-status-success"></span>
