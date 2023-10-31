@@ -32,7 +32,7 @@ class ProductController extends Controller
              $page = $request->post('page');
              $orderBy = $request->post('order_by');
              $orderColumn = $request->post('order_column');
-             $isDefaultSort = $request->post('is_default_sort');  
+             $isDefaultSort = $request->post('is_default_sort') ?? 1;  
              $isHideOutOfStockItem = $request->post('is_hide_out_of_stock_items');   
              $perPage = 10; // Number of items to load per page
             
