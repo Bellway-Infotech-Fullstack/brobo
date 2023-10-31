@@ -10,7 +10,6 @@
   $map_api_key      = (isset($map_api_key_data) && !empty($map_api_key_data)) ? $map_api_key_data->value : '';
   $name=\App\Models\BusinessSetting::where('key','business_name')->first();
   $currency_symbol_position=\App\Models\BusinessSetting::where('key','currency_symbol_position')->first();
-  $config=\App\CentralLogics\Helpers::get_business_settings('maintenance_mode');
 @endphp
 @push('css_or_js')
 <style>
@@ -102,7 +101,7 @@
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 12px">
                         <div class="row">
-                         
+                            @php($config=\App\CentralLogics\Helpers::get_business_settings('maintenance_mode'))
                             <div class="col-6">
                                 <h5 class="text-capitalize">
                                     <i class="tio-settings-outlined"></i>
@@ -134,10 +133,7 @@
                         <div class="col-md-6 col-sm-6 col-12">
                
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">
-                                    {{__('messages.business')}}
-                                    
-                                    {{__('messages.currency')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.currency')}}</label>
                                 <select name="currency" class="form-control js-select2-custom">
                                     @foreach(\App\Models\Currency::orderBy('currency_code')->get() as $currency)
                                         <option
@@ -171,7 +167,8 @@
                             @php
                               $countryData =    \App\Models\BusinessSetting::where('key','country')->first();   
                               $country = (isset($countryData) && !empty($countryData)) ?? $countryData->value ;
-                              
+                               echo "country".$country;
+                               die; 
                             @endphp
                             <div class="form-group">
                                 <label class="input-label text-capitalize d-inline" for="country">{{__('messages.country')}}</label>
@@ -850,7 +847,35 @@
                             </div>
                         </div> --}}
 
-                        
+                        <div class="col-md-4 col-12">
+                            @php($restaurant_self_registration=\App\Models\BusinessSetting::where('key','toggle_restaurant_registration')->first())
+                            @php($restaurant_self_registration=$restaurant_self_registration?$restaurant_self_registration->value:0)
+                            <div class="form-group">
+                                <label class="input-label d-inline">{{__('messages.vendor_self_registration')}}</label><small style="color: red"><span
+                                        class="input-label-secondary" title="{{__('messages.vendor_self_registration')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.vendor_self_registration')}}"></span> *</small>
+                                <div class="input-group input-group-md-down-break">
+                                    <!-- Custom Radio -->
+                                    <div class="form-control">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" value="1" name="restaurant_self_registration"
+                                                   id="restaurant_self_registration1" {{$restaurant_self_registration==1?'checked':''}}>
+                                            <label class="custom-control-label" for="restaurant_self_registration1">{{__('messages.on')}}</label>
+                                        </div>
+                                    </div>
+                                    <!-- End Custom Radio -->
+
+                                    <!-- Custom Radio -->
+                                    <div class="form-control">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" value="0" name="restaurant_self_registration"
+                                                   id="restaurant_self_registration2" {{$restaurant_self_registration==0?'checked':''}}>
+                                            <label class="custom-control-label" for="restaurant_self_registration2">{{__('messages.off')}}</label>
+                                        </div>
+                                    </div>
+                                    <!-- End Custom Radio -->
+                                </div>
+                            </div>
+                        </div>
 
                       {{--   <div class="col-md-4 col-12">
                             @php($dm_self_registration=\App\Models\BusinessSetting::where('key','toggle_dm_registration')->first())
@@ -1042,7 +1067,7 @@
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
                                  onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
-                                 src="{{asset('storage/business/'.$logo)}}" alt="logo image"/>
+                                 src="{{asset('storage/app/public/business/'.$logo)}}" alt="logo image"/>
                         </center>
                     </div>
                     <hr>

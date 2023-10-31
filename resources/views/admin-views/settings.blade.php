@@ -4,7 +4,7 @@
 @php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphpx`
+@endphp
 @push('css_or_js')
 
 @endpush
