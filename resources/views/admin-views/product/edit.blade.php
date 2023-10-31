@@ -107,7 +107,7 @@
 
                     <div class="form-group">
                         <label class="input-label" for="exampleFormControlInput1">{{__('messages.short')}} {{__('messages.description')}}</label>
-                        <textarea type="text" name="description" class="form-control">{{$product['description']}}</textarea>
+                        <textarea type="text" name="description" class="form-control ckeditor">{{$product['description']}}</textarea>
                     </div>
 
                     <div class="row">
@@ -137,6 +137,33 @@
                         </div>
                     </div>
 
+
+                    <div class="row" id="colored_image_section">                       
+                        <div class="col-md-6">
+                             <div class="form-group">
+                                 <label class="input-label" for="exampleFormControlInput1">Color Name</label>
+                                 <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="form-group">
+                                 <label>{{__('messages.product')}} {{__('messages.image')}}</label>
+                                 <div class="custom-file">
+                                     <input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input"
+                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                     <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                                 </div>
+         
+                                 <center style="display: none" id="image-viewer-section" class="pt-2">
+                                     <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
+                                          src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                 </center>
+                             </div>    
+                         </div>                        
+                     </div>
+                     <a href="javascript:void(0)" style="float:right" title="Add More" id="add_more">Add More + </a>
+                     <br>
+
                     <hr>
                     <button type="submit" class="btn btn-primary">{{__('messages.update')}}</button>
                 </form>
@@ -151,6 +178,13 @@
 @endpush
 
 @push('script_2')
+
+<script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.ckeditor').ckeditor();
+    });
+</script>
     <script>
         function getRestaurantData(route, id) {
             $.get({
@@ -283,6 +317,45 @@
 
     <!-- submit form -->
     <script>
+       $(document).ready(function(){
+            var i = 1;
+            $("#add_more").on("click",function(){
+               
+                var htmlData = '<div class="col-md-6 colored-image-section'+i+'">'+
+                                '<div class="form-group">'+
+                                    '<label class="input-label" for="exampleFormControlInput1">Color Name</label>'+
+                                    '<input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div class="col-md-6 colored-image-section'+i+'">'+
+                                    '<div class="form-group">'+
+                                        '<label>{{__('messages.product')}} {{__('messages.image')}}</label>'+
+                                        '<div class="custom-file">'+
+                                        '<input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
+                                            '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
+                                            '</div>'+        
+                                            '<center style="display: none" id="image-viewer-section" class="pt-2">'+
+'<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '</center>'+
+
+                                            '<a href="javascript:void(0)" class="remove-section" data-row-id="'+i+'" style="float:right">Remove</a>'+
+                                        '</div>'+    
+                                    '</div>'+
+                                '</div>';
+                                 i++;          
+
+                                $("#colored_image_section").append(htmlData);
+
+            });
+        });
+
+        $(document).on("click",".remove-section",function(){
+            var row_id = $(this).attr("data-row-id");
+            $(".colored-image-section"+row_id).remove();
+        }); 
+
+
+
         $('#product_form').on('submit', function () {
             var formData = new FormData(this);
             $.ajaxSetup({

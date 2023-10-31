@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
+
 use App\Models\User;
 use App\Models\Wishlist;
 
@@ -44,7 +45,7 @@ class ProductController extends Controller
              // Validate the input data
              $validation = Validator::make($request->all(), $validationRules, [
                  'page.required' => 'page is required.',
-                 'category_id.required' => 'category ID is required.',
+                 'category_id.required' => 'category id is required.',
              ]);
              
  
@@ -75,17 +76,15 @@ class ProductController extends Controller
             ->orderBy($orderColumn, $orderBy)
             ->get();
             // Use the map method to modify the collection
-            // Use the map method to modify the collection
+
             $items = $items->map(function ($item) {
                 // Assuming $item is an instance of the 'product' model
-                $imagePath = (env('APP_ENV') == 'local') ? asset('storage/banner/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
             
                 // Add the image path to the $item object
                 $item->image = $imagePath;
             
-                // Remove this line if you don't need the images property from the 'product' model
-               // unset($item->images);
-            
+                // Remove this line if you don't need the images property from the 'product' model            
                 return $item;
             });     
 
@@ -227,6 +226,53 @@ class ProductController extends Controller
             }
             
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $productImages]);
+             
+         } catch (\Exception $e) {
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+         }
+     }
+
+     /**
+     * It will get product detail.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    
+     public function getProductDetail(Request $request)
+     {
+         try {
+             // Get requested data
+             
+             $itemId = $request->post('item_id');
+             // Define the validation rules
+             $validationRules = [
+                 'item_id' => 'required',
+             ]; 
+         
+             // Validate the input data
+             $validation = Validator::make($request->all(), $validationRules, [
+                 'item_id.required' => 'item id is required.',
+             ]);
+             
+ 
+             // Check for validation errors and return error response if any
+             if ($validation->fails()) {
+                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+             }
+ 
+
+            // Query to retrieve product items with associated products for the specific user
+            $itemDetail = Product::where('id', $itemId)
+            ->with('coloredImages')
+            ->select('id', 'name', 'description', 'price', 'discount', 'discount_type')
+            ->first();      
+
+
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully', 'data' => $itemDetail]);
+
+
              
          } catch (\Exception $e) {
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);

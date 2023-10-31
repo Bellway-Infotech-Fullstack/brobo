@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductColoredImage;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -87,10 +88,22 @@ class ProductController extends Controller
      
         $Product->discount = $request->discount_type == 'amount' ? $request->discount : $request->discount;
         $Product->discount_type = $request->discount_type;
-
- 
-
         $Product->save();
+
+        $productId = $Product->id;
+
+        $productColoredImage = new ProductColoredImage;
+
+        if(count($request->input('colored_name')) > 0){
+            for($i = 0; $i < count($request->input('colored_name')); $i++){
+                $productColoredImage = new ProductColoredImage();
+                $productColoredImage->product_id = $productId;
+                $productColoredImage->color_name = $request->input('colored_name')[$i];           
+                $productColoredImage->image = Helpers::upload('product/colored_images', 'png', $request->file('colored_image')[$i]);
+                $productColoredImage->save();
+            }
+        }
+           
         // return back();
         return response()->json([], 200);
     }
