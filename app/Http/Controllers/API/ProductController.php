@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use App\Models\Wishlist;
 
@@ -62,31 +62,39 @@ class ProductController extends Controller
                  $orderBy = 'desc';
                  $orderColumn = 'created_at';   
             }
-            
+ 
+
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $userId = $user->id;
+       
             $items = Product::whereHas('category', function ($query) use ($cateogyId) {
                 $query->where('parent_id', $cateogyId);
             })
             ->when($isHideOutOfStockItem == '1', function ($query) {
                 $query->where('total_stock', '>', 0);
             })
-
             ->unless($isHideOutOfStockItem == '1', function ($query) {
                 $query->where('total_stock', '=', 0);
             })
+            ->leftJoin('wishlists', function($join) use ($userId) {
+                $join->on('products.id', '=', 'wishlists.item_id')
+                     ->where('wishlists.user_id', '=', $userId);
+            })
             ->orderBy($orderColumn, $orderBy)
+            ->select('products.*', 'wishlists.item_id AS is_item_in_whishlist') // Renamed to 'is_item_in_whishlist'
             ->get();
-            // Use the map method to modify the collection
-
+            
+            
             $items = $items->map(function ($item) {
-                // Assuming $item is an instance of the 'product' model
                 $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
-            
-                // Add the image path to the $item object
+                
                 $item->image = $imagePath;
-            
-                // Remove this line if you don't need the images property from the 'product' model            
+                $item->is_item_in_whishlist = $item->is_item_in_whishlist ? 1 : 0;
+                
                 return $item;
-            });     
+            });
+               
 
            
             

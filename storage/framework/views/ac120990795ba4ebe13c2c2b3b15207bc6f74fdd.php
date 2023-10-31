@@ -1,5 +1,15 @@
 <?php $__env->startSection('title','Settings'); ?>
-
+<?php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+  $language=\App\Models\BusinessSetting::where('key','language')->first();
+  $language = $language->value ?? null;
+  $map_api_key_data = \App\Models\BusinessSetting::where('key', 'map_api_key')->first();
+  $map_api_key      = (isset($map_api_key_data) && !empty($map_api_key_data)) ? $map_api_key_data->value : '';
+  $name=\App\Models\BusinessSetting::where('key','business_name')->first();
+  $currency_symbol_position=\App\Models\BusinessSetting::where('key','currency_symbol_position')->first();
+  $config=\App\CentralLogics\Helpers::get_business_settings('maintenance_mode');
+?>
 <?php $__env->startPush('css_or_js'); ?>
 <style>
     .switch {
@@ -90,17 +100,18 @@
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 12px">
                         <div class="row">
-                            <?php($config=\App\CentralLogics\Helpers::get_business_settings('maintenance_mode'))
+                         
                             <div class="col-6">
                                 <h5 class="text-capitalize">
                                     <i class="tio-settings-outlined"></i>
-                                    {{__('messages.maintenance_mode')}}
+                                    <?php echo e(__('messages.maintenance_mode')); ?>
+
                                 </h5>
                             </div>
                             <div class="col-6">
                                 <label class="switch ml-3 float-right">
                                     <input type="checkbox" class="status" onclick="maintenance_mode()"
-                                        {{isset($config) && $config?'checked':''}}>
+                                        <?php echo e(isset($config) && $config?'checked':''); ?>>
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -109,44 +120,47 @@
                 </div>
             </div>
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
-                <form action="{{route('admin.business-settings.update-setup')}}" method="post"
+                <form action="<?php echo e(route('admin.business-settings.update-setup')); ?>" method="post"
                       enctype="multipart/form-data">
-                    @csrf
-                    @php($name=\App\Models\BusinessSetting::where('key','business_name')->first())
+                      <?php echo csrf_field(); ?>
                     <div class="form-group">
-                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.business')}} {{__('messages.name')}}</label>
-                        <input type="text" name="restaurant_name" value="{{$name->value??''}}" class="form-control"
-                               placeholder="{{__('messages.new_business')}}" required>
+                        <label class="input-label" for="exampleFormControlInput1">Business Name</label>
+                        <input type="text" name="restaurant_name" value="<?php echo e($name->value??''); ?>" class="form-control"
+                               placeholder="New Business" required>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 col-sm-6 col-12">
-                        @php($currency_code=\App\Models\BusinessSetting::where('key','currency')->first())
+               
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.currency')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1">
+                                    <?php echo e(__('messages.business')); ?>
+
+                                    
+                                    <?php echo e(__('messages.currency')); ?></label>
                                 <select name="currency" class="form-control js-select2-custom">
-                                    @foreach(\App\Models\Currency::orderBy('currency_code')->get() as $currency)
+                                    <?php $__currentLoopData = \App\Models\Currency::orderBy('currency_code')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option
-                                            value="{{$currency['currency_code']}}" {{$currency_code?($currency_code->value==$currency['currency_code']?'selected':''):''}}>
-                                            {{$currency['currency_code']}} ( {{$currency['currency_symbol']}} )
+                                            value="<?php echo e($currency['currency_code']); ?>" <?php echo e($currency_code?($currency_code->value==$currency['currency_code']?'selected':''):''); ?>>
+                                            <?php echo e($currency['currency_code']); ?> ( <?php echo e($currency['currency_symbol']); ?> )
                                         </option>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-md-6 col-sm-6 col-12">
-                        @php($currency_symbol_position=\App\Models\BusinessSetting::where('key','currency_symbol_position')->first())
+                      
                             <div class="form-group">
-                                <label class="input-label text-capitalize" for="currency_symbol_position">{{__('messages.currency_symbol_positon')}}</label>
+                                <label class="input-label text-capitalize" for="currency_symbol_position"><?php echo e(__('messages.currency_symbol_positon')); ?></label>
                                 <select name="currency_symbol_position" class="form-control js-select2-custom" id="currency_symbol_position">
                                     <option
-                                        value="left" {{$currency_symbol_position?($currency_symbol_position->value=='left'?'selected':''):''}}>
-                                        {{__('messages.left')}} ({{\App\CentralLogics\Helpers::currency_symbol()}}123)
+                                        value="left" <?php echo e($currency_symbol_position?($currency_symbol_position->value=='left'?'selected':''):''); ?>>
+                                        <?php echo e(__('messages.left')); ?> (<?php echo e(\App\CentralLogics\Helpers::currency_symbol()); ?>123)
                                     </option>
                                     <option
-                                        value="right" {{$currency_symbol_position?($currency_symbol_position->value=='right'?'selected':''):''}}>
-                                        {{__('messages.right')}} (123{{\App\CentralLogics\Helpers::currency_symbol()}})
+                                        value="right" <?php echo e($currency_symbol_position?($currency_symbol_position->value=='right'?'selected':''):''); ?>>
+                                        <?php echo e(__('messages.right')); ?> (123<?php echo e(\App\CentralLogics\Helpers::currency_symbol()); ?>)
                                     </option>
                                 </select>
                             </div>
@@ -154,11 +168,10 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-sm-6 col-12">
-                            @php
+                            <?php
                               $countryData =    \App\Models\BusinessSetting::where('key','country')->first();   
                               $country = (isset($countryData) && !empty($countryData)) ?? $countryData->value ;
-                               echo "country".$country;
-                               die; 
+                              
                             ?>
                             <div class="form-group">
                                 <label class="input-label text-capitalize d-inline" for="country"><?php echo e(__('messages.country')); ?></label>
@@ -559,58 +572,14 @@
                                 <label class="input-label d-inline"><?php echo e(__('messages.order_confirmation_model')); ?></label><small style="color: red">
                                 <span class="input-label-secondary" title="<?php echo e(__('messages.order_confirmation_model_hint')); ?>"><img src="<?php echo e(asset('/public/assets/admin/img/info-circle.svg')); ?>"></span>
                                  *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="restaurant" name="order_confirmation_model"
-                                                   id="order_confirmation_model" <?php echo e($order_confirmation_model=='restaurant'?'checked':''); ?>>
-                                            <label class="custom-control-label" for="order_confirmation_model"><?php echo e(__('messages.vendor')); ?></label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                   
-                                    <!-- End Custom Radio -->
-                                </div>
+                              
                             </div>
                         </div>
 
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4 col-12">
-                            <?php ($canceled_by_restaurant=\App\Models\BusinessSetting::where('key','canceled_by_restaurant')->first()); ?>
-                            <?php ($canceled_by_restaurant=$canceled_by_restaurant?$canceled_by_restaurant->value:0); ?>
-                            <div class="form-group">
-                                <label class="input-label d-inline"><?php echo e(__('messages.vendor_cancellation_toggle')); ?></label><small style="color: red">
-                                <!-- <span class="input-label-secondary" title="<?php echo e(__('messages.customer_varification_toggle')); ?>"><img src="<?php echo e(asset('/public/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.customer_varification_toggle')); ?>"></span> -->
-                                 *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="canceled_by_restaurant"
-                                                   id="canceled_by_restaurant" <?php echo e($canceled_by_restaurant==1?'checked':''); ?>>
-                                            <label class="custom-control-label" for="canceled_by_restaurant"><?php echo e(__('messages.yes')); ?></label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="canceled_by_restaurant"
-                                                   id="canceled_by_restaurant2" <?php echo e($canceled_by_restaurant==0?'checked':''); ?>>
-                                            <label class="custom-control-label" for="canceled_by_restaurant2"><?php echo e(__('messages.no')); ?></label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div>
-                      
+                     
                      
 
                     </div>
@@ -705,35 +674,7 @@
 
                        
 
-                        <div class="col-md-4 col-12">
-                            <?php ($restaurant_self_registration=\App\Models\BusinessSetting::where('key','toggle_restaurant_registration')->first()); ?>
-                            <?php ($restaurant_self_registration=$restaurant_self_registration?$restaurant_self_registration->value:0); ?>
-                            <div class="form-group">
-                                <label class="input-label d-inline"><?php echo e(__('messages.vendor_self_registration')); ?></label><small style="color: red"><span
-                                        class="input-label-secondary" title="<?php echo e(__('messages.vendor_self_registration')); ?>"><img src="<?php echo e(asset('/public/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.vendor_self_registration')); ?>"></span> *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="restaurant_self_registration"
-                                                   id="restaurant_self_registration1" <?php echo e($restaurant_self_registration==1?'checked':''); ?>>
-                                            <label class="custom-control-label" for="restaurant_self_registration1"><?php echo e(__('messages.on')); ?></label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="restaurant_self_registration"
-                                                   id="restaurant_self_registration2" <?php echo e($restaurant_self_registration==0?'checked':''); ?>>
-                                            <label class="custom-control-label" for="restaurant_self_registration2"><?php echo e(__('messages.off')); ?></label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div>
+                        
 
                       
 
@@ -753,7 +694,7 @@
                         <?php ($admin_commission=\App\Models\BusinessSetting::where('key','service_coin_on_registration')->first()); ?>
                             <div class="form-group p-2">
                                 <label class="input-label text-capitalize" >Servicely Coin on Registration</label>
-                                <input type="number" name="service_coin_on_registration" class="form-control" value="<?php echo e($admin_commission?$admin_commission->value:0); ?>" min="0"  required>
+                                <input type="number" name="service_coin_on_registration" class="form-control" value="<?php echo e((isset($admin_commission) && !empty($admin_commission))?$admin_commission->value:0); ?>" min="0"  required>
                             </div>
                         </div>
 
@@ -761,7 +702,7 @@
                         <?php ($admin_commission=\App\Models\BusinessSetting::where('key','service_coin_on_referral')->first()); ?>
                             <div class="form-group p-2">
                                 <label class="input-label text-capitalize" >Servicely Referral Coin</label>
-                                <input type="number" name="service_coin_on_referral" class="form-control" value="<?php echo e($admin_commission?$admin_commission->value:0); ?>" min="0"  required>
+                                <input type="number" name="service_coin_on_referral" class="form-control" value="" min="0"  required>
                             </div>
                         </div>
 
@@ -769,7 +710,7 @@
                         <?php ($admin_commission=\App\Models\BusinessSetting::where('key','minimum_coin_transfer')->first()); ?>
                             <div class="form-group p-2">
                                 <label class="input-label text-capitalize" >Minimum Coin Transfer</label>
-                                <input type="number" name="minimum_coin_transfer" class="form-control" value="<?php echo e($admin_commission?$admin_commission->value:0); ?>" min="0"  required>
+                                <input type="number" name="minimum_coin_transfer" class="form-control" value="<?php echo e((isset($admin_commission) && !empty($admin_commission)) ? $admin_commission->value:0); ?>" min="0"  required>
                             </div>
                         </div>
 
@@ -810,7 +751,15 @@
                                        required><?php echo e($address->value??''); ?></textarea>
                             </div>
                             <?php ($default_location=\App\Models\BusinessSetting::where('key','default_location')->first()); ?>
-                            <?php ($default_location=$default_location->value?json_decode($default_location->value, true):0); ?>
+                            <?php
+                                $default_location = '';
+                                if(isset($default_location) && !empty($default_location)){
+                                    $default_location = $default_location->value?json_decode($default_location->value, true):0;
+                                }
+                            ?>
+                             
+
+                           
                             <div class="form-group">
                                 <label class="input-label text-capitalize d-inline" for="latitude"><?php echo e(__('messages.latitude')); ?><span
                                         class="input-label-secondary" title="<?php echo e(__('messages.click_on_the_map_select_your_defaul_location')); ?>"><img src="<?php echo e(asset('/public/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.click_on_the_map_select_your_defaul_location')); ?>"></span></label>
@@ -857,7 +806,7 @@
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
                                  onerror="this.src='<?php echo e(asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')); ?>'"
-                                 src="<?php echo e(asset('storage/app/public/business/'.$logo)); ?>" alt="logo image"/>
+                                 src="<?php echo e(asset('storage/business/'.$logo)); ?>" alt="logo image"/>
                         </center>
                     </div>
                     <hr>
@@ -871,7 +820,9 @@
 
 <?php $__env->startPush('script_2'); ?>
     <script>
-        
+      
+        let language = <?php echo($language); ?>;
+        $('[id=language]').val(language);
 
         function maintenance_mode() {
         <?php if(env('APP_MODE')=='demo'): ?>
@@ -926,7 +877,9 @@
             readURL(this);
         });
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo e(\App\Models\BusinessSetting::where('key', 'map_api_key')->first()->value); ?>&libraries=places&v=3.45.8"></script>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo e($map_api_key); ?>&libraries=places&v=3.45.8"></script>
     <script>
         function initAutocomplete() {
             var myLatLng = { lat: <?php echo e($default_location?$default_location['lat']:'-33.8688'); ?>, lng: <?php echo e($default_location?$default_location['lng']:'151.2195'); ?> };

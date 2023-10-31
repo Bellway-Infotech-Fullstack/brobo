@@ -73,12 +73,12 @@ class CustomerAuthController extends Controller
             $user = User::create($request->toArray());
 
             // Generate a token for the user
-         //   $token = JWTAuth::fromUser($user);
+            $token = JWTAuth::fromUser($user);
 
             // update auth token
-         /*  $userData = User::where('mobile_number',$request->mobile_number)->first();
+           $userData = User::where('mobile_number',$request->mobile_number)->first();
            $userData->auth_token =  $token;
-           $userData->save();*/
+           $userData->save();
 
              // Save password in user's password table
 
@@ -91,7 +91,7 @@ class CustomerAuthController extends Controller
             $message = "Hello $request->name,Welcome to brobo.You are registered successfully.";
          //  dd($messsage);
             // send verification code to user's mobile number
-            event(new SendSMS($request->mobile_number,$message));
+           // event(new SendSMS($request->mobile_number,$message));
 
             // Return a success response with the token
             $response = ['status' => 'success', 'code' => 201, 'message' => 'User registered successfully','token' => $token];
@@ -201,7 +201,7 @@ class CustomerAuthController extends Controller
                 $userData->save();
                 // send verification code to user's mobile number
                 $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
-                event(new SendSMS($mobileNumber,$message));
+              //  event(new SendSMS($mobileNumber,$message));
 
 
                 return response()->json(['status' => 'success', 'code' => 200, 'data' => $userData, 'message' => 'OTP has been sent to your mobile number to reset password']);
@@ -293,7 +293,7 @@ class CustomerAuthController extends Controller
                 $userData->save();
                 // send verification code to user's mobile number
                 $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
-                
+                //  event(new SendSMS($mobileNumber,$message));
                 return response()->json(['status' => 'success', 'code' => 200, 'data' => $userData, 'message' => 'OTP has been sent to your mobile number to reset password']);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User not found']);
@@ -399,23 +399,17 @@ class CustomerAuthController extends Controller
      */
     public function getCustomerDetails(Request $request)
     {
+      
         // Try to get customer details
         try {
-            // Get customer_id from the request
-            $customerId = $request->post('customer_id');
 
-            // Validate the input data
-            $validation = Validator::make($request->all(), [
-                'customer_id' => 'required',
-            ], [
-                'customer_id.required' => 'Please enter a customer id.',
-            ]);
+            // Get customer_id from the token
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
+
+          
             
-
-            // Check for validation errors and return error response if any
-            if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
-            }
 
             // Find the user by customer_id
             $userData = User::find($customerId);
@@ -442,8 +436,12 @@ class CustomerAuthController extends Controller
     {
         // Try to update customer details
         try {
-            // Get customer_id from the request
-            $customerId = $request->post('customer_id');
+
+            // Get customer_id from the token
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
+
             $emailValidation = "";
             $genderValidation = "";
             if(!empty($request->post('email'))){
@@ -670,24 +668,13 @@ class CustomerAuthController extends Controller
     {
         // Try to delete a customer account
         try {
-            // Get customer_id from the request
-            $customerId = $request->post('customer_id');
 
-            // Invalidate the user's token
-            JWTAuth::invalidate(JWTAuth::getToken());
 
-            // Validate the input data
-            $validation = Validator::make($request->all(), [
-                'customer_id' => 'required',
-            ], [
-                'customer_id.required' => 'Please enter a customer id.',
-            ]);
-            
 
-            // Check for validation errors and return error response if any
-            if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
-            }
+
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
 
             // Find the user by customer_id
             $user = User::find($customerId);
