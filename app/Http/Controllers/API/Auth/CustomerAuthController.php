@@ -93,8 +93,11 @@ class CustomerAuthController extends Controller
             // send verification code to user's mobile number
            // event(new SendSMS($request->mobile_number,$message));
 
-            // Return a success response with the token
-            $response = ['status' => 'success', 'code' => 201, 'message' => 'User registered successfully','token' => $token];
+              // Find the user by customer_id
+              $userData = User::find($user->id);
+
+              // Return a success response with the token
+              $response = ['status' => 'success', 'code' => 201, 'message' => 'User registered successfully', 'data' => $userData];
             return response()->json($response);
         } catch (\Exception $e) {
           //  dd($e);
@@ -444,6 +447,9 @@ class CustomerAuthController extends Controller
 
             $emailValidation = "";
             $genderValidation = "";
+            $nameValidation = "";
+            $mobileValidation = "";
+
             if(!empty($request->post('email'))){
                 $emailValidation = 'email|unique:users,email,'.$customerId;
             }
@@ -452,25 +458,27 @@ class CustomerAuthController extends Controller
                 $genderValidation = 'in:Male,Female';
             }
 
+            if(!empty($request->post('name'))){
+                $nameValidation = 'regex:/^[A-Za-z\s]+$/';
+            }
+
+            if(!empty($request->post('mobile_number'))){
+                $mobileValidation = 'regex:/\+91[0-9]{10}/|unique:users,mobile_number,'.$customerId;
+            }
+
             
 
             // Validate the input data
             $validation = Validator::make($request->all(), [
-                'customer_id' => 'required',
-                'name' => 'required|regex:/^[A-Za-z\s]+$/',
-                'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users,mobile_number,'.$customerId,
+                'name' => $nameValidation,
+                'mobile_number' => $mobileValidation,
                 'email' => $emailValidation,
                 'gender' => $genderValidation
             ], [
-                'customer_id.required' => 'Please enter a customer id.',
-                'name.required' => 'Please enter a name.',
                 'name.regex' => 'Name should only contain letters and spaces.',
-                'mobile_number.required' => 'Please enter a mobile number.',
                 'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
                 'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
-                'email.required' => 'Please enter an email address.',
                 'email.*' => 'The email address is invalid. Please provide a valid email.',
-                'gender.required' => 'Please select a gender.',
                 'gender.*' => 'Invalid gender selection. Please choose a valid gender option.',
             ]);
             
@@ -489,6 +497,7 @@ class CustomerAuthController extends Controller
                 $userData->email = $request->post('email');
                 $userData->gender = $request->post('gender');
                 $userData->mobile_number = $request->post('mobile_number');
+                $userData->address = $request->post('address');
 
                 $userData->save();
 

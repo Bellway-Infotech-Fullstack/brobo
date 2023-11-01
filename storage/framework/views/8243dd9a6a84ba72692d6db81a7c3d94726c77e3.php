@@ -55,7 +55,7 @@
                                href="<?php echo e(route('admin.order.list',['status'=>'pending'])); ?>">
                                 
                                 
-                                <img src="<?php echo e(asset($assetPrefixPath . 'assets/admin/img/booking.png')); ?>" style="width: 20px; height: auto;" />
+                                <img src="<?php echo e(asset($assetPrefixPath . '/assets/admin/img/booking.png')); ?>" style="width: 20px; height: auto;" />
                                 
                             </a>
                         </div>
@@ -73,7 +73,7 @@
                                    }'>
                                 <div class="avatar avatar-sm avatar-circle">
                                     <img class="avatar-img"
-                                         onerror="this.src='<?php echo e(asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')); ?>'"
+                                         onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
                                          src="<?php echo e(asset('storage/app/public/admin')); ?>/<?php echo e(auth()->user()->id); ?>"
                                          alt="Image Description">
                                     <span class="avatar-status avatar-sm-status avatar-status-success"></span>
