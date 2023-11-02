@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\UsersAddress;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsersAddressController extends Controller
 {
@@ -24,12 +24,12 @@ class UsersAddressController extends Controller
     {
         try {
             // Get requested data
-            
-            $customerId = $request->post('customer_id');
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
             $addressId = $request->input('address_id'); // Assume you pass an 'address_id' for updating
             // Define the validation rules
             $validationRules = [
-                'customer_id' => 'required',
                 'house_name' => 'required',
                 'zip_code' => 'required',
             ];
@@ -41,7 +41,6 @@ class UsersAddressController extends Controller
 
             // Validate the input data
             $validation = Validator::make($request->all(), $validationRules, [
-                'customer_id.required' => 'Please enter a customer ID.',
                 'house_name.required' => 'Please enter a house name.',
                 'zip_code.required' => 'Please enter a zip code.',
                 'address_id.required' => 'Address ID is required for updates.',
@@ -88,45 +87,36 @@ class UsersAddressController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function getAddress(Request $request)
-    {
-        try {
-            // Get customer_id and verification_code from the request
-            $customerId       = $request->customer_id;
-            // Validate the input data
-            $validation = Validator::make($request->all(), [
-                'customer_id' => 'required',
-            ], [
-                'customer_id.required' => 'Please enter a customer id.',
-            ]);
-
-            // Validate the input data
-            $validation = Validator::make($request->all(), $validation);
-
-            // Check for validation errors and return error response if any
-            if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
-            }
-
-            // Find the user's address by user_id
-            $addressData = UserAddress::where('user_id', $customerId)->first();
-
-            if ($addressData) {
-                return response()->json(['status' => 'success', 'code' => 200,'data' => [
-                    'houseName' => $addressData->house_name,
-                    'floorNumber' => $addressData->floor_number,
-                    'landmark' => $addressData->landmark,
-                    'zipCode' => $addressData->zip_code,
-                ],
-            ]);
-            } else {
-                return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User has no address'], 404);
-            }
-        } catch (\Exception $e) {
-            // Handle exceptions, if any
-            return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
-        }
-    }
+    
+     public function getAddress(Request $request)
+     {
+         try {
+             // Get customer_id and verification_code from the request
+             $token = JWTAuth::getToken();
+             $user = JWTAuth::toUser($token);
+             $customerId = $user->id;
+            
+ 
+             // Find the user's address by user_id
+             $addressData = UsersAddress::where('customer_id', $customerId)->first();
+ 
+             if ($addressData) {
+                 return response()->json(['status' => 'success', 'code' => 200,'data' => [
+                     'houseName' => $addressData->house_name,
+                     'floorNumber' => $addressData->floor_number,
+                     'landmark' => $addressData->landmark,
+                     'zipCode' => $addressData->zip_code,
+                     'address_id' => $addressData->id
+                 ],
+             ]);
+             } else {
+                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User has no address'], 404);
+             }
+         } catch (\Exception $e) {
+             // Handle exceptions, if any
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
+         }
+     }
 
 
 }
