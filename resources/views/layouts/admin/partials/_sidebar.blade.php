@@ -19,7 +19,7 @@
                 
                 <?php
                 
-                     $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $$restaurant_logo) : asset('storage/app/public/business/' . $restaurant_logo);        
+                     $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $restaurant_logo) : asset('storage/app/public/business/' . $restaurant_logo);        
                 ?>
                 <a class="navbar-brand" href="{{route('admin.dashboard')}}" aria-label="Front">
                     <img class="navbar-brand-logo" style="max-height: 55px; max-width: 100%!important;"
