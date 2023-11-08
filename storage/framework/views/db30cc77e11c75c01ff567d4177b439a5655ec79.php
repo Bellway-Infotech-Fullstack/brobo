@@ -28,7 +28,7 @@
                         <h5><?php echo e(isset($category)?__('messages.update'):__('messages.add').' '.__('messages.new')); ?> <?php echo e(__('messages.sub_category')); ?></h5>
                     </div>
                     <div class="card-body">
-                        <form action="<?php echo e(isset($category)?route('admin.category.update',[$category['id']]):route('admin.category.store')); ?>" method="post">
+                        <form action="<?php echo e(isset($category)?route('admin.category.update',[$category['id']]):route('admin.category.store')); ?>" method="post" enctype="multipart/form-data">
                         <?php echo csrf_field(); ?>
                             <div class="form-group">
                                 <label class="input-label"
@@ -41,12 +41,29 @@
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
+                           
                             <div class="form-group">
                                 <label class="input-label"
                                     for="exampleFormControlInput1"><?php echo e(__('messages.name')); ?></label>
                                 <input type="text" name="name" value="<?php echo e(isset($category)?$category['name']:''); ?>"  class="form-control" placeholder="<?php echo e(__('messages.sub_category')); ?>"
                                     required>
                             </div>
+                                <div class="form-group">
+                                    <label><?php echo e(__('messages.image')); ?></label><small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 1:1 )</small>
+                                    <div class="custom-file">
+                                        <input type="file" name="image" id="customFileEg1" class="custom-file-input"
+                                               accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                        <label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
+                                    </div>
+                                    <hr>
+                                </div>
+                                <div class="col-12">
+                                    <center>
+                                        <img style="width: 30%;border: 1px solid; border-radius: 10px;" id="viewer"
+                                             src="" alt=""/>
+                                    </center>
+                                </div>
+                           
                             <input name="position" value="1" style="display: none">
                             <button type="submit" class="btn btn-primary"><?php echo e(isset($category)?__('messages.update'):__('messages.save')); ?></button>
                         </form>
@@ -162,7 +179,23 @@
 
 <?php $__env->startPush('script_2'); ?>
     <script>
+         function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#viewer').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#customFileEg1").change(function () {
+            readURL(this);
+        });
         $(document).on('ready', function () {
+            
             // INITIALIZATION OF DATATABLES
             // =======================================================
             var datatable = $.HSCore.components.HSDatatables.init($('#columnSearchDatatable'), {

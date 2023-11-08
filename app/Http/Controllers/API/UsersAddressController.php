@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\UsersAddress;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsersAddressController extends Controller
 {
@@ -24,14 +24,15 @@ class UsersAddressController extends Controller
     {
         try {
             // Get requested data
-            
-            $customerId = $request->post('customer_id');
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
             $addressId = $request->input('address_id'); // Assume you pass an 'address_id' for updating
             // Define the validation rules
             $validationRules = [
-                'customer_id' => 'required',
                 'house_name' => 'required',
                 'zip_code' => 'required',
+                'floor_number' => 'required',
             ];
 
             // If it's an update (address_id is provided), validate and update the existing address
@@ -41,9 +42,9 @@ class UsersAddressController extends Controller
 
             // Validate the input data
             $validation = Validator::make($request->all(), $validationRules, [
-                'customer_id.required' => 'Please enter a customer ID.',
                 'house_name.required' => 'Please enter a house name.',
                 'zip_code.required' => 'Please enter a zip code.',
+                'floor_number.required' => 'Please enter a floor number.',
                 'address_id.required' => 'Address ID is required for updates.',
                 'address_id.exists' => 'The provided address ID does not exist for this customer.',
             ]);
@@ -54,29 +55,40 @@ class UsersAddressController extends Controller
                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
-            // Find the user by customer_id
-            $userData = User::find($customerId);
-
-            if (!$userData) {
-                return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User does not exist']);
-            }
+       
 
             // Create or update the address based on whether 'address_id' is provided
             if ($addressId) {
                 // Update an existing address
                 $address = UsersAddress::find($addressId);
                 if ($address) {
-                    $address->update($request->all());
+                    $address->update(array(
+                        'house_name' => $request->house_name,
+                        'floor_number' => $request->floor_number,
+                        'landmark' => $request->landmark,
+                        'area_name' => $request->area_name,
+                        'zip_code' => $request->zip_code,
+                        'customer_id' => $customerId
+                    ));
                     return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address updated successfully']);
                 } else {
                     return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Address not found']);
                 }
             } else {
+
                 // Add a new address
-                UsersAddress::create($request->all());
-                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address added successfully']);
+                UsersAddress::create(array(
+                        'house_name' => $request->house_name,
+                        'floor_number' => $request->floor_number,
+                        'landmark' => $request->landmark,
+                        'zip_code' => $request->zip_code,
+                        'area_name' => $request->area_name,
+                        'customer_id' => $customerId
+                    ));
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address added successfully']);
             }
         } catch (\Exception $e) {
+ 
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
     }
@@ -92,31 +104,22 @@ class UsersAddressController extends Controller
     {
         try {
             // Get customer_id and verification_code from the request
-            $customerId       = $request->customer_id;
-            // Validate the input data
-            $validation = Validator::make($request->all(), [
-                'customer_id' => 'required',
-            ], [
-                'customer_id.required' => 'Please enter a customer id.',
-            ]);
-
-            // Validate the input data
-            $validation = Validator::make($request->all(), $validation);
-
-            // Check for validation errors and return error response if any
-            if ($validation->fails()) {
-                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
-            }
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
+           
 
             // Find the user's address by user_id
-            $addressData = UserAddress::where('user_id', $customerId)->first();
+            $addressData = UsersAddress::where('customer_id', $customerId)->first();
 
             if ($addressData) {
                 return response()->json(['status' => 'success', 'code' => 200,'data' => [
-                    'houseName' => $addressData->house_name,
-                    'floorNumber' => $addressData->floor_number,
+                    'house_name' => $addressData->house_name,
+                    'floor_number' => (int) $addressData->floor_number,
                     'landmark' => $addressData->landmark,
-                    'zipCode' => $addressData->zip_code,
+                    'zip_code' => $addressData->zip_code,
+                    'area_name' => $request->area_name,
+                    'address_id' => $addressData->id
                 ],
             ]);
             } else {

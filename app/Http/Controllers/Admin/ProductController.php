@@ -216,7 +216,7 @@ class ProductController extends Controller
 
     public function delete(Request $request)
     {
-        $product = Product::withoutGlobalScope(RestaurantScope::class)->find($request->id);
+        $product = Product::find($request->id);
 
         if($product->image)
         {

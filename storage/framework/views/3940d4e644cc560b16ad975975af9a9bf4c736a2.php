@@ -25,6 +25,21 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label class="input-label"
+                                    for="exampleFormControlSelect1"><?php echo e(__('messages.main')); ?> <?php echo e(__('messages.category')); ?>
+
+                                    <span class="input-label-secondary">*</span></label>
+                                <select id="exampleFormControlSelect1" name="parent_id" class="form-control" required>
+                                    <?php $__currentLoopData = \App\Models\Category::where('parent_id',0)->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($cat['id']); ?>" <?php echo e(isset($category)?($category['parent_id']==$cat['id']?'selected':''):''); ?> ><?php echo e($cat['name']); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+
+                        </div>
+                       
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.name')); ?></label>
                                 <input type="text" name="name" value="<?php echo e($category['name']); ?>" class="form-control" placeholder="">
                             </div>
@@ -43,8 +58,12 @@
                         </div>
                         <div class="col-12">
                             <center>
+                                <?php
+                                   $imagePath = (env('APP_ENV') == 'local') ? asset('storage/category/' . $category['image']) : asset('storage/app/public/category/' . $category['image']);
+
+                                   ?>
                                 <img style="width: 30%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                     src="<?php echo e(asset('storage/app/public/category')); ?>/<?php echo e($category['image']); ?>" alt=""/>
+                                     src="<?php echo e($imagePath); ?>" alt=""/>
                             </center>
                         </div>
                     </div>

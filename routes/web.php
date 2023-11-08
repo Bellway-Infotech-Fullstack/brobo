@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,11 @@ use Illuminate\Support\Facades\Route;
 // Route::get('pppp', function(){
 //             session()->flush();
 //         });
-
+Route::get('clear-all-cache', function () {
+    echo "all cache cleared";
+    Artisan::call("optimize:clear");
+    
+});
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('terms-and-conditions', 'HomeController@terms_and_conditions')->name('terms-and-conditions');
 Route::get('about-us', 'HomeController@about_us')->name('about-us');
