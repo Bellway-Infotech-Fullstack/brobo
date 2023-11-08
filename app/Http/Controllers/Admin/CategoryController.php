@@ -16,13 +16,13 @@ class CategoryController extends Controller
 {
     function index()
     {
-        $categories=Category::latest()->paginate(config('default_pagination'));
+        $categories=Category::where('parent_id',0)->latest()->paginate(config('default_pagination'));
         return view('admin-views.category.index',compact('categories'));
     }
 
     function sub_index()
     {
-        $categories=Category::with(['parent'])->latest()->paginate(config('default_pagination'));
+        $categories=Category::with(['parent'])->where('parent_id', '<>', 0)->latest()->paginate(config('default_pagination'));
         return view('admin-views.category.sub-index',compact('categories'));
     }
 
@@ -88,7 +88,7 @@ class CategoryController extends Controller
         $category = category::find($request->id);
         $category->status = $request->status;
         $category->save();
-        Toastr::success(trans('messages.category_status_updated'));
+        Toastr::success('Sub Category status updated!');
         return back();
     }
 
