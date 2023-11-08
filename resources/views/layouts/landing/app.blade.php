@@ -69,8 +69,12 @@
             <div class="container">
                 <a class="navbar-brand" href="{{route('home')}}">
                     @php($logo=\App\CentralLogics\Helpers::get_settings('logo'))
+                    <?php
+                
+                        $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $logo) : asset('storage/app/public/business/' . $logo);        
+                    ?>
                     <img  onerror="this.src='{{asset('public/assets/admin/img/160x160/logo2.png')}}'"
-                          src="{{asset('storage/business/'.$logo)}}"
+                          src="{{$logoPath}}"
                           style="height:auto;width:100%; max-width:200px; max-height:60px">
                 </a>
                 <button style="background: #FFFFFF; border-radius: 2px;font-size: 13px" class="navbar-toggler" type="button"
