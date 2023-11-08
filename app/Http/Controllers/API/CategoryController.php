@@ -64,36 +64,42 @@ class CategoryController extends Controller
      */
 
      public function getPopularServices(Request $request)
-     {
-         try {
-            
-             // get popular service data 
+{
+    try {
+        // Get popular service data
+        $tentSubCategories = Category::where(['parent_id' => 1, 'status' => 1])->orderBy('created_at','desc')->get();
+        $floarlSubCategories = Category::where(['parent_id' => 2, 'status' => 1])->orderBy('created_at','desc')->get();
 
-             $tentSubCategories = Category::where(['parent_id' => 1, 'status' => 1])->get();
-             $floarlSubCategories = Category::where(['parent_id' => 2, 'status' => 1])->get();
-             
-             if (count($tentSubCategories) > 0 || count($floarlSubCategories) > 0) {
-                 // Merge the tentSubCategories and floarlSubCategories collections
-                 $mergedData = $floarlSubCategories->merge($tentSubCategories);
-             
-                 return response()->json([
-                     'status' => 'success',
-                     'code' => 200,
-                     'data' => $mergedData,
-                 ]);
-             } else {
-                 // Handle the case when no data found.
-                 return response()->json([
-                     'status' => 'success',
-                     'code' => 200,
-                     'data' => [], // Return an empty array if no data is found
-                 ]);
-             }
-             
+        if (count($tentSubCategories) > 0 || count($floarlSubCategories) > 0) {
+            // Merge the tentSubCategories and floarlSubCategories collections
+            $mergedData = $floarlSubCategories->merge($tentSubCategories);
 
-         } catch (\Exception $e) {
-             // Handle exceptions, if any
-             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
-         }
-     }
+            // Map the image paths for each category
+            $mergedData = $mergedData->map(function ($category) {
+                $imagePath = (env('APP_ENV') == 'local') ? asset('storage/category/' . $category->image) : asset('storage/app/public/category/' . $category->image);
+
+                $category->image = $imagePath;
+
+                return $category;
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => $mergedData,
+            ]);
+        } else {
+            // Handle the case when no data found.
+            return response()->json([
+                'status' => 'success',
+                'code' => 200,
+                'data' => [], // Return an empty array if no data is found
+            ]);
+        }
+    } catch (\Exception $e) {
+        // Handle exceptions, if any
+        return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
+    }
+}
+
 }

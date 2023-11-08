@@ -99,13 +99,15 @@ class CategoryController extends Controller
         ]);
         $category = category::find($id);
 
+
+        $category->parent_id = $request->parent_id;
         $category->name = $request->name;
         $category->image = $request->has('image') ? Helpers::update('category/', $category->image, 'png', $request->file('image')) : $category->image;
         $category->save();
-        Toastr::success(trans('messages.category_updated_successfully'));
+       // Toastr::success(trans('messages.category_updated_successfully'));
 
         if($category->parent_id == 0)
-            Toastr::success(trans('messages.category_updated_successfully'));
+              Toastr::success(trans('messages.category_updated_successfully'));
         else
             Toastr::success('Sub Category updated successfully');
 

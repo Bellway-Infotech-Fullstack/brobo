@@ -28,13 +28,15 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $cateogyId = $request->post('category_id');
+             $categoryId = $request->post('category_id');
              $page = $request->post('page');
-             $orderBy = $request->post('order_by');
-             $orderColumn = $request->post('order_column');
-             $isDefaultSort = $request->post('is_default_sort') ?? 1;  
-             $isHideOutOfStockItem = $request->post('is_hide_out_of_stock_items');   
+             $orderBy = $request->post('order_by') ?? 'desc';
+             $orderColumn = $request->post('order_column') ?? 'created_at';
+             $isDefaultSort = $request->post('is_default_sort') ;  
+             $isHideOutOfStockItem = $request->post('is_hide_out_of_stock_items') ?? 1;   
              $perPage = 10; // Number of items to load per page
+             
+             $desiredCategoryId = $request->post('sub_category_id');
             
              // Define the validation rules
              $validationRules = [
@@ -68,39 +70,42 @@ class ProductController extends Controller
             $user = JWTAuth::toUser($token);
             $userId = $user->id;
        
-            $items = Product::whereHas('category', function ($query) use ($cateogyId) {
-                $query->where('parent_id', $cateogyId);
-            })
-            ->when($isHideOutOfStockItem == '1', function ($query) {
-                $query->where('total_stock', '>', 0);
-            })
-            ->unless($isHideOutOfStockItem == '1', function ($query) {
-                $query->where('total_stock', '=', 0);
-            })
-            ->leftJoin('wishlists', function($join) use ($userId) {
-                $join->on('products.id', '=', 'wishlists.item_id')
-                     ->where('wishlists.user_id', '=', $userId);
-            })
-            ->orderBy($orderColumn, $orderBy)
-            ->select('products.*', 'wishlists.item_id AS is_item_in_whishlist') // Renamed to 'is_item_in_whishlist'
-            ->get();
-            
-            
-            $items = $items->map(function ($item) {
-                $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
-                
-                $item->image = $imagePath;
-                $item->is_item_in_whishlist = $item->is_item_in_whishlist ? 1 : 0;
-                
-                return $item;
-            });
-               
+            $items = Product::select('products.*')
+                ->whereHas('category', function ($query) use ($categoryId) {
+                    $query->where('parent_id', $categoryId);
+                })
+                ->when($isHideOutOfStockItem == '1', function ($query) {
+                    $query->where('total_stock', '>', 0);
+                }, function ($query) {
+                    $query->where('total_stock', '=', 0);
+                })
+                ->leftJoin('wishlists', function ($join) use ($userId) {
+                    $join->on('products.id', '=', 'wishlists.item_id')
+                        ->where('wishlists.user_id', '=', $userId);
+                })
+                ->when(!empty($desiredCategoryId), function ($query) use ($desiredCategoryId) {
+                    $query->where('category_id', '=', $desiredCategoryId);
+                })
+                ->orderBy($orderColumn, $orderBy)
+                ->paginate($perPage, ['*'], 'page', $page);
 
+                $items = $items->map(function ($item) {
+                    $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                    
+                    $item->image = $imagePath;
+
+                    // Set is_item_in_wishlist to 1 if it's not NULL, otherwise set it to 0
+                    $item->is_item_in_wishlist = ($item->is_item_in_wishlist !== null) ? 1 : 0;
+
+                    return $item;
+                });
+            
            
             
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
              
          } catch (\Exception $e) {
+           
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
      }
@@ -274,7 +279,7 @@ class ProductController extends Controller
             // Query to retrieve product items with associated products for the specific user
             $itemDetail = Product::where('id', $itemId)
             ->with('coloredImages')
-            ->select('id', 'name', 'description', 'price', 'discount', 'discount_type')
+            ->select('*')
             ->first();      
 
 
