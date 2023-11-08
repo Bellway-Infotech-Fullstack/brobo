@@ -1046,7 +1046,7 @@
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
                                  onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
-                                 src="{{$logoPath)}}" alt="logo image"/>
+                                 src="{{$logoPath}}" alt="logo image"/>
                         </center>
                     </div>
                     <hr>
