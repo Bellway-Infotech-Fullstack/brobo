@@ -1039,10 +1039,14 @@
                             <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
                         </div>
                         <hr>
+                        <?php
+                
+                        $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $logo) : asset('storage/app/public/business/' . $logo);        
+                    ?>
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
                                  onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
-                                 src="{{asset('storage/business/'.$logo)}}" alt="logo image"/>
+                                 src="{{$logoPath)}}" alt="logo image"/>
                         </center>
                     </div>
                     <hr>
