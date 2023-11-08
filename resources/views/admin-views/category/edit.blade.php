@@ -27,6 +27,20 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
+                                <label class="input-label"
+                                    for="exampleFormControlSelect1">{{__('messages.main')}} {{__('messages.category')}}
+                                    <span class="input-label-secondary">*</span></label>
+                                <select id="exampleFormControlSelect1" name="parent_id" class="form-control" required>
+                                    @foreach(\App\Models\Category::where('parent_id',0)->get() as $cat)
+                                        <option value="{{$cat['id']}}" {{isset($category)?($category['parent_id']==$cat['id']?'selected':''):''}} >{{$cat['name']}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                        </div>
+                       
+                        <div class="col-6">
+                            <div class="form-group">
                                 <label class="input-label" for="exampleFormControlInput1">{{__('messages.name')}}</label>
                                 <input type="text" name="name" value="{{$category['name']}}" class="form-control" placeholder="">
                             </div>
@@ -45,8 +59,12 @@
                         </div>
                         <div class="col-12">
                             <center>
+                                @php
+                                   $imagePath = (env('APP_ENV') == 'local') ? asset('storage/category/' . $category['image']) : asset('storage/app/public/category/' . $category['image']);
+
+                                   @endphp
                                 <img style="width: 30%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                     src="{{asset('storage/app/public/category')}}/{{$category['image']}}" alt=""/>
+                                     src="{{$imagePath}}" alt=""/>
                             </center>
                         </div>
                     </div>
