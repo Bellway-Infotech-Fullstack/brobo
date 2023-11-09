@@ -68,7 +68,7 @@ class ProductController extends Controller
 
             $token = JWTAuth::getToken();
             $user = JWTAuth::toUser($token);
-            $userId = $user->id;
+            $userId = (isset($user) && !empty($user)) ? $user->id : '';
        
             $items = Product::select('products.*')
                 ->whereHas('category', function ($query) use ($categoryId) {
@@ -127,7 +127,9 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $customerId = $request->post('customer_id');
+             $token = JWTAuth::getToken();
+             $user = JWTAuth::toUser($token);
+             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
              $itemId = $request->input('item_id'); 
              $wishListId = $request->post('wishlist_id');
              // Define the validation rules
@@ -200,7 +202,9 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $customerId = $request->post('customer_id');
+             $token = JWTAuth::getToken();
+             $user = JWTAuth::toUser($token);
+             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
              $page = $request->post('page');
              $perPage = 10; // Number of items to load per page
              // Define the validation rules
