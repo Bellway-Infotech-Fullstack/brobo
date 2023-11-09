@@ -26,7 +26,7 @@ class UsersAddressController extends Controller
             // Get requested data
             $token = JWTAuth::getToken();
             $user = JWTAuth::toUser($token);
-            $customerId = $user->id;
+            $customerId = (isset($user) && !empty($user)) ? $user->id : '';
             $addressId = $request->input('address_id'); // Assume you pass an 'address_id' for updating
             // Define the validation rules
             $validationRules = [
