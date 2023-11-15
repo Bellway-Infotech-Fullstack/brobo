@@ -15,8 +15,10 @@ class ProductColoredImage extends Model
     protected $casts = [
         'color_name' => 'string',
         'image' => 'string',
+        'images'=>'array',
         'product_id' => 'integer',
         'created_at' => 'datetime',
+        
         'updated_at' => 'datetime',
     ];
 }
