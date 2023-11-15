@@ -292,14 +292,21 @@ class ProductController extends Controller
             
                 // Modify the item's image property
                 $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                if ($item->image === null) {
+                    $item->image = '';
+                }
                 $all_item_images = array();
                 if(isset($item->images) && !empty($item->images)){
                     foreach($item->images as $key => $val){
+                      
                         $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
                         array_push($all_item_images,$item_image);
                         
                     }
                     $item->images = $all_item_images;
+                }
+                if ($item->images === null) {
+                    $item->images = [];
                 }
 
                 

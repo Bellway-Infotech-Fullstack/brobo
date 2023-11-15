@@ -425,7 +425,7 @@
             });
         });
     </script>
-      <script src="<?php echo e(asset($assetPrefixPath.'assets/admin/js/spartan-multi-image-picker.js')); ?>"></script>
+      <script src="<?php echo e(asset($assetPrefixPath.'/assets/admin/js/spartan-multi-image-picker.js')); ?>"></script>
       <script type="text/javascript">
           
           $(function () {
