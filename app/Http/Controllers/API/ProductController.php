@@ -86,6 +86,7 @@ class ProductController extends Controller
                     $query->where('category_id', '=', $desiredCategoryId);
                 })
                 ->orderBy($orderColumn, $orderBy)
+                ->where('status',1)
                 ->paginate($perPage, ['*'], 'page', $page);
 
                 $items = $items->map(function ($item) {
@@ -283,10 +284,37 @@ class ProductController extends Controller
             $itemDetail = Product::where('id', $itemId)
             ->with('coloredImages')
             ->select('*')
-            ->first();      
+            ->get();      
+
+            $items = $itemDetail->map(function ($item) {
+                // Assuming $item->coloredImages is a collection of images
+               
+            
+                // Modify the item's image property
+                $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                $all_item_images = array();
+                if(isset($item->images) && !empty($item->images)){
+                    foreach($item->images as $key => $val){
+                        $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                        array_push($all_item_images,$item_image);
+                        
+                    }
+                    $item->images = $all_item_images;
+                }
+
+                
+            
+                // Check and set description to blank if null
+                if ($item->description === null) {
+                    $item->description = '';
+                }
+            
+                return $item;
+            });
+            
 
 
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully', 'data' => $itemDetail]);
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully', 'data' => $items[0]]);
 
 
              
