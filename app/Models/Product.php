@@ -13,12 +13,12 @@ class Product extends Model
 {
     protected $casts = [
         'tax' => 'float',
-        'price' => 'float',
+        'price' => 'string',
         'status' => 'integer',
         'discount' => 'float',
         'category_id' => 'integer',
-        'reviews_count' => 'integer',
         'created_at' => 'datetime',
+        'images'=>'array',
         'updated_at' => 'datetime',
     ];
 

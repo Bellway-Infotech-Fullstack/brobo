@@ -1,24 +1,23 @@
-@extends('layouts.admin.app')
-@php
+<?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphp
-@section('title','Update Product')
+?>
+<?php $__env->startSection('title','Update Product'); ?>
 
-@push('css_or_js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{asset($assetPrefixPath . '/admin/css/tags-input.min.css')}}" rel="stylesheet">
-@endpush
+<?php $__env->startPush('css_or_js'); ?>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <link href="<?php echo e(asset($assetPrefixPath . '/admin/css/tags-input.min.css')); ?>" rel="stylesheet">
+<?php $__env->stopPush(); ?>
 
-@section('content')
-    @php($opening_time='')
-    @php($closing_time='')
+<?php $__env->startSection('content'); ?>
+    <?php ($opening_time=''); ?>
+    <?php ($closing_time=''); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"><i class="tio-edit"></i> {{__('messages.product')}} {{__('messages.update')}}</h1>
+                    <h1 class="page-header-title"><i class="tio-edit"></i> <?php echo e(__('messages.product')); ?> <?php echo e(__('messages.update')); ?></h1>
                 </div>
             </div>
         </div>
@@ -27,19 +26,19 @@
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <form action="javascript:" method="post" id="product_form"
                       enctype="multipart/form-data">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <div class="row">
                       
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.name')}}</label>
-                                <input type="text" name="name" value="{{$product['name']}}" class="form-control" placeholder="New food" required>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.name')); ?></label>
+                                <input type="text" name="name" value="<?php echo e($product['name']); ?>" class="form-control" placeholder="New food" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.price')}}</label>
-                                <input type="number" value="{{$product['price']}}" min="0" max="100000" name="price"
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.price')); ?></label>
+                                <input type="number" value="<?php echo e($product['price']); ?>" min="0" max="100000" name="price"
                                        class="form-control" step="0.01"
                                        placeholder="Ex : 100" required>
                             </div>
@@ -51,21 +50,23 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}} {{__('messages.type')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?></label>
                                 <select name="discount_type" class="form-control js-select2-custom">
-                                    <option value="percent" {{$product['discount_type']=='percent'?'selected':''}}>
-                                        {{__('messages.percent')}}
+                                    <option value="percent" <?php echo e($product['discount_type']=='percent'?'selected':''); ?>>
+                                        <?php echo e(__('messages.percent')); ?>
+
                                     </option>
-                                    <option value="amount" {{$product['discount_type']=='amount'?'selected':''}}>
-                                        {{__('messages.amount')}}
+                                    <option value="amount" <?php echo e($product['discount_type']=='amount'?'selected':''); ?>>
+                                        <?php echo e(__('messages.amount')); ?>
+
                                     </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}}</label>
-                                <input type="number" min="0" value="{{$product['discount']}}" max="100000"
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.discount')); ?></label>
+                                <input type="number" min="0" value="<?php echo e($product['discount']); ?>" max="100000"
                                        name="discount" class="form-control"
                                        placeholder="Ex : 100">
                             </div>
@@ -76,23 +77,23 @@
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.category')}}<span
+                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.category')); ?><span
                                         class="input-label-secondary">*</span></label>
                                 <select name="category_id" id="category-id" class="form-control js-select2-custom"
-                                        onchange="getRequest('{{url('/')}}/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
-                                    @foreach($categories as $category)
+                                        onchange="getRequest('<?php echo e(url('/')); ?>/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
+                                    <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option
-                                            value="{{$category['id']}}" {{ $category->id==$product_category[0]->id ? 'selected' : ''}} >{{$category['name']}}</option>
-                                    @endforeach
+                                            value="<?php echo e($category['id']); ?>" <?php echo e($category->id==$product_category[0]->id ? 'selected' : ''); ?> ><?php echo e($category['name']); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.sub_category')}}<span
-                                        class="input-label-secondary" title="{{__('messages.category_required_warning')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.category_required_warning')}}"></span></label>
+                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.sub_category')); ?><span
+                                        class="input-label-secondary" title="<?php echo e(__('messages.category_required_warning')); ?>"><img src="<?php echo e(asset('/public/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.category_required_warning')); ?>"></span></label>
                                 <select name="sub_category_id" id="sub-categories"
-                                        data-id="{{count($product_category)>=2?$product_category[1]->id:''}}"
+                                        data-id="<?php echo e(count($product_category)>=2?$product_category[1]->id:''); ?>"
                                         class="form-control js-select2-custom">
 
                                 </select>
@@ -106,18 +107,18 @@
                   
 
                     <div class="form-group">
-                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.short')}} {{__('messages.description')}}</label>
-                        <textarea type="text" name="description" class="form-control ckeditor">{{$product['description']}}</textarea>
+                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.short')); ?> <?php echo e(__('messages.description')); ?></label>
+                        <textarea type="text" name="description" class="form-control ckeditor"><?php echo e($product['description']); ?></textarea>
                     </div>
 
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>{{__('messages.product')}} {{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
+                                <label><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.image')); ?></label><small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 1:1 )</small>
                                 <div class="custom-file">
                                     <input type="file" name="image" id="customFileEg1" class="custom-file-input"
                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                    <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                                    <label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
                                 </div>
                                     <?php
 
@@ -126,7 +127,7 @@
         
                                 <center style="display: block" id="image-viewer-section" class="pt-2">
                                     <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                         src="{{$productImagePath}}"
+                                         src="<?php echo e($productImagePath); ?>"
                                          alt="product image"/>
                                 </center>
                             </div>
@@ -137,11 +138,11 @@
                         <div class="col-md-12">
 
                         <div class="form-group">
-                            <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                            <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>
                             <div>
                                 <div class="row" id="coba">
-                                    @foreach ($product->images as $key => $photo)
-                                        @if(!str_contains($photo, 'video-'))
+                                    <?php $__currentLoopData = $product->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if(!str_contains($photo, 'video-')): ?>
                                         <?php
 
                                         $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $photo) : asset('storage/app/public/product/' . $photo);    
@@ -150,17 +151,17 @@
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <img style="width: 100%" height="auto"
-                                                                onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                                                src="{{$productImagePath}}"
+                                                                onerror="this.src='<?php echo e(asset('public/assets/front-end/img/image-place-holder.png')); ?>'"
+                                                                src="<?php echo e($productImagePath); ?>"
                                                                 alt="Product image">
-                                                        <a href="{{route('admin.product.remove-image',['id'=>$product['id'],'name'=>$photo])}}"
+                                                        <a href="<?php echo e(route('admin.product.remove-image',['id'=>$product['id'],'name'=>$photo])); ?>"
                                                             class="btn btn-danger btn-block">Remove</a>
     
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endIf
-                                    @endforeach
+                                        <?php endif; ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                             </div>
                         </div>
@@ -171,15 +172,15 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="input-label" for="exampleFormControlInput1">Total Stock <small style="color: red">* </small></label>
-                                <input type="text" name="total_stock" class="form-control" placeholder="Total Stock" value= "{{ $product['total_stock'] }}" required>
+                                <input type="text" name="total_stock" class="form-control" placeholder="Total Stock" value= "<?php echo e($product['total_stock']); ?>" required>
                             </div>
                         </div>
                     </div>
 
                     <div  id="colored_image_section">
                        
-                        @foreach ($product_color_images->images as $key => $photo)
-                                        @if(!str_contains($photo, 'video-'))
+                        <?php $__currentLoopData = $product_color_images->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if(!str_contains($photo, 'video-')): ?>
                                         <?php
 
                                         $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo) : asset('storage/app/public/product/colored_images/' . $photo);    
@@ -193,16 +194,16 @@
                              </div>
                              <div class="col-md-6">
                                  <div class="form-group">
-                                     <label>{{__('messages.product')}} Main Image</label>
+                                     <label><?php echo e(__('messages.product')); ?> Main Image</label>
                                      <div class="custom-file">
                                          <input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input"
                                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                         <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                                         <label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
                                      </div>
              
                                      <center style="display: none" id="image-viewer-section2" class="pt-2">
                                          <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                              src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                              src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
                                      </center>
                                  </div>    
                              </div>   
@@ -210,10 +211,10 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <img style="width: 100%" height="auto"
-                                                onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
-                                                src="{{$productImagePath}}"
+                                                onerror="this.src='<?php echo e(asset('public/assets/front-end/img/image-place-holder.png')); ?>'"
+                                                src="<?php echo e($productImagePath); ?>"
                                                 alt="Product image">
-                                        <a href="{{route('admin.product.remove-image',['id'=>$product_color_images['id'],'name'=>$photo])}}"
+                                        <a href="<?php echo e(route('admin.product.remove-image',['id'=>$product_color_images['id'],'name'=>$photo])); ?>"
                                             class="btn btn-danger btn-block">Remove</a>
 
                                     </div>
@@ -221,15 +222,15 @@
                             </div> 
                              <div class="col-md-12">
                                  <div class="form-group">
-                                     <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                                     <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>
                                      <div>
                                          <div class="row coba0"></div>
                                      </div>
                                  </div>
                              </div>                    
                         </div>
-                        @endIf
-                        @endforeach
+                        <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                         
                     </div>
@@ -239,19 +240,19 @@
                      <br>
 
                     <hr>
-                    <button type="submit" class="btn btn-primary">{{__('messages.update')}}</button>
+                    <button type="submit" class="btn btn-primary"><?php echo e(__('messages.update')); ?></button>
                 </form>
             </div>
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script')
+<?php $__env->startPush('script'); ?>
 
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
 
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
@@ -269,7 +270,7 @@
                 },
             });
             $.get({
-                url:'{{url('/')}}/api/v1/restaurants/details/'+vendor_id,
+                url:'<?php echo e(url('/')); ?>/api/v1/restaurants/details/'+vendor_id,
                 dataType: 'json',
                 success: function(data) {
                     if(data.available_time_starts != null && data.available_time_ends != null){
@@ -316,10 +317,10 @@
         $(document).ready(function () {
             setTimeout(function () {
                 let category = $("#category-id").val();
-                let sub_category = '{{count($product_category)>=2?$product_category[1]->id:''}}';
-                let sub_sub_category ='{{count($product_category)>=3?$product_category[2]->id:''}}';
-                getRequest('{{url('/')}}/admin/product/get-categories?parent_id=' + category + '&&sub_category=' + sub_category, 'sub-categories');
-                getRequest('{{url('/')}}/admin/product/get-categories?parent_id=' + sub_category + '&&sub_category=' + sub_sub_category, 'sub-sub-categories');
+                let sub_category = '<?php echo e(count($product_category)>=2?$product_category[1]->id:''); ?>';
+                let sub_sub_category ='<?php echo e(count($product_category)>=3?$product_category[2]->id:''); ?>';
+                getRequest('<?php echo e(url('/')); ?>/admin/product/get-categories?parent_id=' + category + '&&sub_category=' + sub_category, 'sub-categories');
+                getRequest('<?php echo e(url('/')); ?>/admin/product/get-categories?parent_id=' + sub_category + '&&sub_category=' + sub_sub_category, 'sub-sub-categories');
             
             }, 1000)
         
@@ -335,7 +336,7 @@
         
         $('.js-data-example-ajax').select2({
             ajax: {
-                url: '{{url('/')}}/admin/vendor/get-restaurants',
+                url: '<?php echo e(url('/')); ?>/admin/vendor/get-restaurants',
                 data: function (params) {
                     return {
                         q: params.term, // search term
@@ -360,7 +361,7 @@
         
     </script>
 
-    <script src="{{asset($assetPrefixPath . '/admin')}}/js/tags-input.min.js"></script>
+    <script src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/js/tags-input.min.js"></script>
 
     <script>
         $('#choice_attributes').on('change', function () {
@@ -403,19 +404,19 @@
                                 '</div>'+
                                 '<div class="col-md-6 colored-image-section'+i+'">'+
                                     '<div class="form-group">'+
-                                        '<label>{{__('messages.product')}} Main {{__('messages.image')}}</label>'+
+                                        '<label><?php echo e(__('messages.product')); ?> Main <?php echo e(__('messages.image')); ?></label>'+
                                         '<div class="custom-file">'+
                                         '<input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
-                                            '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
+                                            '<label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>'+
                                             '</div>'+        
                                             '<center style="display: none" id="image-viewer-section" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+
                                              '<div class="row">'+
                                             '<div class="col-md-12">'+
                                                 '<div class="form-group">'+
-                                                    '<label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>'+
+                                                    '<label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>'+
                                                     '<div>'+
                                                         '<div class="row coba'+i+'"></div>'+
                                                         '</div>'+
@@ -440,7 +441,7 @@
                                     groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                                     maxFileSize: '',
                                     placeholderImage: {
-                                        image: "{{asset('assets/admin/img/400x400/img2.jpg')}}",
+                                        image: "<?php echo e(asset('assets/admin/img/400x400/img2.jpg')); ?>",
                                         width: '100%'
                                     },
                                     dropFileLabel: "Drop Here",
@@ -454,13 +455,13 @@
                     
                                     },
                                     onExtensionErr: function (index, file) {
-                                        toastr.error("{{__('messages.please_only_input_png_or_jpg_type_file')}}", {
+                                        toastr.error("<?php echo e(__('messages.please_only_input_png_or_jpg_type_file')); ?>", {
                                             CloseButton: true,
                                             ProgressBar: true
                                         });
                                     },
                                     onSizeErr: function (index, file) {
-                                        toastr.error("{{__('messages.file_size_too_big')}}", {
+                                        toastr.error("<?php echo e(__('messages.file_size_too_big')); ?>", {
                                             CloseButton: true,
                                             ProgressBar: true
                                         });
@@ -487,7 +488,7 @@
                 }
             });
             $.post({
-                url: '{{route('admin.product.update',[$product['id']])}}',
+                url: '<?php echo e(route('admin.product.update',[$product['id']])); ?>',
                 data: $('#product_form').serialize(),
                 data: formData,
                 cache: false,
@@ -511,14 +512,14 @@
                             ProgressBar: true
                         });
                         setTimeout(function () {
-                            location.href = '{{\Request::server('HTTP_REFERER')??route('admin.product.list')}}';
+                            location.href = '<?php echo e(\Request::server('HTTP_REFERER')??route('admin.product.list')); ?>';
                         }, 2000);
                     }
                 }
             });
         });
     </script>
-    <script src="{{asset($assetPrefixPath.'assets/admin/js/spartan-multi-image-picker.js')}}"></script>
+    <script src="<?php echo e(asset($assetPrefixPath.'assets/admin/js/spartan-multi-image-picker.js')); ?>"></script>
     <script type="text/javascript">
         
         $(function () {
@@ -529,7 +530,7 @@
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: "{{asset('assets/admin/img/400x400/img2.jpg')}}",
+                    image: "<?php echo e(asset('assets/admin/img/400x400/img2.jpg')); ?>",
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -543,13 +544,13 @@
 
                 },
                 onExtensionErr: function (index, file) {
-                    toastr.error("{{__('messages.please_only_input_png_or_jpg_type_file')}}", {
+                    toastr.error("<?php echo e(__('messages.please_only_input_png_or_jpg_type_file')); ?>", {
                         CloseButton: true,
                         ProgressBar: true
                     });
                 },
                 onSizeErr: function (index, file) {
-                    toastr.error("{{__('messages.file_size_too_big')}}", {
+                    toastr.error("<?php echo e(__('messages.file_size_too_big')); ?>", {
                         CloseButton: true,
                         ProgressBar: true
                     });
@@ -563,7 +564,7 @@
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: "{{asset('assets/admin/img/400x400/img2.jpg')}}",
+                    image: "<?php echo e(asset('assets/admin/img/400x400/img2.jpg')); ?>",
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -577,13 +578,13 @@
 
                 },
                 onExtensionErr: function (index, file) {
-                    toastr.error("{{__('messages.please_only_input_png_or_jpg_type_file')}}", {
+                    toastr.error("<?php echo e(__('messages.please_only_input_png_or_jpg_type_file')); ?>", {
                         CloseButton: true,
                         ProgressBar: true
                     });
                 },
                 onSizeErr: function (index, file) {
-                    toastr.error("{{__('messages.file_size_too_big')}}", {
+                    toastr.error("<?php echo e(__('messages.file_size_too_big')); ?>", {
                         CloseButton: true,
                         ProgressBar: true
                     });
@@ -591,6 +592,8 @@
             }); 
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
 
 
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/product/edit.blade.php ENDPATH**/ ?>
