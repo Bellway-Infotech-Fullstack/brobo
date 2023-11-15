@@ -178,18 +178,13 @@
                     </div>
 
                     <div  id="colored_image_section">
+                        <?php $__currentLoopData = $product_color_image_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                        
-                        <?php $__currentLoopData = $product_color_images->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php if(!str_contains($photo, 'video-')): ?>
-                                        <?php
-
-                                        $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo) : asset('storage/app/public/product/colored_images/' . $photo);    
-                                        ?>
                         <div class="row">
                             <div class="col-md-6">
                                  <div class="form-group">
                                      <label class="input-label" for="exampleFormControlInput1">Color Name</label>
-                                     <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">
+                                     <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name" value="<?php echo e($photo['name']); ?>">
                                  </div>
                              </div>
                              <div class="col-md-6">
@@ -200,13 +195,24 @@
                                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                          <label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
                                      </div>
+                                     <?php
+                           
+
+                                     $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $photo['image']) : asset('storage/app/public/product/' . $photo['image']);    
+                                     ?>
              
-                                     <center style="display: none" id="image-viewer-section2" class="pt-2">
+                                     <center style="display: block" id="image-viewer-section2" class="pt-2">
                                          <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                              src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
+                                              src="<?php echo e($productImagePath); ?>" alt="product image"/>
                                      </center>
                                  </div>    
                              </div>   
+                             <div class="row">
+                             <?php $__currentLoopData = $photo['images']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                             
+        
+                           
+                           
                              <div class="col-lg-2 col-md-4 col-sm-4 col-6">
                                 <div class="card">
                                     <div class="card-body">
@@ -214,12 +220,15 @@
                                                 onerror="this.src='<?php echo e(asset('public/assets/front-end/img/image-place-holder.png')); ?>'"
                                                 src="<?php echo e($productImagePath); ?>"
                                                 alt="Product image">
-                                        <a href="<?php echo e(route('admin.product.remove-image',['id'=>$product_color_images['id'],'name'=>$photo])); ?>"
+                                        <a href="<?php echo e(route('admin.product.remove-image',['id'=>2,'name'=>$photo])); ?>"
                                             class="btn btn-danger btn-block">Remove</a>
 
                                     </div>
                                 </div>
-                            </div> 
+                            
+                        </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>  
+                        </div> 
                              <div class="col-md-12">
                                  <div class="form-group">
                                      <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>
@@ -227,13 +236,15 @@
                                          <div class="row coba0"></div>
                                      </div>
                                  </div>
-                             </div>                    
+                             </div>  
+                            
+                                           
                         </div>
-                        <?php endif; ?>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                       
 
                         
                     </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>  
                     
                     
                      <a href="javascript:void(0)" style="float:right" title="Add More" id="add_more">Add More + </a>
