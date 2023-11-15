@@ -1,6 +1,7 @@
 <?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+  
 ?>
 <style>
     .nav-sub{
@@ -15,14 +16,19 @@
             <div class="navbar-brand-wrapper justify-content-between">
                 <!-- Logo -->
                 <?php (@$restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value); ?>
+                
+                <?php
+                
+                     $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $restaurant_logo) : asset('storage/app/public/business/' . $restaurant_logo);        
+                ?>
                 <a class="navbar-brand" href="<?php echo e(route('admin.dashboard')); ?>" aria-label="Front">
                     <img class="navbar-brand-logo" style="max-height: 55px; max-width: 100%!important;"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')); ?>'"
-                         src="<?php echo e(asset('storage/business/'.$restaurant_logo)); ?>"
+                         src="<?php echo e($logoPath); ?>"
                          alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 55px; max-width: 100%!important;"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')); ?>'"
-                         src="<?php echo e(asset('storage/business/'.$restaurant_logo)); ?>" alt="Logo">
+                         src="{$logoPath}" alt="Logo">
                 </a>
                 <!-- End Logo -->
 

@@ -84,8 +84,25 @@ class ProductController extends Controller
         $Product->total_stock = $request->total_stock;
       
         $Product->price = $request->price;
-        $Product->image = Helpers::upload('product/', 'png', $request->file('image'));
+      
+
+        $img_names = [];
+        $images = [];
      
+       
+        if (!empty($request->file('product_images'))) {
+            foreach ($request->file('product_images') as $img) {
+                $image_name = Helpers::upload('product/', 'png', $img);
+                array_push($img_names, $image_name);
+            }
+            $images = $img_names;
+        }
+        $Product->image = Helpers::upload('product/', 'png', $request->file('image'));
+       
+        $Product->images = $images;
+
+     
+        
         $Product->discount = $request->discount_type == 'amount' ? $request->discount : $request->discount;
         $Product->discount_type = $request->discount_type;
         $Product->save();
@@ -100,7 +117,16 @@ class ProductController extends Controller
                      $productColoredImage = new ProductColoredImage();
                     $productColoredImage->product_id = $productId;
                     $productColoredImage->color_name = $request->input('colored_name')[$i];           
-                    $productColoredImage->image = Helpers::upload('product/colored_images', 'png', $request->file('colored_image')[$i]);
+                    $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
+                    if (!empty($request->file('product_colored_images'))) {
+                        foreach ($request->file('product_colored_images') as $img) {
+                            $image_name = Helpers::upload('product/colored_images/', 'png', $img);
+                            array_push($img_names, $image_name);
+                        }
+                        $images = $img_names;
+                    }
+                   
+                    $productColoredImage->images = $images;
                     $productColoredImage->save();
                 }
                
@@ -125,9 +151,13 @@ class ProductController extends Controller
             Toastr::error(trans('messages.Product').' '.trans('messages.not_found'));
             return back();
         }
+        $product_color_images = ProductColoredImage::where('product_id',$id)->get();
+        echo "<pre>";
+        print_r($product_color_images);
+     
         $product_category = json_decode($product->category_ids);
         $categories = Category::where(['parent_id' => 0])->get();
-        return view('admin-views.product.edit', compact('product', 'product_category', 'categories'));
+        return view('admin-views.product.edit', compact('product', 'product_category', 'categories','product_color_images'));
     }
 
     public function status(Request $request)
@@ -197,6 +227,20 @@ class ProductController extends Controller
 
         $p->total_stock = $request->total_stock;
 
+        $item_images = $p['images'];
+        $images = [];
+
+        if ($request->has('product_images')){
+            foreach ($request->product_images as $img) {
+                $image = Helpers::upload('product/', 'png', $img);
+                array_push($images, $image);
+            }
+        } 
+
+  
+
+        $p->images = array_merge($images,$item_images);
+
     
         //combinations end
 
@@ -230,6 +274,28 @@ class ProductController extends Controller
         return back();
     }
 
+    public function remove_image(Request $request)
+    {
+        if (Storage::disk('public')->exists('product/' . $request['name'])) {
+            Storage::disk('public')->delete('product/' . $request['name']);
+        }
+        $item = Product::withoutGlobalScope(StoreScope::class)->find($request['id']);
+        $array = [];
+        /*if (count($item['images']) < 2) {
+            Toastr::warning(__('all_image_delete_warning'));
+            return back();
+        }*/
+        foreach ($item['images'] as $image) {
+            if ($image != $request['name']) {
+                array_push($array, $image);
+            }
+        }
+        Product::withoutGlobalScope(StoreScope::class)->where('id', $request['id'])->update([
+            'images' => json_encode($array),
+        ]);
+        Toastr::success("Product image removed successfully");
+        return back();
+    }
    
 
    

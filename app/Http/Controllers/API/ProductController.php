@@ -28,15 +28,14 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $categoryId = $request->post('category_id');
-             $page = $request->post('page');
-             $orderBy = $request->post('order_by') ?? 'desc';
-             $orderColumn = $request->post('order_column') ?? 'created_at';
-             $isDefaultSort = $request->post('is_default_sort') ;  
-             $isHideOutOfStockItem = $request->post('is_hide_out_of_stock_items') ?? 1;   
+             $categoryId = $request->get('category_id');
+             $page = $request->get('page');
+             $orderBy = $request->get('order_by') ?? 'desc';
+             $orderColumn = $request->get('order_column') ?? 'created_at';
+             $isDefaultSort = $request->get('is_default_sort') ;  
+             $isHideOutOfStockItem = $request->get('is_hide_out_of_stock_items') ?? 1;   
              $perPage = 10; // Number of items to load per page
-             
-             $desiredCategoryId = $request->post('sub_category_id');
+             $desiredCategoryId = $request->get('sub_category_id');
             
              // Define the validation rules
              $validationRules = [
@@ -87,6 +86,7 @@ class ProductController extends Controller
                     $query->where('category_id', '=', $desiredCategoryId);
                 })
                 ->orderBy($orderColumn, $orderBy)
+                ->where('status',1)
                 ->paginate($perPage, ['*'], 'page', $page);
 
                 $items = $items->map(function ($item) {
@@ -131,7 +131,7 @@ class ProductController extends Controller
              $user = JWTAuth::toUser($token);
              $customerId = (isset($user) && !empty($user)) ? $user->id : '';
              $itemId = $request->input('item_id'); 
-             $wishListId = $request->post('wishlist_id');
+             $wishListId = $request->input('wishlist_id');
              // Define the validation rules
              $validationRules = [
                  'customer_id' => 'required',
@@ -205,7 +205,7 @@ class ProductController extends Controller
              $token = JWTAuth::getToken();
              $user = JWTAuth::toUser($token);
              $customerId = (isset($user) && !empty($user)) ? $user->id : '';
-             $page = $request->post('page');
+             $page = $request->get('page');
              $perPage = 10; // Number of items to load per page
              // Define the validation rules
              $validationRules = [
@@ -262,7 +262,7 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $itemId = $request->post('item_id');
+             $itemId = $request->get('item_id');
              // Define the validation rules
              $validationRules = [
                  'item_id' => 'required',
@@ -284,10 +284,37 @@ class ProductController extends Controller
             $itemDetail = Product::where('id', $itemId)
             ->with('coloredImages')
             ->select('*')
-            ->first();      
+            ->get();      
+
+            $items = $itemDetail->map(function ($item) {
+                // Assuming $item->coloredImages is a collection of images
+               
+            
+                // Modify the item's image property
+                $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                $all_item_images = array();
+                if(isset($item->images) && !empty($item->images)){
+                    foreach($item->images as $key => $val){
+                        $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                        array_push($all_item_images,$item_image);
+                        
+                    }
+                    $item->images = $all_item_images;
+                }
+
+                
+            
+                // Check and set description to blank if null
+                if ($item->description === null) {
+                    $item->description = '';
+                }
+            
+                return $item;
+            });
+            
 
 
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully', 'data' => $itemDetail]);
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully', 'data' => $items[0]]);
 
 
              
@@ -310,8 +337,8 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $cateogyId = $request->post('category_id');
-             $productId = $request->post('product_id');
+             $cateogyId = $request->get('category_id');
+             $productId = $request->get('product_id');
 
              $page = $request->post('page');
   
