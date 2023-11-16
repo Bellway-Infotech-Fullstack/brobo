@@ -137,7 +137,7 @@
                         <div class="col-md-12">
 
                         <div class="form-group">
-                            <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                            <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>
                             <div>
                                 <div class="row" id="coba">
                                     @foreach ($product->images as $key => $photo)
@@ -178,7 +178,9 @@
 
                     <div  id="colored_image_section">
                         <?php
-                                         echo ""   
+                            //  echo "<pre>";
+                           //     print_r($product_color_image_data);
+                            //    die;   
 
                             ?>
                         @foreach ($product_color_image_data as $key => $photo)
@@ -187,7 +189,7 @@
                             <div class="col-md-6">
                                  <div class="form-group">
                                      <label class="input-label" for="exampleFormControlInput1">Color Name</label>
-                                     <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name" value="{{$photo['name']}}">
+                                     <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name" value="{{$photo['color_name']}}">
                                  </div>
                              </div>
                              <div class="col-md-6">
@@ -201,7 +203,7 @@
                                      <?php
                            
 
-                                     $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $photo['image']) : asset('storage/app/public/product/' . $photo['image']);    
+                                     $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo['image']) : asset('storage/app/public/product/colored_images/' . $photo['image']);    
                                      ?>
              
                                      <center style="display: block" id="image-viewer-section2" class="pt-2">
@@ -216,7 +218,7 @@
         
                            
                            
-                             <div class="col-lg-2 col-md-4 col-sm-4 col-6">
+                             <div class="col-lg-6 col-md-6 col-sm-6 col-6">
                                 <div class="card">
                                     <div class="card-body">
                                         <img style="width: 100%" height="auto"
@@ -234,7 +236,7 @@
                         </div> 
                              <div class="col-md-12">
                                  <div class="form-group">
-                                     <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                                     <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>
                                      <div>
                                          <div class="row coba0"></div>
                                      </div>
