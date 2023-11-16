@@ -161,19 +161,7 @@ class ProductController extends Controller
             }
             $all_product_colored_images = $product_color_images[0];
         }
-      /*  $all_data = [];
-        
-        foreach ($product_color_image_data as $key => $val){
-            array_push($product_color_images,$val);
-            
-        }
-        $all_data['name'] = $product_color_image_data[0]->color_name;
-        $all_data['image'] = $product_color_image_data[0]->image;
-        $all_data['images'] = $all_product_colored_images;*/
      
-      //  echo "<pre>";
-     //  print_r($product_color_image_data);
-     //   die;
 
        
      
@@ -253,7 +241,7 @@ class ProductController extends Controller
         $images = [];
 
      
-        $images = [];
+        
 
         if ($request->has('product_images')){
             foreach ($request->product_images as $img) {
@@ -279,30 +267,73 @@ class ProductController extends Controller
         $productColoredImage = new ProductColoredImage;
 
         if(count($request->input('colored_name')) > 0){
-           // echo "count=".count($request->input('colored_name'));
+          
+            $colored_img_names = [];
 
             for($i = 0; $i < count($request->input('colored_name')); $i++){
-                if(!empty($request->input('colored_name')[$i]) && !empty($request->file('colored_image')[$i])){
-                     $productColoredImage = new ProductColoredImage();
-                    $productColoredImage->product_id = $id;
-                    $productColoredImage->color_name = $request->input('colored_name')[$i];           
-                    $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
-                    if (!empty($request->file('product_colored_images'))) {
-                        foreach ($request->file('product_colored_images') as $img) {
-                            $image_name = Helpers::upload('product/colored_images/', 'png', $img);
-                            array_push($img_names, $image_name);
+                
+                if(isset($request->input('colored_image_id')[$i]) && !empty($request->input('colored_image_id')[$i])){
+                    $colored_image_id = $request->input('colored_image_id')[$i];
+                    $pci = ProductColoredImage::find($colored_image_id);
+                    $item_colored_images = $pci['images'];
+                
+                    if (!empty($request->file('product_colored_images')[$i])) {                    
+                      
+                        foreach($request->file('product_colored_images') as $img2) {
+                          
+                            $image_name = Helpers::upload('product/colored_images/', 'png', $img2);
+                    
+                            array_push($colored_img_names, $image_name);
                         }
-                        $images = $img_names;
+                        $colored_images = $colored_img_names;
+                        $pci->images = array_merge($colored_images,$item_colored_images);
                     }
-                   
-                    $productColoredImage->images = $images;
-                    $productColoredImage->save();
+            
+                
+                    
+                    $pci->color_name = $request->input('colored_name')[$i];
+                    if(isset($request->file('colored_image')[$i]) && !empty($request->file('colored_image')[$i])){
+                        $pci->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
+                    }
+                    
+                    
+                    $pci->save();
+                } else {
+                    if(!empty($request->input('colored_name')[$i]) && !empty($request->file('colored_image')[$i])){
+                        $productColoredImage = new ProductColoredImage();
+                       
+   
+                       $productColoredImage->product_id = $id;
+                       $productColoredImage->color_name = $request->input('colored_name')[$i];           
+                       $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
+                       if (!empty($request->file('product_colored_images'))) {
+                           foreach ($request->file('product_colored_images') as $img) {
+                               $image_name = Helpers::upload('product/colored_images/', 'png', $img);
+                               array_push($img_names, $image_name);
+                           }
+                           $images = $img_names;
+                           $productColoredImage->images = $images;
+                       }
+
+                       
+   
+                       
+                      
+                       $productColoredImage->save();
+                   }
+
                 }
+                
+                
+
+
+                
                
             }
         }
 
         $p->save();
+        
 
         return response()->json([], 200);
     }
@@ -346,6 +377,28 @@ class ProductController extends Controller
         return back();
     }
    
+    public function remove_color_image(Request $request)
+    {
+        if (Storage::disk('public')->exists('product/' . $request['name'])) {
+            Storage::disk('public')->delete('product/' . $request['name']);
+        }
+        $item = ProductColoredImage::find($request['id']);
+        $array = [];
+        /*if (count($item['images']) < 2) {
+            Toastr::warning(__('all_image_delete_warning'));
+            return back();
+        }*/
+        foreach ($item['images'] as $image) {
+            if ($image != $request['name']) {
+                array_push($array, $image);
+            }
+        }
+        ProductColoredImage::where('id', $request['id'])->update([
+            'images' => json_encode($array),
+        ]);
+        Toastr::success("Image removed successfully");
+        return back();
+    }
 
    
     public function get_categories(Request $request)

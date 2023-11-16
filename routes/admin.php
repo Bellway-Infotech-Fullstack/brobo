@@ -66,6 +66,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('review-status/{id}/{status}', 'ProductController@reviews_status')->name('reviews.status');
             Route::post('search', 'ProductController@search')->name('search');
             Route::get('remove-image', 'ProductController@remove_image')->name('remove-image');
+            Route::get('remove-color-image', 'ProductController@remove_color_image')->name('remove-color-image');
             Route::get('view/{id}', 'ProductController@view')->name('view');
             //ajax request
             Route::get('get-categories', 'ProductController@get_categories')->name('get-categories');
