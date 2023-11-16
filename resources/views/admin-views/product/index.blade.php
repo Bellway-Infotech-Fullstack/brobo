@@ -205,11 +205,11 @@
                                     '<div class="form-group">'+
                                         '<label>{{__('messages.product')}} Main {{__('messages.image')}}</label>'+
                                         '<div class="custom-file">'+
-                                        '<input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
+                                        '<input type="file" name="colored_image[]" data-id="'+i+'" class="custom-file-input customFileEg" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
                                             '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
                                             '</div>'+        
-                                            '<center style="display: none" id="image-viewer-section" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '<center style="display: none" id="color-image-viewer-section'+i+'" class="pt-2">'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer'+i+'" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+
                                              '</div>'+
@@ -332,6 +332,33 @@
             console.log("this",this)
             readURL(this);
             $('#image-viewer-section').show(1000);
+        });
+
+        function readURL2(input, id) {
+                if (input.files && input.files[0]) {
+                    console.log("ev",input)
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        // Set the source of the image
+                        console.log("result",e.target.result)
+                     
+                        $('#viewer'+id).attr('src', e.target.result);
+                        $('#color-image-viewer-section'+id).show();
+                    };
+
+                    // Read the selected file as a data URL
+                    reader.readAsDataURL(input.files[0]);
+                }
+        }
+
+        $(document).on("change",".customFileEg",function(ev){
+    
+            var id = $(this).attr("data-id");  
+               
+     
+            readURL2(this,id);
+            
         });
     </script>
 

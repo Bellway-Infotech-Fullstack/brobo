@@ -191,7 +191,8 @@
                                  <div class="form-group">
                                      <label>{{__('messages.product')}} Main Image</label>
                                      <div class="custom-file">
-                                         <input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input"
+                                         <input type="file" name="colored_image[]" data-id="{{$photo['id']}}"  
+                                         class="custom-file-input customFileEg"
                                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                          <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
                                      </div>
@@ -201,8 +202,8 @@
                                      $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo['image']) : asset('storage/app/public/product/colored_images/' . $photo['image']);    
                                      ?>
              
-                                     <center style="display: block" id="image-viewer-section2" class="pt-2">
-                                         <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
+                                     <center style="display: block" id="color-image-viewer-section{{$photo['id']}}" class="pt-2">
+                                         <img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer{{$photo['id']}}"
                                               src="{{$productImagePath}}" alt="product image"/>
                                      </center>
                                  </div>    
@@ -324,17 +325,6 @@
             }
         }
 
-        /*function readURL2(input,id) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    $('#viewer'+id).attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }*/
 
         $("#customFileEg1").change(function () {
             readURL(this);
@@ -342,38 +332,33 @@
             $('#image-viewer-section').show(1000)
         });
 
-        $(document).on("change", ".customFileEg", function (ev) {
-    var id = $(this).attr("data-id");
-    //alert(id);
     
-    // Function to read the selected image file and set the source
-    function readURL2(input, id) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
 
-            reader.onload = function (e) {
-                // Set the source of the image
-                $('#image-preview'+id).attr('src', e.target.result);
-            };
+ // Function to read the selected image file and set the source
+        function readURL2(input, id) {
+                if (input.files && input.files[0]) {
+                    console.log("ev",input)
+                    var reader = new FileReader();
 
-            // Read the selected file as a data URL
-            reader.readAsDataURL(input.files[0]);
+                    reader.onload = function (e) {
+                        // Set the source of the image
+                        console.log("result",e.target.result)
+                     
+                        $('#viewer'+id).attr('src', e.target.result);
+                        $('#color-image-viewer-section'+id).show();
+                    };
+
+                    // Read the selected file as a data URL
+                    reader.readAsDataURL(input.files[0]);
+                }
         }
-    }
-
-    // Call the readURL2 function with the input element and id
-    //readURL2(this, id);
-    
-   // $('#image-viewer-section'+id).show(1000);
-});
 
         $(document).on("change",".customFileEg",function(ev){
     
-            var id = $(this).attr("data-id");
-            alert(id)
-            console.log("ev",this)
-            readURL2(ev,id);
-            $('#image-viewer-section'+id).show(1000)
+            var id = $(this).attr("data-id");           
+     
+            readURL2(this,id);
+            
         });
 
         $(document).ready(function () {
@@ -473,8 +458,8 @@
                                         '<input type="file" name="colored_image[]"  data-id="'+i+'" class="custom-file-input  customFileEg" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
                                             '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
                                             '</div>'+        
-                                            '<center style="display: none" id="image-viewer-section'+i+'" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer'+i+'" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '<center style="display: none" id="color-image-viewer-section'+i+'" class="pt-2">'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+      
                                              '</div>'+  
@@ -579,14 +564,14 @@
                             ProgressBar: true
                         });
                         setTimeout(function () {
-                         //   location.href = '{{\Request::server('HTTP_REFERER')??route('admin.product.list')}}';
+                            location.href = '{{\Request::server('HTTP_REFERER')??route('admin.product.list')}}';
                         }, 2000);
                     }
                 }
             });
         });
     </script>
-    <script src="{{asset($assetPrefixPath.'assets/admin/js/spartan-multi-image-picker.js')}}"></script>
+    <script src="{{asset($assetPrefixPath.'/assets/admin/js/spartan-multi-image-picker.js')}}"></script>
     <script type="text/javascript">
         
         $(function () {
