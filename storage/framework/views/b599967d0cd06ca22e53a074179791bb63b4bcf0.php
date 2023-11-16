@@ -344,7 +344,7 @@
                     reader.onload = function (e) {
                         // Set the source of the image
                         console.log("result",e.target.result)
-                        alert('#viewer'+id)
+                     
                         $('#viewer'+id).attr('src', e.target.result);
                         $('#color-image-viewer-section'+id).show();
                     };
@@ -468,7 +468,7 @@
                                              '</div>'+                                         
                                             '<div class="col-md-12 colored-image-section'+i+'">'+
                                                 '<div class="form-group">'+
-                                                    '<label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>'+
+                                                    '<label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> Different Angle <?php echo e(__('messages.images')); ?></label>'+
                                                     '<div>'+
                                                         '<div class="row coba'+i+'"></div>'+
                                                        
@@ -533,9 +533,14 @@
         }); 
 
 
-
+        CKEDITOR.replace('description');
         $('#product_form').on('submit', function () {
             var formData = new FormData(this);
+             // Get CKEditor data
+             var editorData = CKEDITOR.instances.description.getData();
+
+            // Append CKEditor data to FormData
+            formData.append('description', editorData);
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
