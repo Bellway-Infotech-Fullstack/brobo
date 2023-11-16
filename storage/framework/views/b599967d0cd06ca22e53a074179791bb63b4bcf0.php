@@ -107,7 +107,7 @@
                   
 
                     <div class="form-group">
-                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.short')); ?> <?php echo e(__('messages.description')); ?></label>
+                        <label class="input-label" for="exampleFormControlInput1"> <?php echo e(__('messages.description')); ?></label>
                         <textarea type="text" name="description" class="form-control ckeditor"><?php echo e($product['description']); ?></textarea>
                     </div>
 
@@ -178,14 +178,9 @@
                     </div>
 
                     <div  id="colored_image_section">
-                        <?php
-                            //  echo "<pre>";
-                           //     print_r($product_color_image_data);
-                            //    die;   
-
-                            ?>
+                      
                         <?php $__currentLoopData = $product_color_image_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                       
+                        <input type="hidden" name="colored_image_id[]" class="form-control" value="<?php echo e($photo['id']); ?>">
                         <div class="row">
                             <div class="col-md-6">
                                  <div class="form-group">
@@ -214,8 +209,12 @@
                                  </div>    
                              </div>   
                              <div class="row">
-                             <?php $__currentLoopData = $photo['images']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                             
+                             <?php $__currentLoopData = $photo['images']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo2): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                             <?php
+                           
+
+                                     $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo2) : asset('storage/app/public/product/colored_images/' . $photo2);    
+                                     ?>
         
                            
                            
@@ -226,7 +225,7 @@
                                                 onerror="this.src='<?php echo e(asset('public/assets/front-end/img/image-place-holder.png')); ?>'"
                                                 src="<?php echo e($productImagePath); ?>"
                                                 alt="Product image">
-                                        <a href="<?php echo e(route('admin.product.remove-image',['id'=>2,'name'=>$photo])); ?>"
+                                        <a href="<?php echo e(route('admin.product.remove-color-image',['id'=>$photo['id'],'name'=>$photo2])); ?>"
                                             class="btn btn-danger btn-block">Remove</a>
 
                                     </div>
@@ -326,9 +325,56 @@
             }
         }
 
+        /*function readURL2(input,id) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#viewer'+id).attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }*/
+
         $("#customFileEg1").change(function () {
             readURL(this);
+            console.log("ev",ev)
             $('#image-viewer-section').show(1000)
+        });
+
+        $(document).on("change", ".customFileEg", function (ev) {
+    var id = $(this).attr("data-id");
+    //alert(id);
+    
+    // Function to read the selected image file and set the source
+    function readURL2(input, id) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                // Set the source of the image
+                $('#image-preview'+id).attr('src', e.target.result);
+            };
+
+            // Read the selected file as a data URL
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Call the readURL2 function with the input element and id
+    //readURL2(this, id);
+    
+   // $('#image-viewer-section'+id).show(1000);
+});
+
+        $(document).on("change",".customFileEg",function(ev){
+    
+            var id = $(this).attr("data-id");
+            alert(id)
+            console.log("ev",this)
+            readURL2(ev,id);
+            $('#image-viewer-section'+id).show(1000)
         });
 
         $(document).ready(function () {
@@ -410,7 +456,10 @@
     <!-- submit form -->
     <script>
        $(document).ready(function(){
-            var i = 1;
+            var length = <?php echo e(count($product_color_image_data)); ?>
+
+            var i = length;
+            
             $("#add_more").on("click",function(){
                
                 var htmlData = '<div class="col-md-6 colored-image-section'+i+'">'+
@@ -423,11 +472,11 @@
                                     '<div class="form-group">'+
                                         '<label><?php echo e(__('messages.product')); ?> Main <?php echo e(__('messages.image')); ?></label>'+
                                         '<div class="custom-file">'+
-                                        '<input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
+                                        '<input type="file" name="colored_image[]"  data-id="'+i+'" class="custom-file-input  customFileEg" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">'+
                                             '<label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>'+
                                             '</div>'+        
-                                            '<center style="display: none" id="image-viewer-section" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
+                                            '<center style="display: none" id="image-viewer-section'+i+'" class="pt-2">'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer'+i+'" src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+
                                              '<div class="row">'+
@@ -448,6 +497,7 @@
                                
                                  i++;        
                                  var new_count = i-1;
+                             
                                  
 
                                 $("#colored_image_section").append(htmlData);
@@ -529,7 +579,7 @@
                             ProgressBar: true
                         });
                         setTimeout(function () {
-                            location.href = '<?php echo e(\Request::server('HTTP_REFERER')??route('admin.product.list')); ?>';
+                         //   location.href = '<?php echo e(\Request::server('HTTP_REFERER')??route('admin.product.list')); ?>';
                         }, 2000);
                     }
                 }
