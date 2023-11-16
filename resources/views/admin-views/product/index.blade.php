@@ -140,7 +140,7 @@
                         </div>
                     </div>
 
-                    <div class="row" id="colored_image_section">                       
+                    <div  id="colored_image_section">                       
                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="input-label" for="exampleFormControlInput1">Color Name</label>
@@ -171,7 +171,7 @@
                             </div>
                         </div>                    
                     </div>
-                    <a href="javascript:void(0)" style="float:right" title="Add More" id="add_more">Add More + </a>
+                    <a href="javascript:void(0)" style="float:right;margin-top: 18px;" title="Add More" id="add_more">Add More + </a>
                     <br>
                     <hr>
                     <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
@@ -212,14 +212,16 @@
                                             '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+
-                                             '<div class="row">'+
-                                            '<div class="col-md-12">'+
+                                             '</div>'+
+                                          
+                                            '<div class="col-md-12 colored-image-section'+i+'">'+
                                                 '<div class="form-group">'+
                                                     '<label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>'+
-                                                    '<div>'+
+                                                   
                                                         '<div class="row coba'+i+'"></div>'+
+                                                       
                                                         '</div>'+
-                                                        '</div>'+
+                                                        '</div> '+
                                                         '</div> '+
 
                                             '<a href="javascript:void(0)" class="remove-section" data-row-id="'+i+'" style="float:right">Remove</a>'+
@@ -275,6 +277,7 @@
         $(document).on("click",".remove-section",function(){
             var row_id = $(this).attr("data-row-id");
             $(".colored-image-section"+row_id).remove();
+            $(this).remove();
         });
 
         function getRestaurantData(route, vendor_id , id) {
