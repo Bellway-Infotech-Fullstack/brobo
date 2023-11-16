@@ -137,7 +137,7 @@
                         <div class="col-md-12">
 
                         <div class="form-group">
-                            <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                            <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>
                             <div>
                                 <div class="row" id="coba">
                                     @foreach ($product->images as $key => $photo)
@@ -177,18 +177,19 @@
                     </div>
 
                     <div  id="colored_image_section">
-                       
-                        @foreach ($product_color_images->images as $key => $photo)
-                                        @if(!str_contains($photo, 'video-'))
-                                        <?php
+                        <?php
+                            //  echo "<pre>";
+                           //     print_r($product_color_image_data);
+                            //    die;   
 
-                                        $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo) : asset('storage/app/public/product/colored_images/' . $photo);    
-                                        ?>
+                            ?>
+                        @foreach ($product_color_image_data as $key => $photo)
+                       
                         <div class="row">
                             <div class="col-md-6">
                                  <div class="form-group">
                                      <label class="input-label" for="exampleFormControlInput1">Color Name</label>
-                                     <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">
+                                     <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name" value="{{$photo['color_name']}}">
                                  </div>
                              </div>
                              <div class="col-md-6">
@@ -199,40 +200,56 @@
                                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                          <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
                                      </div>
+                                     <?php
+                           
+
+                                     $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $photo['image']) : asset('storage/app/public/product/colored_images/' . $photo['image']);    
+                                     ?>
              
-                                     <center style="display: none" id="image-viewer-section2" class="pt-2">
+                                     <center style="display: block" id="image-viewer-section2" class="pt-2">
                                          <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                              src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                              src="{{$productImagePath}}" alt="product image"/>
                                      </center>
                                  </div>    
                              </div>   
-                             <div class="col-lg-2 col-md-4 col-sm-4 col-6">
+                             <div class="row">
+                             @foreach ($photo['images'] as $key => $photo)
+                             
+        
+                           
+                           
+                             <div class="col-lg-6 col-md-6 col-sm-6 col-6">
                                 <div class="card">
                                     <div class="card-body">
                                         <img style="width: 100%" height="auto"
                                                 onerror="this.src='{{asset('public/assets/front-end/img/image-place-holder.png')}}'"
                                                 src="{{$productImagePath}}"
                                                 alt="Product image">
-                                        <a href="{{route('admin.product.remove-image',['id'=>$product_color_images['id'],'name'=>$photo])}}"
+                                        <a href="{{route('admin.product.remove-image',['id'=>2,'name'=>$photo])}}"
                                             class="btn btn-danger btn-block">Remove</a>
 
                                     </div>
                                 </div>
-                            </div> 
+                            
+                        </div>
+                            @endforeach  
+                        </div> 
                              <div class="col-md-12">
                                  <div class="form-group">
-                                     <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                                     <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>
                                      <div>
                                          <div class="row coba0"></div>
                                      </div>
                                  </div>
-                             </div>                    
+                             </div>  
+                            
+                                           
                         </div>
-                        @endIf
-                        @endforeach
+                       
 
                         
                     </div>
+                    @endforeach  
                     
                     
                      <a href="javascript:void(0)" style="float:right" title="Add More" id="add_more">Add More + </a>

@@ -151,13 +151,35 @@ class ProductController extends Controller
             Toastr::error(trans('messages.Product').' '.trans('messages.not_found'));
             return back();
         }
-        $product_color_images = ProductColoredImage::where('product_id',$id)->get();
-        echo "<pre>";
-        print_r($product_color_images);
+        $product_color_image_data = ProductColoredImage::where('product_id',$id)->get()->toArray();
+        $product_color_images = [];
+        $all_product_colored_images = [];
+        if(isset($product_color_image_data) && !empty($product_color_image_data)){
+            foreach ($product_color_image_data as $key => $val){
+                array_push($product_color_images,$val['images']);
+                
+            }
+            $all_product_colored_images = $product_color_images[0];
+        }
+      /*  $all_data = [];
+        
+        foreach ($product_color_image_data as $key => $val){
+            array_push($product_color_images,$val);
+            
+        }
+        $all_data['name'] = $product_color_image_data[0]->color_name;
+        $all_data['image'] = $product_color_image_data[0]->image;
+        $all_data['images'] = $all_product_colored_images;*/
+     
+      //  echo "<pre>";
+     //  print_r($product_color_image_data);
+     //   die;
+
+       
      
         $product_category = json_decode($product->category_ids);
         $categories = Category::where(['parent_id' => 0])->get();
-        return view('admin-views.product.edit', compact('product', 'product_category', 'categories','product_color_images'));
+        return view('admin-views.product.edit', compact('product', 'product_category', 'categories','product_color_image_data'));
     }
 
     public function status(Request $request)
@@ -230,6 +252,9 @@ class ProductController extends Controller
         $item_images = $p['images'];
         $images = [];
 
+     
+        $images = [];
+
         if ($request->has('product_images')){
             foreach ($request->product_images as $img) {
                 $image = Helpers::upload('product/', 'png', $img);
@@ -241,7 +266,7 @@ class ProductController extends Controller
 
         $p->images = array_merge($images,$item_images);
 
-    
+        $img_names = [];
         //combinations end
 
         $p->price = $request->price;
@@ -251,7 +276,31 @@ class ProductController extends Controller
         $p->discount = $request->discount_type == 'amount' ? $request->discount : $request->discount;
         $p->discount_type = $request->discount_type;
 
+        $productColoredImage = new ProductColoredImage;
 
+        if(count($request->input('colored_name')) > 0){
+           // echo "count=".count($request->input('colored_name'));
+
+            for($i = 0; $i < count($request->input('colored_name')); $i++){
+                if(!empty($request->input('colored_name')[$i]) && !empty($request->file('colored_image')[$i])){
+                     $productColoredImage = new ProductColoredImage();
+                    $productColoredImage->product_id = $id;
+                    $productColoredImage->color_name = $request->input('colored_name')[$i];           
+                    $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
+                    if (!empty($request->file('product_colored_images'))) {
+                        foreach ($request->file('product_colored_images') as $img) {
+                            $image_name = Helpers::upload('product/colored_images/', 'png', $img);
+                            array_push($img_names, $image_name);
+                        }
+                        $images = $img_names;
+                    }
+                   
+                    $productColoredImage->images = $images;
+                    $productColoredImage->save();
+                }
+               
+            }
+        }
 
         $p->save();
 

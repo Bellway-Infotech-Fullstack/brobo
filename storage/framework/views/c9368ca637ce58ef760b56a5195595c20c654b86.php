@@ -122,7 +122,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> Different Angle <?php echo e(__('messages.images')); ?></label>
                                 <div>
                                     <div class="row" id="coba"></div>
                                 </div>
@@ -425,7 +425,7 @@
             });
         });
     </script>
-      <script src="<?php echo e(asset($assetPrefixPath.'assets/admin/js/spartan-multi-image-picker.js')); ?>"></script>
+      <script src="<?php echo e(asset($assetPrefixPath.'/assets/admin/js/spartan-multi-image-picker.js')); ?>"></script>
       <script type="text/javascript">
           
           $(function () {
