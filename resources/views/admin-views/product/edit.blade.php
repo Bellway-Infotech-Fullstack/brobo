@@ -466,7 +466,7 @@
                                              '</div>'+                                         
                                             '<div class="col-md-12 colored-image-section'+i+'">'+
                                                 '<div class="form-group">'+
-                                                    '<label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>'+
+                                                    '<label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>'+
                                                     '<div>'+
                                                         '<div class="row coba'+i+'"></div>'+
                                                        
@@ -531,9 +531,14 @@
         }); 
 
 
-
+        CKEDITOR.replace('description');
         $('#product_form').on('submit', function () {
             var formData = new FormData(this);
+             // Get CKEditor data
+             var editorData = CKEDITOR.instances.description.getData();
+
+            // Append CKEditor data to FormData
+            formData.append('description', editorData);
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
