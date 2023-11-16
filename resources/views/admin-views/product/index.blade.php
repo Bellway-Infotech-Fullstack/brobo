@@ -123,7 +123,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>
                                 <div>
                                     <div class="row" id="coba"></div>
                                 </div>
@@ -164,7 +164,7 @@
                         </div>    
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} {{__('messages.images')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.product')}} Different Angle {{__('messages.images')}}</label>
                                 <div>
                                     <div class="row coba0"></div>
                                 </div>
@@ -426,7 +426,7 @@
             });
         });
     </script>
-      <script src="{{asset($assetPrefixPath.'assets/admin/js/spartan-multi-image-picker.js')}}"></script>
+      <script src="{{asset($assetPrefixPath.'/assets/admin/js/spartan-multi-image-picker.js')}}"></script>
       <script type="text/javascript">
           
           $(function () {
