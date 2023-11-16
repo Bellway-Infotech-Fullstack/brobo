@@ -312,7 +312,7 @@ class ProductController extends Controller
                             $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $val) : asset('storage/app/public/product/colored_images/' . $val);
                             array_push($all_item_colored_images, $item_image);
                         }
-                        array_push($all_item_colored_images, $main_item_image);
+                       // array_push($all_item_colored_images, $main_item_image);
                         $coloredImage->images = $all_item_colored_images;
                     }
 

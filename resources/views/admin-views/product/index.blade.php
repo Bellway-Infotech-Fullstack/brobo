@@ -151,13 +151,13 @@
                             <div class="form-group">
                                 <label>{{__('messages.product')}} Main Image</label>
                                 <div class="custom-file">
-                                    <input type="file" name="colored_image[]" id="customFileEg1" class="custom-file-input"
+                                    <input type="file" name="colored_image[]" data-id="0"  class="custom-file-input customFileEg"
                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
                                     <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
                                 </div>
         
-                                <center style="display: none" id="image-viewer-section2" class="pt-2">
-                                    <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
+                                <center style="display: none" id="color-image-viewer-section0" class="pt-2">
+                                    <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer0"
                                          src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
                                 </center>
                             </div>    
@@ -417,9 +417,15 @@
     </script>
 
     <script>
+        CKEDITOR.replace('description');
         $('#food_form').on('submit', function (e) {
             e.preventDefault();
             var formData = new FormData(this);
+             // Get CKEditor data
+             var editorData = CKEDITOR.instances.description.getData();
+
+            // Append CKEditor data to FormData
+            formData.append('description', editorData);
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -427,7 +433,6 @@
             });
             $.post({
                 url: '{{route('admin.product.store')}}',
-                data: $('#food_form').serialize(),
                 data: formData,
                 cache: false,
                 contentType: false,
