@@ -382,21 +382,23 @@ class ProductController extends Controller
          try {
              // Get requested data
              
-             $cateogyId = $request->get('category_id');
+             $cateogryId = $request->get('category_id');
              $productId = $request->get('product_id');
 
-             $page = $request->post('page');
+             $page = 1;
   
              $perPage = 10; // Number of items to load per page
             
              // Define the validation rules
              $validationRules = [
                  'category_id' => 'required',
+                 'product_id' => 'required',
              ]; 
          
              // Validate the input data
              $validation = Validator::make($request->all(), $validationRules, [
                  'category_id.required' => 'category ID is required.',
+                  'product_id.required' => 'product ID is required.',
              ]);
              
  
@@ -408,11 +410,61 @@ class ProductController extends Controller
            
             // Query to retrieve items         
            
-            $items =  Product::whereHas('category', function ($query) use ($cateogyId) {
-                            $query->where('parent_id', $cateogyId);
-                        })->where('id','!=',$productId)
-                        ->paginate($perPage, ['*'], 'page', $page);
-
+            $items =  Product::whereHas('category', function ($query) use ($cateogryId) {
+                            $query->where('category_id', $cateogryId);
+                        })->where('id', '!=', $productId)
+                          ->take(10)
+                          ->get();
+                          $items = $items->map(function ($item) {
+                            // Modify the item's image property
+                            $main_item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                            if ($main_item_image === null) {
+                                $main_item_image = '';
+                            }
+                          
+                          
+           
+                            // Modify the item's image property
+                            $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                            if ($item->image === null) {
+                                $item->image = '';
+                            }
+           
+                           $all_item_images = array();
+                           if (isset($item->images) && !empty($item->images)) {
+                               array_push($all_item_images, $item->image);
+                               foreach ($item->images as $key => $val) {
+                                   $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                                   array_push($all_item_images, $item_image);
+                               }
+                               $item->images = $all_item_images;
+                           }
+           
+                           if ($item->images === null) {
+                               $item->images = [];
+                           }
+           
+                           // Check and set description to blank if null
+                           if ($item->description === null) {
+                               $item->description = '';
+                           }
+           
+                           // Calculate discount price
+                           if ($item->discount_type == 'amount') {
+                               $item->discounted_price = number_format($item->price - $item->discount, 2);
+                           } else {
+                               $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
+                           }
+           
+                           // get catefory name
+           
+                           $category_data = Category::find($item->category_id);
+           
+                           $item->category_name = $category_data->name ?? '';
+           
+                           return $item;
+                       });
+                        
            
             
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
