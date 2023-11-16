@@ -163,7 +163,7 @@
                         </div>    
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> Different Angle <?php echo e(__('messages.images')); ?></label>
                                 <div>
                                     <div class="row coba0"></div>
                                 </div>
@@ -325,6 +325,7 @@
         }
 
         $("#customFileEg1").change(function () {
+            console.log("this",this)
             readURL(this);
             $('#image-viewer-section').show(1000);
         });

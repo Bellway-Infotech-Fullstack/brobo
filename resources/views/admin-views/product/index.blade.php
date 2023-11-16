@@ -326,6 +326,7 @@
         }
 
         $("#customFileEg1").change(function () {
+            console.log("this",this)
             readURL(this);
             $('#image-viewer-section').show(1000);
         });
