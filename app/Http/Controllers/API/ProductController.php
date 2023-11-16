@@ -291,29 +291,39 @@ class ProductController extends Controller
                 }
 
             $items = $itemDetail->map(function ($item) {
+                 // Modify the item's image property
+                 $main_item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                 if ($main_item_image === null) {
+                     $main_item_image = '';
+                 }
+               
+               
                 // Update colored images paths
-                $item->coloredImages->map(function ($coloredImage) {
+                $item->coloredImages->map(function ($coloredImage)use ($main_item_image) {
+                 
                     // Add image path to colored_image
                     $coloredImage->image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $coloredImage->image) : asset('storage/app/public/product/colored_images/' . $coloredImage->image);
 
                     $all_item_colored_images = array();
                     if (isset($coloredImage->images) && !empty($coloredImage->images)) {
                         array_push($all_item_colored_images, $coloredImage->image);
+
                         foreach ($coloredImage->images as $key => $val) {
                             $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $val) : asset('storage/app/public/product/colored_images/' . $val);
                             array_push($all_item_colored_images, $item_image);
                         }
+                        array_push($all_item_colored_images, $main_item_image);
                         $coloredImage->images = $all_item_colored_images;
                     }
 
                     return $coloredImage;
                 });
 
-                // Modify the item's image property
-                $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
-                if ($item->image === null) {
-                    $item->image = '';
-                }
+                 // Modify the item's image property
+                 $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                 if ($item->image === null) {
+                     $item->image = '';
+                 }
 
                 $all_item_images = array();
                 if (isset($item->images) && !empty($item->images)) {
@@ -381,13 +391,11 @@ class ProductController extends Controller
             
              // Define the validation rules
              $validationRules = [
-                 'page' => 'required',
                  'category_id' => 'required',
              ]; 
          
              // Validate the input data
              $validation = Validator::make($request->all(), $validationRules, [
-                 'page.required' => 'page is required.',
                  'category_id.required' => 'category ID is required.',
              ]);
              
