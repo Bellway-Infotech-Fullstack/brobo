@@ -181,7 +181,7 @@
                       
                         <?php $__currentLoopData = $product_color_image_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <input type="hidden" name="colored_image_id[]" class="form-control" value="<?php echo e($photo['id']); ?>">
-                        <div class="row">
+                        <div>
                             <div class="col-md-6">
                                  <div class="form-group">
                                      <label class="input-label" for="exampleFormControlInput1">Color Name</label>
@@ -218,7 +218,7 @@
         
                            
                            
-                             <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                             <div class="col-lg-2 col-md-4 col-sm-4 col-6">
                                 <div class="card">
                                     <div class="card-body">
                                         <img style="width: 100%" height="auto"
@@ -252,7 +252,7 @@
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>  
                     
                     
-                     <a href="javascript:void(0)" style="float:right" title="Add More" id="add_more">Add More + </a>
+                     <a href="javascript:void(0)" style="float:right;margin-top: 18px;" title="Add More" id="add_more">Add More + </a>
                      <br>
 
                     <hr>
@@ -478,14 +478,15 @@
                                             '<center style="display: none" id="image-viewer-section'+i+'" class="pt-2">'+
                                             '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer'+i+'" src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
                                             '</center>'+
-                                             '</div>'+
-                                             '<div class="row">'+
-                                            '<div class="col-md-12">'+
+                                             '</div>'+      
+                                             '</div>'+  
+                                             '</div>'+                                         
+                                            '<div class="col-md-12 colored-image-section'+i+'">'+
                                                 '<div class="form-group">'+
                                                     '<label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.images')); ?></label>'+
                                                     '<div>'+
                                                         '<div class="row coba'+i+'"></div>'+
-                                                        '</div>'+
+                                                       
                                                         '</div>'+
                                                         '</div> '+
 
@@ -543,6 +544,7 @@
         $(document).on("click",".remove-section",function(){
             var row_id = $(this).attr("data-row-id");
             $(".colored-image-section"+row_id).remove();
+            $(this).remove();
         }); 
 
 
