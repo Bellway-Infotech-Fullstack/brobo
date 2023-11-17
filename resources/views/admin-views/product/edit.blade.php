@@ -464,7 +464,7 @@
                                             '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
                                             '</div>'+        
                                             '<center style="display: none" id="color-image-viewer-section'+i+'" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="{{asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+      
                                              '</div>'+  
