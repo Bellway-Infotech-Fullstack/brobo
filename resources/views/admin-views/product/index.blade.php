@@ -30,7 +30,7 @@
                      id="food_form"
                       enctype="multipart/form-data">
                     @csrf
-                    
+                    <input type="hidden" value="{{asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')}}" id="placeholder_image_path">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -242,7 +242,7 @@
                                     groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                                     maxFileSize: '',
                                     placeholderImage: {
-                                        image: "{{asset('assets/admin/img/400x400/img2.jpg')}}",
+                                        image: $("#placeholder_image_path").val(),
                                         width: '100%'
                                     },
                                     dropFileLabel: "Drop Here",
@@ -473,7 +473,7 @@
                   groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                   maxFileSize: '',
                   placeholderImage: {
-                      image: "{{asset('assets/admin/img/400x400/img2.jpg')}}",
+                    image: $("#placeholder_image_path").val(),
                       width: '100%'
                   },
                   dropFileLabel: "Drop Here",
@@ -507,7 +507,7 @@
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: "{{asset('assets/admin/img/400x400/img2.jpg')}}",
+                    image: $("#placeholder_image_path").val(),
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
