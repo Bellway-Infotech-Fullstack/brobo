@@ -63,9 +63,18 @@ class Product extends Model
 
     public function getCategoryAttribute()
     {
-        $category=Category::find(json_decode($this->category_ids)[0]->id);
-        return $category?$category->name:trans('messages.uncategorize');
+    if (!empty($this->category_ids)) {
+        $decodedCategoryIds = json_decode($this->category_ids);
+
+        // Check if the array is not empty and the first element exists
+        if (!empty($decodedCategoryIds) && isset($decodedCategoryIds[0]->id)) {
+            $category = Category::find($decodedCategoryIds[0]->id);
+            return $category ? $category->name : trans('messages.uncategorize');
+        }
     }
+
+    return trans('messages.uncategorize');
+  }
 
     // Product.php (Product model)
     public function coloredImages()

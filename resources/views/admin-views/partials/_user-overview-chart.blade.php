@@ -12,7 +12,7 @@
 </div>
 
 
-<script src="{{asset($assetPrefixPath . '/admin')}}/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="{{asset($assetPrefixPath . '/assets/admin')}}/vendor/chart.js/dist/Chart.min.js"></script>
 
 
 <script>

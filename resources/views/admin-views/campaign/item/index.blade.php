@@ -230,7 +230,7 @@
 @endsection
 
 @push('script_2')
-    <script src="{{asset($assetPrefixPath . '/admin')}}/js/tags-input.min.js"></script>
+    <script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/tags-input.min.js"></script>
     <script>
         $('#choice_attributes').on('change', function () {
             $('#customer_choice_options').html(null);

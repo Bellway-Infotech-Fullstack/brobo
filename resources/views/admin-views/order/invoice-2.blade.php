@@ -8,10 +8,10 @@
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
     <!-- CSS Implementing Plugins -->
-    <link rel="stylesheet" href="{{asset($assetPrefixPath . '/admin')}}/css/vendor.min.css">
-    <link rel="stylesheet" href="{{asset($assetPrefixPath . '/admin')}}/vendor/icon-set/style.css">
+    <link rel="stylesheet" href="{{asset($assetPrefixPath . '/assets/admin')}}/css/vendor.min.css">
+    <link rel="stylesheet" href="{{asset($assetPrefixPath . '/assets/admin')}}/vendor/icon-set/style.css">
     <!-- CSS Front Template -->
-    <link rel="stylesheet" href="{{asset($assetPrefixPath . '/admin')}}/css/theme.minc619.css?v=1.0">
+    <link rel="stylesheet" href="{{asset($assetPrefixPath . '/assets/admin')}}/css/theme.minc619.css?v=1.0">
 </head>
 
 <body class="footer-offset">
@@ -230,11 +230,11 @@
     </div>
 </main>
 
-<script src="{{asset($assetPrefixPath . '/admin')}}/js/demo.js"></script>
+<script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/demo.js"></script>
 <!-- JS Implementing Plugins -->
 <!-- JS Front -->
-<script src="{{asset($assetPrefixPath . '/admin')}}/js/vendor.min.js"></script>
-<script src="{{asset($assetPrefixPath . '/admin')}}/js/theme.min.js"></script>
+<script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/vendor.min.js"></script>
+<script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/theme.min.js"></script>
 <script>
     window.print();
 </script>
