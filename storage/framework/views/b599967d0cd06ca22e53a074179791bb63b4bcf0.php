@@ -27,6 +27,8 @@
                 <form action="javascript:" method="post" id="product_form"
                       enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
+
+                    <input type="hidden" value="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')); ?>" id="placeholder_image_path">
                     <div class="row">
                       
                         <div class="col-md-6">
@@ -91,7 +93,7 @@
                         <div class="col-md-6 col-12">
                             <div class="form-group">
                                 <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.sub_category')); ?><span
-                                        class="input-label-secondary" title="<?php echo e(__('messages.category_required_warning')); ?>"><img src="<?php echo e(asset('/public/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.category_required_warning')); ?>"></span></label>
+                                        class="input-label-secondary" title="<?php echo e(__('messages.category_required_warning')); ?>"><img src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.category_required_warning')); ?>"></span></label>
                                 <select name="sub_category_id" id="sub-categories"
                                         data-id="<?php echo e(count($product_category)>=2?$product_category[1]->id:''); ?>"
                                         class="form-control js-select2-custom">
@@ -248,9 +250,9 @@
                         </div>
                        
 
-                        
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                     </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>  
+                    
                     
                     
                      <a href="javascript:void(0)" style="float:right;margin-top: 18px;" title="Add More" id="add_more">Add More + </a>
@@ -494,7 +496,7 @@
                                     groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                                     maxFileSize: '',
                                     placeholderImage: {
-                                        image: "<?php echo e(asset('assets/admin/img/400x400/img2.jpg')); ?>",
+                                        image: $("#placeholder_image_path").val(),
                                         width: '100%'
                                     },
                                     dropFileLabel: "Drop Here",
@@ -589,7 +591,7 @@
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: "<?php echo e(asset('assets/admin/img/400x400/img2.jpg')); ?>",
+                    image: $("#placeholder_image_path").val(),
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -623,7 +625,7 @@
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: "<?php echo e(asset('assets/admin/img/400x400/img2.jpg')); ?>",
+                    image: $("#placeholder_image_path").val(),
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
