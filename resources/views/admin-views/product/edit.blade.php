@@ -254,7 +254,7 @@
                     
                     
                     
-                     <a href="javascript:void(0)" style="float:right;margin-top: 18px;" title="Add More" id="add_more">Add More + </a>
+                     <a href="javascript:void(0)" style="float:right;margin-top: 18px ;" title="Add More" id="add_more">Add More + </a>
                      <br>
 
                     <hr>
