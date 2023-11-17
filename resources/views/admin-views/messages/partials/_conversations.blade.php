@@ -11,7 +11,7 @@
         <div class="avatar avatar-lg avatar-circle">
             <img class="avatar-img" style="width: 54px;height: 54px"
                  src="{{asset('storage/app/public/profile/'.$user['image'])}}"
-                 onerror="this.src='{{asset($assetPrefixPath . '/admin')}}/img/160x160/img1.jpg'"
+                 onerror="this.src='{{asset($assetPrefixPath . '/assets/admin')}}/img/160x160/img1.jpg'"
                  alt="Image Description">
         </div>
         <h5 class="mb-0 mr-3">{{$user['f_name'].' '.$user['l_name']}}</h5>

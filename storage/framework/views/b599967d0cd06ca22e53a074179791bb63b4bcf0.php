@@ -84,8 +84,11 @@
                                 <select name="category_id" id="category-id" class="form-control js-select2-custom"
                                         onchange="getRequest('<?php echo e(url('/')); ?>/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+                                      $product_category_id =   $product_category ?? $product_category[0]->id;
+                                    ?>
                                         <option
-                                            value="<?php echo e($category['id']); ?>" <?php echo e($category->id==$product_category[0]->id ? 'selected' : ''); ?> ><?php echo e($category['name']); ?></option>
+                                            value="<?php echo e($category['id']); ?>" <?php echo e($category->id==$product_category_id ? 'selected' : ''); ?> ><?php echo e($category['name']); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
@@ -255,7 +258,7 @@
                     
                     
                     
-                     <a href="javascript:void(0)" style="float:right;margin-top: 18px;" title="Add More" id="add_more">Add More + </a>
+                     <a href="javascript:void(0)" style="float:right;margin-top: 18px ;" title="Add More" id="add_more">Add More + </a>
                      <br>
 
                     <hr>
@@ -408,10 +411,10 @@
                 }
             }
         });
-        
+        $assetPrefixPath . '/assets/admin'
     </script>
 
-    <script src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/js/tags-input.min.js"></script>
+    <script src="<?php echo e(asset($assetPrefixPath . '/assets/admin')); ?>/js/tags-input.min.js"></script>
 
     <script>
         $('#choice_attributes').on('change', function () {

@@ -6,12 +6,15 @@
                 <!-- Logo -->
                 <?php (@$restaurant_logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first()->value); ?>
                 <a class="navbar-brand" href="<?php echo e(route('admin.dashboard')); ?>" aria-label="">
+                    <?php
+                    $restaurant_logo = (env('APP_ENV') == 'local') ?  asset('storage/business/' . $restaurant_logo) : asset('storage/app/public/business/' . $restaurant_logo); 
+                    ?>
                     <img class="navbar-brand-logo" style="max-height: 48px; border-radius: 8px"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
-                         src="<?php echo e(asset('storage/app/public/business/'.$restaurant_logo)); ?>" alt="Logo">
+                         src="<?php echo e($restaurant_logo); ?>" alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 48px; border-radius: 8px"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
-                         src="<?php echo e(asset('storage/app/public/business/'.$restaurant_logo)); ?>" alt="Logo">
+                         src="<?php echo e($restaurant_logo); ?>" alt="Logo">
                 </a>
                 <!-- End Logo -->
             </div>
@@ -66,6 +69,9 @@
                     <li class="nav-item">
                         <!-- Account -->
                         <div class="hs-unfold">
+                            <?php
+                            $def_image = (env('APP_ENV') == 'local') ?  asset('storage/admin/' . auth()->user()->image) : asset('storage/app/public/admin/' . auth()->user()->image); 
+                            ?>
                             <a class="js-hs-unfold-invoker navbar-dropdown-account-wrapper" href="javascript:;"
                                data-hs-unfold-options='{
                                      "target": "#accountNavbarDropdown",
@@ -74,7 +80,7 @@
                                 <div class="avatar avatar-sm avatar-circle">
                                     <img class="avatar-img"
                                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
-                                         src="<?php echo e(asset('storage/app/public/admin')); ?>/<?php echo e(auth()->user()->id); ?>"
+                                         src="<?php echo e($def_image); ?>"
                                          alt="Image Description">
                                     <span class="avatar-status avatar-sm-status avatar-status-success"></span>
                                 </div>
@@ -88,7 +94,7 @@
                                         <div class="avatar avatar-sm avatar-circle mr-2">
                                             <img class="avatar-img"
                                                  onerror="this.src='<?php echo e(asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')); ?>'"
-                                                 src="<?php echo e(asset('storage/app/public/admin')); ?>/<?php echo e(auth()->user()->image); ?>"
+                                                 src="<?php echo e($def_image); ?>"
                                                  alt="Image Description">
                                         </div>
                                         <div class="media-body">
