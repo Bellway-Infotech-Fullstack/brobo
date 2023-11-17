@@ -83,8 +83,11 @@
                                 <select name="category_id" id="category-id" class="form-control js-select2-custom"
                                         onchange="getRequest('{{url('/')}}/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     @foreach($categories as $category)
+                                    <?php
+                                      $product_category_id =   $product_category ?? $product_category[0]->id;
+                                    ?>
                                         <option
-                                            value="{{$category['id']}}" {{ $category->id==$product_category[0]->id ? 'selected' : ''}} >{{$category['name']}}</option>
+                                            value="{{$category['id']}}" {{ $category->id==$product_category_id ? 'selected' : ''}} >{{$category['name']}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -410,7 +413,7 @@
         
     </script>
 
-    <script src="{{asset($assetPrefixPath . '/admin')}}/js/tags-input.min.js"></script>
+    <script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/tags-input.min.js"></script>
 
     <script>
         $('#choice_attributes').on('change', function () {

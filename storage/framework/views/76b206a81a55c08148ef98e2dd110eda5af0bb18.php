@@ -28,7 +28,7 @@
                          alt="Logo">
                     <img class="navbar-brand-logo-mini" style="max-height: 55px; max-width: 100%!important;"
                          onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/logo2.png')); ?>'"
-                         src="{$logoPath}" alt="Logo">
+                         src="<?php echo e($logoPath); ?>" alt="Logo">
                 </a>
                 <!-- End Logo -->
 
