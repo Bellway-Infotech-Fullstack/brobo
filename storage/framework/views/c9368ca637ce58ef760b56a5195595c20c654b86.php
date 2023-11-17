@@ -396,7 +396,7 @@
     </script>
 
 
-    <script src="<?php echo e(asset($assetPrefixPath . '/admin')); ?>/js/tags-input.min.js"></script>
+    <script src="<?php echo e(asset($assetPrefixPath . '/assets/admin')); ?>/js/tags-input.min.js"></script>
 
     <script>
         $('#choice_attributes').on('change', function () {

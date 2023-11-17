@@ -83,8 +83,11 @@
                                 <select name="category_id" id="category-id" class="form-control js-select2-custom"
                                         onchange="getRequest('{{url('/')}}/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     @foreach($categories as $category)
+                                    <?php
+                                      $product_category_id =   $product_category ?? $product_category[0]->id;
+                                    ?>
                                         <option
-                                            value="{{$category['id']}}" {{ $category->id==$product_category[0]->id ? 'selected' : ''}} >{{$category['name']}}</option>
+                                            value="{{$category['id']}}" {{ $category->id==$product_category_id ? 'selected' : ''}} >{{$category['name']}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -410,7 +413,7 @@
         
     </script>
 
-    <script src="{{asset($assetPrefixPath . '/admin')}}/js/tags-input.min.js"></script>
+    <script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/tags-input.min.js"></script>
 
     <script>
         $('#choice_attributes').on('change', function () {
@@ -461,7 +464,7 @@
                                             '<label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>'+
                                             '</div>'+        
                                             '<center style="display: none" id="color-image-viewer-section'+i+'" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="{{asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')}}" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+      
                                              '</div>'+  

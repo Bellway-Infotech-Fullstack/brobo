@@ -349,6 +349,8 @@ class ProductController extends Controller
                     $item->discounted_price = number_format($item->price - $item->discount, 2);
                 } else {
                     $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
+                    $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
+
                 }
 
                 // get catefory name
