@@ -29,7 +29,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|unqiue:products,name',
+            'name' => 'required',
             'category_id' => 'required',
             'image' => 'required',
             'price' => 'required|numeric|min:.01',
@@ -110,6 +110,8 @@ class ProductController extends Controller
         $productId = $Product->id;
 
         $productColoredImage = new ProductColoredImage;
+        $colored_images = [];
+        $colored_img_names = [];
 
         if(count($request->input('colored_name')) > 0){
             for($i = 0; $i < count($request->input('colored_name')); $i++){
@@ -118,22 +120,35 @@ class ProductController extends Controller
                     $productColoredImage->product_id = $productId;
                     $productColoredImage->color_name = $request->input('colored_name')[$i];           
                     $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
-                    if (!empty($request->file('product_colored_images'))) {
-                        foreach ($request->file('product_colored_images') as $img) {
-                            $image_name = Helpers::upload('product/colored_images/', 'png', $img);
-                            array_push($img_names, $image_name);
+                    $productColoredImages = $request->product_colored_images[$i];
+                 
+                    if (!empty($productColoredImages)) {
+                        $existingImages = array(); // Assuming $existingImages is the first array
+                        $colored_img_names = array(); // Initialize the array to store processed images
+                    
+                        foreach ($productColoredImages as $img2) {
+                            // Process each image
+                            $color_image_name = Helpers::upload('product/colored_images/', 'png', $img2);
+                    
+                            // Check if $color_image_name is not in $existingImages
+                            if (!in_array($color_image_name, $existingImages)) {
+                                array_push($colored_img_names, $color_image_name);
+                                // Update $existingImages with the new image
+                                $existingImages[] = $color_image_name;
+                            }
                         }
-                        $images = $img_names;
-                    }
+                    
                    
-                    $productColoredImage->images = $images;
-                    $productColoredImage->save();
+                    
+                        $productColoredImage->images = $colored_img_names;
+                        $productColoredImage->save();
+                    }                 
                 }
                
             }
         }
            
-        // return back();
+      
         return response()->json([], 200);
     }
 
@@ -166,8 +181,12 @@ class ProductController extends Controller
        
      
         $product_category = json_decode($product->category_ids);
+        $product_category_id = $product->category_id;
+        $product_category_data = Category::where(['id' => $product_category_id])->first();
+        $product_category_parent_id = $product_category_data->parent_id;
+     
         $categories = Category::where(['parent_id' => 0])->get();
-        return view('admin-views.product.edit', compact('product', 'product_category', 'categories','product_color_image_data'));
+        return view('admin-views.product.edit', compact('product', 'product_category', 'categories','product_color_image_data','product_category_parent_id'));
     }
 
     public function status(Request $request)
@@ -264,72 +283,112 @@ class ProductController extends Controller
         $p->discount = $request->discount_type == 'amount' ? $request->discount : $request->discount;
         $p->discount_type = $request->discount_type;
 
-        $productColoredImage = new ProductColoredImage;
-
+      //  $productColoredImage = new ProductColoredImage;
+        $colored_img_names = [];
+        $colored_images = [];
+        $colored_img_names_arr = [];
         if(count($request->input('colored_name')) > 0){
-          
-            $colored_img_names = [];
-
-            for($i = 0; $i < count($request->input('colored_name')); $i++){
-                
-                if(isset($request->input('colored_image_id')[$i]) && !empty($request->input('colored_image_id')[$i])){
-                    $colored_image_id = $request->input('colored_image_id')[$i];
+            $all_item_colored_images = array();
+            for($i = 0; $i < count($request->input('colored_name')); $i++){ 
+                $colored_image_id = isset($request->input('colored_image_id')[$i]) ? $request->input('colored_image_id')[$i] : '';
+                if(isset($colored_image_id) && !empty($colored_image_id)){
                     $pci = ProductColoredImage::find($colored_image_id);
                     $item_colored_images = $pci['images'];
-                
-                    if (!empty($request->file('product_colored_images')[$i])) {                    
-                      
-                        foreach($request->file('product_colored_images') as $img2) {
-                          
-                            $image_name = Helpers::upload('product/colored_images/', 'png', $img2);
-                    
-                            array_push($colored_img_names, $image_name);
-                        }
-                        $colored_images = $colored_img_names;
-                        $pci->images = array_merge($colored_images,$item_colored_images);
-                    }
-            
-                
-                    
-                    $pci->color_name = $request->input('colored_name')[$i];
-                    if(isset($request->file('colored_image')[$i]) && !empty($request->file('colored_image')[$i])){
-                        $pci->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
-                    }
-                    
-                    
-                    $pci->save();
+                    array_push($all_item_colored_images,$item_colored_images);
                 } else {
-                    if(!empty($request->input('colored_name')[$i]) && !empty($request->file('colored_image')[$i])){
-                        $productColoredImage = new ProductColoredImage();
-                       
-   
-                       $productColoredImage->product_id = $id;
-                       $productColoredImage->color_name = $request->input('colored_name')[$i];           
-                       $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
-                       if (!empty($request->file('product_colored_images'))) {
-                           foreach ($request->file('product_colored_images') as $img) {
-                               $image_name = Helpers::upload('product/colored_images/', 'png', $img);
-                               array_push($img_names, $image_name);
-                           }
-                           $images = $img_names;
-                           $productColoredImage->images = $images;
-                       }
-
-                       
-   
-                       
-                      
-                       $productColoredImage->save();
-                   }
+                    $item_colored_images = array();
 
                 }
                 
-                
-
-
-                
-               
             }
+                    if(count($item_colored_images) > 0) {
+                     
+                       
+
+
+                       
+                        for($i = 0; $i < count($request->input('colored_name')); $i++){  
+                       
+                            $productColoredImages1 = isset($request->product_colored_images[$i]) && !empty($request->product_colored_images[$i]) ? $request->product_colored_images[$i] : [];
+                          
+                        if (!empty($productColoredImages1)) {
+                            $existingImages = array(); // Assuming $existingImages is the first array
+                            $colored_img_names = array(); // Initialize the array to store processed images
+                        
+                            foreach ($productColoredImages1 as $img21) {
+                                // Process each image
+                                $color_image_name = Helpers::upload('product/colored_images/', 'png', $img21);
+                        
+                                // Check if $color_image_name is not in $existingImages
+                                if (!in_array($color_image_name, $existingImages)) {
+                                    array_push($colored_img_names, $color_image_name);
+                                    // Update $existingImages with the new image
+                                    $existingImages[] = $color_image_name;
+                                }
+                            }
+                        
+                       
+                           
+                            $pci->images = array_merge($colored_img_names,$item_colored_images);
+                        }    
+    
+                       
+                
+                    
+                        
+                        $pci->color_name = $request->input('colored_name')[$i];
+                        if(isset($request->file('colored_image')[$i]) && !empty($request->file('colored_image')[$i])){
+                            $pci->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
+                        }
+                        
+                       
+                        $pci->save();
+
+
+                        
+                    }
+                        
+                    } else {
+
+                        for($i = 0; $i < count($request->input('colored_name')); $i++){  
+
+
+                
+                        $productColoredImage = new ProductColoredImage();
+                        $productColoredImage->product_id = $id;
+                        $productColoredImage->color_name = $request->input('colored_name')[$i];     
+                        
+                        $cim = (isset($request->file('colored_image')[$i]) && !empty($request->file('colored_image')[$i])) ? $request->file('colored_image')[$i] : array();
+                        $productColoredImage->image = Helpers::upload('product/colored_images/', 'png', $cim);
+                        $pcims = (isset($request->file('product_colored_images')[$i]) && !empty($request->file('product_colored_images')[$i])) ? $request->file('product_colored_images')[$i] : array();
+
+                        $productColoredImages = $pcims;
+                    
+                        if (!empty($productColoredImages)) {
+                            $existingImages2 = array(); // Assuming $existingImages is the first array
+                            $colored_img_names_arr = array(); // Initialize the array to store processed images
+                        
+                            foreach ($productColoredImages as $img2) {
+                                // Process each image
+                                $color_image_name = Helpers::upload('product/colored_images/', 'png', $img2);
+                        
+                                // Check if $color_image_name is not in $existingImages
+                                if (!in_array($color_image_name, $existingImages2)) {
+                                    array_push($colored_img_names_arr, $color_image_name);
+                                    // Update $existingImages with the new image
+                                    $existingImages2[] = $color_image_name;
+                                }
+                            }
+                        
+                    
+                 
+                            $productColoredImage->images = $colored_img_names_arr;
+                            $productColoredImage->save();
+                        }                 
+                    }
+                    }
+                  
+             
         }
 
         $p->save();
@@ -404,7 +463,7 @@ class ProductController extends Controller
     public function get_categories(Request $request)
     {
         $cat = Category::where(['parent_id' => $request->parent_id])->get();
-        $res = '<option value="' . 0 . '" disabled selected>---Select---</option>';
+        $res = '<option value="">---Select---</option>';
         foreach ($cat as $row) {
             if ($row->id == $request->sub_category) {
                 $res .= '<option value="' . $row->id . '" selected >' . $row->name . '</option>';
