@@ -7,7 +7,7 @@
 
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="{{asset($assetPrefixPath . '/admin/css/tags-input.min.css')}}" rel="stylesheet">
+    <link href="{{asset($assetPrefixPath . '/assets/admin/css/tags-input.min.css')}}" rel="stylesheet">
 @endpush
 
 @section('content')
@@ -71,8 +71,8 @@
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.category')}}<small style="color: red">* </small></label>
-                                <select name="category_id" class="form-control js-select2-custom"
+                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.category')}} <small style="color: red"> * </small></label>
+                                <select name="category_id"  class="form-control js-select2-custom"
                                         onchange="getRequest('{{url('/')}}/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     <option value="">---{{__('messages.select')}}---</option>
                                     @foreach($categories as $category)
@@ -83,9 +83,7 @@
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.sub_category')}}<span
-                                        class="input-label-secondary" title="{{__('messages.category_required_warning')}}">
-                                        <img src="{{asset($assetPrefixPath.'/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.category_required_warning')}}"></span></label>
+                                <label class="input-label" for="exampleFormControlSelect1">{{__('messages.sub_category')}} <small style="color: red"> * </small></label>
                                 <select name="sub_category_id" id="sub-categories"
                                         class="form-control js-select2-custom">
 
@@ -158,7 +156,7 @@
         
                                 <center style="display: none" id="color-image-viewer-section0" class="pt-2">
                                     <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer0"
-                                         src="{{asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                         src="{{asset($assetPrefixPath . '/assets/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
                                 </center>
                             </div>    
                         </div>    
@@ -236,7 +234,7 @@
 
                                 $("#colored_image_section").append(htmlData);
                                 $(".coba"+new_count).spartanMultiImagePicker({
-                                    fieldName: 'product_colored_images[]',
+                                    fieldName: "product_colored_images["+new_count+"][]",
                                     maxCount: 6,
                                     rowHeight: '120px',
                                     groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
@@ -367,8 +365,12 @@
             // INITIALIZATION OF SELECT2
             // =======================================================
             $('.js-select2-custom').each(function () {
+               
                 var select2 = $.HSCore.components.HSSelect2.init($(this));
             });
+
+
+            $('.js-select2-custom').prop("required",true)
         });
         $('.js-data-example-ajax').select2({
             ajax: {
@@ -419,6 +421,7 @@
     <script>
         CKEDITOR.replace('description');
         $('#food_form').on('submit', function (e) {
+           
             e.preventDefault();
             var formData = new FormData(this);
              // Get CKEditor data
@@ -501,7 +504,7 @@
               });
 
               $(".coba0").spartanMultiImagePicker({
-                fieldName: 'product_colored_images[]',
+                fieldName: 'product_colored_images[0][]',
                 maxCount: 6,
                 rowHeight: '120px',
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
