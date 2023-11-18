@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="col-sm-8 col-12 pt-2 border-left">
-                        <h4>{{__('messages.short')}} {{__('messages.description')}} : </h4>
+                        <h4> {{__('messages.description')}} : </h4>
                         {!!$product['description'] !!}
                     </div>
                 </div>

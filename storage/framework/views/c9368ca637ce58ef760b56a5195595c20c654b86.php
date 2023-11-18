@@ -6,7 +6,7 @@
 
 <?php $__env->startPush('css_or_js'); ?>
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <link href="<?php echo e(asset($assetPrefixPath . '/admin/css/tags-input.min.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset($assetPrefixPath . '/assets/admin/css/tags-input.min.css')); ?>" rel="stylesheet">
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -70,8 +70,8 @@
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.category')); ?><small style="color: red">* </small></label>
-                                <select name="category_id" class="form-control js-select2-custom"
+                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.category')); ?> <small style="color: red"> * </small></label>
+                                <select name="category_id"  class="form-control js-select2-custom"
                                         onchange="getRequest('<?php echo e(url('/')); ?>/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
                                     <option value="">---<?php echo e(__('messages.select')); ?>---</option>
                                     <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -82,9 +82,7 @@
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.sub_category')); ?><span
-                                        class="input-label-secondary" title="<?php echo e(__('messages.category_required_warning')); ?>">
-                                        <img src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.category_required_warning')); ?>"></span></label>
+                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.sub_category')); ?> <small style="color: red"> * </small></label>
                                 <select name="sub_category_id" id="sub-categories"
                                         class="form-control js-select2-custom">
 
@@ -116,7 +114,7 @@
         
                                 <center style="display: none" id="image-viewer-section" class="pt-2">
                                     <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                        src="<?php echo e(asset('public/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
+                                        src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
                                 </center>
                             </div>
                         </div>
@@ -157,7 +155,7 @@
         
                                 <center style="display: none" id="color-image-viewer-section0" class="pt-2">
                                     <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer0"
-                                         src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
+                                         src="<?php echo e(asset($assetPrefixPath . '/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
                                 </center>
                             </div>    
                         </div>    
@@ -208,7 +206,7 @@
                                             '<label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>'+
                                             '</div>'+        
                                             '<center style="display: none" id="color-image-viewer-section'+i+'" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer'+i+'" src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer'+i+'" src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+
                                              '</div>'+
@@ -235,7 +233,7 @@
 
                                 $("#colored_image_section").append(htmlData);
                                 $(".coba"+new_count).spartanMultiImagePicker({
-                                    fieldName: 'product_colored_images[]',
+                                    fieldName: "product_colored_images["+new_count+"][]",
                                     maxCount: 6,
                                     rowHeight: '120px',
                                     groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
@@ -366,8 +364,12 @@
             // INITIALIZATION OF SELECT2
             // =======================================================
             $('.js-select2-custom').each(function () {
+               
                 var select2 = $.HSCore.components.HSSelect2.init($(this));
             });
+
+
+            $('.js-select2-custom').prop("required",true)
         });
         $('.js-data-example-ajax').select2({
             ajax: {
@@ -418,6 +420,7 @@
     <script>
         CKEDITOR.replace('description');
         $('#food_form').on('submit', function (e) {
+           
             e.preventDefault();
             var formData = new FormData(this);
              // Get CKEditor data
@@ -500,7 +503,7 @@
               });
 
               $(".coba0").spartanMultiImagePicker({
-                fieldName: 'product_colored_images[]',
+                fieldName: 'product_colored_images[0][]',
                 maxCount: 6,
                 rowHeight: '120px',
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',

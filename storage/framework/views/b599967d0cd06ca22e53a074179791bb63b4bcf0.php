@@ -6,7 +6,7 @@
 
 <?php $__env->startPush('css_or_js'); ?>
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <link href="<?php echo e(asset($assetPrefixPath . '/admin/css/tags-input.min.css')); ?>" rel="stylesheet">
+    <link href="<?php echo e(asset($assetPrefixPath . '/assets/admin/css/tags-input.min.css')); ?>" rel="stylesheet">
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -33,13 +33,13 @@
                       
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.name')); ?></label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.name')); ?> <small style="color: red">* </small></label>
                                 <input type="text" name="name" value="<?php echo e($product['name']); ?>" class="form-control" placeholder="New food" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.price')); ?></label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.price')); ?> <small style="color: red">* </small></label>
                                 <input type="number" value="<?php echo e($product['price']); ?>" min="0" max="100000" name="price"
                                        class="form-control" step="0.01"
                                        placeholder="Ex : 100" required>
@@ -52,7 +52,7 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?></label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?> <small style="color: red">* </small></label>
                                 <select name="discount_type" class="form-control js-select2-custom">
                                     <option value="percent" <?php echo e($product['discount_type']=='percent'?'selected':''); ?>>
                                         <?php echo e(__('messages.percent')); ?>
@@ -79,24 +79,21 @@
                     <div class="row">
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.category')); ?><span
-                                        class="input-label-secondary">*</span></label>
+                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.category')); ?> <small style="color: red"> * </small></label>
                                 <select name="category_id" id="category-id" class="form-control js-select2-custom"
                                         onchange="getRequest('<?php echo e(url('/')); ?>/admin/product/get-categories?parent_id='+this.value,'sub-categories')">
+                                        <option value="">---<?php echo e(__('messages.select')); ?>---</option>
                                     <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <?php
-                                      $product_category_id =   $product_category ?? $product_category[0]->id;
-                                    ?>
+                                  
                                         <option
-                                            value="<?php echo e($category['id']); ?>" <?php echo e($category->id==$product_category_id ? 'selected' : ''); ?> ><?php echo e($category['name']); ?></option>
+                                            value="<?php echo e($category['id']); ?>" <?php echo e(($category['id'] == $product_category_parent_id) ? 'selected' : ''); ?> ><?php echo e($category['name']); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.sub_category')); ?><span
-                                        class="input-label-secondary" title="<?php echo e(__('messages.category_required_warning')); ?>"><img src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/info-circle.svg')); ?>" alt="<?php echo e(__('messages.category_required_warning')); ?>"></span></label>
+                                <label class="input-label" for="exampleFormControlSelect1"><?php echo e(__('messages.sub_category')); ?> <small style="color: red"> * </small></label>
                                 <select name="sub_category_id" id="sub-categories"
                                         data-id="<?php echo e(count($product_category)>=2?$product_category[1]->id:''); ?>"
                                         class="form-control js-select2-custom">
@@ -143,9 +140,10 @@
                         <div class="col-md-12">
 
                         <div class="form-group">
-                            <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> Different Angle <?php echo e(__('messages.images')); ?></label>
+                            <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> Different Angle <?php echo e(__('messages.images')); ?> </label>
                             <div>
                                 <div class="row" id="coba">
+                                    <?php if(count($product->images) > 0): ?>
                                     <?php $__currentLoopData = $product->images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php if(!str_contains($photo, 'video-')): ?>
                                         <?php
@@ -156,7 +154,7 @@
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <img style="width: 100%" height="auto"
-                                                                onerror="this.src='<?php echo e(asset('public/assets/front-end/img/image-place-holder.png')); ?>'"
+                                                               
                                                                 src="<?php echo e($productImagePath); ?>"
                                                                 alt="Product image">
                                                         <a href="<?php echo e(route('admin.product.remove-image',['id'=>$product['id'],'name'=>$photo])); ?>"
@@ -167,6 +165,7 @@
                                             </div>
                                         <?php endif; ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -183,6 +182,7 @@
                     </div>
 
                     <div  id="colored_image_section">
+                    <?php if(count($product_color_image_data) > 0): ?>
                       
                         <?php $__currentLoopData = $product_color_image_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <input type="hidden" name="colored_image_id[]" class="form-control" value="<?php echo e($photo['id']); ?>">
@@ -214,7 +214,9 @@
                                      </center>
                                  </div>    
                              </div>   
-                             <div class="row">
+                         
+                             <div class="row ">
+                                
                              <?php $__currentLoopData = $photo['images']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $photo2): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                              <?php
                            
@@ -228,7 +230,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <img style="width: 100%" height="auto"
-                                                onerror="this.src='<?php echo e(asset('public/assets/front-end/img/image-place-holder.png')); ?>'"
+                                              
                                                 src="<?php echo e($productImagePath); ?>"
                                                 alt="Product image">
                                         <a href="<?php echo e(route('admin.product.remove-color-image',['id'=>$photo['id'],'name'=>$photo2])); ?>"
@@ -254,6 +256,38 @@
                        
 
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+                        <?php else: ?>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1">Color Name</label>
+                                <input type="text" name="colored_name[]" class="form-control" placeholder="Color Name">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label><?php echo e(__('messages.product')); ?> Main Image</label>
+                                <div class="custom-file">
+                                    <input type="file" name="colored_image[]" data-id="0"  class="custom-file-input customFileEg"
+                                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                    <label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
+                                </div>
+        
+                                <center style="display: none" id="color-image-viewer-section0" class="pt-2">
+                                    <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer0"
+                                         src="<?php echo e(asset($assetPrefixPath . '/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
+                                </center>
+                            </div>    
+                        </div>    
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.product')); ?> Different Angle <?php echo e(__('messages.images')); ?></label>
+                                <div>
+                                    <div class="row coba0"></div>
+                                </div>
+                            </div>
+                        </div>  
+                       <?php endif; ?>
+                        
                     </div>
                     
                     
@@ -385,6 +419,7 @@
             $('.js-select2-custom').each(function () {
                 var select2 = $.HSCore.components.HSSelect2.init($(this));
             });
+            $('.js-select2-custom').prop("required",true)
         });
         
         $('.js-data-example-ajax').select2({
@@ -411,7 +446,7 @@
                 }
             }
         });
-        $assetPrefixPath . '/assets/admin'
+        
     </script>
 
     <script src="<?php echo e(asset($assetPrefixPath . '/assets/admin')); ?>/js/tags-input.min.js"></script>
@@ -448,7 +483,12 @@
        $(document).ready(function(){
             var length = <?php echo e(count($product_color_image_data)); ?>
 
-            var i = length;
+            if(length >0) {
+              var i = length;  
+            } else {
+                var i = 1; 
+            }
+
             
             $("#add_more").on("click",function(){
                
@@ -466,7 +506,7 @@
                                             '<label class="custom-file-label" for="customFileEg1"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>'+
                                             '</div>'+        
                                             '<center style="display: none" id="color-image-viewer-section'+i+'" class="pt-2">'+
-                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="<?php echo e(asset($assetPrefixPath . '/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
+                                            '<img style="height: 200px;border: 1px solid; border-radius: 10px;"  id="viewer'+i+'" src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>'+
                                             '</center>'+
                                              '</div>'+      
                                              '</div>'+  
@@ -493,7 +533,7 @@
 
                                 $("#colored_image_section").append(htmlData);
                                 $(".coba"+new_count).spartanMultiImagePicker({
-                                    fieldName: 'product_colored_images[]',
+                                    fieldName: "product_colored_images["+new_count+"][]",
                                     maxCount: 6,
                                     rowHeight: '120px',
                                     groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',
@@ -622,7 +662,7 @@
             });
 
             $(".coba0").spartanMultiImagePicker({
-                fieldName: 'product_colored_images[]',
+                fieldName: 'product_colored_images[0][]',
                 maxCount: 6,
                 rowHeight: '120px',
                 groupClassName: 'col-lg-2 col-md-4 col-sm-4 col-6',

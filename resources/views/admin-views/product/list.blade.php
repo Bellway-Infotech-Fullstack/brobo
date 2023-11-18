@@ -66,7 +66,7 @@
                                     "target": "#showHideDropdown",
                                     "type": "css-animation"
                                     }'>
-                                    <i class="tio-table mr-1"></i> Columns <span class="badge badge-soft-dark rounded-circle ml-1">7</span>
+                                    <i class="tio-table mr-1"></i> Columns <span class="badge badge-soft-dark rounded-circle ml-1">6</span>
                                 </a>
 
                                 <div id="showHideDropdown" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right dropdown-card" style="width: 15rem;">
@@ -96,11 +96,11 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">Type</span>
+                                                <span class="mr-2">Category</span>
 
                                                 <!-- Checkbox Switch -->
-                                                <label class="toggle-switch toggle-switch-sm" for="toggleColumn_type">
-                                                    <input type="checkbox" class="toggle-switch-input" id="toggleColumn_type" checked>
+                                                <label class="toggle-switch toggle-switch-sm" for="toggleColumn_category">
+                                                    <input type="checkbox" class="toggle-switch-input" id="toggleColumn_category" checked>
                                                     <span class="toggle-switch-label">
                                                     <span class="toggle-switch-indicator"></span>
                                                     </span>
@@ -108,38 +108,26 @@
                                             <!-- End Checkbox Switch -->
                                             </div>
 
+                                     
+                                        
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">Restaurant</span>
+                                                <span class="mr-2">Price </span>
 
                                                 <!-- Checkbox Switch -->
-                                                <label class="toggle-switch toggle-switch-sm" for="toggleColumn_vendor">
-                                                    <input type="checkbox" class="toggle-switch-input" id="toggleColumn_vendor" checked>
+                                                <label class="toggle-switch toggle-switch-sm" for="toggleColumn_price">
+                                                    <input type="checkbox" class="toggle-switch-input" id="toggleColumn_price" checked>
                                                     <span class="toggle-switch-label">
                                                     <span class="toggle-switch-indicator"></span>
                                                     </span>
                                                 </label>
                                                 <!-- End Checkbox Switch -->
                                             </div>
-
-                                        
                                             <div class="d-flex justify-content-between align-items-center mb-3">
                                                 <span class="mr-2">Status</span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_status">
                                                     <input type="checkbox" class="toggle-switch-input" id="toggleColumn_status" checked>
-                                                    <span class="toggle-switch-label">
-                                                    <span class="toggle-switch-indicator"></span>
-                                                    </span>
-                                                </label>
-                                                <!-- End Checkbox Switch -->
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2">Price</span>
-
-                                                <!-- Checkbox Switch -->
-                                                <label class="toggle-switch toggle-switch-sm" for="toggleColumn_price">
-                                                    <input type="checkbox" class="toggle-switch-input" id="toggleColumn_price" checked>
                                                     <span class="toggle-switch-label">
                                                     <span class="toggle-switch-indicator"></span>
                                                     </span>
@@ -308,22 +296,20 @@
           datatable.columns(1).visible(e.target.checked)
         })
 
-        $('#toggleColumn_type').change(function (e) {
+        $('#toggleColumn_category').change(function (e) {
           datatable.columns(2).visible(e.target.checked)
         })
 
-        $('#toggleColumn_vendor').change(function (e) {
+        $('#toggleColumn_price').change(function (e) {
           datatable.columns(3).visible(e.target.checked)
         })
 
         $('#toggleColumn_status').change(function (e) {
-          datatable.columns(5).visible(e.target.checked)
-        })
-        $('#toggleColumn_price').change(function (e) {
           datatable.columns(4).visible(e.target.checked)
         })
+        
         $('#toggleColumn_action').change(function (e) {
-          datatable.columns(6).visible(e.target.checked)
+          datatable.columns(5).visible(e.target.checked)
         })
 
             // INITIALIZATION OF SELECT2
