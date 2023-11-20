@@ -40,32 +40,43 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('logout', 'logout');           
         });     
     });
+    
+    Route::group(['middleware' => 'custom.jwt'], function () {
 
-    Route::controller(UsersAddressController::class)->group(function () {
-        Route::post('manage-delivery-address', 'manageAddress');
-        Route::get('get-delivery-address', 'getAddress');
+        Route::controller(UsersAddressController::class)->group(function () {
+            Route::post('manage-delivery-address', 'manageAddress');
+            Route::get('get-delivery-address', 'getAddress');
+        }); 
+    });
+    
+    Route::group(['middleware' => 'custom.jwt'], function () {
+
+        Route::controller(CategoryController::class)->group(function () {
+            Route::get('get-all-subcategories', 'getAllSubCategories');
+            Route::get('get-popular-services', 'getPopularServices');
+        }); 
+    });
+    Route::group(['middleware' => 'custom.jwt'], function () {
+
+        Route::controller(BannerController::class)->group(function () {
+            Route::get('get-all-banners', 'index');
+        }); 
+    });
+    Route::group(['middleware' => 'custom.jwt'], function () {
+
+        Route::controller(SettingController::class)->group(function () {
+            Route::get('get-setting-data', 'index');
+            Route::get('update-notification-setting', 'updateNotificationSetting');
+        }); 
     }); 
-
-    Route::controller(CategoryController::class)->group(function () {
-        Route::get('get-all-subcategories', 'getAllSubCategories');
-        Route::get('get-popular-services', 'getPopularServices');
-    }); 
-
-    Route::controller(BannerController::class)->group(function () {
-        Route::get('get-all-banners', 'index');
-    }); 
-
-    Route::controller(SettingController::class)->group(function () {
-        Route::get('get-setting-data', 'index');
-        Route::get('update-notification-setting', 'updateNotificationSetting');
-    }); 
-
-    Route::controller(ProductController::class)->group(function () {
-        Route::get('get-product-list', 'getProductList');
-        Route::get('product-detail', 'getProductDetail');
-        Route::get('manage-item-in-whishlist', 'manageItemInWishList');
-        Route::get('get-item-in-whishlist', 'getItemInWishList');
-        Route::get('get-product-recommendation-list', 'getProductRecommendationList');        
+    Route::group(['middleware' => 'custom.jwt'], function () {
+        Route::controller(ProductController::class)->group(function () {
+            Route::get('get-product-list', 'getProductList');
+            Route::get('product-detail', 'getProductDetail');
+            Route::get('manage-item-in-whishlist', 'manageItemInWishList');
+            Route::get('get-item-in-whishlist', 'getItemInWishList');
+            Route::get('get-product-recommendation-list', 'getProductRecommendationList');        
+        }); 
     }); 
 });
 
