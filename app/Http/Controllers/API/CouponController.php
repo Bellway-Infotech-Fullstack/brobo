@@ -31,7 +31,7 @@ class CouponController extends Controller
                     "status"=> "success",
                     "code"=> 200,
                     "data" => array(
-                    'id' => $couponData->id,
+                     'id' => $couponData->id,
                      'title' => $couponData->title,
                      'code' => $couponData->code,
                      'start_date' => $couponData->start_date,
