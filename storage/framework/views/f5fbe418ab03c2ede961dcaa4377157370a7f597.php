@@ -1,21 +1,20 @@
-@extends('layouts.admin.app')
-@php
+<?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphp
-@section('title','Add new coupon')
+?>
+<?php $__env->startSection('title','Add new coupon'); ?>
 
-@push('css_or_js')
+<?php $__env->startPush('css_or_js'); ?>
 
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"><i class="tio-add-circle-outlined"></i> {{__('messages.add')}} {{__('messages.new')}} {{__('messages.coupon')}}</h1>
+                    <h1 class="page-header-title"><i class="tio-add-circle-outlined"></i> <?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?> <?php echo e(__('messages.coupon')); ?></h1>
                 </div>
             </div>
         </div>
@@ -24,33 +23,33 @@
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{route('admin.coupon.store')}}" method="post" enctype="multipart/form-data">
-                            @csrf
+                        <form action="<?php echo e(route('admin.coupon.store')); ?>" method="post" enctype="multipart/form-data">
+                            <?php echo csrf_field(); ?>
                             <div class="row">
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.title')}}</label>
-                                        <input type="text" name="title" class="form-control" placeholder="{{__('messages.new_coupon')}}" required>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.title')); ?></label>
+                                        <input type="text" name="title" class="form-control" placeholder="<?php echo e(__('messages.new_coupon')); ?>" required>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.coupon')}} {{__('messages.type')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.coupon')); ?> <?php echo e(__('messages.type')); ?></label>
                                         <select name="coupon_type" class="form-control" onchange="coupon_type_change(this.value)">                                         
-                                            <option value="default">{{__('messages.default')}}</option>
+                                            <option value="default"><?php echo e(__('messages.default')); ?></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-4" >
                                    
                                     <div class="form-group" id="zone_wise" style="display: none">
-                                        <label class="input-label" for="exampleFormControlInput1">Select {{__('messages.zone')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1">Select <?php echo e(__('messages.zone')); ?></label>
                                         <select name="zone_ids[]" id="choice_zones"
                                             class="form-control js-select2-custom"
-                                            multiple="multiple" data-placeholder="{{__('messages.select_zone')}}">
-                                        @foreach(\App\Models\Zone::all() as $zone)
-                                            <option value="{{$zone->id}}">{{$zone->name}}</option>
-                                        @endforeach
+                                            multiple="multiple" data-placeholder="<?php echo e(__('messages.select_zone')); ?>">
+                                        <?php $__currentLoopData = \App\Models\Zone::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $zone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($zone->id); ?>"><?php echo e($zone->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
                                 </div>
@@ -60,20 +59,20 @@
                                 
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.code')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.code')); ?></label>
                                         <input type="text" name="code" class="form-control"
-                                            placeholder="{{\Illuminate\Support\Str::random(8)}}" required>
+                                            placeholder="<?php echo e(\Illuminate\Support\Str::random(8)); ?>" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.limit')}} {{__('messages.for')}} {{__('messages.same')}} {{__('messages.user')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.limit')); ?> <?php echo e(__('messages.for')); ?> <?php echo e(__('messages.same')); ?> <?php echo e(__('messages.user')); ?></label>
                                         <input type="number" name="limit" id="coupon_limit" class="form-control" placeholder="EX: 10">
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.start')}} {{__('messages.date')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.start')); ?> <?php echo e(__('messages.date')); ?></label>
                                         <input type="date" name="start_date" class="form-control" id="date_from" required>
                                     </div>
                                 </div>
@@ -83,34 +82,34 @@
                             <div class="row">
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.expire')}} {{__('messages.date')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.expire')); ?> <?php echo e(__('messages.date')); ?></label>
                                         <input type="date" name="expire_date" class="form-control" id="date_to" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}} {{__('messages.type')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?></label>
                                         <select name="discount_type" class="form-control" id="discount_type">
-                                            <option value="amount">{{__('messages.amount')}}</option>
-                                            <option value="percent">{{__('messages.percent')}}</option>
+                                            <option value="amount"><?php echo e(__('messages.amount')); ?></option>
+                                            <option value="percent"><?php echo e(__('messages.percent')); ?></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.discount')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.discount')); ?></label>
                                         <input type="number" step="0.01" min="1" max="10000" name="discount" id="discount" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="max_discount">{{__('messages.max')}} {{__('messages.discount')}}</label>
+                                        <label class="input-label" for="max_discount"><?php echo e(__('messages.max')); ?> <?php echo e(__('messages.discount')); ?></label>
                                         <input type="number" step="0.01" min="0" value="0" max="1000000" name="max_discount" id="max_discount" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
-                                        <label class="input-label" for="exampleFormControlInput1">{{__('messages.min')}} {{__('messages.purchase')}}</label>
+                                        <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.min')); ?> <?php echo e(__('messages.purchase')); ?></label>
                                         <input type="number" step="0.01" name="min_purchase" value="0" min="0" max="100000" class="form-control"
                                             placeholder="100">
                                     </div>
@@ -123,11 +122,11 @@
                                     </div>
                                     <center style="display: none" id="image-viewer-section" class="pt-2">
                                         <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                            src="{{asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')}}" alt="banner image"/>
+                                            src="<?php echo e(asset($assetPrefixPath.'/assets/admin/img/400x400/img2.jpg')); ?>" alt="banner image"/>
                                     </center>
                                 </div>  
                             </div>
-                            <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
+                            <button type="submit" class="btn btn-primary"><?php echo e(__('messages.submit')); ?></button>
                         </form>
                     </div>
                 </div>
@@ -137,9 +136,9 @@
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <div class="card">
                     <div class="card-header">
-                    <h5>{{__('messages.coupon')}} {{__('messages.list')}}<span class="badge badge-soft-dark ml-2" id="itemCount">{{$coupons->total()}}</span></h5>
+                    <h5><?php echo e(__('messages.coupon')); ?> <?php echo e(__('messages.list')); ?><span class="badge badge-soft-dark ml-2" id="itemCount"><?php echo e($coupons->total()); ?></span></h5>
                         <form id="dataSearch">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                             <!-- Search -->
                             <div class="input-group input-group-merge input-group-flush">
                                 <div class="input-group-prepend">
@@ -147,8 +146,8 @@
                                         <i class="tio-search"></i>
                                     </div>
                                 </div>
-                                <input id="datatableSearch" type="search" name="search" class="form-control" placeholder="{{__('messages.search_here')}}" aria-label="{{__('messages.search_here')}}">
-                                <button type="submit" class="btn btn-light">{{__('messages.search')}}</button>
+                                <input id="datatableSearch" type="search" name="search" class="form-control" placeholder="<?php echo e(__('messages.search_here')); ?>" aria-label="<?php echo e(__('messages.search_here')); ?>">
+                                <button type="submit" class="btn btn-light"><?php echo e(__('messages.search')); ?></button>
                             </div>
                             <!-- End Search -->
                         </form>
@@ -168,66 +167,68 @@
                                }'>
                             <thead class="thead-light">
                             <tr>
-                                <th>{{__('messages.#')}}</th>
-                                <th>{{__('messages.title')}}</th>
-                                <th>{{__('messages.code')}}</th>
-                                <th>{{__('messages.type')}}</th>
-                                <th>{{__('messages.total_uses')}}</th>
-                                <th>{{__('messages.min')}} {{__('messages.purchase')}}</th>
-                                <th>{{__('messages.max')}} {{__('messages.discount')}}</th>
-                                <th>{{__('messages.discount')}}</th>
-                                <th>{{__('messages.discount')}} {{__('messages.type')}}</th>
-                                <th>{{__('messages.start')}} {{__('messages.date')}}</th>
-                                <th>{{__('messages.expire')}} {{__('messages.date')}}</th>
-                                <th>{{__('messages.status')}}</th>
-                                <th>{{__('messages.action')}}</th>
+                                <th><?php echo e(__('messages.#')); ?></th>
+                                <th><?php echo e(__('messages.title')); ?></th>
+                                <th><?php echo e(__('messages.code')); ?></th>
+                                <th><?php echo e(__('messages.type')); ?></th>
+                                <th><?php echo e(__('messages.total_uses')); ?></th>
+                                <th><?php echo e(__('messages.min')); ?> <?php echo e(__('messages.purchase')); ?></th>
+                                <th><?php echo e(__('messages.max')); ?> <?php echo e(__('messages.discount')); ?></th>
+                                <th><?php echo e(__('messages.discount')); ?></th>
+                                <th><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?></th>
+                                <th><?php echo e(__('messages.start')); ?> <?php echo e(__('messages.date')); ?></th>
+                                <th><?php echo e(__('messages.expire')); ?> <?php echo e(__('messages.date')); ?></th>
+                                <th><?php echo e(__('messages.status')); ?></th>
+                                <th><?php echo e(__('messages.action')); ?></th>
                             </tr>
                             </thead>
 
                             <tbody id="set-rows">
-                            @foreach($coupons as $key=>$coupon)
+                            <?php $__currentLoopData = $coupons; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$coupon): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <td>{{$key+$coupons->firstItem()}}</td>
+                                    <td><?php echo e($key+$coupons->firstItem()); ?></td>
                                     <td>
                                     <span class="d-block font-size-sm text-body">
-                                        {{$coupon['title']}}
+                                        <?php echo e($coupon['title']); ?>
+
                                     </span>
                                     </td>
-                                    <td>{{$coupon['code']}}</td>
-                                    <td>{{ ucwords(str_replace('_', ' ', $coupon->coupon_type)) }}</td>
-                                    <td>{{$coupon->total_uses}}</td>
-                                    <td>{{\App\CentralLogics\Helpers::format_currency($coupon['min_purchase'])}}</td>
-                                    <td>{{\App\CentralLogics\Helpers::format_currency($coupon['max_discount'])}}</td>
-                                    <td>{{$coupon['discount']}}</td>
-                                    <td>{{$coupon['discount_type']}}</td>
-                                    <td>{{$coupon['start_date']}}</td>
-                                    <td>{{$coupon['expire_date']}}</td>
+                                    <td><?php echo e($coupon['code']); ?></td>
+                                    <td><?php echo e(ucwords(str_replace('_', ' ', $coupon->coupon_type))); ?></td>
+                                    <td><?php echo e($coupon->total_uses); ?></td>
+                                    <td><?php echo e(\App\CentralLogics\Helpers::format_currency($coupon['min_purchase'])); ?></td>
+                                    <td><?php echo e(\App\CentralLogics\Helpers::format_currency($coupon['max_discount'])); ?></td>
+                                    <td><?php echo e($coupon['discount']); ?></td>
+                                    <td><?php echo e($coupon['discount_type']); ?></td>
+                                    <td><?php echo e($coupon['start_date']); ?></td>
+                                    <td><?php echo e($coupon['expire_date']); ?></td>
                                     <td>
-                                        <label class="toggle-switch toggle-switch-sm" for="couponCheckbox{{$coupon->id}}">
-                                            <input type="checkbox" onclick="location.href='{{route('admin.coupon.status',[$coupon['id'],$coupon->status?0:1])}}'" class="toggle-switch-input" id="couponCheckbox{{$coupon->id}}" {{$coupon->status?'checked':''}}>
+                                        <label class="toggle-switch toggle-switch-sm" for="couponCheckbox<?php echo e($coupon->id); ?>">
+                                            <input type="checkbox" onclick="location.href='<?php echo e(route('admin.coupon.status',[$coupon['id'],$coupon->status?0:1])); ?>'" class="toggle-switch-input" id="couponCheckbox<?php echo e($coupon->id); ?>" <?php echo e($coupon->status?'checked':''); ?>>
                                             <span class="toggle-switch-label">
                                                 <span class="toggle-switch-indicator"></span>
                                             </span>
                                         </label>
                                     </td>
                                     <td>
-                                        <a class="btn btn-sm btn-white" href="{{route('admin.coupon.update',[$coupon['id']])}}"title="{{__('messages.edit')}} {{__('messages.coupon')}}"><i class="tio-edit"></i>
+                                        <a class="btn btn-sm btn-white" href="<?php echo e(route('admin.coupon.update',[$coupon['id']])); ?>"title="<?php echo e(__('messages.edit')); ?> <?php echo e(__('messages.coupon')); ?>"><i class="tio-edit"></i>
                                         </a>
-                                        <a class="btn btn-sm btn-white" href="javascript:" onclick="form_alert('coupon-{{$coupon['id']}}','Want to delete this coupon ?')" title="{{__('messages.delete')}} {{__('messages.coupon')}}"><i class="tio-delete-outlined"></i>
+                                        <a class="btn btn-sm btn-white" href="javascript:" onclick="form_alert('coupon-<?php echo e($coupon['id']); ?>','Want to delete this coupon ?')" title="<?php echo e(__('messages.delete')); ?> <?php echo e(__('messages.coupon')); ?>"><i class="tio-delete-outlined"></i>
                                         </a>
-                                        <form action="{{route('admin.coupon.delete',[$coupon['id']])}}"
-                                                    method="post" id="coupon-{{$coupon['id']}}">
-                                                @csrf @method('delete')
+                                        <form action="<?php echo e(route('admin.coupon.delete',[$coupon['id']])); ?>"
+                                                    method="post" id="coupon-<?php echo e($coupon['id']); ?>">
+                                                <?php echo csrf_field(); ?> <?php echo method_field('delete'); ?>
                                         </form>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
                         <hr>
                         <table>
                             <tfoot>
-                            {!! $coupons->links() !!}
+                            <?php echo $coupons->links(); ?>
+
                             </tfoot>
                         </table>
                     </div>
@@ -237,9 +238,9 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
 <script>
        $("#coupon_background_image").change(function () {
             readURL(this);
@@ -301,7 +302,7 @@
                 },
                 language: {
                     zeroRecords: '<div class="text-center p-4">' +
-                    '<img class="mb-3" src="{{asset($assetPrefixPath . '/admin/svg/illustrations/sorry.svg')}}" alt="Image Description" style="width: 7rem;">' +
+                    '<img class="mb-3" src="<?php echo e(asset($assetPrefixPath . '/admin/svg/illustrations/sorry.svg')); ?>" alt="Image Description" style="width: 7rem;">' +
                     '<p class="mb-0">No data to show</p>' +
                     '</div>'
                 }
@@ -352,7 +353,7 @@
                 }
             });
             $.post({
-                url: '{{route('admin.coupon.search')}}',
+                url: '<?php echo e(route('admin.coupon.search')); ?>',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -371,4 +372,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/coupon/index.blade.php ENDPATH**/ ?>

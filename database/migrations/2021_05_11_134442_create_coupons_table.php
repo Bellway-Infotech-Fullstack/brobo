@@ -26,7 +26,8 @@ class CreateCouponsTable extends Migration
             $table->string('coupon_type')->default('default');
             $table->integer('limit')->nullable();
             $table->boolean('status')->default(1);
-            $table->foreignId('restaurant_id');
+            $table->foreignId('product_id')->nullable();
+            $table->text('background_image')->nullable();
             $table->timestamps();
         });
     }

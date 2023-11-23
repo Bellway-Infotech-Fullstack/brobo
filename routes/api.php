@@ -78,6 +78,12 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-product-recommendation-list', 'getProductRecommendationList');        
         }); 
     }); 
+
+    Route::group(['middleware' => 'custom.jwt'], function () {
+        Route::controller(CouponController::class)->group(function () {
+            Route::get('get-dashboard-coupon-data', 'index');
+        }); 
+    }); 
 });
 
 
