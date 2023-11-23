@@ -71,6 +71,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             //ajax request
             Route::get('get-categories', 'ProductController@get_categories')->name('get-categories');
             Route::get('get-foods', 'ProductController@get_foods')->name('getfoods');
+            Route::get('get-products', 'ProductController@get_products')->name('get-products');
             
             //Import and export
             Route::get('bulk-import', 'ProductController@bulk_import_index')->name('bulk-import');
@@ -134,8 +135,8 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
         Route::group(['prefix' => 'vendor', 'as' => 'vendor.'], function () {
                 Route::get('get-restaurants-data/{restaurant}', 'VendorController@get_restaurant_data')->name('get-restaurants-data');
-                Route::get('restaurant-filter/{id}', 'VendorController@restaurant_filter')->name('restaurantfilter');
-                Route::get('get-account-data/{restaurant}', 'VendorController@get_account_data')->name('restaurantfilter');
+               // Route::get('restaurant-filter/{id}', 'VendorController@restaurant_filter')->name('restaurantfilter');
+              //  Route::get('get-account-data/{restaurant}', 'VendorController@get_account_data')->name('restaurantfilter');
                 Route::group(['middleware' => ['module:restaurant']], function () {
                 Route::get('update-application/{id}/{status}', 'VendorController@update_application')->name('application');
                 Route::get('add', 'VendorController@index')->name('add');
@@ -265,10 +266,10 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('apis', 'BusinessSettingsController@config_setup')->name('config-setup');
             Route::post('config-update', 'BusinessSettingsController@config_update')->name('config-update');
             Route::post('update-setup', 'BusinessSettingsController@business_setup')->name('update-setup');
-            Route::get('app-settings', 'BusinessSettingsController@app_settings')->name('app-settings');
+            Route::get('app-settings', 'BusinessSettingsController@app_settings')->name('app-settings2');
             Route::POST('app-settings', 'BusinessSettingsController@update_app_settings')->name('app-settings');
             Route::get('landing-page-settings/{tab?}', 'BusinessSettingsController@landing_page_settings')->name('landing-page-settings');
-            Route::POST('landing-page-settings/{tab}', 'BusinessSettingsController@update_landing_page_settings')->name('landing-page-settings');
+            Route::POST('landing-page-settings/{tab}', 'BusinessSettingsController@update_landing_page_settings')->name('add-landing-page-settings');
             Route::DELETE('landing-page-settings/{tab}/{key}', 'BusinessSettingsController@delete_landing_page_settings')->name('landing-page-settings-delete');
 
 

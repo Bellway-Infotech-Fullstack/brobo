@@ -309,20 +309,7 @@
                                 </li>
 
                                 
-                                <li class="nav-item <?php echo e(Request::is('admin/category/bulk-import')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.category.bulk-import')); ?>"
-                                       title="<?php echo e(__('messages.bulk_import')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate text-capitalize"><?php echo e(__('messages.bulk_import')); ?></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/category/bulk-export')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.category.bulk-export-index')); ?>"
-                                       title="<?php echo e(__('messages.bulk_export')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate text-capitalize"><?php echo e(__('messages.bulk_export')); ?></span>
-                                    </a>
-                                </li>
+                               
                             </ul>
                         </li>
                     <?php endif; ?>
@@ -364,20 +351,7 @@
                                         <span class="text-truncate"><?php echo e(__('messages.list')); ?></span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/product/bulk-import')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.product.bulk-import')); ?>"
-                                       title="<?php echo e(__('messages.bulk_import')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate text-capitalize"><?php echo e(__('messages.bulk_import')); ?></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/product/bulk-export')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.product.bulk-export-index')); ?>"
-                                       title="<?php echo e(__('messages.bulk_export')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate text-capitalize"><?php echo e(__('messages.bulk_export')); ?></span>
-                                    </a>
-                                </li>
+                              
                             </ul>
                         </li>
                     <?php endif; ?>

@@ -26,6 +26,14 @@ class ProductController extends Controller
         return view('admin-views.product.index', compact('categories'));
     }
 
+    public function get_products()
+    {
+        $products = Product::where('status',1)->get();
+       // echo "<pre>";
+       // print_r($products);
+        return $products;
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
