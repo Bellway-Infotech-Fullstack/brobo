@@ -7,6 +7,7 @@ use App\Models\Coupon;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\CentralLogics\Helpers;
 
 class CouponController extends Controller
 {
@@ -24,19 +25,22 @@ class CouponController extends Controller
             'start_date' => 'required',
             'expire_date' => 'required',
             'discount' => 'required',
-            'coupon_type' => 'required|in:zone_wise,service_wise,first_order,default',
+            'coupon_type' => 'required|in:zone_wise,default',
             'zone_ids' => 'required_if:coupon_type,zone_wise',
-            'service_ids' => 'required_if:coupon_type,service_wise'
+            'product_ids' => 'required_if:coupon_type,product_wise',
+            'coupon_background_image' => 'required|mimes:png',
         ]);
         $data  = '';
         if($request->coupon_type == 'zone_wise')
         {
             $data = $request->zone_ids;
         }
-        else if($request->coupon_type == 'service_wise')
+        else if($request->coupon_type == 'product_wise')
         {
-            $data = $request->service_ids;
+            $data = $request->product_ids;
         }
+
+    
 
         DB::table('coupons')->insert([
             'title' => $request->title,
@@ -49,6 +53,7 @@ class CouponController extends Controller
             'max_discount' => $request->max_discount != null ? $request->max_discount : 0,
             'discount' => $request->discount_type == 'amount' ? $request->discount : $request['discount'],
             'discount_type' => $request->discount_type??'',
+            'background_image' => Helpers::upload('coupon_background_image/', 'png', $request->file('coupon_background_image')),
             'status' => 1,
             'data' => json_encode($data),
             'created_at' => now(),
@@ -74,8 +79,10 @@ class CouponController extends Controller
             'start_date' => 'required',
             'expire_date' => 'required',
             'discount' => 'required',
+            'coupon_type' => 'required|in:zone_wise,default',
             'zone_ids' => 'required_if:coupon_type,zone_wise',
-            'service_ids' => 'required_if:coupon_type,service_wise'
+            'product_ids' => 'required_if:coupon_type,product_wise',
+            'coupon_background_image' => 'mimes:png',
         ]);
         $data  = '';
         if($request->coupon_type == 'zone_wise')
@@ -86,6 +93,10 @@ class CouponController extends Controller
         {
             $data = $request->service_ids;
         }
+
+        $couponData = Coupon::find($id);
+
+       
 
         DB::table('coupons')->where(['id' => $id])->update([
             'title' => $request->title,
@@ -99,6 +110,7 @@ class CouponController extends Controller
             'discount' => $request->discount_type == 'amount' ? $request->discount : $request['discount'],
             'discount_type' => $request->discount_type??'',
             'data' => json_encode($data),
+            'background_image' => $request->file('coupon_background_image') ? Helpers::update('coupon_background_image/', $couponData->background_image, 'png', $request->file('coupon_background_image')) : $couponData->image,
             'updated_at' => now()
         ]);
 
