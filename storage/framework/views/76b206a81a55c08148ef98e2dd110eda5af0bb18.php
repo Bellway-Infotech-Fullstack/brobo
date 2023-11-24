@@ -378,7 +378,7 @@
                             </a>
                         </li>
                     <?php endif; ?>
-                <!-- End Banner -->
+                    <!-- End Banner -->
                     <!-- Coupon -->
                     <?php if(\App\CentralLogics\Helpers::module_permission_check('coupon')): ?>
                         <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/coupon*')?'active':''); ?>">
@@ -392,6 +392,19 @@
                         </li>
                     <?php endif; ?>
                 <!-- End Coupon -->
+
+                <!-- FAQ -->
+
+                <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/faq*')?'active':''); ?>">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link"
+                       href="<?php echo e(route('admin.faq.faq-add-new')); ?>" title="FAQ"
+                    >
+                        <i class="tio-gift nav-icon"></i>
+                        <span
+                            class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">FAQS</span>
+                    </a>
+                </li>
+                <!-- FAQ -->
                     <!-- Notification -->
                     <?php if(\App\CentralLogics\Helpers::module_permission_check('notification')): ?>
                         <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/notification*')?'active':''); ?>">

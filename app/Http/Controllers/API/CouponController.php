@@ -11,7 +11,7 @@ class CouponController extends Controller
     //
 
     /**
-     * get all banners.
+     * get all coupons.
      *
      * @param  \Illuminate\Http\Request  $request
      * 

@@ -118,20 +118,17 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('search', 'CouponController@search')->name('search');
         });
 
-        // Route::group(['prefix' => 'attribute', 'as' => 'attribute.', 'middleware' => ['module:attribute']], function () {
-        //     Route::get('add-new', 'AttributeController@index')->name('add-new');
-        //     Route::post('store', 'AttributeController@store')->name('store');
-        //     Route::get('edit/{id}', 'AttributeController@edit')->name('edit');
-        //     Route::post('update/{id}', 'AttributeController@update')->name('update');
-        //     Route::delete('delete/{id}', 'AttributeController@delete')->name('delete');
-        //     Route::post('search', 'AttributeController@search')->name('search');
+        Route::group(['prefix' => 'faq', 'as' => 'faq.', 'middleware' => ['module:coupon']], function () {
+            Route::get('add-new', 'FAQController@add_new')->name('faq-add-new');
+            Route::post('store', 'FAQController@store')->name('faq-store');
+            Route::get('update/{id}', 'FAQController@edit')->name('faq-update');
+            Route::post('update/{id}', 'FAQController@update');
+            Route::get('status/{id}/{status}', 'FAQController@status')->name('faq-status');
+            Route::delete('delete/{id}', 'FAQController@delete')->name('faq-delete');
+            Route::post('search', 'FAQController@search')->name('search');
+        });
 
-        //     //Import and export
-        //     Route::get('bulk-import', 'AttributeController@bulk_import_index')->name('bulk-import');
-        //     Route::post('bulk-import', 'AttributeController@bulk_import_data');
-        //     Route::get('bulk-export', 'AttributeController@bulk_export_index')->name('bulk-export-index');
-        //     Route::post('bulk-export', 'AttributeController@bulk_export_data')->name('bulk-export');
-        // });
+   
 
         Route::group(['prefix' => 'vendor', 'as' => 'vendor.'], function () {
                 Route::get('get-restaurants-data/{restaurant}', 'VendorController@get_restaurant_data')->name('get-restaurants-data');
