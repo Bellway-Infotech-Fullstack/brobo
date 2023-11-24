@@ -13,6 +13,7 @@ class CouponController extends Controller
 {
     public function add_new()
     {
+        
         $coupons = Coupon::latest()->paginate(config('default_pagination'));
         return view('admin-views.coupon.index', compact('coupons'));
     }
@@ -39,6 +40,8 @@ class CouponController extends Controller
         {
             $data = $request->product_ids;
         }
+
+      
 
     
 
@@ -110,7 +113,7 @@ class CouponController extends Controller
             'discount' => $request->discount_type == 'amount' ? $request->discount : $request['discount'],
             'discount_type' => $request->discount_type??'',
             'data' => json_encode($data),
-            'background_image' => $request->file('coupon_background_image') ? Helpers::update('coupon_background_image/', $couponData->background_image, 'png', $request->file('coupon_background_image')) : $couponData->image,
+            'background_image' => $request->file('coupon_background_image') ? Helpers::update('coupon_background_image/', $couponData->background_image, 'png', $request->file('coupon_background_image')) : $couponData->background_image,
             'updated_at' => now()
         ]);
 
