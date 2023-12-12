@@ -54,7 +54,7 @@ class CustomerAuthController extends Controller
             if ($validation->fails()) {
                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
-            $token  =  Str::random(10);
+ 
             // Hash the password and set other request attributes
             $password = Hash::make($request->password);
             $request['password'] = $password ;
@@ -63,7 +63,7 @@ class CustomerAuthController extends Controller
             $request['name'] = $request->name;
             $request['mobile_number'] = $request->mobile_number;
             $request['remember_token'] = Str::random(10);
-             $request['auth_token'] =  $token;
+
 
          
 
@@ -153,6 +153,10 @@ class CustomerAuthController extends Controller
 
             // Check the user's role after successful authentication
             $user = Auth::user();
+
+            // Generate a token for the user
+            $token = JWTAuth::fromUser($user);
+            $user->update(['auth_token' => $token]);
 
             if ($user->role_id != $request->role_id) {
                 // The user has an invalid role
