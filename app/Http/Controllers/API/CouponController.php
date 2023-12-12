@@ -11,7 +11,7 @@ class CouponController extends Controller
     //
 
     /**
-     * get all banners.
+     * get all coupons.
      *
      * @param  \Illuminate\Http\Request  $request
      * 
@@ -31,7 +31,7 @@ class CouponController extends Controller
                     "status"=> "success",
                     "code"=> 200,
                     "data" => array(
-                    'id' => $couponData->id,
+                     'id' => $couponData->id,
                      'title' => $couponData->title,
                      'code' => $couponData->code,
                      'start_date' => $couponData->start_date,
