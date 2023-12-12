@@ -241,8 +241,56 @@
 
 @push('script_2')
 <script>
+    // Assuming input is the file input element
+
+        var isequal = 0;
+        function handleFile(input){
+            const file = input.files[0];
+
+            // Check if the file is an image
+            
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const img = new Image();
+
+                    img.onload = function () {
+                        // Get the width and height of the image
+                        const width = this.width;
+                        const height = this.height;
+
+                        // Check if the dimensions meet your criteria         
+
+                        if (width != 343 || height != 100) {
+                                // Dimensions are not allowed, handle accordingly (e.g., show an error message)
+                                alert('Invalid dimensions. Width must be  343px and height must be <= 100px.');
+                                // Optionally clear the file input if needed
+                                input.value = '';
+                                isequal = 1;
+                            } else {
+                            // Dimensions are within the allowed range, you can proceed with your logic
+                            // ...
+                            }
+                        };
+                            img.src = e.target.result;
+                            if(isequal == 1){
+                                $('#viewer').attr('src', e.target.result);
+                            }
+                    
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                // File is not an image, handle accordingly (e.g., show an error message)
+                alert('Invalid file type. Please upload an image.');
+                // Optionally clear the file input if needed
+                input.value = '';
+            }
+        }
+
        $("#coupon_background_image").change(function () {
-            readURL(this);
+            handleFile(this);
             $('#image-viewer-section').show(1000);
         });
 
@@ -256,17 +304,7 @@
 
             $('.js-data-example-ajax').select2({});
 
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
 
-                reader.onload = function (e) {
-                    $('#viewer').attr('src', e.target.result);
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
     
     
     $(document).on('ready', function () {
