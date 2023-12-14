@@ -135,7 +135,6 @@ class ProductController extends Controller
              $wishListId = $request->input('wishlist_id');
              // Define the validation rules
              $validationRules = [
-                 'customer_id' => 'required',
                  'item_id' => 'required',
              ];
  
@@ -146,7 +145,6 @@ class ProductController extends Controller
  
              // Validate the input data
              $validation = Validator::make($request->all(), $validationRules, [
-                 'customer_id.required' => 'customer ID is required.',
                  'item_id.required' => 'Item ID is required.',
                  'wishlist_id.required' => 'Whishlist ID is required for updates.',
                  'wishlist_id.exists' => 'The provided wishlist ID does not exist for this customer.',
@@ -206,26 +204,10 @@ class ProductController extends Controller
              $token = JWTAuth::getToken();
              $user = JWTAuth::toUser($token);
              $customerId = (isset($user) && !empty($user)) ? $user->id : '';
-             $page = $request->get('page');
+             $page = $request->get('page') ?? 1;
              $perPage = 10; // Number of items to load per page
              // Define the validation rules
-             $validationRules = [
-                 'customer_id' => 'required',
-             ]; 
-         
-             // Validate the input data
-             $validation = Validator::make($request->all(), $validationRules, [
-                 'customer_id.required' => 'customer ID is required.',
-             ]);
-             
- 
-             // Check for validation errors and return error response if any
-             if ($validation->fails()) {
-                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
-             }
- 
- 
-             // Retrieve wishlist items with their associated products for a specific user.
+
             // Query to retrieve wishlist items with associated products for the specific user
             $wishlistItems = Wishlist::where('user_id', $customerId)
             ->with('product')
@@ -238,12 +220,18 @@ class ProductController extends Controller
             if(isset($wishlistItems) && !empty($wishlistItems)){
                 foreach ($wishlistItems as $wishlistItem) {
                     $product = $wishlistItem->product;
-                    $productImage = $product->image;
-                    array_push($productImages,$productImage);
+                    $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $product->image) : asset('storage/app/public/product/' . $product->image);
+                    array_push($productImages,$imagePath);
                 }
             }
+
+            if(count($productImages) > 0){
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $productImages]);
+            } else {
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'No data found','data' => $productImages]);
+            }
             
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $productImages]);
+            
              
          } catch (\Exception $e) {
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
