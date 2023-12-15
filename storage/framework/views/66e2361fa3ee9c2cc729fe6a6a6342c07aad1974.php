@@ -1,29 +1,27 @@
-@extends('layouts.admin.app')
-@section('title','Employee List')
-@push('css_or_js')
+<?php $__env->startSection('title','Customer List'); ?>
+<?php $__env->startPush('css_or_js'); ?>
 
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="content container-fluid">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{trans('messages.dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{trans('messages.Employee')}}</li>
-            <li class="breadcrumb-item" aria-current="page">{{trans('messages.list')}}</li>
+            <li class="breadcrumb-item"><a href="<?php echo e(route('admin.dashboard')); ?>"><?php echo e(trans('messages.dashboard')); ?></a></li>
+            <li class="breadcrumb-item" aria-current="page"><?php echo e(trans('messages.customers')); ?></li>
         </ol>
     </nav>
     <!-- Page Heading -->
     <div class="d-md-flex_ align-items-center justify-content-between mb-2">
         <div class="row">
             <div class="col-md-8">
-                <h3 class="h3 mb-0 text-black-50">{{trans('messages.Employee')}} {{trans('messages.list')}}</h3>
+                <h3 class="h3 mb-0 text-black-50"><?php echo e(trans('messages.customer')); ?> <?php echo e(trans('messages.list')); ?></h3>
             </div>
 
             <div class="col-md-4">
-                <a href="{{route('admin.employee.add-new')}}" class="btn btn-primary  float-right">
+                <a href="<?php echo e(route('admin.customer.add-new')); ?>" class="btn btn-primary  float-right">
                     <i class="tio-add-circle"></i>
-                    <span class="text">{{trans('messages.add')}} {{trans('messages.new')}}</span>
+                    <span class="text"><?php echo e(trans('messages.add')); ?> <?php echo e(trans('messages.new')); ?></span>
                 </a>
             </div>
         </div>
@@ -33,9 +31,9 @@
         <div class="col-md-12">
             <div class="card">
             <div class="card-header py-0">
-                    <h5>{{trans('messages.Employee')}} {{trans('messages.table')}} <span class="badge badge-soft-dark ml-2" id="itemCount">{{$em->total()}}</span></h5>
+                    <h5><?php echo e(trans('messages.customer')); ?> <?php echo e(trans('messages.table')); ?> <span class="badge badge-soft-dark ml-2" id="itemCount"><?php echo e($user_list->total()); ?></span></h5>
                     <form action="javascript:" id="search-form">
-                        @csrf
+                        <?php echo csrf_field(); ?>
                         <!-- Search -->
                         <div class="input-group input-group-merge input-group-flush">
                             <div class="input-group-prepend">
@@ -43,8 +41,8 @@
                                     <i class="tio-search"></i>
                                 </div>
                             </div>
-                            <input id="datatableSearch_" type="search" name="search" class="form-control" placeholder="{{__('messages.search')}}" aria-label="Search">
-                            <button type="submit" class="btn btn-light">{{__('messages.search')}}</button>
+                            <input id="datatableSearch_" type="search" name="search" class="form-control" placeholder="<?php echo e(__('messages.search')); ?>" aria-label="Search">
+                            <button type="submit" class="btn btn-light"><?php echo e(__('messages.search')); ?></button>
                         </div>
                         <!-- End Search -->
                     </form>
@@ -61,38 +59,34 @@
                                }'>
                             <thead class="thead-light">
                             <tr>
-                                <th>{{trans('messages.#')}}</th>
-                                <th>{{trans('messages.name')}}</th>
-                                <th>{{trans('messages.email')}}</th>
-                                <th>{{trans('messages.phone')}}</th>
-                                <th>{{trans('messages.Role')}}</th>
-                                <th style="width: 50px">{{trans('messages.action')}}</th>
+                                <th><?php echo e(trans('messages.#')); ?></th>
+                                <th><?php echo e(trans('messages.name')); ?></th>
+                                <th><?php echo e(trans('messages.email')); ?></th>
+                                <th><?php echo e(trans('messages.phone')); ?></th>
+                                <th style="width: 50px"><?php echo e(trans('messages.action')); ?></th>
                             </tr>
                             </thead>
                             <tbody id="set-rows">
-                            @foreach($em as $k=>$e)
+                            <?php $__currentLoopData = $user_list; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k=>$e): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <th scope="row">{{$k+$em->firstItem()}}</th>
-                                    <td class="text-capitalize">{{$e['f_name']}} {{$e['l_name']}}</td>
-                                    <td >
-                                      {{$e['email']}}
-                                    </td>
-                                    <td>{{$e['phone']}}</td>
-                                    <td>{{$e->role?$e->role['name']:__('messages.role_deleted')}}</td>
+                                    <th scope="row"><?php echo e($k+$user_list->firstItem()); ?></th>
+                                    <td class="text-capitalize"><?php echo e($e['name']); ?></td>
+                                    <td ><?php echo e($e['email'] ?? 'N/A'); ?></td>
+                                    <td><?php echo e($e['mobile_number'] ?? 'N/A'); ?></td>
                                     <td>
                                         <a class="btn btn-sm btn-white"
-                                            href="{{route('admin.employee.edit',[$e['id']])}}" title="{{__('messages.edit')}} {{__('messages.Employee')}}"><i class="tio-edit"></i>
+                                            href="<?php echo e(route('admin.customer.edit',[$e['id']])); ?>" title="<?php echo e(__('messages.edit')); ?> <?php echo e(__('messages.customer')); ?>"><i class="tio-edit"></i>
                                         </a>
                                         <a class="btn btn-sm btn-danger" href="javascript:"
-                                            onclick="form_alert('employee-{{$e['id']}}','{{__('messages.Want_to_delete_this_role')}}')" title="{{__('messages.delete')}} {{__('messages.Employee')}}"><i class="tio-delete-outlined"></i>
+                                            onclick="form_alert('customer-<?php echo e($e['id']); ?>','<?php echo e(__('messages.Want_to_delete_this_role')); ?>')" title="<?php echo e(__('messages.delete')); ?> <?php echo e(__('messages.customer')); ?>"><i class="tio-delete-outlined"></i>
                                         </a>
-                                        <form action="{{route('admin.employee.delete',[$e['id']])}}"
-                                                method="post" id="employee-{{$e['id']}}">
-                                            @csrf @method('delete')
+                                        <form action="<?php echo e(route('admin.customer.delete',[$e['id']])); ?>"
+                                                method="post" id="customer-<?php echo e($e['id']); ?>">
+                                            <?php echo csrf_field(); ?> <?php echo method_field('delete'); ?>
                                         </form>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
                     </div>
@@ -101,7 +95,8 @@
                     <div class="page-area">
                         <table>
                             <tfoot>
-                            {!! $em->links() !!}
+                            <?php echo $user_list->links(); ?>
+
                             </tfoot>
                         </table>
                     </div>
@@ -110,9 +105,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
     <script>
         // Call the dataTables jQuery plugin
         $(document).ready(function () {
@@ -127,7 +122,7 @@
                 }
             });
             $.post({
-                url: '{{route('admin.employee.search')}}',
+                url: '<?php echo e(route('admin.customer.search')); ?>',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -146,4 +141,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/customer/list.blade.php ENDPATH**/ ?>
