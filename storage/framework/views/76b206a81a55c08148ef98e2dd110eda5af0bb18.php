@@ -56,38 +56,38 @@
                     </li>
                     <!-- End Dashboards -->
                     
-                       <!-- Employee-->
+                       <!-- customer-->
 
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="<?php echo e(__('messages.employee_handle')); ?>"><?php echo e(__('messages.employee')); ?> <?php echo e(__('section')); ?></small>
+                               title="<?php echo e(__('messages.customer_handle')); ?>"><?php echo e(__('messages.customer')); ?> <?php echo e(__('section')); ?></small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
 
           
 
-                    <?php if(\App\CentralLogics\Helpers::module_permission_check('employee')): ?>
-                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/employee*')?'active':''); ?>">
+                    <?php if(\App\CentralLogics\Helpers::module_permission_check('customer')): ?>
+                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/customer*')?'active':''); ?>">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                href="javascript:"
-                               title="<?php echo e(__('messages.Employee')); ?>">
+                               title="<?php echo e(__('messages.customer')); ?>">
                                 <i class="tio-user nav-icon"></i>
                                 <span
-                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate"><?php echo e(__('messages.employees')); ?></span>
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate"><?php echo e(__('messages.customers')); ?></span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: <?php echo e(Request::is('admin/employee*')?'block':'none'); ?>">
-                                <li class="nav-item <?php echo e(Request::is('admin/employee/add-new')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.employee.add-new')); ?>"
-                                       title="<?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?> <?php echo e(__('messages.Employee')); ?>">
+                                style="display: <?php echo e(Request::is('admin/customer*')?'block':'none'); ?>">
+                                <li class="nav-item <?php echo e(Request::is('admin/customer/add-new')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.customer.add-new')); ?>"
+                                       title="<?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?> <?php echo e(__('messages.customer')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span
                                             class="text-truncate"><?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?></span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/employee/list')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.employee.list')); ?>"
-                                       title="<?php echo e(__('messages.Employee')); ?> <?php echo e(__('messages.list')); ?>">
+                                <li class="nav-item <?php echo e(Request::is('admin/customer/list')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.customer.list')); ?>"
+                                       title="<?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.list')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate"><?php echo e(__('messages.list')); ?></span>
                                     </a>
@@ -96,7 +96,7 @@
                             </ul>
                         </li>
                 <?php endif; ?>
-                <!-- End Employee -->
+                <!-- End customer -->
 
 
                     <!-- Orders -->
@@ -362,7 +362,7 @@
                     <!-- Marketing section -->
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="<?php echo e(__('messages.employee_handle')); ?>"><?php echo e(__('messages.marketing')); ?> <?php echo e(__('messages.section')); ?></small>
+                               title="<?php echo e(__('messages.customer_handle')); ?>"><?php echo e(__('messages.marketing')); ?> <?php echo e(__('messages.section')); ?></small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
 

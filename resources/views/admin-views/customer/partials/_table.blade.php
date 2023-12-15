@@ -1,40 +1,22 @@
-@foreach($customers as $key=>$customer)
-    <tr class="">
-        <td class="">
-            {{$key+1}}
-        </td>
-        <td class="table-column-pl-0">
-            <a href="{{route('admin.customer.view',[$customer['id']])}}">
-                {{$customer['f_name']." ".$customer['l_name']}}
-            </a>
-        </td>
-        <td>
-            {{$customer['email']}}
-        </td>
-        <td>
-            {{$customer['phone']}}
-        </td>
-        <td>
-            <label class="badge badge-soft-info">
-                {{$customer->orders->count()}}
-            </label>
-        </td>
-        <td>
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                    <i class="tio-settings"></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{route('admin.customer.view',[$customer['id']])}}">
-                        <i class="tio-visible"></i> {{__('messages.view')}}
-                    </a>
-                    {{--<a class="dropdown-item" target="" href="">
-                        <i class="tio-download"></i> Suspend
-                    </a>--}}
-                </div>
-            </div>
-        </td>
-    </tr>
+@foreach($customers as $k=>$e)
+<tr>
+    <th scope="row">{{$k+1}}</th>
+    <td class="text-capitalize">{{$e['name']}}</td>
+    <td >
+        {{$e['email']}}
+    </td>
+    <td>{{$e['mobile_number']}}</td>
+    <td>
+        <a class="btn btn-sm btn-white"
+            href="{{route('admin.customer.edit',[$e['id']])}}" title="{{__('messages.edit')}} {{__('messages.customer')}}"><i class="tio-edit"></i>
+        </a>
+        <a class="btn btn-sm btn-danger" href="javascript:"
+            onclick="form_alert('employee-{{$e['id']}}','{{__('messages.Want_to_delete_this_role')}}')" title="{{__('messages.delete')}} {{__('messages.customer')}}"><i class="tio-delete-outlined"></i>
+        </a>
+        <form action="{{route('admin.customer.delete',[$e['id']])}}"
+                method="post" id="employee-{{$e['id']}}">
+            @csrf @method('delete')
+        </form>
+    </td>
+</tr>
 @endforeach

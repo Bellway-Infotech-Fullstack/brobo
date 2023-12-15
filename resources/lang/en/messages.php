@@ -147,12 +147,12 @@ return [
     'earned'=>'earned',
     'email' => 'Email',
     'email_is_ready_to_register'=>'Email is ready to register',
-    'employees'=>'Customers',
-    'employee'=>'Customer',
+    'customers'=>'Customers',
+    'customer'=>'Customer',
     'service_wise_report' => 'Service wise Report',
-    'employee_added_successfully'=>'Customer added successfully',
-    'employee_deleted_successfully'=>'Customer deleted successfully',
-    'employee_updated_successfully'=>'Customer updated successfully',
+    'customer_added_successfully'=>'Customer added successfully',
+    'customer_deleted_successfully'=>'Customer deleted successfully',
+    'customer_updated_successfully'=>'Customer updated successfully',
     'end' => 'End',
     'enter_if_you_want_to_change'=>'enter if you want to change',
     'enter_new_email_address'=>'Enter new email address',
@@ -1039,5 +1039,6 @@ return [
     'Please check the recaptcha' => 'Please check the recaptcha',
     'Enter recaptcha value' => 'Enter recaptcha value',
     'ReCAPTCHA Failed' => 'ReCAPTCHA Failed',
+    'mobile_number' => 'Mobile Number'
   
 ];
