@@ -130,7 +130,7 @@ class CustomerAuthController extends Controller
                 ],
             ], [
                 'mobile_number.required' => 'Please enter mobile number.',
-                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
+                'mobile_number.regex' => 'The mobile number ••••••••should start with +91 and have 10 digits.',
                 'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',

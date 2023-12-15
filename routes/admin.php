@@ -43,14 +43,14 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('search', 'CustomRoleController@search')->name('search');
         });
 
-        Route::group(['prefix' => 'employee', 'as' => 'employee.', 'middleware' => ['module:employee']], function () {
-            Route::get('add-new', 'EmployeeController@add_new')->name('add-new');
-            Route::post('add-new', 'EmployeeController@store');
-            Route::get('list', 'EmployeeController@list')->name('list');
-            Route::get('update/{id}', 'EmployeeController@edit')->name('edit');
-            Route::post('update/{id}', 'EmployeeController@update')->name('update');
-            Route::delete('delete/{id}', 'EmployeeController@distroy')->name('delete');
-            Route::post('search', 'EmployeeController@search')->name('search');
+        Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customer']], function () {
+            Route::get('add-new', 'CustomerController@add_new')->name('add-new');
+            Route::post('add-new', 'CustomerController@store');
+            Route::get('list', 'CustomerController@list')->name('list');
+            Route::get('update/{id}', 'CustomerController@edit')->name('edit');
+            Route::post('update/{id}', 'CustomerController@update')->name('update');
+            Route::delete('delete/{id}', 'CustomerController@distroy')->name('delete');
+            Route::post('search', 'CustomerController@search')->name('search');
         });
         Route::post('food/variant-price', 'ProductController@variant_price')->name('food.variant-price');
 
@@ -358,7 +358,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         });
 
         Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customerList']], function () {
-            Route::get('list', 'CustomerController@customer_list')->name('list');
+            Route::get('list', 'CustomerController@list')->name('list');
             Route::get('view/{user_id}', 'CustomerController@view')->name('view');
             Route::post('search', 'CustomerController@search')->name('search');
             Route::get('status/{customer}/{status}', 'CustomerController@status')->name('status');

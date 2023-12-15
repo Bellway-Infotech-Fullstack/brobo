@@ -55,38 +55,38 @@
                     </li>
                     <!-- End Dashboards -->
                     
-                       <!-- Employee-->
+                       <!-- customer-->
 
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="{{__('messages.employee_handle')}}">{{__('messages.employee')}} {{__('section')}}</small>
+                               title="{{__('messages.customer_handle')}}">{{__('messages.customer')}} {{__('section')}}</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
 
           
 
-                    @if(\App\CentralLogics\Helpers::module_permission_check('employee'))
-                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/employee*')?'active':''}}">
+                    @if(\App\CentralLogics\Helpers::module_permission_check('customer'))
+                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/customer*')?'active':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                href="javascript:"
-                               title="{{__('messages.Employee')}}">
+                               title="{{__('messages.customer')}}">
                                 <i class="tio-user nav-icon"></i>
                                 <span
-                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{__('messages.employees')}}</span>
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{__('messages.customers')}}</span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{Request::is('admin/employee*')?'block':'none'}}">
-                                <li class="nav-item {{Request::is('admin/employee/add-new')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.employee.add-new')}}"
-                                       title="{{__('messages.add')}} {{__('messages.new')}} {{__('messages.Employee')}}">
+                                style="display: {{Request::is('admin/customer*')?'block':'none'}}">
+                                <li class="nav-item {{Request::is('admin/customer/add-new')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.customer.add-new')}}"
+                                       title="{{__('messages.add')}} {{__('messages.new')}} {{__('messages.customer')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span
                                             class="text-truncate">{{__('messages.add')}} {{__('messages.new')}}</span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{Request::is('admin/employee/list')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.employee.list')}}"
-                                       title="{{__('messages.Employee')}} {{__('messages.list')}}">
+                                <li class="nav-item {{Request::is('admin/customer/list')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.customer.list')}}"
+                                       title="{{__('messages.customer')}} {{__('messages.list')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">{{__('messages.list')}}</span>
                                     </a>
@@ -95,7 +95,7 @@
                             </ul>
                         </li>
                 @endif
-                <!-- End Employee -->
+                <!-- End customer -->
 
 
                     <!-- Orders -->
@@ -468,7 +468,7 @@
                     <!-- Marketing section -->
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="{{__('messages.employee_handle')}}">{{__('messages.marketing')}} {{__('messages.section')}}</small>
+                               title="{{__('messages.customer_handle')}}">{{__('messages.marketing')}} {{__('messages.section')}}</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
 
