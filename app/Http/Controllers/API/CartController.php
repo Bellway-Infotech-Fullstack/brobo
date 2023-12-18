@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Product;
 
 class CartController extends Controller
 {
@@ -27,6 +28,8 @@ class CartController extends Controller
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
             $itemId = $request->input('item_id');
             $quantity = $request->input('quantity');
+            
+            
 
             // Define the validation rules
             $validationRules = [
@@ -44,6 +47,16 @@ class CartController extends Controller
             if ($validation->fails()) {
                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
+            
+              // Query to retrieve product items with associated colored images
+            $itemDetail = Product::where('id', $itemId)
+                ->select('*')
+                ->get();  
+
+             // Check if the product item exists
+             if (count($itemDetail) == 0) {
+                return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Product not found.']);
+            }
 
             // Check if the cart item already exists for the customer and item
             $existingCartItem = Cart::where('customer_id', $customerId)
@@ -52,7 +65,7 @@ class CartController extends Controller
 
             if ($existingCartItem) {
                 // If the cart item already exists, update the quantity
-                $existingCartItem->quantity += $quantity;
+                $existingCartItem->quantity = $quantity;
                 $existingCartItem->save();
 
                 return response()->json(['status' => 'Quantity updated in cart successfully', 'code' => 200, 'data' => $existingCartItem]);
