@@ -107,7 +107,13 @@ class CartController extends Controller
                 if ($product->image === null) {
                     $product->image = '';
                 }
-                
+                if ($product->discount_type == 'amount') {
+                    $product->discounted_price = number_format($product->price - $product->discount, 2);
+                } else {
+                    $product->discounted_price = number_format(($product->discount / 100) * $product->price, 2);
+                    $product->discounted_price = number_format(($product->price- $product->discounted_price),2);
+
+                }
                 return [
                     'id' => $cartItem->id,
                     'quantity' => $cartItem->quantity,
@@ -115,7 +121,8 @@ class CartController extends Controller
                     'item_name' => $product->name,
                     'item_image' => $product->image,
                     'customer_id' => $customerId,
-                    
+                    'item_price' => $product->discounted_price,
+
                     
                     // Adjust this based on your actual product model
                     // Add other product-related information as needed
