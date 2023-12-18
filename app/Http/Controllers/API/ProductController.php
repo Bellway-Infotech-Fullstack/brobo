@@ -132,22 +132,16 @@ class ProductController extends Controller
              $user = JWTAuth::toUser($token);
              $customerId = (isset($user) && !empty($user)) ? $user->id : '';
              $itemId = $request->input('item_id'); 
-             $wishListId = $request->input('wishlist_id');
              // Define the validation rules
              $validationRules = [
                  'item_id' => 'required',
              ];
  
-             // If it's an update (wishlist_id is provided), validate and update the existing address
-             if ($wishListId) {
-                 $validationRules['wishlist_id'] = 'required|exists:wishlists,id,user_id,' . $customerId;
-             }
+
  
              // Validate the input data
              $validation = Validator::make($request->all(), $validationRules, [
                  'item_id.required' => 'Item ID is required.',
-                 'wishlist_id.required' => 'Whishlist ID is required for updates.',
-                 'wishlist_id.exists' => 'The provided wishlist ID does not exist for this customer.',
              ]);
              
  
@@ -162,26 +156,35 @@ class ProductController extends Controller
              if (!$userData) {
                  return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User does not exist']);
              }
- 
-             // Create or update the address based on whether 'address_id' is provided
-             if ($wishListId) {
-                 // Update an existing 
-                 $wishList = Wishlist::find($wishListId);
-                 if ($wishList) {
-                     $wishList->delete();
-                     return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Item  is removed from wishlist']);
-                 } else {
-                     return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Wishlist id not found']);
-                 }
-             } else {
-                 // Add item to wishlist
-                 Wishlist::create([
-                'item_id' => $itemId,
-                'user_id' => $customerId,
+             
+                   // Query to retrieve product items with associated colored images
+            $itemDetail = Product::where('id', $itemId)
+                ->select('*')
+                ->get();  
 
-                 ]);
-                 return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Item is added to wishlist']);
-             }
+             // Check if the product item exists
+             if (count($itemDetail) == 0) {
+                return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Product not found.']);
+            }
+ 
+              // Check if the item is already in the wishlist for the user
+        $existingWishlistItem = Wishlist::where('item_id', $itemId)->where('user_id', $customerId)->first();
+
+        // Create or update the wishlist based on whether 'wishlist_id' is provided
+
+            // Update an existing wishlist item
+            if ($existingWishlistItem) {
+                $existingWishlistItem->delete();
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Item is removed from wishlist']);
+            }
+             else {
+                $result = Wishlist::create([
+                    'item_id' => $itemId,
+                    'user_id' => $customerId,
+                ]);
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Item is added to wishlist', 'data' => $result]);
+            }
+        
          } catch (\Exception $e) {
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
@@ -197,46 +200,72 @@ class ProductController extends Controller
      */
     
      public function getItemInWishList(Request $request)
-     {
-         try {
-             // Get requested data
-             
-             $token = JWTAuth::getToken();
-             $user = JWTAuth::toUser($token);
-             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
-             $page = $request->get('page') ?? 1;
-             $perPage = 10; // Number of items to load per page
-             // Define the validation rules
+{
+    try {
+        // Get requested data
+        $token = JWTAuth::getToken();
+        $user = JWTAuth::toUser($token);
+        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+        $page = $request->get('page') ?? 1;
+        $perPage = 10; // Number of items to load per page
 
-            // Query to retrieve wishlist items with associated products for the specific user
-            $wishlistItems = Wishlist::where('user_id', $customerId)
+        // Query to retrieve wishlist items with associated products for the specific user
+        $wishlistItems = Wishlist::where('user_id', $customerId)
             ->with('product')
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 
-            // Loop through the wishlist items and access the associated product details.
+        // Prepare response data array
+        $responseData = [];
 
-            $productImages = [];
-            if(isset($wishlistItems) && !empty($wishlistItems)){
-                foreach ($wishlistItems as $wishlistItem) {
-                    $product = $wishlistItem->product;
-                    $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $product->image) : asset('storage/app/public/product/' . $product->image);
-                    array_push($productImages,$imagePath);
+        // Loop through the wishlist items and access the associated product details.
+        if (isset($wishlistItems) && !empty($wishlistItems)) {
+            foreach ($wishlistItems as $wishlistItem) {
+                $product = $wishlistItem->product;
+
+                // Build the images array for the response
+                $productImages = [];
+                foreach ($product->images as $image) {
+                    $productImages[] = (env('APP_ENV') == 'local') ? asset('storage/product/' . $image) : asset('storage/app/public/product/' . $image);
                 }
-            }
+                $product_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $product->image) : asset('storage/app/public/product/' . $product->image);
+                 if ($product->image === null) {
+                     $product_image = '';
+                 }
 
-            if(count($productImages) > 0){
-                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $productImages]);
-            } else {
-                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'No data found','data' => $productImages]);
+                // Add product details to the response data array
+                $responseData[] = [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'category_id' => $product->category_id,
+                    'category_ids' => $product->category_ids,
+                    'price' => $product->price,
+                    'tax' => $product->tax,
+                    'tax_type' => $product->tax_type,
+                    'discount' => $product->discount,
+                    'discount_type' => $product->discount_type,
+                    'images' => $productImages,
+                    'total_stock' => $product->total_stock,
+                    'status' => $product->status,
+                    'created_at' => $product->created_at,
+                    'updated_at' => $product->updated_at,
+                    'image' => $product_image,
+                ];
             }
-            
-            
-             
-         } catch (\Exception $e) {
-             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
-         }
-     }
+        }
+
+        if (count($responseData) > 0) {
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully', 'data' => $responseData]);
+        } else {
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'No data found', 'data' => $responseData]);
+        }
+
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+    }
+}
+
 
      /**
      * It will get product detail.
@@ -396,6 +425,17 @@ class ProductController extends Controller
              if ($validation->fails()) {
                  return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
              }
+             
+               // Query to retrieve product items with associated colored images
+            $itemDetail = Product::where('id', $itemId)
+                ->with('coloredImages')
+                ->select('*')
+                ->get();  
+
+                 // Check if the product item exists
+                 if (count($itemDetail) == 0) {
+                    return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Product not found.']);
+                }
  
            
             // Query to retrieve items         
