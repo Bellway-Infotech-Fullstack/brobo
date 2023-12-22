@@ -37,6 +37,8 @@ class ProductController extends Controller
              $isHideOutOfStockItem = $request->get('is_hide_out_of_stock_items') ?? 1;   
              $perPage = 10; // Number of items to load per page
              $desiredCategoryId = $request->get('sub_category_id');
+             $searchKey = $request->get('search_key') ;  
+
             
              // Define the validation rules
              $validationRules = [
@@ -86,20 +88,67 @@ class ProductController extends Controller
                 ->when(!empty($desiredCategoryId), function ($query) use ($desiredCategoryId) {
                     $query->where('category_id', '=', $desiredCategoryId);
                 })
+
+                ->when(!empty($searchKey), function ($query) use ($searchKey) {
+                    $query->where('name', 'like', '%' . $searchKey . '%');
+                })
                 ->orderBy($orderColumn, $orderBy)
                 ->where('status',1)
                 ->paginate($perPage, ['*'], 'page', $page);
 
-                $items = $items->map(function ($item) {
+                $items = $items->map(function ($item) use ($userId) {
+
                     $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
                     
                     $item->image = $imagePath;
 
+                    $itemId = $item->id;
+                    $wishlistItem = Wishlist::where('item_id', $itemId)->where('user_id', $userId)->first();
+
+    
+
+
                     // Set is_item_in_wishlist to 1 if it's not NULL, otherwise set it to 0
-                    $item->is_item_in_wishlist = ($item->is_item_in_wishlist !== null) ? 1 : 0;
+                    $item->is_item_in_wishlist = ($wishlistItem !== null) ? 1 : 0;
+
+                     // Modify the item's image property
+                        $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                        if ($item_image === null) {
+                            $item_image = '';
+                        }
+
+                    $all_item_images = array();
+                    if (isset($item->images) && !empty($item->images)) {
+                        array_push($all_item_images, $item->image);
+                        foreach ($item->images as $key => $val) {
+                            $item_images = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                            array_push($all_item_images, $item_images);
+                        }
+                        $item->images = $all_item_images;
+                    }
+
+                    if ($item->images === null) {
+                        $item->images = [];
+                    }
+
+                    // Check and set description to blank if null
+                    if ($item->description === null) {
+                        $item->description = '';
+                    }
+
+                    // Calculate discount price
+                    if ($item->discount_type == 'amount') {
+                        $item->discounted_price = number_format($item->price - $item->discount, 2);
+                    } else {
+                        $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
+                        $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
+
+                    }
 
                     return $item;
                 });
+
+               
             
            
             
@@ -199,9 +248,8 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-     public function getItemInWishList(Request $request)
-{
-    try {
+     public function getItemInWishList(Request $request){
+      try {
         // Get requested data
         $token = JWTAuth::getToken();
         $user = JWTAuth::toUser($token);
@@ -233,6 +281,11 @@ class ProductController extends Controller
                      $product_image = '';
                  }
 
+                // Check and set description to blank if null
+                if ($product->description === null) {
+                    $product->description = '';
+                }
+
                 // Add product details to the response data array
                 $responseData[] = [
                     'id' => $product->id,
@@ -251,6 +304,8 @@ class ProductController extends Controller
                     'created_at' => $product->created_at,
                     'updated_at' => $product->updated_at,
                     'image' => $product_image,
+                    'is_item_in_whishlist' => 1
+                    
                 ];
             }
         }
@@ -427,7 +482,7 @@ class ProductController extends Controller
              }
              
                // Query to retrieve product items with associated colored images
-            $itemDetail = Product::where('id', $itemId)
+            $itemDetail = Product::where('id', $productId)
                 ->with('coloredImages')
                 ->select('*')
                 ->get();  
