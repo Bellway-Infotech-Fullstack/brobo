@@ -68,7 +68,7 @@ class CartController extends Controller
                 $existingCartItem->quantity = $quantity;
                 $existingCartItem->save();
 
-                return response()->json(['status' => 'Quantity updated in cart successfully', 'code' => 200, 'data' => $existingCartItem]);
+                return response()->json(['status' => 'success','message' => 'Quantity updated in cart successfully', 'code' => 200, 'data' => $existingCartItem]);
             }
 
             // If the cart item doesn't exist, create a new one
@@ -80,7 +80,7 @@ class CartController extends Controller
 
             $cartItem = Cart::create($requestData);
 
-            return response()->json(['status' => 'Item added to cart successfully', 'code' => 201, 'data' => $cartItem]);
+            return response()->json(['status' => 'success','message' => 'Item added to cart successfully', 'code' => 201, 'data' => $cartItem]);
 
         } catch (\Exception $e) {
             // Handle exceptions, if any
