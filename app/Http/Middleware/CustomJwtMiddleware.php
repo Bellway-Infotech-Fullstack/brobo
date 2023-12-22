@@ -21,8 +21,25 @@ class CustomJwtMiddleware
             $user = JWTAuth::toUser($tokenFromHeader);
             $customerId = $user->id;
             
-            // Get the user's token from the database
-            $userData = User::where('id',$customerId)->orWhere('mobile_number',$request->mobile_number)->first();
+
+        
+            // Retrieve the current route path
+             $currentPath = request()->path(); 
+             
+            // Fetch user data based on the conditions
+            if ($currentPath === 'api/auth/update-profile') {
+                // If it's an update to the profile without considering the mobile number
+                $userData = User::where('id', $customerId)->first();
+            } else {
+                // If the update involves checking and potentially changing the mobile number
+                $userData = User::where('id', $customerId)
+                                ->orWhere('mobile_number', $request->mobile_number)
+                                ->first();
+            
+            }
+                    
+            
+            
             if($userData){
                 $authTokenFromDB = $userData->auth_token;
                 if ($tokenFromHeader == $authTokenFromDB) {                
