@@ -144,6 +144,8 @@ class ProductController extends Controller
                         $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
 
                     }
+                      // Remove commas from discounted_price
+                    $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
                     return $item;
                 });
@@ -424,6 +426,9 @@ class ProductController extends Controller
                     $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
 
                 }
+                
+                  // Remove commas from discounted_price
+                    $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
                 // get catefory name
 
@@ -540,6 +545,9 @@ class ProductController extends Controller
                            } else {
                                $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
                            }
+                           
+                             // Remove commas from discounted_price
+                            $item->discounted_price = str_replace(',', '', $item->discounted_price);
            
                            // get catefory name
            
@@ -555,6 +563,133 @@ class ProductController extends Controller
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
              
          } catch (\Exception $e) {
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+         }
+     }
+
+
+     //
+
+     /**
+     * It will get all items of all categories .
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    
+     public function getAllProductList(Request $request)
+     {
+         try {
+             // Get requested data
+             
+             $page = $request->get('page');
+             $perPage = 10; // Number of items to load per page
+             $searchKey = $request->get('search_key') ;  
+
+            
+             // Define the validation rules
+             $validationRules = [
+                 'page' => 'required',
+             ]; 
+         
+             // Validate the input data
+             $validation = Validator::make($request->all(), $validationRules, [
+                 'page.required' => 'page is required.',
+             ]);
+             
+ 
+             // Check for validation errors and return error response if any
+             if ($validation->fails()) {
+                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+             }
+ 
+           
+            // Query to retrieve items
+
+
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $userId = (isset($user) && !empty($user)) ? $user->id : '';
+       
+            $items = Product::select('products.*')
+               
+                
+                ->leftJoin('wishlists', function ($join) use ($userId) {
+                    $join->on('products.id', '=', 'wishlists.item_id')
+                        ->where('wishlists.user_id', '=', $userId);
+                })
+              
+                ->when(!empty($searchKey), function ($query) use ($searchKey) {
+                    $query->where('name', 'like', '%' . $searchKey . '%');
+                })
+                ->orderBy('created_at', 'desc')
+                ->where('status',1)
+                ->where('total_stock','>',0)
+                ->paginate($perPage, ['*'], 'page', $page);
+
+                $items = $items->map(function ($item) use ($userId) {
+
+                    $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                    
+                    $item->image = $imagePath;
+
+                    $itemId = $item->id;
+                    $wishlistItem = Wishlist::where('item_id', $itemId)->where('user_id', $userId)->first();
+
+    
+
+
+                    // Set is_item_in_wishlist to 1 if it's not NULL, otherwise set it to 0
+                    $item->is_item_in_wishlist = ($wishlistItem !== null) ? 1 : 0;
+
+                     // Modify the item's image property
+                        $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                        if ($item_image === null) {
+                            $item_image = '';
+                        }
+
+                    $all_item_images = array();
+                    if (isset($item->images) && !empty($item->images)) {
+                        array_push($all_item_images, $item->image);
+                        foreach ($item->images as $key => $val) {
+                            $item_images = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                            array_push($all_item_images, $item_images);
+                        }
+                        $item->images = $all_item_images;
+                    }
+
+                    if ($item->images === null) {
+                        $item->images = [];
+                    }
+
+                    // Check and set description to blank if null
+                    if ($item->description === null) {
+                        $item->description = '';
+                    }
+
+                    // Calculate discount price
+                    if ($item->discount_type == 'amount') {
+                        $item->discounted_price = number_format($item->price - $item->discount, 2);
+                    } else {
+                        $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
+                        $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
+
+                    }
+                    // Remove commas from discounted_price
+                    $item->discounted_price = str_replace(',', '', $item->discounted_price);
+
+                    return $item;
+                });
+
+               
+            
+           
+            
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+             
+         } catch (\Exception $e) {
+           
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
      }
