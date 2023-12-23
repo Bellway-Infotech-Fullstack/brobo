@@ -114,6 +114,8 @@ class CartController extends Controller
                     $product->discounted_price = number_format(($product->price- $product->discounted_price),2);
 
                 }
+                // Remove commas from discounted_price
+                $product->discounted_price = str_replace(',', '', $product->discounted_price);
                 return [
                     'id' => $cartItem->id,
                     'quantity' => $cartItem->quantity,
@@ -122,10 +124,6 @@ class CartController extends Controller
                     'item_image' => $product->image,
                     'customer_id' => $customerId,
                     'item_price' => $product->discounted_price,
-
-                    
-                    // Adjust this based on your actual product model
-                    // Add other product-related information as needed
                 ];
             });
 
