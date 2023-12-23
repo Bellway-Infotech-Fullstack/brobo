@@ -58,6 +58,7 @@ Route::group(['namespace' => 'API'], function () {
         Route::controller(SettingController::class)->group(function () {
             Route::get('get-setting-data', 'index');
             Route::get('update-notification-setting', 'updateNotificationSetting');
+            Route::get('get-order-limits', 'get_order_limits');
         });
 
         Route::controller(ProductController::class)->group(function () {
@@ -66,6 +67,7 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('manage-item-in-whishlist', 'manageItemInWishList');
             Route::get('get-item-in-whishlist', 'getItemInWishList');
             Route::get('get-product-recommendation-list', 'getProductRecommendationList');
+            Route::get('get-all-product-list', 'getAllProductList');
         });
 
         Route::controller(CouponController::class)->group(function () {

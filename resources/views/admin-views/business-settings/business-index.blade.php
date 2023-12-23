@@ -130,42 +130,7 @@
                                placeholder="New Business" required>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 col-12">
-               
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">
-                                    {{__('messages.business')}}
-                                    
-                                    {{__('messages.currency')}}</label>
-                                <select name="currency" class="form-control js-select2-custom">
-                                    @foreach(\App\Models\Currency::orderBy('currency_code')->get() as $currency)
-                                        <option
-                                            value="{{$currency['currency_code']}}" {{$currency_code?($currency_code->value==$currency['currency_code']?'selected':''):''}}>
-                                            {{$currency['currency_code']}} ( {{$currency['currency_symbol']}} )
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 col-sm-6 col-12">
-                      
-                            <div class="form-group">
-                                <label class="input-label text-capitalize" for="currency_symbol_position">{{__('messages.currency_symbol_positon')}}</label>
-                                <select name="currency_symbol_position" class="form-control js-select2-custom" id="currency_symbol_position">
-                                    <option
-                                        value="left" {{$currency_symbol_position?($currency_symbol_position->value=='left'?'selected':''):''}}>
-                                        {{__('messages.left')}} ({{\App\CentralLogics\Helpers::currency_symbol()}}123)
-                                    </option>
-                                    <option
-                                        value="right" {{$currency_symbol_position?($currency_symbol_position->value=='right'?'selected':''):''}}>
-                                        {{__('messages.right')}} (123{{\App\CentralLogics\Helpers::currency_symbol()}})
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="row">
                         <div class="col-md-4 col-sm-6 col-12">
                             @php
@@ -428,155 +393,7 @@
                                 </select>
                             </div>
                         </div>
-                        {{--<div class="col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{trans('messages.language')}} </label>
-                                <select name="language[]" id="language" data-maximum-selection-length="3" class="form-control js-select2-custom" required multiple=true>
-                                    <option value="en">English(default)</option>
-                                    <option value="af">Afrikaans</option>
-                                    <option value="sq">Albanian - shqip</option>
-                                    <option value="am">Amharic - አማርኛ</option>
-                                    <option value="ar">Arabic - العربية</option>
-                                    <option value="an">Aragonese - aragonés</option>
-                                    <option value="hy">Armenian - հայերեն</option>
-                                    <option value="ast">Asturian - asturianu</option>
-                                    <option value="az">Azerbaijani - azərbaycan dili</option>
-                                    <option value="eu">Basque - euskara</option>
-                                    <option value="be">Belarusian - беларуская</option>
-                                    <option value="bn">Bengali - বাংলা</option>
-                                    <option value="bs">Bosnian - bosanski</option>
-                                    <option value="br">Breton - brezhoneg</option>
-                                    <option value="bg">Bulgarian - български</option>
-                                    <option value="ca">Catalan - català</option>
-                                    <option value="ckb">Central Kurdish - کوردی (دەستنوسی عەرەبی)</option>
-                                    <option value="zh">Chinese - 中文</option>
-                                    <option value="zh-HK">Chinese (Hong Kong) - 中文（香港）</option>
-                                    <option value="zh-CN">Chinese (Simplified) - 中文（简体）</option>
-                                    <option value="zh-TW">Chinese (Traditional) - 中文（繁體）</option>
-                                    <option value="co">Corsican</option>
-                                    <option value="hr">Croatian - hrvatski</option>
-                                    <option value="cs">Czech - čeština</option>
-                                    <option value="da">Danish - dansk</option>
-                                    <option value="nl">Dutch - Nederlands</option>
-                                    <option value="en-AU">English (Australia)</option>
-                                    <option value="en-CA">English (Canada)</option>
-                                    <option value="en-IN">English (India)</option>
-                                    <option value="en-NZ">English (New Zealand)</option>
-                                    <option value="en-ZA">English (South Africa)</option>
-                                    <option value="en-GB">English (United Kingdom)</option>
-                                    <option value="en-US">English (United States)</option>
-                                    <option value="eo">Esperanto - esperanto</option>
-                                    <option value="et">Estonian - eesti</option>
-                                    <option value="fo">Faroese - føroyskt</option>
-                                    <option value="fil">Filipino</option>
-                                    <option value="fi">Finnish - suomi</option>
-                                    <option value="fr">French - français</option>
-                                    <option value="fr-CA">French (Canada) - français (Canada)</option>
-                                    <option value="fr-FR">French (France) - français (France)</option>
-                                    <option value="fr-CH">French (Switzerland) - français (Suisse)</option>
-                                    <option value="gl">Galician - galego</option>
-                                    <option value="ka">Georgian - ქართული</option>
-                                    <option value="de">German - Deutsch</option>
-                                    <option value="de-AT">German (Austria) - Deutsch (Österreich)</option>
-                                    <option value="de-DE">German (Germany) - Deutsch (Deutschland)</option>
-                                    <option value="de-LI">German (Liechtenstein) - Deutsch (Liechtenstein)</option>
-                                    <option value="de-CH">German (Switzerland) - Deutsch (Schweiz)</option>
-                                    <option value="el">Greek - Ελληνικά</option>
-                                    <option value="gn">Guarani</option>
-                                    <option value="gu">Gujarati - ગુજરાતી</option>
-                                    <option value="ha">Hausa</option>
-                                    <option value="haw">Hawaiian - ʻŌlelo Hawaiʻi</option>
-                                    <option value="he">Hebrew - עברית</option>
-                                    <option value="hi">Hindi - हिन्दी</option>
-                                    <option value="hu">Hungarian - magyar</option>
-                                    <option value="is">Icelandic - íslenska</option>
-                                    <option value="id">Indonesian - Indonesia</option>
-                                    <option value="ia">Interlingua</option>
-                                    <option value="ga">Irish - Gaeilge</option>
-                                    <option value="it">Italian - italiano</option>
-                                    <option value="it-IT">Italian (Italy) - italiano (Italia)</option>
-                                    <option value="it-CH">Italian (Switzerland) - italiano (Svizzera)</option>
-                                    <option value="ja">Japanese - 日本語</option>
-                                    <option value="kn">Kannada - ಕನ್ನಡ</option>
-                                    <option value="kk">Kazakh - қазақ тілі</option>
-                                    <option value="km">Khmer - ខ្មែរ</option>
-                                    <option value="ko">Korean - 한국어</option>
-                                    <option value="ku">Kurdish - Kurdî</option>
-                                    <option value="ky">Kyrgyz - кыргызча</option>
-                                    <option value="lo">Lao - ລາວ</option>
-                                    <option value="la">Latin</option>
-                                    <option value="lv">Latvian - latviešu</option>
-                                    <option value="ln">Lingala - lingála</option>
-                                    <option value="lt">Lithuanian - lietuvių</option>
-                                    <option value="mk">Macedonian - македонски</option>
-                                    <option value="ms">Malay - Bahasa Melayu</option>
-                                    <option value="ml">Malayalam - മലയാളം</option>
-                                    <option value="mt">Maltese - Malti</option>
-                                    <option value="mr">Marathi - मराठी</option>
-                                    <option value="mn">Mongolian - монгол</option>
-                                    <option value="ne">Nepali - नेपाली</option>
-                                    <option value="no">Norwegian - norsk</option>
-                                    <option value="nb">Norwegian Bokmål - norsk bokmål</option>
-                                    <option value="nn">Norwegian Nynorsk - nynorsk</option>
-                                    <option value="oc">Occitan</option>
-                                    <option value="or">Oriya - ଓଡ଼ିଆ</option>
-                                    <option value="om">Oromo - Oromoo</option>
-                                    <option value="ps">Pashto - پښتو</option>
-                                    <option value="fa">Persian - فارسی</option>
-                                    <option value="pl">Polish - polski</option>
-                                    <option value="pt">Portuguese - português</option>
-                                    <option value="pt-BR">Portuguese (Brazil) - português (Brasil)</option>
-                                    <option value="pt-PT">Portuguese (Portugal) - português (Portugal)</option>
-                                    <option value="pa">Punjabi - ਪੰਜਾਬੀ</option>
-                                    <option value="qu">Quechua</option>
-                                    <option value="ro">Romanian - română</option>
-                                    <option value="mo">Romanian (Moldova) - română (Moldova)</option>
-                                    <option value="rm">Romansh - rumantsch</option>
-                                    <option value="ru">Russian - русский</option>
-                                    <option value="gd">Scottish Gaelic</option>
-                                    <option value="sr">Serbian - српски</option>
-                                    <option value="sh">Serbo-Croatian - Srpskohrvatski</option>
-                                    <option value="sn">Shona - chiShona</option>
-                                    <option value="sd">Sindhi</option>
-                                    <option value="si">Sinhala - සිංහල</option>
-                                    <option value="sk">Slovak - slovenčina</option>
-                                    <option value="sl">Slovenian - slovenščina</option>
-                                    <option value="so">Somali - Soomaali</option>
-                                    <option value="st">Southern Sotho</option>
-                                    <option value="es">Spanish - español</option>
-                                    <option value="es-AR">Spanish (Argentina) - español (Argentina)</option>
-                                    <option value="es-419">Spanish (Latin America) - español (Latinoamérica)</option>
-                                    <option value="es-MX">Spanish (Mexico) - español (México)</option>
-                                    <option value="es-ES">Spanish (Spain) - español (España)</option>
-                                    <option value="es-US">Spanish (United States) - español (Estados Unidos)</option>
-                                    <option value="su">Sundanese</option>
-                                    <option value="sw">Swahili - Kiswahili</option>
-                                    <option value="sv">Swedish - svenska</option>
-                                    <option value="tg">Tajik - тоҷикӣ</option>
-                                    <option value="ta">Tamil - தமிழ்</option>
-                                    <option value="tt">Tatar</option>
-                                    <option value="te">Telugu - తెలుగు</option>
-                                    <option value="th">Thai - ไทย</option>
-                                    <option value="ti">Tigrinya - ትግርኛ</option>
-                                    <option value="to">Tongan - lea fakatonga</option>
-                                    <option value="tr">Turkish - Türkçe</option>
-                                    <option value="tk">Turkmen</option>
-                                    <option value="tw">Twi</option>
-                                    <option value="uk">Ukrainian - українська</option>
-                                    <option value="ur">Urdu - اردو</option>
-                                    <option value="ug">Uyghur</option>
-                                    <option value="uz">Uzbek - o‘zbek</option>
-                                    <option value="vi">Vietnamese - Tiếng Việt</option>
-                                    <option value="wa">Walloon - wa</option>
-                                    <option value="cy">Welsh - Cymraeg</option>
-                                    <option value="fy">Western Frisian</option>
-                                    <option value="xh">Xhosa</option>
-                                    <option value="yi">Yiddish</option>
-                                    <option value="yo">Yoruba - Èdè Yorùbá</option>
-                                    <option value="zu">Zulu - isiZulu</option>
-                                </select>
-                            </div>
-                        </div>--}}
+                 
                         <div class="col-md-4 col-sm-6 col-12">
                             @php($tz=\App\Models\BusinessSetting::where('key','timezone')->first())
                             @php($tz=$tz?$tz->value:0)
@@ -683,278 +500,24 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-6 col-12">
-                            @php($schedule_order=\App\Models\BusinessSetting::where('key','schedule_order')->first())
-                            @php($schedule_order=$schedule_order?$schedule_order->value:0)
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.scheduled')}} {{__('messages.orders')}}</label><small style="color: red">
-                                <!-- <span class="input-label-secondary" title="{{__('messages.customer_varification_toggle')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.customer_varification_toggle')}}"></span> -->
-                                 *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="schedule_order"
-                                                   id="schedule_order" {{$schedule_order==1?'checked':''}}>
-                                            <label class="custom-control-label" for="schedule_order">{{__('messages.on')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="schedule_order"
-                                                   id="schedule_order2" {{$schedule_order==0?'checked':''}}>
-                                            <label class="custom-control-label" for="schedule_order2">{{__('messages.off')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-12">
-                            @php($order_confirmation_model=\App\Models\BusinessSetting::where('key','order_confirmation_model')->first())
-                            @php($order_confirmation_model=$order_confirmation_model?$order_confirmation_model->value:'deliveryman')
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.order_confirmation_model')}}</label><small style="color: red">
-                                <span class="input-label-secondary" title="{{__('messages.order_confirmation_model_hint')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}"></span>
-                                 *</small>
-                              
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                     
-                     
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 col-12">
-                            @php($admin_order_notification=\App\Models\BusinessSetting::where('key','admin_order_notification')->first())
-                            @php($admin_order_notification=$admin_order_notification?$admin_order_notification->value:0)
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.admin')}} {{__('messages.order')}} {{__('messages.notification')}}</label><small style="color: red">*</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="admin_order_notification"
-                                                   id="aon1" {{$admin_order_notification==1?'checked':''}}>
-                                            <label class="custom-control-label" for="aon1">{{__('messages.on')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="admin_order_notification"
-                                                   id="aon2" {{$admin_order_notification==0?'checked':''}}>
-                                            <label class="custom-control-label" for="aon2">{{__('messages.off')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-12">
-                            @php($ev=\App\Models\BusinessSetting::where('key','customer_verification')->first())
-                            @php($ev=$ev?$ev->value:0)
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.customer')}} {{__('messages.verification')}}</label><small style="color: red"><span
-                                        class="input-label-secondary" title="{{__('messages.customer_varification_toggle')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.customer_varification_toggle')}}"></span> *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="customer_verification"
-                                                   id="ev1" {{$ev==1?'checked':''}}>
-                                            <label class="custom-control-label" for="ev1">{{__('messages.on')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="customer_verification"
-                                                   id="ev2" {{$ev==0?'checked':''}}>
-                                            <label class="custom-control-label" for="ev2">{{__('messages.off')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-12">
-                            @php($odc=\App\Models\BusinessSetting::where('key','order_delivery_verification')->first())
-                            @php($odc=$odc?$odc->value:0)
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.order')}}  {{__('messages.verification')}}</label><small style="color: red"><span
-                                        class="input-label-secondary" title="{{__('messages.order_varification_toggle')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.order_varification_toggle')}}"></span> *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="odc"
-                                                   id="odc1" {{$odc==1?'checked':''}}>
-                                            <label class="custom-control-label" for="odc1">{{__('messages.on')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="odc"
-                                                   id="odc2" {{$odc==0?'checked':''}}>
-                                            <label class="custom-control-label" for="odc2">{{__('messages.off')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div>
-
-                       {{--  <div class="col-md-4 col-12">
-                            @php($vnv=\App\Models\BusinessSetting::where('key','toggle_veg_non_veg')->first())
-                            @php($vnv=$vnv?$vnv->value:0)
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.veg')}}/{{__('messages.non_veg')}}</label><small style="color: red"><span
-                                        class="input-label-secondary" title="{{__('messages.veg_non_veg')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.order_varification_toggle')}}"></span> *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="vnv"
-                                                   id="vnv1" {{$vnv==1?'checked':''}}>
-                                            <label class="custom-control-label" for="vnv1">{{__('messages.on')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="vnv"
-                                                   id="vnv2" {{$vnv==0?'checked':''}}>
-                                            <label class="custom-control-label" for="vnv2">{{__('messages.off')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div> --}}
-
                         
-
-                      {{--   <div class="col-md-4 col-12">
-                            @php($dm_self_registration=\App\Models\BusinessSetting::where('key','toggle_dm_registration')->first())
-                            @php($dm_self_registration=$dm_self_registration?$dm_self_registration->value:0)
-                            <div class="form-group">
-                                <label class="input-label d-inline">{{__('messages.dm_self_registration')}}</label><small style="color: red"><span
-                                        class="input-label-secondary" title="{{__('messages.dm_self_registration')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.dm_self_registration')}}"></span> *</small>
-                                <div class="input-group input-group-md-down-break">
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="1" name="dm_self_registration"
-                                                   id="dm_self_registration1" {{$dm_self_registration==1?'checked':''}}>
-                                            <label class="custom-control-label" for="dm_self_registration1">{{__('messages.on')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-
-                                    <!-- Custom Radio -->
-                                    <div class="form-control">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input" value="0" name="dm_self_registration"
-                                                   id="dm_self_registration2" {{$dm_self_registration==0?'checked':''}}>
-                                            <label class="custom-control-label" for="dm_self_registration2">{{__('messages.off')}}</label>
-                                        </div>
-                                    </div>
-                                    <!-- End Custom Radio -->
-                                </div>
-                            </div>
-                        </div> --}}
+                      
 
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                        @php($admin_commission=\App\Models\BusinessSetting::where('key','admin_commission')->first())
-                            <div class="form-group p-2">
-                                <label class="input-label text-capitalize" for="admin_commission">{{__('messages.default_admin_commission')}}</label>
-                                <input type="number" name="admin_commission" class="form-control" id="admin_commission" value="{{$admin_commission?$admin_commission->value:0}}" min="0" max="100" required>
-                            </div>
-                        </div>
+                     
+                     
 
-
-                        <div class="col-md-6">
-                        @php($admin_commission=\App\Models\BusinessSetting::where('key','service_coin_on_registration')->first())
-                            <div class="form-group p-2">
-                                <label class="input-label text-capitalize" >Servicely Coin on Registration</label>
-                                <input type="number" name="service_coin_on_registration" class="form-control" value="{{(isset($admin_commission) && !empty($admin_commission))?$admin_commission->value:0}}" min="0"  required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                        @php($admin_commission=\App\Models\BusinessSetting::where('key','service_coin_on_referral')->first())
-                            <div class="form-group p-2">
-                                <label class="input-label text-capitalize" >Servicely Referral Coin</label>
-                                <input type="number" name="service_coin_on_referral" class="form-control" value="" min="0"  required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                        @php($admin_commission=\App\Models\BusinessSetting::where('key','minimum_coin_transfer')->first())
-                            <div class="form-group p-2">
-                                <label class="input-label text-capitalize" >Minimum Coin Transfer</label>
-                                <input type="number" name="minimum_coin_transfer" class="form-control" value="{{(isset($admin_commission) && !empty($admin_commission)) ? $admin_commission->value:0}}" min="0"  required>
-                            </div>
-                        </div>
-
-                        {{-- <div class="col-md-6 col-12">
-                        @php($free_delivery_over=\App\Models\BusinessSetting::where('key','free_delivery_over')->first())
-                            <div class="form-group p-2 border">
-                                <label class="input-label d-inline text-capitalize" for="free_delivery_over">{{__('messages.free_delivery_over')}} ({{\App\CentralLogics\Helpers::currency_symbol()}})</label>
-                                <label class="switch ml-3 float-right">
-                                    <input type="checkbox" class="status" name="free_delivery_over_status" id="free_delivery_over_status" value="1"
-                                        {{isset($free_delivery_over->value)?'checked':''}}>
-                                    <span class="slider round"></span>
-                                </label>
-                                <input type="number" name="free_delivery_over" class="form-control" id="free_delivery_over" value="{{$free_delivery_over?$free_delivery_over->value:0}}" min="0" step=".01" required {{isset($free_delivery_over->value)?'':'readonly'}}>
-                            </div>
-                        </div> --}}
-
-                        {{-- <div class="col-md-4 col-12">
-                        @php($minimum_shipping_charge=\App\Models\BusinessSetting::where('key','minimum_shipping_charge')->first())
-                            <div class="form-group">
-                                <label class="input-label d-inline text-capitalize" for="minimum_shipping_charge">{{__('messages.minimum_shipping_charge')}}</label>
-                                <input type="number" name="minimum_shipping_charge" class="form-control" id="minimum_shipping_charge"  min="0" step=".01" value="{{$minimum_shipping_charge?$minimum_shipping_charge->value:0}}" required>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="col-md-4 col-12">
-                        @php($per_km_shipping_charge=\App\Models\BusinessSetting::where('key','per_km_shipping_charge')->first())
-                            <div class="form-group">
-                                <label class="input-label d-inline text-capitalize" for="per_km_shipping_charge">{{__('messages.per_km_shipping_charge')}}</label>
-                                <input type="number" name="per_km_shipping_charge" class="form-control" id="per_km_shipping_charge"  min="0" step=".01" value="{{$per_km_shipping_charge?$per_km_shipping_charge->value:0}}" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 col-12">
-                        @php($dm_maximum_orders=\App\Models\BusinessSetting::where('key','dm_maximum_orders')->first())
-                            <div class="form-group">
-                                <label class="input-label d-inline text-capitalize" for="dm_maximum_orders">{{__('messages.dm_maximum_order')}}</label><small style="color: red"><span
-                                        class="input-label-secondary" title="{{__('messages.dm_maximum_order_hint')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.dm_maximum_order_hint')}}"></span> *</small>
-                                <input type="number" name="dm_maximum_orders" class="form-control" id="dm_maximum_orders"  min="1" value="{{$dm_maximum_orders?$dm_maximum_orders->value:1}}" required>
-                            </div>
-                        </div> --}}
                     </div>
+
+                    <div class="row">
+                        
+                    
+
+                    </div>
+
+                  
 
                     <div class="row">
                         @php($phone=\App\Models\BusinessSetting::where('key','phone')->first())
@@ -972,6 +535,48 @@
                                 <label class="input-label d-inline" for="exampleFormControlInput1">{{__('messages.email')}}</label>
                                 <input type="email" value="{{$email->value??''}}"
                                        name="email" class="form-control" placeholder=""
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @php($order_limit_amount=\App\Models\BusinessSetting::where('key','order_limit_amount')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Limit Amount</label>
+                                <input type="text" value="{{$order_limit_amount->value??''}}"
+                                       name="order_limit_amount" class="form-control"
+                                       placeholder="" required>
+                            </div>
+                        </div>
+                        @php($order_installment_amount_1=\App\Models\BusinessSetting::where('key','order_installment_amount_1')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Amount 1 (%)</label>
+                                <input type="text" value="{{$order_installment_amount_1->value??''}}"
+                                       name="order_installment_amount_1" class="form-control" placeholder=""
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @php($order_installment_amount_2=\App\Models\BusinessSetting::where('key','order_installment_amount_2')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Amount 2 (%)</label>
+                                <input type="text" value="{{$order_installment_amount_2->value??''}}"
+                                       name="order_installment_amount_2" class="form-control" placeholder=""
+                                       required>
+                            </div>
+                        </div>
+                        @php($order_installment_amount_3=\App\Models\BusinessSetting::where('key','order_installment_amount_3')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Amount 3 (%)</label>
+                                <input type="text" value="{{$order_installment_amount_3->value??''}}"
+                                       name="order_installment_amount_3" class="form-control" placeholder=""
                                        required>
                             </div>
                         </div>
@@ -998,14 +603,14 @@
                            
                             <div class="form-group">
                                 <label class="input-label text-capitalize d-inline" for="latitude">{{__('messages.latitude')}}<span
-                                        class="input-label-secondary" title="{{__('messages.click_on_the_map_select_your_defaul_location')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.click_on_the_map_select_your_defaul_location')}}"></span></label>
+                                        class="input-label-secondary" title="{{__('messages.click_on_the_map_select_your_defaul_location')}}"><img src="{{asset($assetPrefixPath.'/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.click_on_the_map_select_your_defaul_location')}}"></span></label>
                                 <input type="text" id="latitude"
                                        name="latitude" class="form-control d-inline"
                                        placeholder="Ex : -94.22213" value="{{$default_location?$default_location['lat']:0}}" required readonly>
                             </div>
                             <div class="form-group">
                                 <label class="input-label d-inline text-capitalize" for="longitude">{{__('messages.longitude')}}<span
-                                        class="input-label-secondary" title="{{__('messages.click_on_the_map_select_your_defaul_location')}}"><img src="{{asset('/public/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.click_on_the_map_select_your_defaul_location')}}"></span></label>
+                                        class="input-label-secondary" title="{{__('messages.click_on_the_map_select_your_defaul_location')}}"><img src="{{asset($assetPrefixPath.'/assets/admin/img/info-circle.svg')}}" alt="{{__('messages.click_on_the_map_select_your_defaul_location')}}"></span></label>
                                 <input type="text"
                                        name="longitude" class="form-control"
                                        placeholder="Ex : 103.344322" id="longitude" value="{{$default_location?$default_location['lng']:0}}" required readonly>
