@@ -116,8 +116,8 @@ class SettingController extends Controller
 
      public function get_order_limits(Request $request){
         try {
-            $order_limit_amount_data = BusinessSetting::where(['key' => 'order_limit_amount'])->first();
-            $order_limit_amount = (isset($order_limit_amount_data) && !empty($order_limit_amount_data)) ? $order_limit_amount_data->value : '';
+            $mininum_order_amount_data = BusinessSetting::where(['key' => 'mininum_order_amount'])->first();
+            $mininum_order_amount = (isset($mininum_order_amount_data) && !empty($mininum_order_amount_data)) ? $mininum_order_amount_data->value : '';
 
             $order_installment_percents_data = BusinessSetting::whereIn('key', ['order_installment_percent_1', 'order_installment_percent_2', 'order_installment_percent_3'])->get();
 
@@ -128,7 +128,7 @@ class SettingController extends Controller
                 $order_installment_percents[] = (isset($amount_data->value) && !empty($amount_data->value)) ?  $amount_data->value: '';
             }
 
-            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['order_limit_amount' => $order_limit_amount, 'order_installment_percents' => $order_installment_percents]]);
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents]]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
