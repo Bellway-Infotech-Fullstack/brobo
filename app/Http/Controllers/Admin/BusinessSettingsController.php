@@ -145,16 +145,16 @@ class BusinessSettingsController extends Controller
             'value' => $request['order_limit_amount']
         ]);
         
-        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_amount_1'], [
-            'value' => $request['order_installment_amount_1']
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_1'], [
+            'value' => $request['order_installment_percent_1']
         ]);
 
-        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_amount_2'], [
-            'value' => $request['order_installment_amount_2']
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_2'], [
+            'value' => $request['order_installment_percent_2']
         ]);
 
-        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_amount_3'], [
-            'value' => $request['order_installment_amount_3']
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_3'], [
+            'value' => $request['order_installment_percent_3']
         ]);
 
         // $languages = $request['language'];
