@@ -541,12 +541,12 @@
                     </div>
 
                     <div class="row">
-                        @php($order_limit_amount=\App\Models\BusinessSetting::where('key','order_limit_amount')->first())
+                        @php($mininum_order_amount=\App\Models\BusinessSetting::where('key','mininum_order_amount')->first())
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Limit Amount</label>
-                                <input type="text" value="{{$order_limit_amount->value??''}}"
-                                       name="order_limit_amount" class="form-control"
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Mininum Order Amount</label>
+                                <input type="text" value="{{$mininum_order_amount->value??''}}"
+                                       name="mininum_order_amount" class="form-control"
                                        placeholder="" required>
                             </div>
                         </div>

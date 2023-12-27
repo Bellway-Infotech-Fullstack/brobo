@@ -141,8 +141,8 @@ class BusinessSettingsController extends Controller
             'value' => $request['dm_maximum_orders']
         ]);
           
-        DB::table('business_settings')->updateOrInsert(['key' => 'order_limit_amount'], [
-            'value' => $request['order_limit_amount']
+        DB::table('business_settings')->updateOrInsert(['key' => 'mininum_order_amount'], [
+            'value' => $request['mininum_order_amount']
         ]);
         
         DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_1'], [
