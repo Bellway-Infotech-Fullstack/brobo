@@ -123,7 +123,7 @@ class CartController extends Controller
                     'item_name' => $product->name,
                     'item_image' => $product->image,
                     'customer_id' => $customerId,
-                    'item_price' => $product->discounted_price,
+                    'item_price' => $cartItem->quantity*$product->discounted_price,
                 ];
             });
 

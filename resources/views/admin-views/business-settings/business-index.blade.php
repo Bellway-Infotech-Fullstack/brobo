@@ -550,33 +550,33 @@
                                        placeholder="" required>
                             </div>
                         </div>
-                        @php($order_installment_amount_1=\App\Models\BusinessSetting::where('key','order_installment_amount_1')->first())
+                        @php($order_installment_percent_1=\App\Models\BusinessSetting::where('key','order_installment_percent_1')->first())
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Amount 1 (%)</label>
-                                <input type="text" value="{{$order_installment_amount_1->value??''}}"
-                                       name="order_installment_amount_1" class="form-control" placeholder=""
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Percent 1</label>
+                                <input type="text" value="{{$order_installment_percent_1->value??''}}"
+                                       name="order_installment_percent_1" class="form-control" placeholder=""
                                        required>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        @php($order_installment_amount_2=\App\Models\BusinessSetting::where('key','order_installment_amount_2')->first())
+                        @php($order_installment_percent_2=\App\Models\BusinessSetting::where('key','order_installment_percent_2')->first())
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Amount 2 (%)</label>
-                                <input type="text" value="{{$order_installment_amount_2->value??''}}"
-                                       name="order_installment_amount_2" class="form-control" placeholder=""
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Percent 2</label>
+                                <input type="text" value="{{$order_installment_percent_2->value??''}}"
+                                       name="order_installment_percent_2" class="form-control" placeholder=""
                                        required>
                             </div>
                         </div>
-                        @php($order_installment_amount_3=\App\Models\BusinessSetting::where('key','order_installment_amount_3')->first())
+                        @php($order_installment_percent_3=\App\Models\BusinessSetting::where('key','order_installment_percent_3')->first())
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Amount 3 (%)</label>
-                                <input type="text" value="{{$order_installment_amount_3->value??''}}"
-                                       name="order_installment_amount_3" class="form-control" placeholder=""
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Installment Percent 3</label>
+                                <input type="text" value="{{$order_installment_percent_3->value??''}}"
+                                       name="order_installment_percent_3" class="form-control" placeholder=""
                                        required>
                             </div>
                         </div>
