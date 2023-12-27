@@ -560,6 +560,7 @@
                             </div>
                         </div>
                     </div>
+                    
 
                     <div class="row">
                         @php($order_installment_percent_2=\App\Models\BusinessSetting::where('key','order_installment_percent_2')->first())
@@ -666,8 +667,8 @@
 @push('script_2')
     <script>
       
-        let language = <?php echo($language); ?>;
-        $('[id=language]').val(language);
+      //  let language = <?php echo($language); ?>;
+     //   $('[id=language]').val(language);
 
         function maintenance_mode() {
         @if(env('APP_MODE')=='demo')
