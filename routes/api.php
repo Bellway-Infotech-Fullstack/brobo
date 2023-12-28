@@ -72,6 +72,7 @@ Route::group(['namespace' => 'API'], function () {
 
         Route::controller(CouponController::class)->group(function () {
             Route::get('get-dashboard-coupon-data', 'index');
+            Route::get('get-all-coupons', 'get_all_coupons');
         });
 
         Route::controller(FAQController::class)->group(function () {
@@ -83,6 +84,10 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-cart-items', 'getCartItems');
             Route::delete('delete-cart-item', 'removeItemFromCart');
             Route::delete('empty-cart', 'emptyCart');
+        });
+
+        Route::controller(BookingController::class)->group(function () {
+            Route::post('book-items','bookItems');
         });
     });
 });

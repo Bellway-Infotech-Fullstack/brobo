@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Coupon;
+use DB;
 
 class CouponController extends Controller
 {
@@ -64,4 +65,23 @@ class CouponController extends Controller
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
          }
      }
+
+     public function get_all_coupons(){
+        $todayDate = date("Y-m-d");
+
+        $couponData = Coupon::where(['status' => 1])
+        ->whereDate('start_date', '<=', $todayDate)
+        ->whereDate('expire_date', '>=', $todayDate)
+        ->orderBy('created_at', 'desc')->get();   
+
+
+
+                           
+        if(count($couponData) > 0) {
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'data found','data' => $couponData], 200);
+            
+        } else {
+            return response()->json(['status' => 'error', 'code' => 404, 'message' => 'No data found'], 404);
+        }
+    }
 }

@@ -117,117 +117,46 @@
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                 style="display: {{Request::is('admin/order*')?'block':'none'}}">
-                                <li class="nav-item {{Request::is('admin/order/list/pending')?'active':''}}">
+                                <li class="nav-item {{Request::is('admin/order/list/ongoing')?'active':''}}">
                                     <a class="nav-link " href="{{route('admin.order.list',['pending'])}}"
-                                       title="{{__('messages.pending')}} {{__('messages.orders')}}">
+                                       title="Ongoing {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                            {{__('messages.pending')}}
+                                            Ongoing
                                             <span class="badge badge-soft-info badge-pill ml-1">
                                                 {{\App\Models\Order::Pending()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-
-                                <li class="nav-item {{Request::is('admin/order/list/accepted')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['accepted'])}}"
-                                       title="{{__('messages.acceptedbyDM')}}">
+                                <li class="nav-item {{Request::is('admin/order/list/ongoing')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['pending'])}}"
+                                       title="Cancelled {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                        {{__('messages.accepted')}}
-                                            <span class="badge badge-soft-success badge-pill ml-1">
-                                            {{\App\Models\Order::Accepted()->count()}}
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{Request::is('admin/order/list/processing')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['processing'])}}"
-                                       title="{{__('messages.preparingInRestaurants')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                            {{__('messages.processing')}}
-                                                <span class="badge badge-warning badge-pill ml-1">
-                                                {{\App\Models\Order::Preparing()->count()}}
+                                            Cancelled
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                {{\App\Models\Order::Pending()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{Request::is('admin/order/list/services_ongoing')?'active':''}}">
-                                    <a class="nav-link text-capitalize"
-                                       href="{{route('admin.order.list',['services_ongoing'])}}"
-                                       title="{{__('messages.serviceOngoing')}}">
+                                <li class="nav-item {{Request::is('admin/order/list/ongoing')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['pending'])}}"
+                                       title="Delivered {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                            {{__('messages.serviceOngoing')}}
-                                                <span class="badge badge-warning badge-pill ml-1">
-                                                {{\App\Models\Order::ServiceOngoing()->count()}}
+                                            Delivered
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                {{\App\Models\Order::Pending()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{Request::is('admin/order/list/delivered')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['completed'])}}"
-                                       title="{{__('messages.delivered')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        {{__('messages.completed')}}
-                                            <span class="badge badge-success badge-pill ml-1">
-                                            {{\App\Models\Order::Delivered()->count()}}
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{Request::is('admin/order/list/canceled')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['canceled'])}}"
-                                       title="{{__('messages.canceled')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        {{__('messages.canceled')}}
-                                            <span class="badge badge-soft-warning bg-light badge-pill ml-1">
-                                            {{\App\Models\Order::Canceled()->count()}}
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{Request::is('admin/order/list/failed')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['failed'])}}"
-                                       title="{{__('messages.payment')}} {{__('messages.failed')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate text-capitalize">
-                                        {{__('messages.payment')}} {{__('messages.failed')}}
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                            {{\App\Models\Order::failed()->count()}}
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{Request::is('admin/order/list/refunded')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['refunded'])}}"
-                                       title="{{__('messages.refunded')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        {{__('messages.refunded')}}
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                            {{\App\Models\Order::Refunded()->count()}}
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
+                                
+                                
 
-                                <li class="nav-item {{Request::is('admin/order/list/scheduled')?'active':''}}">
-                                    <a class="nav-link" href="{{route('admin.order.list',['scheduled'])}}"
-                                       title="{{__('messages.scheduled')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        {{__('messages.scheduled')}}
-                                        <span class="badge badge-info badge-pill ml-1">
-                                            {{\App\Models\Order::Scheduled()->count()}}
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
+                               
                                 <li class="nav-item {{Request::is('admin/order/list/all')?'active':''}}">
                                     <a class="nav-link" href="{{route('admin.order.list',['all'])}}"
                                        title="{{__('messages.all')}} {{__('messages.orders')}}">
@@ -235,7 +164,7 @@
                                         <span class="text-truncate">
                                             {{__('messages.all')}}
                                             <span class="badge badge-info badge-pill ml-1">
-                                                {{\App\Models\Order::whereIn('order_status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded'])->orWhere('scheduled', 1)->count()}}
+                                                {{\App\Models\Order::whereIn('status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded'])->count()}}
                                             </span>
                                         </span>
                                     </a>
@@ -288,7 +217,7 @@
 
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="{{__('messages.service')}} {{__('messages.section')}}">{{__('messages.service')}} {{__('messages.management')}}</small>
+                               title="{{__('messages.service')}} {{__('messages.section')}}">Service Management</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
                     
@@ -686,25 +615,6 @@
                     @endif
                 <!-- End web & adpp Settings -->
 
-                    <!-- Report -->
-                    @if(\App\CentralLogics\Helpers::module_permission_check('report'))
-                        <li class="nav-item">
-                            <small class="nav-subtitle"
-                                   title="{{__('messages.report_and_analytics')}}">{{__('messages.report_and_analytics')}}</small>
-                            <small class="tio-more-horizontal nav-subtitle-replacer"></small>
-                        </li>
-
-                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/report/day-wise-report')?'active':''}}">
-                            <a class="nav-link " href="{{route('admin.report.day-wise-report')}}"
-                               title="{{__('messages.day_wise_report')}}">
-                                <span class="tio-report nav-icon"></span>
-                                <span
-                                    class="text-truncate">{{__('messages.day_wise_report')}}</span>
-                            </a>
-                        </li>
-
-                        
-                    @endif
 
              
 

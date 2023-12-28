@@ -9,23 +9,24 @@ use App\Scopes\ZoneScope;
 class Order extends Model
 {
 
+    protected $fillable = ['start_date', 'end_date','time_duration', 'user_id','status','cart_items','paid_amount','pending_amount','delivery_address_id','coupon_id','delivery_charge','order_installment_percent','transaction_id'];
+
     protected $casts = [
-        'order_amount' => 'float',
-        'coupon_discount_amount' => 'float',
-        'total_tax_amount' => 'float',
-        'restaurant_discount_amount' => 'float',
-        'delivery_address_id' => 'integer',
-        'delivery_man_id' => 'integer',
-        'delivery_charge' => 'float',
-        'original_delivery_charge'=>'float',
+        'start_date' => 'string',
+        'end_date' => 'string',
+        'time_duration' => 'string',
         'user_id' => 'integer',
-        'scheduled' => 'integer',
-        'restaurant_id' => 'integer',
-        'details_count' => 'integer',
+        'status' => 'string',
+        'cart_items' => 'string',
+        'paid_amount' => 'float',
+        'pending_amount' => 'float',
+        'delivery_address_id' => 'integer',
+        'coupon_id' => 'integer',
+        'delivery_charge'=>'integer',
+        'order_installment_percent' => 'integer',
+        'transaction_id' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'original_delivery_charge'=>'float',
-        // 'delivery_address' => 'json'
     ];
 
     public function setDeliveryChargeAttribute($value)
@@ -80,68 +81,68 @@ class Order extends Model
 
     public function scopeAccepteByDeliveryman($query)
     {
-        return $query->where('order_status', 'accepted');
+        return $query->where('status', 'accepted');
     }
 
     public function scopeAccepted($query)
     {
-        return $query->where('order_status', 'accepted');
+        return $query->where('status', 'accepted');
     }
 
     public function scopePreparing($query)
     {
-        return $query->whereIn('order_status', ['processing']);
+        return $query->whereIn('status', ['processing']);
     }
     
     public function scopeOngoing($query)
     {
-        return $query->whereIn('order_status', ['accepted','confirmed','processing','handover','picked_up']);
+        return $query->whereIn('status', ['accepted','confirmed','processing','handover','picked_up']);
     }
     
     public function scopeFoodOnTheWay($query)
     {
-        return $query->where('order_status','picked_up');
+        return $query->where('status','picked_up');
     }
 
 
     public function scopeServiceOngoing($query)
     {
-        return $query->whereIn('order_status',['services_ongoing', 'picked_up', 'service_ongoing']);
+        return $query->whereIn('status',['services_ongoing', 'picked_up', 'service_ongoing']);
     }
     
     public function scopePending($query)
     {
-        return $query->where('order_status','pending');
+        return $query->where('status','pending');
     }
 
     public function scopeAll($query)
     {
-        return $query->whereIn('order_status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded']);
+        return $query->whereIn('status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded']);
     }
     
     // public function scopeRefundRequest($query)
     // {
-    //     return $query->where('order_status','refund_requested');
+    //     return $query->where('status','refund_requested');
     // }
 
     public function scopeFailed($query)
     {
-        return $query->where('order_status','failed');
+        return $query->where('status','failed');
     }
     
     public function scopeCanceled($query)
     {
-        return $query->where('order_status','canceled');
+        return $query->where('status','canceled');
     }
     
     public function scopeDelivered($query)
     {
-        return $query->whereIn('order_status', ['delivered', 'completed']);
+        return $query->whereIn('status', ['delivered', 'completed']);
     }
     
     public function scopeRefunded($query)
     {
-        return $query->where('order_status','refunded');
+        return $query->where('status','refunded');
     }
     
     public function scopeSearchingForDeliveryman($query)

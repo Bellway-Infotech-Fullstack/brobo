@@ -119,13 +119,12 @@
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                 style="display: <?php echo e(Request::is('admin/order*')?'block':'none'); ?>">
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/pending')?'active':''); ?>">
+                                <li class="nav-item <?php echo e(Request::is('admin/order/list/ongoing')?'active':''); ?>">
                                     <a class="nav-link " href="<?php echo e(route('admin.order.list',['pending'])); ?>"
-                                       title="<?php echo e(__('messages.pending')); ?> <?php echo e(__('messages.orders')); ?>">
+                                       title="Ongoing <?php echo e(__('messages.orders')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                            <?php echo e(__('messages.pending')); ?>
-
+                                            Ongoing
                                             <span class="badge badge-soft-info badge-pill ml-1">
                                                 <?php echo e(\App\Models\Order::Pending()->count()); ?>
 
@@ -133,121 +132,36 @@
                                         </span>
                                     </a>
                                 </li>
-
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/accepted')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['accepted'])); ?>"
-                                       title="<?php echo e(__('messages.acceptedbyDM')); ?>">
+                                <li class="nav-item <?php echo e(Request::is('admin/order/list/ongoing')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['pending'])); ?>"
+                                       title="Cancelled <?php echo e(__('messages.orders')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                        <?php echo e(__('messages.accepted')); ?>
-
-                                            <span class="badge badge-soft-success badge-pill ml-1">
-                                            <?php echo e(\App\Models\Order::Accepted()->count()); ?>
-
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/processing')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['processing'])); ?>"
-                                       title="<?php echo e(__('messages.preparingInRestaurants')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                            <?php echo e(__('messages.processing')); ?>
-
-                                                <span class="badge badge-warning badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::Preparing()->count()); ?>
+                                            Cancelled
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                <?php echo e(\App\Models\Order::Pending()->count()); ?>
 
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/services_ongoing')?'active':''); ?>">
-                                    <a class="nav-link text-capitalize"
-                                       href="<?php echo e(route('admin.order.list',['services_ongoing'])); ?>"
-                                       title="<?php echo e(__('messages.serviceOngoing')); ?>">
+                                <li class="nav-item <?php echo e(Request::is('admin/order/list/ongoing')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['pending'])); ?>"
+                                       title="Delivered <?php echo e(__('messages.orders')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                            <?php echo e(__('messages.serviceOngoing')); ?>
-
-                                                <span class="badge badge-warning badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::ServiceOngoing()->count()); ?>
+                                            Delivered
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                <?php echo e(\App\Models\Order::Pending()->count()); ?>
 
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/delivered')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['completed'])); ?>"
-                                       title="<?php echo e(__('messages.delivered')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        <?php echo e(__('messages.completed')); ?>
+                                
+                                
 
-                                            <span class="badge badge-success badge-pill ml-1">
-                                            <?php echo e(\App\Models\Order::Delivered()->count()); ?>
-
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/canceled')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['canceled'])); ?>"
-                                       title="<?php echo e(__('messages.canceled')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        <?php echo e(__('messages.canceled')); ?>
-
-                                            <span class="badge badge-soft-warning bg-light badge-pill ml-1">
-                                            <?php echo e(\App\Models\Order::Canceled()->count()); ?>
-
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/failed')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['failed'])); ?>"
-                                       title="<?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.failed')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate text-capitalize">
-                                        <?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.failed')); ?>
-
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                            <?php echo e(\App\Models\Order::failed()->count()); ?>
-
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/refunded')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['refunded'])); ?>"
-                                       title="<?php echo e(__('messages.refunded')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        <?php echo e(__('messages.refunded')); ?>
-
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                            <?php echo e(\App\Models\Order::Refunded()->count()); ?>
-
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/scheduled')?'active':''); ?>">
-                                    <a class="nav-link" href="<?php echo e(route('admin.order.list',['scheduled'])); ?>"
-                                       title="<?php echo e(__('messages.scheduled')); ?>">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                        <?php echo e(__('messages.scheduled')); ?>
-
-                                        <span class="badge badge-info badge-pill ml-1">
-                                            <?php echo e(\App\Models\Order::Scheduled()->count()); ?>
-
-                                        </span>
-                                    </span>
-                                    </a>
-                                </li>
+                               
                                 <li class="nav-item <?php echo e(Request::is('admin/order/list/all')?'active':''); ?>">
                                     <a class="nav-link" href="<?php echo e(route('admin.order.list',['all'])); ?>"
                                        title="<?php echo e(__('messages.all')); ?> <?php echo e(__('messages.orders')); ?>">
@@ -256,7 +170,7 @@
                                             <?php echo e(__('messages.all')); ?>
 
                                             <span class="badge badge-info badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::whereIn('order_status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded'])->orWhere('scheduled', 1)->count()); ?>
+                                                <?php echo e(\App\Models\Order::whereIn('status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded'])->count()); ?>
 
                                             </span>
                                         </span>
@@ -274,7 +188,7 @@
 
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="<?php echo e(__('messages.service')); ?> <?php echo e(__('messages.section')); ?>"><?php echo e(__('messages.service')); ?> <?php echo e(__('messages.management')); ?></small>
+                               title="<?php echo e(__('messages.service')); ?> <?php echo e(__('messages.section')); ?>">Service Management</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
                     
@@ -570,25 +484,6 @@
                     <?php endif; ?>
                 <!-- End web & adpp Settings -->
 
-                    <!-- Report -->
-                    <?php if(\App\CentralLogics\Helpers::module_permission_check('report')): ?>
-                        <li class="nav-item">
-                            <small class="nav-subtitle"
-                                   title="<?php echo e(__('messages.report_and_analytics')); ?>"><?php echo e(__('messages.report_and_analytics')); ?></small>
-                            <small class="tio-more-horizontal nav-subtitle-replacer"></small>
-                        </li>
-
-                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/report/day-wise-report')?'active':''); ?>">
-                            <a class="nav-link " href="<?php echo e(route('admin.report.day-wise-report')); ?>"
-                               title="<?php echo e(__('messages.day_wise_report')); ?>">
-                                <span class="tio-report nav-icon"></span>
-                                <span
-                                    class="text-truncate"><?php echo e(__('messages.day_wise_report')); ?></span>
-                            </a>
-                        </li>
-
-                        
-                    <?php endif; ?>
 
              
 
