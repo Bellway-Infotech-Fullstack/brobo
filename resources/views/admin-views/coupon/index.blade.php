@@ -102,12 +102,7 @@
                                         <input type="number" step="0.01" min="1" max="10000" name="discount" id="discount" class="form-control" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group">
-                                        <label class="input-label" for="max_discount">{{__('messages.max')}} {{__('messages.discount')}}</label>
-                                        <input type="number" step="0.01" min="0" value="0" max="1000000" name="max_discount" id="max_discount" class="form-control" readonly>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
                                         <label class="input-label" for="exampleFormControlInput1">{{__('messages.min')}} {{__('messages.purchase')}}</label>
@@ -172,9 +167,7 @@
                                 <th>{{__('messages.title')}}</th>
                                 <th>{{__('messages.code')}}</th>
                                 <th>{{__('messages.type')}}</th>
-                                <th>{{__('messages.total_uses')}}</th>
                                 <th>{{__('messages.min')}} {{__('messages.purchase')}}</th>
-                                <th>{{__('messages.max')}} {{__('messages.discount')}}</th>
                                 <th>{{__('messages.discount')}}</th>
                                 <th>{{__('messages.discount')}} {{__('messages.type')}}</th>
                                 <th>{{__('messages.start')}} {{__('messages.date')}}</th>
@@ -195,9 +188,7 @@
                                     </td>
                                     <td>{{$coupon['code']}}</td>
                                     <td>{{ ucwords(str_replace('_', ' ', $coupon->coupon_type)) }}</td>
-                                    <td>{{$coupon->total_uses}}</td>
                                     <td>{{\App\CentralLogics\Helpers::format_currency($coupon['min_purchase'])}}</td>
-                                    <td>{{\App\CentralLogics\Helpers::format_currency($coupon['max_discount'])}}</td>
                                     <td>{{$coupon['discount']}}</td>
                                     <td>{{$coupon['discount_type']}}</td>
                                     <td>{{$coupon['start_date']}}</td>
@@ -308,17 +299,7 @@
     
     
     $(document).on('ready', function () {
-        $('#discount_type').on('change', function() {
-         if($('#discount_type').val() == 'amount')
-            {
-                $('#max_discount').attr("readonly","true");
-                $('#max_discount').val(0);
-            }
-            else
-            {
-                $('#max_discount').removeAttr("readonly");
-            }
-        });
+
         
         $('#date_from').attr('min',(new Date()).toISOString().split('T')[0]);
         $('#date_to').attr('min',(new Date()).toISOString().split('T')[0]);

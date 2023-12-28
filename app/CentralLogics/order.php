@@ -5,7 +5,6 @@ namespace App\CentralLogics;
 use App\Models\Admin;
 use App\Models\Order;
 use App\CentralLogics\SMS_module;
-use App\Models\OrderTransaction;
 use App\Models\AdminWallet;
 use App\Models\RestaurantWallet;
 use App\Models\DeliveryManWallet;

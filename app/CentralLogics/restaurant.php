@@ -3,7 +3,6 @@
 namespace App\CentralLogics;
 
 use App\Models\Restaurant;
-use App\Models\OrderTransaction;
 use App\Models\Review;
 
 class RestaurantLogic

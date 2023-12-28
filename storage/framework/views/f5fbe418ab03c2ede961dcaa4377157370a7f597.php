@@ -101,12 +101,7 @@
                                         <input type="number" step="0.01" min="1" max="10000" name="discount" id="discount" class="form-control" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-6">
-                                    <div class="form-group">
-                                        <label class="input-label" for="max_discount"><?php echo e(__('messages.max')); ?> <?php echo e(__('messages.discount')); ?></label>
-                                        <input type="number" step="0.01" min="0" value="0" max="1000000" name="max_discount" id="max_discount" class="form-control" readonly>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-4 col-6">
                                     <div class="form-group">
                                         <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.min')); ?> <?php echo e(__('messages.purchase')); ?></label>
@@ -171,9 +166,7 @@
                                 <th><?php echo e(__('messages.title')); ?></th>
                                 <th><?php echo e(__('messages.code')); ?></th>
                                 <th><?php echo e(__('messages.type')); ?></th>
-                                <th><?php echo e(__('messages.total_uses')); ?></th>
                                 <th><?php echo e(__('messages.min')); ?> <?php echo e(__('messages.purchase')); ?></th>
-                                <th><?php echo e(__('messages.max')); ?> <?php echo e(__('messages.discount')); ?></th>
                                 <th><?php echo e(__('messages.discount')); ?></th>
                                 <th><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?></th>
                                 <th><?php echo e(__('messages.start')); ?> <?php echo e(__('messages.date')); ?></th>
@@ -195,9 +188,7 @@
                                     </td>
                                     <td><?php echo e($coupon['code']); ?></td>
                                     <td><?php echo e(ucwords(str_replace('_', ' ', $coupon->coupon_type))); ?></td>
-                                    <td><?php echo e($coupon->total_uses); ?></td>
                                     <td><?php echo e(\App\CentralLogics\Helpers::format_currency($coupon['min_purchase'])); ?></td>
-                                    <td><?php echo e(\App\CentralLogics\Helpers::format_currency($coupon['max_discount'])); ?></td>
                                     <td><?php echo e($coupon['discount']); ?></td>
                                     <td><?php echo e($coupon['discount_type']); ?></td>
                                     <td><?php echo e($coupon['start_date']); ?></td>
@@ -309,17 +300,7 @@
     
     
     $(document).on('ready', function () {
-        $('#discount_type').on('change', function() {
-         if($('#discount_type').val() == 'amount')
-            {
-                $('#max_discount').attr("readonly","true");
-                $('#max_discount').val(0);
-            }
-            else
-            {
-                $('#max_discount').removeAttr("readonly");
-            }
-        });
+
         
         $('#date_from').attr('min',(new Date()).toISOString().split('T')[0]);
         $('#date_to').attr('min',(new Date()).toISOString().split('T')[0]);
