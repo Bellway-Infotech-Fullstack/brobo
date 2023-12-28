@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use App\Models\OrderTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

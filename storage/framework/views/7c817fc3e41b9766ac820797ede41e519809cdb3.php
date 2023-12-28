@@ -1,55 +1,53 @@
-@extends('layouts.admin.app')
+<?php $__env->startSection('title','Update Coupon'); ?>
 
-@section('title','Update Coupon')
+<?php $__env->startPush('css_or_js'); ?>
 
-@push('css_or_js')
+<?php $__env->stopPush(); ?>
 
-@endpush
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title"><i class="tio-edit"></i> {{__('messages.coupon')}} {{__('messages.update')}}</h1>
+                    <h1 class="page-header-title"><i class="tio-edit"></i> <?php echo e(__('messages.coupon')); ?> <?php echo e(__('messages.update')); ?></h1>
                 </div>
             </div>
         </div>
         <!-- End Page Header -->
         <div class="row gx-2 gx-lg-3">
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
-                <form action="{{route('admin.coupon.update',[$coupon['id']])}}" method="post" enctype="multipart/form-data">
-                    @csrf
+                <form action="<?php echo e(route('admin.coupon.update',[$coupon['id']])); ?>" method="post" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
                     <div class="row">
                         <div class="col-4">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.title')}}</label>
-                                <input type="text" name="title" value="{{$coupon['title']}}" class="form-control"
-                                       placeholder="{{__('messages.new_coupon')}}" required>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.title')); ?></label>
+                                <input type="text" name="title" value="<?php echo e($coupon['title']); ?>" class="form-control"
+                                       placeholder="<?php echo e(__('messages.new_coupon')); ?>" required>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.coupon')}} {{__('messages.type')}}</label>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.coupon')); ?> <?php echo e(__('messages.type')); ?></label>
                                 <select name="coupon_type" class="form-control" onchange="coupon_type_change(this.value)">
                                     
                         
                                   
-                                    <option value="default" {{$coupon['coupon_type']=='default'?'selected':''}}>{{__('messages.default')}}</option>
+                                    <option value="default" <?php echo e($coupon['coupon_type']=='default'?'selected':''); ?>><?php echo e(__('messages.default')); ?></option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-4">
                            
                                 <div class="form-group" id="zone_wise" style="display: none">
-                                    <label class="input-label" for="exampleFormControlInput1">{{__('messages.select')}} {{__('messages.zone')}}</label>
+                                    <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.select')); ?> <?php echo e(__('messages.zone')); ?></label>
                                     <select name="zone_ids[]" id="choice_zones"
                                         class="form-control js-select2-custom"
-                                        multiple="multiple" placeholder="{{__('messages.select_zone')}}">
-                                    @foreach(\App\Models\Zone::all() as $zone)
-                                        <option value="{{$zone->id}}" {{($coupon->coupon_type=='zone_wise'&&json_decode($coupon->data))?(in_array($zone->id, json_decode($coupon->data))?'selected':''):''}}>{{$zone->name}}</option>
-                                    @endforeach
+                                        multiple="multiple" placeholder="<?php echo e(__('messages.select_zone')); ?>">
+                                    <?php $__currentLoopData = \App\Models\Zone::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $zone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($zone->id); ?>" <?php echo e(($coupon->coupon_type=='zone_wise'&&json_decode($coupon->data))?(in_array($zone->id, json_decode($coupon->data))?'selected':''):''); ?>><?php echo e($zone->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
                         </div>
@@ -58,22 +56,22 @@
                     <div class="row">
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.code')}}</label>
-                                <input type="text" name="code" class="form-control" value="{{$coupon['code']}}"
-                                       placeholder="{{\Illuminate\Support\Str::random(8)}}" required>
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.code')); ?></label>
+                                <input type="text" name="code" class="form-control" value="<?php echo e($coupon['code']); ?>"
+                                       placeholder="<?php echo e(\Illuminate\Support\Str::random(8)); ?>" required>
                             </div>
                         </div>
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="limit">{{__('messages.limit')}} {{__('messages.for')}} {{__('messages.same')}} {{__('messages.user')}}</label>
-                                <input type="number" name="limit" id="coupon_limit" value="{{$coupon['limit']}}" class="form-control"
+                                <label class="input-label" for="limit"><?php echo e(__('messages.limit')); ?> <?php echo e(__('messages.for')); ?> <?php echo e(__('messages.same')); ?> <?php echo e(__('messages.user')); ?></label>
+                                <input type="number" name="limit" id="coupon_limit" value="<?php echo e($coupon['limit']); ?>" class="form-control"
                                        placeholder="EX: 10">
                             </div>
                         </div>
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="">{{__('messages.start')}} {{__('messages.date')}}</label>
-                                <input type="date" name="start_date" class="form-control" id="date_from" placeholder="{{__('messages.select_date')}}" value="{{date('Y-m-d',strtotime($coupon['start_date']))}}">
+                                <label class="input-label" for=""><?php echo e(__('messages.start')); ?> <?php echo e(__('messages.date')); ?></label>
+                                <input type="date" name="start_date" class="form-control" id="date_from" placeholder="<?php echo e(__('messages.select_date')); ?>" value="<?php echo e(date('Y-m-d',strtotime($coupon['start_date']))); ?>">
                             </div>
                         </div>
                        
@@ -82,8 +80,8 @@
                     <div class="row">
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="date_to">{{__('messages.expire')}} {{__('messages.date')}}</label>
-                                <input type="date" name="expire_date" class="form-control" placeholder="{{__('messages.select_date')}}" id="date_to" value="{{date('Y-m-d',strtotime($coupon['expire_date']))}}"
+                                <label class="input-label" for="date_to"><?php echo e(__('messages.expire')); ?> <?php echo e(__('messages.date')); ?></label>
+                                <input type="date" name="expire_date" class="form-control" placeholder="<?php echo e(__('messages.select_date')); ?>" id="date_to" value="<?php echo e(date('Y-m-d',strtotime($coupon['expire_date']))); ?>"
                                        data-hs-flatpickr-options='{
                                      "dateFormat": "Y-m-d"
                                    }'>
@@ -91,27 +89,29 @@
                         </div>
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="discount_type">{{__('messages.discount')}} {{__('messages.type')}}</label>
+                                <label class="input-label" for="discount_type"><?php echo e(__('messages.discount')); ?> <?php echo e(__('messages.type')); ?></label>
                                 <select name="discount_type" id="discount_type" class="form-control">
-                                    <option value="amount" {{$coupon['discount_type']=='amount'?'selected':''}}>{{__('messages.amount')}}
+                                    <option value="amount" <?php echo e($coupon['discount_type']=='amount'?'selected':''); ?>><?php echo e(__('messages.amount')); ?>
+
                                     </option>
-                                    <option value="percent" {{$coupon['discount_type']=='percent'?'selected':''}}>
-                                        {{__('messages.percent')}}
+                                    <option value="percent" <?php echo e($coupon['discount_type']=='percent'?'selected':''); ?>>
+                                        <?php echo e(__('messages.percent')); ?>
+
                                     </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="discount">{{__('messages.discount')}}</label>
-                                <input type="number" id="discount" min="1" max="10000" step="0.01" value="{{$coupon['discount']}}"
+                                <label class="input-label" for="discount"><?php echo e(__('messages.discount')); ?></label>
+                                <input type="number" id="discount" min="1" max="10000" step="0.01" value="<?php echo e($coupon['discount']); ?>"
                                        name="discount" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-md-4 col-6">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.min')}} {{__('messages.purchase')}}</label>
-                                <input type="number" name="min_purchase" step="0.01" value="{{$coupon['min_purchase']}}"
+                                <label class="input-label" for="exampleFormControlInput1"><?php echo e(__('messages.min')); ?> <?php echo e(__('messages.purchase')); ?></label>
+                                <input type="number" name="min_purchase" step="0.01" value="<?php echo e($coupon['min_purchase']); ?>"
                                        min="0" max="100000" class="form-control"
                                        placeholder="100">
                             </div>
@@ -128,21 +128,21 @@
 
                         <center style="display: block" id="image-viewer-section" class="pt-2">
                             <img style="height: 200px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 src="{{$couponImagePath}}"
+                                 src="<?php echo e($couponImagePath); ?>"
                                  alt="coupon image"/>
                         </center>
                         </div>  
                     </div>
-                    <button type="submit" class="btn btn-primary">{{__('messages.update')}}</button>
+                    <button type="submit" class="btn btn-primary"><?php echo e(__('messages.update')); ?></button>
                 </form>
             </div>
             <!-- End Table -->
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
     <script>
           $("#coupon_background_image").change(function () {
             handleFile(this);
@@ -213,11 +213,11 @@
             $('#date_from').attr('max',$(this).val());
         });
         $(document).on('ready', function () {
-            $('#date_from').attr('max','{{date("Y-m-d",strtotime($coupon["expire_date"]))}}');
-            $('#date_to').attr('min','{{date("Y-m-d",strtotime($coupon["start_date"]))}}');
+            $('#date_from').attr('max','<?php echo e(date("Y-m-d",strtotime($coupon["expire_date"]))); ?>');
+            $('#date_to').attr('min','<?php echo e(date("Y-m-d",strtotime($coupon["start_date"]))); ?>');
             $('.js-data-example-ajax').select2({
             ajax: {
-                url: '{{url('/')}}/admin/vendor/get-services',
+                url: '<?php echo e(url('/')); ?>/admin/vendor/get-services',
                 data: function (params) {
                     return {
                         q: params.term, // search term
@@ -287,4 +287,6 @@
             }
         }
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/coupon/edit.blade.php ENDPATH**/ ?>
