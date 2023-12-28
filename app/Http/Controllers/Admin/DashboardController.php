@@ -13,7 +13,6 @@ use App\Models\Review;
 use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\Zone;
-use App\Models\OrderTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -318,16 +317,7 @@ class DashboardController extends Controller
             $top_sell = [];
         $total_sell = [];
         $commission = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $from = date('Y-' . $i . '-01');
-            $to = date('Y-' . $i . '-30');
-            $total_sell[$i] = OrderTransaction::NotRefunded()
-                ->whereIn('vendor_id', $vendor_ids)
-                ->whereBetween('created_at', [$from, $to])->sum('order_amount');
-            $commission[$i] = OrderTransaction::NotRefunded()
-                ->whereIn('vendor_id', $vendor_ids)
-                ->whereBetween('created_at', [$from, $to])->sum('admin_commission');
-        }
+       
 
         $dash_data = array_merge($data_os, $data_uo, $data_bo);
         $dash_data['popular'] = $popular;
@@ -336,8 +326,8 @@ class DashboardController extends Controller
         $dash_data['top_deliveryman'] = $top_deliveryman;
         $dash_data['top_customer'] = $top_customer;
         $dash_data['top_restaurants'] = $top_restaurants;
-        $dash_data['total_sell'] = $total_sell;
-        $dash_data['commission'] = $commission;
+        $dash_data['total_sell'] = 0;
+        $dash_data['commission'] = 0;
 
         return $dash_data;
     }

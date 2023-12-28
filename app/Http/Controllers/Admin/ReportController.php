@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\CentralLogics\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderTransaction;
 use App\Models\Zone;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
@@ -67,7 +66,7 @@ class ReportController extends Controller
 
     public function order_transaction()
     {
-        $order_transactions = OrderTransaction::latest()->paginate(config('default_pagination'));
+      //  $order_transactions = OrderTransaction::latest()->paginate(config('default_pagination'));
         return view('admin-views.report.order-transactions', compact('order_transactions'));
     }
 
