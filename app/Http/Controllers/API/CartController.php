@@ -8,6 +8,7 @@ use App\Models\Cart;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
+use App\Models\Category;
 
 class CartController extends Controller
 {
@@ -116,10 +117,13 @@ class CartController extends Controller
                 }
                 // Remove commas from discounted_price
                 $product->discounted_price = str_replace(',', '', $product->discounted_price);
+                $main_category_data = Category::find($product->category_id);
+                
                 return [
                     'id' => $cartItem->id,
                     'quantity' => $cartItem->quantity,
                     'item_id' => $product->id,
+                    'category_id' => $main_category_data->parent_id,
                     'item_name' => $product->name,
                     'item_image' => $product->image,
                     'customer_id' => $customerId,
@@ -181,3 +185,4 @@ class CartController extends Controller
 }
 
 }
+
