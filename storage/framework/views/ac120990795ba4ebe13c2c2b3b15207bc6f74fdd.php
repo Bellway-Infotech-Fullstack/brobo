@@ -540,12 +540,12 @@
                     </div>
 
                     <div class="row">
-                        <?php ($order_limit_amount=\App\Models\BusinessSetting::where('key','order_limit_amount')->first()); ?>
+                        <?php ($mininum_order_amount=\App\Models\BusinessSetting::where('key','mininum_order_amount')->first()); ?>
                         <div class="col-md-6 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order Limit Amount</label>
-                                <input type="text" value="<?php echo e($order_limit_amount->value??''); ?>"
-                                       name="order_limit_amount" class="form-control"
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Mininum Order Amount</label>
+                                <input type="text" value="<?php echo e($mininum_order_amount->value??''); ?>"
+                                       name="mininum_order_amount" class="form-control"
                                        placeholder="" required>
                             </div>
                         </div>
@@ -559,6 +559,7 @@
                             </div>
                         </div>
                     </div>
+                    
 
                     <div class="row">
                         <?php ($order_installment_percent_2=\App\Models\BusinessSetting::where('key','order_installment_percent_2')->first()); ?>
@@ -580,6 +581,45 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <?php ($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first()); ?>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                <input type="text" value="<?php echo e($delivery_charge->value??''); ?>"
+                                       name="delivery_charge" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        <?php ($referred_discount=\App\Models\BusinessSetting::where('key','referred_discount')->first()); ?>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Referred Discount (%)</label>
+                                <input type="text" value="<?php echo e($referred_discount->value??''); ?>"
+                                       name="referred_discount" class="form-control" placeholder="" required>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
+                                <input type="time" value="" name="order_from_time_slots[]" class="form-control" placeholder="">
+                            </div>                         
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
+                                <input type="time" value="" name="order_to_time_slots[]" class="form-control" placeholder="">
+                            </div>                           
+                        </div>
+                        
+                    </div>
+                    <div  style='float:right;'>
+                         <a href="#" class="add-more-time-slot"> Add More </a>
+                        </div>
 
                     <div class="row">
                         <div class="col-sm-6">
@@ -664,9 +704,14 @@
 
 <?php $__env->startPush('script_2'); ?>
     <script>
+
+        $(".add-more-time-slot").on("click",function(){
+            alert("here");
+            var timeSlotData = ""
+        });
       
-        let language = <?php echo($language); ?>;
-        $('[id=language]').val(language);
+      //  let language = <?php echo($language); ?>;
+     //   $('[id=language]').val(language);
 
         function maintenance_mode() {
         <?php if(env('APP_MODE')=='demo'): ?>

@@ -157,6 +157,15 @@ class BusinessSettingsController extends Controller
             'value' => $request['order_installment_percent_3']
         ]);
 
+        DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge'], [
+            'value' => $request['delivery_charge']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'referred_discount'], [
+            'value' => $request['referred_discount']
+        ]);
+        
+
         // $languages = $request['language'];
 
         // if(in_array('en',$languages))
