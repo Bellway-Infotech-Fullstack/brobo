@@ -584,6 +584,45 @@
                     </div>
 
                     <div class="row">
+                        @php($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                <input type="text" value="{{$delivery_charge->value??''}}"
+                                       name="delivery_charge" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        @php($referred_discount=\App\Models\BusinessSetting::where('key','referred_discount')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Referred Discount (%)</label>
+                                <input type="text" value="{{$referred_discount->value??''}}"
+                                       name="referred_discount" class="form-control" placeholder="" required>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
+                                <input type="time" value="" name="order_from_time_slots[]" class="form-control" placeholder="">
+                            </div>                         
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
+                                <input type="time" value="" name="order_to_time_slots[]" class="form-control" placeholder="">
+                            </div>                           
+                        </div>
+                        
+                    </div>
+                    <div  style='float:right;'>
+                         <a href="#" class="add-more-time-slot"> Add More </a>
+                        </div>
+
+                    <div class="row">
                         <div class="col-sm-6">
                             @php($address=\App\Models\BusinessSetting::where('key','address')->first())
                             <div class="form-group">
@@ -666,6 +705,11 @@
 
 @push('script_2')
     <script>
+
+        $(".add-more-time-slot").on("click",function(){
+            alert("here");
+            var timeSlotData = ""
+        });
       
       //  let language = <?php echo($language); ?>;
      //   $('[id=language]').val(language);

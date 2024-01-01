@@ -88,6 +88,9 @@ Route::group(['namespace' => 'API'], function () {
 
         Route::controller(BookingController::class)->group(function () {
             Route::post('book-items','bookItems');
+            Route::get('get-bookings','getBookings');
+            Route::put('cancel-order','cancelOrder');
+            
         });
     });
 });
