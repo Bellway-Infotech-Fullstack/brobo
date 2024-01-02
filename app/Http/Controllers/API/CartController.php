@@ -162,27 +162,44 @@ class CartController extends Controller
     }
 
     public function emptyCart(Request $request){
-    try {
-        // Delete all items from the cart for the authenticated user
-        $token = JWTAuth::getToken();
-        $user = JWTAuth::toUser($token);
-        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+        try {
+            // Delete all items from the cart for the authenticated user
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = (isset($user) && !empty($user)) ? $user->id : '';
 
-        $cartItems = Cart::where('customer_id', $customerId)->get();
+            $cartItems = Cart::where('customer_id', $customerId)->get();
 
-        if ($cartItems->isEmpty()) {
-            return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Cart items not found']);
+            if ($cartItems->isEmpty()) {
+                return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Cart items not found']);
+            }
+
+            // Delete all cart items
+            $cartItems->each->delete();
+
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'All items removed from cart']);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
         }
-
-        // Delete all cart items
-        $cartItems->each->delete();
-
-        return response()->json(['status' => 'success', 'code' => 200, 'message' => 'All items removed from cart']);
-
-    } catch (\Exception $e) {
-        return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
     }
-}
+
+    public function manageCartItemQuantity(Request $request){
+        $cartId = $request->post('cart_id');
+        $quantity = $request->post('quantity');
+        $cartData = Cart::find($cartId);
+    
+        // Check if the cart exists
+        if (!$cartData) {
+            return response()->json(['status' => 'error', 'message' => 'Cart not found', 'code' => 404]);
+        }
+    
+    
+        $cartData->quantity = $quantity;
+        $cartData->save();
+    
+        return response()->json(['status' => 'success', 'message' => 'Quantity updated successfully', 'code' => 200]);
+    }
 
 }
 

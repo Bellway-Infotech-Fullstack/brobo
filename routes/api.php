@@ -84,12 +84,16 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-cart-items', 'getCartItems');
             Route::delete('delete-cart-item', 'removeItemFromCart');
             Route::delete('empty-cart', 'emptyCart');
+            Route::put('manage-cart-item-quantity','manageCartItemQuantity');
         });
 
         Route::controller(BookingController::class)->group(function () {
             Route::post('book-items','bookItems');
             Route::get('get-bookings','getBookings');
+            Route::get('get-booking-detail','getBookingDetail');
             Route::put('cancel-order','cancelOrder');
+            Route::put('extend-order','extendOrder');
+           
             
         });
     });
