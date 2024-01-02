@@ -9,8 +9,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Order;
 use App\Models\Coupon;
-use App\Models\Product;
+use App\Models\UsersAddress;
 use App\Models\BusinessSetting;
+
 
 class BookingController extends Controller
 {
@@ -174,71 +175,143 @@ class BookingController extends Controller
             return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
         }
 
-            $bookingData =  Order::select('*')->where('status',$status)
-                        ->orderBy($orderColumn, $orderBy)
-                        ->paginate($perPage, ['*'], 'page', $page);
+        $bookingData =  Order::select('*')->where('status',$status)
+                    ->orderBy($orderColumn, $orderBy)
+                    ->paginate($perPage, ['*'], 'page', $page);
+                
 
+        $bookingData = $bookingData->map(function ($item)  {
+            $allData = array();
+            $description = $item->description; 
+            $cartItems = json_decode($item->cart_items);
+            $cartTotalItemAmount = 0;
+
+            if(isset($cartItems) && !empty($cartItems)){
+                foreach($cartItems as $key => $val){
+                    $cartTotalItemAmount = $cartTotalItemAmount + $val->item_price;
+                }
+            }            
+            
+            $orderId   = $item->order_id; 
+            $cartTotalItemAmount = number_format(($cartTotalItemAmount),0);
+            
+            array_push($allData,
+                array(
+                    'description' => $description,
+                    'order_id' => $orderId,
+                    'arriving_date' => date("D d M Y",strtotime($item->start_date)),
+                    'total_items_price' => $cartTotalItemAmount
                     
-
-            $bookingData = $bookingData->map(function ($item)  {
-                $allData = array();
-                $description = $item->description; 
-                $orderId   = $item->order_id; 
-                array_push($allData,array('description' => $description,'order_id' => $orderId, 'arriving_date' => date("D d M Y",strtotime($item->start_date))));
-                return $allData;
-            });
+                    )
+                );
+            return $allData;
+        });
                         
+        if (count($bookingData) == 0) {
+            return response()->json(['status' => 'error', 'message' => 'No data found', 'code' => 404]);
+        }
+      
+        return response()->json(['status' => 'success','message' => 'Data found successfully', 'code' => 200, 'data' =>  $bookingData[0]]);
+    }
+
+    public function getBookingDetail(Request $request){
+        $bookingId = $request->get('booking_id');
+        $bookingData = Order::where('order_id',$bookingId)->get();
+    
         // Check if the order exists
         if (!$bookingData) {
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
-      
-        return response()->json(['status' => 'success','message' => 'Data found successfully', 'code' => 200, 'data' => $bookingData]);
+
+    
+
+        $bookingData = $bookingData->map(function ($item)  {
+            $allData = array();
+            $description = $item->description; 
+            $cartItems = json_decode($item->cart_items);
+            $cartTotalItemAmount = 0;
+            $totalOrderPrice = $item->paid_amount; 
+            $pendingAmount = $item->pending_amount; 
+            
+            if(isset($cartItems) && !empty($cartItems)){
+                foreach($cartItems as $key => $val){
+                    $cartTotalItemAmount = $cartTotalItemAmount + $val->item_price;
+                }
+            }            
+
+            $orderId   = $item->order_id; 
+            $cartTotalItemAmount = number_format(($cartTotalItemAmount),0);
+
+            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
+
+
+            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+
+            $addressId = $item->delivery_address_id;
+
+            $shippingAddressData = UsersAddress::find($addressId);
+
+            $shippingAddress = $shippingAddressData->house_name . "," . $shippingAddressData->floor_number ." floor" . "," . $shippingAddressData->landmark  . "," . $shippingAddressData->area_name;
+
+            array_push($allData,
+                array(
+                    'description' => $description,
+                    'order_id' => $orderId,
+                    'arriving_date' => date("M d,Y",strtotime($item->start_date)),
+                    'total_items_price' => $cartTotalItemAmount,
+                    'delivery_charge' => $deliveryCharge,
+                    'total_order_price' => number_format(($totalOrderPrice),0),
+                    'shipping_address' => $shippingAddress,
+                    'pending_amount' => number_format(($pendingAmount),0),
+                    'item_details'  => json_decode($item->cart_items,true)
+                    
+                    )
+                );
+            return $allData;
+        });
+                    
+        if (count($bookingData) == 0) {
+        return response()->json(['status' => 'error', 'message' => 'No data found', 'code' => 404]);
+        }
+        return response()->json(['status' => 'success', 'message' => 'Data found successfully', 'code' => 200, 'data' => $bookingData[0][0]]);
+    }
+
+    public function extendOrder(Request $request){
+        $bookingId = $request->post('booking_id');
+        $endDate = $request->post('end_date');
+        $bookingData = Order::where('order_id',$bookingId)->get();
+    
+        // Check if the order exists
+        if (!$bookingData) {
+            return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
+        }
+    
+        Order::where('order_id', $bookingId)->update(['end_date' => $endDate]);
+
+    
+        return response()->json(['status' => 'success', 'message' => 'Order extended successfully', 'code' => 200, 'data' => $bookingData]);
     }
 
   
 
     public function cancelOrder(Request $request){
-        $bookingId = $request->get('booking_id');
-        $bookingData = Order::find($bookingId);
+        $bookingId = $request->post('booking_id');
+      
+        $bookingData = Order::where('order_id',$bookingId)->get();
     
         // Check if the order exists
         if (!$bookingData) {
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
     
-        // Update order status to "cancelled"
-        $bookingData->status = 'cancelled';
-        $bookingData->save();
+
+
+        Order::where('order_id', $bookingId)->update(['status' => 'cancelled', 'description' => 'Your order has been cancelled']);
     
-        return response()->json(['status' => 'success', 'message' => 'Order cancelled successfully', 'code' => 200, 'data' => $bookingData]);
+        return response()->json(['status' => 'success', 'message' => 'Order cancelled successfully', 'code' => 200]);
     }
 
-    public function extendOrder(Request $request){
-        $bookingId = $request->get('booking_id');
-        $endDate = $request->get('end_date');
-        $bookingData = Order::find($bookingId);
     
-        // Check if the order exists
-        if (!$bookingData) {
-            return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
-        }
-    
-    
-        $bookingData->end_date = $endDate ;
-        $bookingData->save();
-    
-        return response()->json(['status' => 'success', 'message' => 'Order extended successfully', 'code' => 200, 'data' => $bookingData]);
-    }
 
-    public function orderDetail(Request $request){
-        $bookingId = $request->get('booking_id');
-        $bookingData = Order::find($bookingId);
-    
-        // Check if the order exists
-        if (!$bookingData) {
-            return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
-        }
-    return response()->json(['status' => 'success', 'message' => 'Data found successfully', 'code' => 200, 'data' => $bookingData]);
-    }
+   
 }

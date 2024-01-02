@@ -692,5 +692,5 @@ class ProductController extends Controller
            
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
-     }
+    }
 }

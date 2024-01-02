@@ -603,7 +603,7 @@
                     </div>
 
                    
-                    <div class="row">
+                    <div class="row" id="time_slot_data">
                         <div class="col-md-6 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
@@ -619,8 +619,8 @@
                         
                     </div>
                     <div  style='float:right;'>
-                         <a href="#" class="add-more-time-slot"> Add More </a>
-                        </div>
+                         <a href="javascript:void(0)" class="add-more-time-slot"> Add More </a>
+                    </div>
 
                     <div class="row">
                         <div class="col-sm-6">
@@ -706,10 +706,39 @@
 @push('script_2')
     <script>
 
+        var count = 2;
+
         $(".add-more-time-slot").on("click",function(){
-            alert("here");
-            var timeSlotData = ""
+        
+                var timeSlotData = '<div class="col-md-6 col-12 slot-section'+count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot '+count+'</label>'+
+                                            '<input type="time" name="order_from_time_slots[]" class="form-control">'+
+                                        '</div>'+                    
+                                    '</div>'+
+                                    '<div class="col-md-6 col-12 slot-section'+count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot '+count+'</label>'+
+                                            '<input type="time"  name="order_to_time_slots[]" class="form-control">'+
+                                        '</div>'+   
+                                    '<div  style="float:right;">'+
+                                        '<a href="javascript:void(0)" class="remove-time-slot" data-count="'+count+'"> Remove </a>'+
+                                    '</div>'+              
+                                '</div>';
+                       
+                       
+            count++;               
+            $("#time_slot_data").append(timeSlotData);
         });
+
+        $(document).on("click",".remove-time-slot",function(){
+            var count = $(this).attr("data-count");
+            count--;
+            $(".slot-section"+count).remove();
+
+        });
+
+ 
       
       //  let language = <?php echo($language); ?>;
      //   $('[id=language]').val(language);

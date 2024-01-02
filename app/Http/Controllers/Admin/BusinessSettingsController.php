@@ -164,6 +164,23 @@ class BusinessSettingsController extends Controller
         DB::table('business_settings')->updateOrInsert(['key' => 'referred_discount'], [
             'value' => $request['referred_discount']
         ]);
+
+
+      
+
+        $order_from_time_slots = $request['order_from_time_slots'];
+        $order_to_time_slots = $request['order_to_time_slots'];
+
+        if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
+            foreach($order_from_time_slots as $key => $value){
+           
+                DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slot'.$key+1], [
+                    'value' => $value."-".$order_to_time_slots[$key]
+                ]);
+            }
+
+
+        }
         
 
         // $languages = $request['language'];
