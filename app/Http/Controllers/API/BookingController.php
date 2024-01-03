@@ -151,68 +151,61 @@ class BookingController extends Controller
        
     public function getBookings(Request $request){
         $status = $request->get('status');
-        $page = $request->get('page') ;
-        $orderBy =  'desc';
-        $orderColumn =  'created_at';
+        $page = $request->get('page');
+        $orderBy = 'desc';
+        $orderColumn = 'created_at';
         $perPage = 10;
 
-          
         // Define the validation rules
         $validationRules = [
             'page' => 'required',
             'status' => 'required',
-        ]; 
+        ];
 
         // Validate the input data
         $validation = Validator::make($request->all(), $validationRules, [
             'page.required' => 'page is required.',
             'status.required' => 'status is required.',
         ]);
-        
 
         // Check for validation errors and return error response if any
         if ($validation->fails()) {
             return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
         }
 
-        $bookingData =  Order::select('*')->where('status',$status)
-                    ->orderBy($orderColumn, $orderBy)
-                    ->paginate($perPage, ['*'], 'page', $page);
-                
+        $bookingData = Order::select('*')->where('status', $status)
+            ->orderBy($orderColumn, $orderBy)
+            ->paginate($perPage, ['*'], 'page', $page);
 
-        $bookingData = $bookingData->map(function ($item)  {
-            $allData = array();
-            $description = $item->description; 
+        $bookingData = $bookingData->map(function ($item) {
+            $description = $item->description;
             $cartItems = json_decode($item->cart_items);
             $cartTotalItemAmount = 0;
 
-            if(isset($cartItems) && !empty($cartItems)){
-                foreach($cartItems as $key => $val){
+            if (isset($cartItems) && !empty($cartItems)) {
+                foreach ($cartItems as $key => $val) {
                     $cartTotalItemAmount = $cartTotalItemAmount + $val->item_price;
                 }
-            }            
-            
-            $orderId   = $item->order_id; 
-            $cartTotalItemAmount = number_format(($cartTotalItemAmount),0);
-            
-            array_push($allData,
-                array(
-                    'description' => $description,
-                    'order_id' => $orderId,
-                    'arriving_date' => date("D d M Y",strtotime($item->start_date)),
-                    'total_items_price' => $cartTotalItemAmount
-                    
-                    )
-                );
-            return $allData;
+            }
+
+            $orderId = $item->order_id;
+            $cartTotalItemAmount = number_format(($cartTotalItemAmount), 0);
+
+            return [
+                'description' => $description,
+                'order_id' => $orderId,
+                'arriving_date' => date("D d M Y", strtotime($item->start_date)),
+                'total_items_price' => $cartTotalItemAmount
+            ];
         });
-                        
-        if (count($bookingData) == 0) {
+
+        if ($bookingData->isEmpty()) {
             return response()->json(['status' => 'error', 'message' => 'No data found', 'code' => 404]);
         }
-      
-        return response()->json(['status' => 'success','message' => 'Data found successfully', 'code' => 200, 'data' =>  $bookingData[0]]);
+
+        return response()->json(['status' => 'success', 'message' => 'Data found successfully', 'code' => 200, 'data' => $bookingData->all()]);
     }
+
 
     public function getBookingDetail(Request $request){
         $bookingId = $request->get('booking_id');
@@ -240,7 +233,7 @@ class BookingController extends Controller
             }            
 
             $orderId   = $item->order_id; 
-            $cartTotalItemAmount = number_format(($cartTotalItemAmount),0);
+            $cartTotalItemAmount = $cartTotalItemAmount;
 
             $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
 
@@ -258,11 +251,13 @@ class BookingController extends Controller
                     'description' => $description,
                     'order_id' => $orderId,
                     'arriving_date' => date("M d,Y",strtotime($item->start_date)),
+                    'start_date' => $item->start_date,
+                    'end_date' => $item->end_date,
                     'total_items_price' => $cartTotalItemAmount,
                     'delivery_charge' => $deliveryCharge,
-                    'total_order_price' => number_format(($totalOrderPrice),0),
+                    'total_order_price' => $totalOrderPrice,
                     'shipping_address' => $shippingAddress,
-                    'pending_amount' => number_format(($pendingAmount),0),
+                    'pending_amount' => $pendingAmount,
                     'item_details'  => json_decode($item->cart_items,true)
                     
                     )
@@ -279,6 +274,7 @@ class BookingController extends Controller
     public function extendOrder(Request $request){
         $bookingId = $request->post('booking_id');
         $endDate = $request->post('end_date');
+        $transactionId = $request->post('extended_order_transaction_id');
         $bookingData = Order::where('order_id',$bookingId)->get();
     
         // Check if the order exists
@@ -286,7 +282,7 @@ class BookingController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
     
-        Order::where('order_id', $bookingId)->update(['end_date' => $endDate]);
+        Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate]);
 
     
         return response()->json(['status' => 'success', 'message' => 'Order extended successfully', 'code' => 200, 'data' => $bookingData]);
