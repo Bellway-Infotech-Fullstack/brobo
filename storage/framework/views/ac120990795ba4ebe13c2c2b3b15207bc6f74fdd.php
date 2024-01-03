@@ -498,23 +498,7 @@
 
                         </div>
                     </div>
-                    <div class="row">
-                        
-                      
-
-                    </div>
-
-                    <div class="row">
-                     
-                     
-
-                    </div>
-
-                    <div class="row">
-                        
-                    
-
-                    </div>
+                   
 
                   
 
@@ -600,23 +584,64 @@
                             </div>
                         </div>
                     </div>
+                    <?php
 
-                   
-                    <div class="row" id="time_slot_data">
-                        <div class="col-md-6 col-12">
-                            <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
-                                <input type="time" value="" name="order_from_time_slots[]" class="form-control" placeholder="">
-                            </div>                         
-                        </div>
-                        <div class="col-md-6 col-12">
-                            <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
-                                <input type="time" value="" name="order_to_time_slots[]" class="form-control" placeholder="">
-                            </div>                           
-                        </div>
+                        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
+                        $order_time_slot_data = explode(",",$order_time_slot_data->value);
+
+                    ?>
+                    <input type="hidden" id="time_slot_length"  value="<?php echo e(count($order_time_slot_data)); ?>">
+
+                    <div  id="time_slot_data">
+                        
+                            <?php
+                            
+                          
+                            if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+                            foreach($order_time_slot_data as $key => $value){
+                                $time_slot_data = explode("-",$value);
+                                $from_time_slot = $time_slot_data[0];
+                                $to_time_slot   = $time_slot_data[1];
+                    
+                            ?>
+
+<div class="row">
+    <div class="col-md-6 col-12">
+        <div class="form-group">
+            <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot <?php echo e($key+1); ?> </label>
+            <input type="time" value="<?php echo e($from_time_slot ?? ''); ?>" name="order_from_time_slots[]" class="form-control">
+        </div>                         
+    </div>
+    <div class="col-md-6 col-12">
+        <div class="form-group">
+            <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot <?php echo e($key+1); ?></label>
+            <input type="time" value="<?php echo e($to_time_slot ?? ''); ?>" name="order_to_time_slots[]" class="form-control">
+        </div>                           
+    </div>
+
+</div>
+                         
+                            
+                            <?php }} else { ?>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
+                                        <input type="time"  name="order_from_time_slots[]" class="form-control">
+                                    </div>                         
+                                </div>
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
+                                        <input type="time"  name="order_to_time_slots[]" class="form-control">
+                                    </div>                           
+                                </div>
+
+
+                            <?php } ?>
+                            
                         
                     </div>
+               
                     <div  style='float:right;'>
                          <a href="javascript:void(0)" class="add-more-time-slot"> Add More </a>
                     </div>
@@ -705,11 +730,40 @@
 <?php $__env->startPush('script_2'); ?>
     <script>
 
-        var count = 2;
+            if($("#time_slot_length").val() > 0){
+                var count = parseInt($("#time_slot_length").val());
+            }   else {
+                var count = 1;
+            } 
 
-        $(".add-more-time-slot").on("click",function(){
-        
-                var timeSlotData = '<div class="col-md-6 col-12 slot-section'+count+'">'+
+             // Add more rows
+            $(".add-more-time-slot").click(function(e) {
+                e.preventDefault();
+                addRow();
+            });
+
+            // Remove rows and update labels
+            $("#time_slot_data").on("click", "a.remove-time-slot", function(e) {
+                e.preventDefault();
+                $(this).closest('.row').remove();
+                 manageLabels();
+                count--;
+            });
+       
+            function manageLabels(){                
+                // Update the labels for remaining rows
+                let rows = $("#time_slot_data").children('.row');
+                rows.each(function(index, row) {
+                    let labels = $(row).find('label');
+                    labels.eq(0).text(`Order From Time Slot ${index + 1}`);
+                    labels.eq(1).text(`Order To Time Slot ${index + 1}`);
+                });
+            }
+          
+        function addRow(){
+            count++;  
+            var timeSlotData = '<div class="row">'+
+                                    '<div class="col-md-6 col-12 slot-section'+count+'">'+
                                         '<div class="form-group">'+
                                             '<label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot '+count+'</label>'+
                                             '<input type="time" name="order_from_time_slots[]" class="form-control">'+
@@ -726,16 +780,16 @@
                                 '</div>';
                        
                        
-            count++;               
+                        
             $("#time_slot_data").append(timeSlotData);
-        });
 
-        $(document).on("click",".remove-time-slot",function(){
-            var count = $(this).attr("data-count");
-            count--;
-            $(".slot-section"+count).remove();
+        }
 
-        });
+        
+               
+        
+
+      
 
  
       
