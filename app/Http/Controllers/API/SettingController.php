@@ -135,20 +135,14 @@ class SettingController extends Controller
 
             // Convert time slots to 12-hour format with AM and PM
             $formatted_time_slots = [];
-            foreach ($order_time_slot_data as $time_slot) {
-               
-                $time_slot = explode("-",$time_slot);
-                $from_time_slot = $time_slot[0];
-                $to_time_slot = $time_slot[1];
-               // echo "key".$time_slot;
-                $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " - " . date("h:i A", strtotime($to_time_slot));
+            if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+                foreach ($order_time_slot_data as $time_slot) {               
+                    $time_slot = explode("-",$time_slot);
+                    $from_time_slot = $time_slot[0];
+                    $to_time_slot = $time_slot[1];
+                    $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " - " . date("h:i A", strtotime($to_time_slot));
+                }
             }
-
-            /* "15:30-16:34",
-            "17:33-17:34",
-            "13:57-14:57"
-
-            */
 
             return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots]]);
         } catch (\Exception $e) {
