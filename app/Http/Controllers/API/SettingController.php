@@ -107,28 +107,50 @@ class SettingController extends Controller
 
 
     /**
-     * get order limits .
+     * get order settings .
      *
      * @param  \Illuminate\Http\Request  $request
      * 
      * @return \Illuminate\Http\Response
      */
 
-     public function get_order_limits(Request $request){
+    public function getOrderSettings(Request $request){
         try {
             $mininum_order_amount_data = BusinessSetting::where(['key' => 'mininum_order_amount'])->first();
             $mininum_order_amount = (isset($mininum_order_amount_data) && !empty($mininum_order_amount_data)) ? $mininum_order_amount_data->value : '';
 
             $order_installment_percents_data = BusinessSetting::whereIn('key', ['order_installment_percent_1', 'order_installment_percent_2', 'order_installment_percent_3'])->get();
 
+            $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
+
+            $order_time_slot_data = explode(",",$order_time_slot_data->value);
+
             $order_installment_percents = [];
 
-            foreach ($order_installment_percents_data as $amount_data) {
-                
-                $order_installment_percents[] = (isset($amount_data->value) && !empty($amount_data->value)) ?  $amount_data->value: '';
+            if(isset($order_installment_percents_data) && !empty($order_installment_percents_data)){
+                foreach ($order_installment_percents_data as $amount_data) {
+                    $order_installment_percents[] = (isset($amount_data->value) && !empty($amount_data->value)) ?  $amount_data->value: '';
+                 }
             }
 
-            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents]]);
+            // Convert time slots to 12-hour format with AM and PM
+            $formatted_time_slots = [];
+            foreach ($order_time_slot_data as $time_slot) {
+               
+                $time_slot = explode("-",$time_slot);
+                $from_time_slot = $time_slot[0];
+                $to_time_slot = $time_slot[1];
+               // echo "key".$time_slot;
+                $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " - " . date("h:i A", strtotime($to_time_slot));
+            }
+
+            /* "15:30-16:34",
+            "17:33-17:34",
+            "13:57-14:57"
+
+            */
+
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots]]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
