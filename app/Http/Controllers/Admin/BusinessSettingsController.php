@@ -171,14 +171,21 @@ class BusinessSettingsController extends Controller
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
 
+        echo "<pre>";
+
+     
+        $time_slots = '';
         if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
-           
-                DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slot'.$key+1], [
-                    'value' => $value."-".$order_to_time_slots[$key]
-                ]);
+               $time_slots =  $time_slots . $value."-".$order_to_time_slots[$key] . ",";
+                
             }
+            $time_slots = rtrim($time_slots, ',');
 
+           
+            DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
+                'value' => $time_slots
+            ]);
 
         }
         
