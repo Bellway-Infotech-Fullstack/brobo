@@ -48,6 +48,7 @@ class BookingController extends Controller
                 'end_date' => 'required',
                 'address_id' => 'required',
                 'transaction_id' => 'required',
+                'final_item_price'=> 'required',
             ];
 
             // Validate the input data
@@ -102,7 +103,7 @@ class BookingController extends Controller
                 $orderMinAmount  = $orderMinAmountData->value;
 
                 if($orderMinAmount >  $finalItemPrice){
-                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You hacan not order less than '.$orderMinAmount]);
+                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You can not order less than '.$orderMinAmount]);
                 }
 
 
@@ -167,6 +168,10 @@ class BookingController extends Controller
                 $orderId = "BRO".$newOrder->id;
                 Order::where('id', $newOrder->id)->update(['order_id' => $orderId]);
 
+                // clear cart
+
+                Cart::where('customer_id',$customerId)->delete();
+
 
             return response()->json(['status' => 'success','message' => 'Order placed successfully', 'code' => 200]);
         } catch (\Exception $e) {
@@ -206,6 +211,7 @@ class BookingController extends Controller
 
         $bookingData = $bookingData->map(function ($item) {
             $description = $item->description;
+            $finalItemPrice   = $item->final_item_price; 
             $cartItems = json_decode($item->cart_items);
             $cartTotalItemAmount = 0;
 
@@ -222,7 +228,8 @@ class BookingController extends Controller
                 'description' => $description,
                 'order_id' => $orderId,
                 'arriving_date' => date("D d M Y", strtotime($item->start_date)),
-                'total_items_price' => $cartTotalItemAmount
+                'total_items_price' => $cartTotalItemAmount,
+                'final_item_price' => $finalItemPrice
             ];
         });
 

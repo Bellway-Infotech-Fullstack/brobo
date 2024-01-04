@@ -588,7 +588,8 @@
                     <?php
 
                         $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
-                        $order_time_slot_data = explode(",",$order_time_slot_data->value);
+                        
+                            $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ? explode(",",$order_time_slot_data->value) : array();
 
                     ?>
                     <input type="hidden" id="time_slot_length"  value="{{count($order_time_slot_data)}}">
@@ -599,6 +600,7 @@
                             
                           
                             if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+                                    
                             foreach($order_time_slot_data as $key => $value){
                                 $time_slot_data = explode("-",$value);
                                 $from_time_slot = $time_slot_data[0];
@@ -634,6 +636,7 @@
                          
                             
                             <?php }} else { ?>
+                              <div class="row">
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
@@ -646,6 +649,7 @@
                                         <input type="time"  name="order_to_time_slots[]" class="form-control">
                                     </div>                           
                                 </div>
+                                 </div>
 
 
                             <?php } ?>

@@ -123,7 +123,7 @@ class SettingController extends Controller
 
             $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
 
-            $order_time_slot_data = explode(",",$order_time_slot_data->value);
+            
 
             $order_installment_percents = [];
 
@@ -136,6 +136,7 @@ class SettingController extends Controller
             // Convert time slots to 12-hour format with AM and PM
             $formatted_time_slots = [];
             if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+                $order_time_slot_data = explode(",",$order_time_slot_data->value);
                 foreach ($order_time_slot_data as $time_slot) {               
                     $time_slot = explode("-",$time_slot);
                     $from_time_slot = $time_slot[0];
@@ -144,7 +145,10 @@ class SettingController extends Controller
                 }
             }
 
-            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots]]);
+            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
+            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge' => $deliveryCharge]]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
