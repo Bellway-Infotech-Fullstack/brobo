@@ -38,15 +38,8 @@ class Order extends Model
         $this->attributes['delivery_charge'] = round($value, 3);
     }
 
-    public function details()
-    {
-        return $this->hasMany(OrderDetail::class, 'order_id');
-    }
-
-    public function delivery_man()
-    {
-        return $this->belongsTo(DeliveryMan::class, 'delivery_man_id');
-    }
+ 
+  
 
     public function customer()
     {
@@ -58,40 +51,15 @@ class Order extends Model
         return $this->belongsTo(Coupon::class, 'coupon_code', 'code');
     }
 
-    public function restaurant()
-    {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id');
-    }
 
-    public function vendor()
-    {
-        return $this->belongsTo(Vendor::class, 'vendor_id');
-    }
 
-    public function delivery_history()
-    {
-        return $this->hasMany(DeliveryHistory::class, 'order_id');
-    }
-
-    public function dm_last_location()
-    {
-        return $this->hasOne(DeliveryHistory::class, 'order_id')->latest();
-    }
-
-    public function transaction()
-    {
-        return $this->hasOne(OrderTransaction::class);
-    }
 
     public function scopeAccepteByDeliveryman($query)
     {
         return $query->where('status', 'accepted');
     }
 
-    public function scopeAccepted($query)
-    {
-        return $query->where('status', 'accepted');
-    }
+
 
     public function scopePreparing($query)
     {
@@ -111,17 +79,13 @@ class Order extends Model
 
     public function scopeServiceOngoing($query)
     {
-        return $query->whereIn('status',['services_ongoing', 'picked_up', 'service_ongoing']);
+        return $query->whereIn('status',['ongoing']);
     }
-    
-    public function scopePending($query)
-    {
-        return $query->where('status','pending');
-    }
+
 
     public function scopeAll($query)
     {
-        return $query->whereIn('status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded']);
+        return $query->whereIn('status',['ongoing', 'failed', 'cancelled', 'delivered', 'completed', 'refunded']);
     }
     
     // public function scopeRefundRequest($query)
@@ -134,12 +98,12 @@ class Order extends Model
         return $query->where('status','failed');
     }
     
-    public function scopeCanceled($query)
+    public function scopeCancelled($query)
     {
-        return $query->where('status','canceled');
+        return $query->where('status','cancelled');
     }
     
-    public function scopeDelivered($query)
+    public function scopeCompleted($query)
     {
         return $query->whereIn('status', ['delivered', 'completed']);
     }

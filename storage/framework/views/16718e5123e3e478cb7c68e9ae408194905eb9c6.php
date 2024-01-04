@@ -61,146 +61,21 @@
 
 
         <!-- Stats -->
-      
+     <div class="card mb-3">
+            <div class="card-body">
+                <div class="row gx-2 gx-lg-3 mb-2">
+                   
+                  
+                </div>
+                <div class="row gx-2 gx-lg-3" id="order_stats">
+                    <?php echo $__env->make('admin-views.partials._dashboard-order-stats',['data'=>$data], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                </div>
+            </div>
+        </div> 
 
         <!-- End Stats -->
 
-        <div class="row gx-2 gx-lg-3">
-            <div class="col-lg-12 mb-3 mb-lg-12">
-                <!-- Card -->
-                <div class="card h-100" id="monthly-earning-graph">
-                    <!-- Body -->
-                <?php echo $__env->make('admin-views.partials._monthly-earning-graph',['total_sell'=>$total_sell,'commission'=>$commission], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                <!-- End Body -->
-                </div>
-                <!-- End Card -->
-            </div>
-        </div>
-        <!-- End Row -->
-
-        <div class="row gx-2 gx-lg-3">
-            <div class="col-lg-6 mb-3">
-                <!-- Card -->
-                <div class="card h-100">
-                    <!-- Header -->
-                    <div class="card-header">
-                        <h5 class="card-header-title">
-                            Users Overview
-                        </h5>
-                        <select class="custom-select" style="width: 30%" name="user_overview"
-                                onchange="user_overview_stats_update(this.value)">
-                            <option
-                                value="this_month" <?php echo e($params['user_overview'] == 'this_month'?'selected':''); ?>>
-                                This Month
-                            </option>
-                            <option
-                                value="overall" <?php echo e($params['user_overview'] == 'overall'?'selected':''); ?>>
-                                Overall
-                            </option>
-                        </select>
-                    </div>
-                    <!-- End Header -->
-
-                    <!-- Body -->
-                    <div class="card-body" id="user-overview-board">
-                        <?php if($params['zone_id']!='all'): ?>
-                            <?php ($zone_name=\App\Models\Zone::where('id',$params['zone_id'])->first()->name); ?>
-                        <?php else: ?>
-                            <?php ($zone_name='All'); ?>
-                        <?php endif; ?>
-                        <label class="badge badge-soft-info">( Zone : <?php echo e($zone_name); ?> )</label>
-                        <div class="chartjs-custom mx-auto">
-                            <canvas id="user-overview" class="mt-2"></canvas>
-                        </div>
-                        <!-- End Chart -->
-                    </div>
-                    <!-- End Body -->
-                </div>
-            </div>
-
-            <div class="col-lg-6 mb-3">
-                <!-- Card -->
-                <div class="card h-100">
-                    <!-- Header -->
-                    <div class="card-header">
-                        <h5 class="card-header-title">
-                            Business Overview
-                        </h5>
-                        <select class="custom-select" style="width: 30%" name="business_overview"
-                                onchange="business_overview_stats_update(this.value)">
-                            <option
-                                value="this_month" <?php echo e($params['business_overview'] == 'this_month'?'selected':''); ?>>
-                                This Month
-                            </option>
-                            <option
-                                value="overall" <?php echo e($params['business_overview'] == 'overall'?'selected':''); ?>>
-                                Overall
-                            </option>
-                        </select>
-                    </div>
-                    <!-- End Header -->
-
-                    <!-- Body -->
-                    <div class="card-body" id="business-overview-board">
-                        <?php if($params['zone_id']!='all'): ?>
-                            <?php ($zone_name=\App\Models\Zone::where('id',$params['zone_id'])->first()->name); ?>
-                        <?php else: ?>
-                            <?php ($zone_name='All'); ?>
-                        <?php endif; ?>
-                        <label class="badge badge-soft-info">( Zone : <?php echo e($zone_name); ?> )</label>
-                        <!-- Chart -->
-                        <div class="chartjs-custom mx-auto">
-                            <canvas style="max-height: 85%;" id="business-overview" class="mt-2"></canvas>
-                        </div>
-                        <!-- End Chart -->
-                    </div>
-                    <!-- End Body -->
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-lg-6 mb-3">
-                <!-- Card -->
-                <div class="card h-100" id="top-selling-foods-view">
-                    <?php echo $__env->make('admin-views.partials._top-selling-foods',['top_sell'=>$data['top_sell']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-lg-6 mb-3">
-                <!-- Card -->
-                <div class="card h-100" id="popular-restaurants-view">
-                    <?php echo $__env->make('admin-views.partials._popular-restaurants',['popular'=>$data['popular']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-lg-6 mt-3">
-                <!-- Card -->
-                <div class="card h-100" id="top-rated-foods-view">
-                    <?php echo $__env->make('admin-views.partials._top-rated-foods',['top_rated_services'=>$data['top_rated_services']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                </div>
-                <!-- End Card -->
-            </div>
-
-           
-
-            <div class="col-lg-6 mt-3">
-                <!-- Card -->
-                <div class="card h-100" id="top-customer-view">
-                    <?php echo $__env->make('admin-views.partials._top-customer',['top_customer'=>$data['top_customer']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                </div>
-                <!-- End Card -->
-            </div>
-
-            <div class="col-lg-6 mt-3">
-                <!-- Card -->
-                <div class="card h-100" id="top-restaurants-view">
-                    <?php echo $__env->make('admin-views.partials._top-restaurants',['top_restaurants'=>$data['top_restaurants']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                </div>
-                <!-- End Card -->
-            </div>
-        </div>
+      
         <?php else: ?>
         <!-- Page Header -->
         <div class="page-header">
@@ -225,78 +100,7 @@
 
 
 <?php $__env->startPush('script_2'); ?>
-    <script>
-        // INITIALIZATION OF CHARTJS
-        // =======================================================
-        Chart.plugins.unregister(ChartDataLabels);
-
-        $('.js-chart').each(function () {
-            $.HSCore.components.HSChartJS.init($(this));
-        });
-
-        var updatingChart = $.HSCore.components.HSChartJS.init($('#updatingData'));
-    </script>
-
-    <script>
-        var ctx = document.getElementById('user-overview');
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: [
-                    'Customer',
-                    'Vendor',
-                ],
-                datasets: [{
-                    label: 'User',
-                    data: ['<?php echo e($data['customer']); ?>', '<?php echo e($data['vendors']); ?>'],
-                    backgroundColor: [
-                        '#628395',
-                        '#055052',
-                        '#53B8BB'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
-
-    <script>
-        var ctx = document.getElementById('business-overview');
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: [
-                    'Service',
-                    'Review',
-                    'Wishlist'
-                ],
-                datasets: [{
-                    label: 'Business',
-                    data: ['<?php echo e($data['service']); ?>', '<?php echo e($data['reviews']); ?>', '<?php echo e($data['wishlist']); ?>'],
-                    backgroundColor: [
-                        '#2C2E43',
-                        '#595260',
-                        '#B2B1B9'
-                    ],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
+    
 
     <script>
         function order_stats_update(type) {

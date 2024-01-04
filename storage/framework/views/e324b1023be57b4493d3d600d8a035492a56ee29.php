@@ -1,16 +1,16 @@
 <div class="col-12">
-    @php($params=session('dash_params'))
-    @if($params['zone_id']!='all')
-        @php($zone_name=\App\Models\Zone::where('id',$params['zone_id'])->first()->name)
-    @else
-        @php($zone_name='All')
-    @endif
-    <label class="badge badge-soft-info">( Zone : {{$zone_name}} )</label>
+    <?php ($params=session('dash_params')); ?>
+    <?php if($params['zone_id']!='all'): ?>
+        <?php ($zone_name=\App\Models\Zone::where('id',$params['zone_id'])->first()->name); ?>
+    <?php else: ?>
+        <?php ($zone_name='All'); ?>
+    <?php endif; ?>
+    <label class="badge badge-soft-info">( Zone : <?php echo e($zone_name); ?> )</label>
 </div>
 
 <div class="col-sm-4 col-lg-4 mb-3 mb-lg-5">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('admin.order.list',['all'])}}"
+    <a class="card card-hover-shadow h-100" href="<?php echo e(route('admin.order.list',['all'])); ?>"
        style="background: #54436B">
         <div class="card-body">
             <h6 class="card-subtitle"
@@ -18,7 +18,7 @@
             <div class="row align-items-center gx-2 mb-1">
                 <div class="col-6">
                             <span class="card-title h2" style="color: white!important;">
-                                        {{ $total_orders  }} 
+                                        <?php echo e($total_orders); ?> 
                                 </span>
                 </div>
                 <div class="col-6 mt-2">
@@ -34,7 +34,7 @@
 
 <div class="col-sm-4 col-lg-4 mb-3 mb-lg-5">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('admin.customer.list')}}"
+    <a class="card card-hover-shadow h-100" href="<?php echo e(route('admin.customer.list')); ?>"
        style="background: #402218">
         <div class="card-body">
             <h6 class="card-subtitle"
@@ -43,7 +43,8 @@
             <div class="row align-items-center gx-2 mb-1">
                 <div class="col-6">
                         <span class="card-title h2" style="color: white!important;">
-                            {{ $total_users  }}
+                            <?php echo e($total_users); ?>
+
                         </span>
                 </div>
 
@@ -60,7 +61,7 @@
 
 <div class="col-sm-4 col-lg-4 mb-3 mb-lg-5">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('admin.order.list',['food_on_the_way'])}}"
+    <a class="card card-hover-shadow h-100" href="<?php echo e(route('admin.order.list',['food_on_the_way'])); ?>"
        style="background: #334257">
         <div class="card-body">
             <h6 class="card-subtitle"
@@ -69,7 +70,8 @@
             <div class="row align-items-center gx-2 mb-1">
                 <div class="col-6">
                     <span class="card-title h2" style="color: white!important;">
-                        Rs. {{ number_format($total_sales)  }}
+                        Rs. <?php echo e(number_format($total_sales)); ?>
+
                     </span>
                 </div>
 
@@ -89,11 +91,12 @@
         <div class="row gx-lg-4">
             <div class="col-sm-6 col-lg-3">
                 <div class="media" style="cursor: pointer"
-                     onclick="location.href='{{route('admin.order.list',['completed'])}}'">
+                     onclick="location.href='<?php echo e(route('admin.order.list',['completed'])); ?>'">
                     <div class="media-body">
-                        <h6 class="card-subtitle">{{__('messages.delivered')}}</h6>
+                        <h6 class="card-subtitle"><?php echo e(__('messages.delivered')); ?></h6>
                         <span class="card-title h3">
-                                             {{$data['completed']}}
+                                             <?php echo e($data['completed']); ?>
+
                                             </span>
                     </div>
                     <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
@@ -107,11 +110,11 @@
 
             <div class="col-sm-6 col-lg-3 column-divider-sm">
                 <div class="media" style="cursor: pointer"
-                     onclick="location.href='{{route('admin.order.list',['cancelled'])}}'">
+                     onclick="location.href='<?php echo e(route('admin.order.list',['cancelled'])); ?>'">
                     <div class="media-body">
-                        <h6 class="card-subtitle">{{__('messages.canceled')}}</h6>
+                        <h6 class="card-subtitle"><?php echo e(__('messages.canceled')); ?></h6>
                         <span
-                            class="card-title h3">{{$data['cancelled']}}</span>
+                            class="card-title h3"><?php echo e($data['cancelled']); ?></span>
                     </div>
                     <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
                                           <i class="tio-remove-from-trash"></i>
@@ -124,11 +127,11 @@
 
             <div class="col-sm-6 col-lg-3 column-divider-lg">
                 <div class="media" style="cursor: pointer"
-                     onclick="location.href='{{route('admin.order.list',['failed'])}}'">
+                     onclick="location.href='<?php echo e(route('admin.order.list',['failed'])); ?>'">
                     <div class="media-body">
-                        <h6 class="card-subtitle">{{__('messages.payment')}} {{__('messages.failed')}}</h6>
+                        <h6 class="card-subtitle"><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.failed')); ?></h6>
                         <span
-                            class="card-title h3">{{$data['refund_requested']}}</span>
+                            class="card-title h3"><?php echo e($data['refund_requested']); ?></span>
                     </div>
                     <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
                                           <i class="tio-hand-wave"></i>
@@ -141,11 +144,11 @@
 
             <div class="col-sm-6 col-lg-3 column-divider-sm">
                 <div class="media" style="cursor: pointer"
-                     onclick="location.href='{{route('admin.order.list',['refunded'])}}'">
+                     onclick="location.href='<?php echo e(route('admin.order.list',['refunded'])); ?>'">
                     <div class="media-body">
-                        <h6 class="card-subtitle">{{__('messages.refunded')}}</h6>
+                        <h6 class="card-subtitle"><?php echo e(__('messages.refunded')); ?></h6>
                         <span
-                            class="card-title h3">{{$data['refunded']}}</span>
+                            class="card-title h3"><?php echo e($data['refunded']); ?></span>
                     </div>
                     <span class="icon icon-sm icon-soft-secondary icon-circle ml-3">
                                           <i class="tio-history"></i>
@@ -158,3 +161,4 @@
         </div>
     </div>
 </div>
+<?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/partials/_dashboard-order-stats.blade.php ENDPATH**/ ?>

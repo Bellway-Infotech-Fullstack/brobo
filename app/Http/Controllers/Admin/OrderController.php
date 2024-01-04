@@ -6,12 +6,10 @@ use App\CentralLogics\Helpers;
 use App\CentralLogics\OrderLogic;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderDetail;
 use App\Models\Admin;
 use App\Models\Zone;
-use App\Models\Service;
-use App\Models\RestaurantWallet;
-use App\Models\AdminWallet;
+use App\Models\Product;
+
 use App\Models\DeliveryManWallet;
 use App\Models\DeliveryMan;
 use App\Models\Category;
@@ -37,34 +35,23 @@ class OrderController extends Controller
             $request = json_decode(session('order_filter'));
         }
         
-        Order::where(['checked' => 0])->update(['checked' => 1]);
 
-        $orders = Order::with(['customer', 'vendor'])
+        $orders = Order::with(['customer'])
         ->when(isset($request->zone), function($query)use($request){
             return $query->whereHas('vendor', function($q)use($request){
                 return $q->whereIn('zone_id',$request->zone);
             });
         })
-        ->when($status == 'searching_for_deliverymen', function($query){
-            return $query->SearchingForDeliveryman();
-        })
-        ->when($status == 'pending', function($query){
-            return $query->Pending();
-        })
-        ->when($status == 'accepted', function($query){
-            return $query->Accepted();
-        })
-        ->when($status == 'processing', function($query){
-            return $query->Preparing();
-        })
-        ->when($status == 'services_ongoing', function($query){
+   
+        
+        ->when($status == 'ongoing', function($query){
             return $query->ServiceOngoing();
         })
         ->when($status == 'completed', function($query){
-            return $query->Delivered();
+            return $query->Completed();
         })
-        ->when($status == 'canceled', function($query){
-            return $query->Canceled();
+        ->when($status == 'cancelled', function($query){
+            return $query->Cancelled();
         })
         ->when($status == 'failed', function($query){
             return $query->failed();
@@ -72,15 +59,11 @@ class OrderController extends Controller
         ->when($status == 'refunded', function($query){
             return $query->Refunded();
         })
-        ->when($status == 'scheduled', function($query){
-            return $query->Scheduled();
-        })
+
         ->when($status == 'all', function($query){
             return $query->All();
         })
-        // ->when(($status != 'all' && $status != 'scheduled' && $status != 'canceled' && $status != 'refund_requested' && $status != 'refunded' && $status != 'delivered' && $status != 'failed' && $status != 'accepted' && $status != 'services_ongoing' && $status != 'services_ongoing'  && $status != 'services_ongoing' && $status != 'pending'  && $status != 'processing'), function($query){
-        //     return $query->OrderScheduledIn(30);
-        // })
+
         ->when(isset($request->vendor), function($query)use($request){
             return $query->whereHas('vendor', function($query)use($request){
                 return $query->whereIn('id',$request->vendor);
@@ -92,26 +75,25 @@ class OrderController extends Controller
         ->when(isset($request->scheduled) && $status == 'all', function($query){
             return $query->scheduled();
         })
-        ->when(isset($request->order_type), function($query)use($request){
-            return $query->where('order_type', $request->order_type);
-        })
+      
         ->when(isset($request->from_date)&&isset($request->to_date)&&$request->from_date!=null&&$request->to_date!=null, function($query)use($request){
             return $query->whereBetween('created_at', [$request->from_date." 00:00:00",$request->to_date." 23:59:59"]);
         })
-        ->Notpos()
+        
         ->orderBy('id', 'desc')
         ->paginate(config('default_pagination'));
+
+
         $orderstatus = isset($request->orderStatus)?$request->orderStatus:[];
         $scheduled =isset($request->scheduled)?$request->scheduled:0;
         $vendor_ids =isset($request->vendor)?$request->vendor:[];
         $zone_ids =isset($request->zone)?$request->zone:[];
         $from_date =isset($request->from_date)?$request->from_date:null;
         $to_date =isset($request->to_date)?$request->to_date:null;
-        $order_type =isset($request->order_type)?$request->order_type:null;
-        $total = $orders->total();
+        $total = $orders->count();
 
 
-        return view('admin-views.order.list', compact('orders', 'status', 'orderstatus', 'scheduled', 'vendor_ids', 'zone_ids', 'from_date', 'to_date', 'total', 'order_type'));
+        return view('admin-views.order.list', compact('orders', 'status', 'orderstatus', 'scheduled', 'vendor_ids', 'zone_ids', 'from_date', 'to_date', 'total'));
     }
     
     public function dispatch_list($status, Request $request)
@@ -145,7 +127,7 @@ class OrderController extends Controller
         ->when(isset($request->from_date)&&isset($request->to_date)&&$request->from_date!=null&&$request->to_date!=null, function($query)use($request){
             return $query->whereBetween('created_at', [$request->from_date." 00:00:00",$request->to_date." 23:59:59"]);
         })
-        ->Notpos()
+      
         ->OrderScheduledIn(30)
         ->orderBy('schedule_at', 'desc')
         ->paginate(config('default_pagination'));
@@ -163,25 +145,18 @@ class OrderController extends Controller
 
     public function details(Request $request, $id)
     {
-        $order = Order::with('details')->where(['id' => $id])->Notpos()->first();
+        $order = Order::where(['id' => $id])->first();
 
         if (isset($order)) {
-            // if($order->vendor->self_delivery_system)
-            // {
-            //     $deliveryMen = DeliveryMan::where('vendor_id',$order->vendor_id)->available()->active()->get();
-            // }
-            // else
-            // {
-            //     $deliveryMen = DeliveryMan::where('zone_id',$order->vendor->zone_id)->available()->active()->get();
-            // }
+
 
             $category = $request->query('category_id', 0);
             // $sub_category = $request->query('sub_category', 0);
             $categories = Category::active()->get();
             $keyword = $request->query('keyword', false);
             $key = explode(' ', $keyword);
-            $products = Service::withoutGlobalScope(VendorScope::class)->where('vendor_id', $order->vendor_id)
-            ->when($category, function($query)use($category){
+            $products = Product::
+            when($category, function($query)use($category){
                 $query->whereHas('category',function($q)use($category){
                     return $q->whereId($category)->orWhere('parent_id', $category);
                 });
@@ -258,7 +233,7 @@ class OrderController extends Controller
                 ->orWhere('transaction_reference', 'like', "%{$value}%");
             }
         })
-        ->Notpos()
+     
         ->limit(50)->get();
 
         return response()->json([
@@ -274,7 +249,7 @@ class OrderController extends Controller
 
     public function status(Request $request)
     {
-        $order = Order::Notpos()->find($request->id);
+        $order = Order::find($request->id);
 
         // if ($order['delivery_man_id'] == null && $request->order_status == 'out_for_delivery') {
         //     Toastr::warning(trans('messages.please_assign_deliveryman_first'));
@@ -307,7 +282,7 @@ class OrderController extends Controller
             {
                 if($order->payment_method="cash_on_delivery")
                 {
-                    if($order->order_type=='take_away')
+                    /*if($order->order_type=='take_away')
                     {
                         $ol = OrderLogic::create_transaction($order,'vendor', null);
                     }
@@ -318,7 +293,7 @@ class OrderController extends Controller
                     else if($order->user_id)
                     {
                         $ol =  OrderLogic::create_transaction($order, false, null);
-                    }
+                    }*/
                 }
                 else
                 {
@@ -463,7 +438,7 @@ class OrderController extends Controller
                     ]
                 ], 404);
         }
-        $order = Order::Notpos()->find($order_id);
+        $order = Order::find($order_id);
 
         $deliveryman = DeliveryMan::where('id', $delivery_man_id)->available()->active()->first();
         if($order->delivery_man_id == $delivery_man_id)
@@ -592,13 +567,13 @@ class OrderController extends Controller
 
     public function generate_invoice($id)
     {
-        $order = Order::Notpos()->where('id', $id)->first();
+        $order = Order::where('id', $id)->first();
         return view('admin-views.order.invoice', compact('order'));
     }
 
     public function add_payment_ref_code(Request $request, $id)
     {
-        Order::Notpos()->where(['id' => $id])->update([
+        Order::where(['id' => $id])->update([
             'transaction_reference' => $request['transaction_reference']
         ]);
 
@@ -628,127 +603,7 @@ class OrderController extends Controller
     }
 
 
-    public function add_to_cart(Request $request)
-    {
-        if($request->item_type=='food')
-        {
-            $product = Food::find($request->id);
-        }
-        else
-        {
-            $product = ItemCampaign::find($request->id);
-        }
 
-        $data = new OrderDetail();
-        if($request->order_details_id)
-        {
-            $data['id'] = $request->order_details_id;
-        }
-        
-        $data['service_id'] = $request->item_type=='food'?$product->id:null;
-        $data['item_campaign_id'] = $request->item_type=='campaign'?$product->id:null;
-        $data['order_id']=$request->order_id;
-        $str = '';
-        $price = 0;
-        $addon_price = 0;
-
-        //Gets all the choice values of customer choice option and generate a string like Black-S-Cotton
-        foreach (json_decode($product->choice_options) as $key => $choice) {
-            if ($str != null) {
-                $str .= '-' . str_replace(' ', '', $request[$choice->name]);
-            } else {
-                $str .= str_replace(' ', '', $request[$choice->name]);
-            }
-        }
-        $data['variant'] = json_encode([]);
-        $data['variation'] = json_encode([]);
-        if ($request->session()->has('order_cart') && !isset($request->cart_item_key)) {
-            if (count($request->session()->get('order_cart')) > 0) {
-                foreach ($request->session()->get('order_cart') as $key => $cartItem) {
-                    if ($cartItem['service_id'] == $request['id'] && $cartItem['status']==true) {
-                        if(count(json_decode($cartItem['variation'], true))>0)
-                        {
-                            if(json_decode($cartItem['variation'],true)[0]['type'] == $str)
-                            {
-                                return response()->json([
-                                'data' => 1
-                                ]);
-                            }
-                        }
-                        else
-                        {
-                            return response()->json([
-                               'data' => 1
-                            ]);
-                        }
-
-                    }
-                }
-
-            }
-        }
-        //Check the string and decreases quantity for the stock
-        if ($str != null) {
-            $count = count(json_decode($product->variations));
-            for ($i = 0; $i < $count; $i++) {
-                if (json_decode($product->variations)[$i]->type == $str) {
-                    $price = json_decode($product->variations)[$i]->price;
-                }
-            }
-            $data['variation'] = json_encode([["type"=>$str,"price"=>$price]]);
-        } else {
-            $price = $product->price;
-        }
-
-        $data['quantity'] = $request['quantity'];
-        $data['price'] = $price;
-        $data['status'] = true;
-        $data['discount_on_food'] = Helpers::product_discount_calculate($product, $price,$product->restaurant);
-        $data["discount_type"] = "discount_on_product";
-        $data["tax_amount"] = Helpers::tax_calculate($product, $price);
-        $add_ons = [];
-        $add_on_qtys = [];
-        
-        if($request['addon_id'])
-        {
-            foreach($request['addon_id'] as $id)
-            {
-                $addon_price+= $request['addon-price'.$id]*$request['addon-quantity'.$id];
-                $add_on_qtys[]=$request['addon-quantity'.$id];
-            } 
-            $add_ons = $request['addon_id'];
-        }
-
-        $addon_data = Helpers::calculate_addon_price(\App\Models\AddOn::whereIn('id',$add_ons)->get(), $add_on_qtys);
-        $data['add_ons'] = json_encode($addon_data['addons']);
-        $data['total_add_on_price'] = $addon_data['total_add_on_price'];
-        // dd($data);
-        $cart = $request->session()->get('order_cart', collect([]));
-        if(isset($request->cart_item_key))
-        {
-            $cart[$request->cart_item_key] = $data;
-            return response()->json([
-                'data' => 2
-            ]);
-        }
-        else
-        {
-            $cart->push($data);
-        }
-
-        return response()->json([
-            'data' => 0
-        ]);
-    }
-
-    public function remove_from_cart(Request $request)
-    {
-        $cart = $request->session()->get('order_cart', collect([]));
-        $cart[$request->key]->status=false;
-        $request->session()->put('order_cart', $cart);
-
-        return response()->json([],200);
-    }
 
     public function edit(Request $request, Order $order)
     {
