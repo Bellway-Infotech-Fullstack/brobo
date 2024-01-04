@@ -309,6 +309,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
             Route::get('sms-module', 'SMSModuleController@sms_index')->name('sms-module');
             Route::post('sms-module-update/{sms_module}', 'SMSModuleController@sms_update')->name('sms-module-update');
+            Route::post('remove-dynamic-time-slot', 'BusinessSettingsController@removeDynamicTimeSlot')->name('remove-dynamic-time-slot');
 
         });
 

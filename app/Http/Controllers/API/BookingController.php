@@ -38,6 +38,7 @@ class BookingController extends Controller
             $couponId = $request->input('coupon_id');
             $orderInstallmentPercent = $request->input('order_installment_percent');
             $transactionId = $request->input('transaction_id');
+            $finalItemPrice = $request->input('final_item_price');
             $todayDate = date("Y-m-d");
             
 
@@ -96,24 +97,49 @@ class BookingController extends Controller
                 $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
 
 
-                $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
-                $totalAmount = $cartTotalItemAmount + $deliveryCharge;
+                $orderMinAmountData  = BusinessSetting::where('key','mininum_order_amount')->first();
 
+                $orderMinAmount  = $orderMinAmountData->value;
+
+                if($orderMinAmount >  $finalItemPrice){
+                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You hacan not order less than '.$orderMinAmount]);
+                }
+
+
+                $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+                $totalAmount = $finalItemPrice + $deliveryCharge;
 
                 if($orderInstallmentPercent == ''){
                     $paidAmount = $totalAmount;
-                    $pendingAmount = 0;
+                    
                 } else {
                     $paidAmount =   ($orderInstallmentPercent / 100) * $totalAmount;
-                    $pendingAmount = $totalAmount - $paidAmount;
+                    
                 }
+               
 
                 if($couponId!=''){
                     $couponMinimumPurchase = $couponData->min_purchase;
+                    $couponMinimumPurchase = $couponData->min_purchase;
                     if($couponMinimumPurchase > $paidAmount){
                         return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
+                    } else {
+
+                          // Calculate discount price
+                        if ($couponData->discount_type == 'amount') {
+                            $discountedPrice = number_format($paidAmount - $couponData->discount, 2);
+                        } else {
+                            $discountedPrice = number_format(($couponData->discount / 100) * $paidAmount, 2);
+                            $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
+
+                        }
+                        $paidAmount = $discountedPrice;
                     }
                 }
+
+                $pendingAmount = $totalAmount - $paidAmount;
+
+               
                 
                 $requestData = [
                     'start_date' => $starDate,
@@ -130,7 +156,8 @@ class BookingController extends Controller
                     'order_installment_percent' => $orderInstallmentPercent,
                     'transaction_id' => $transactionId,
                     'status' => 'ongoing',
-                    'description' => $description
+                    'description' => $description,
+                    'final_item_price' => $finalItemPrice
                 ];
 
                 $newOrder = Order::create($requestData);
@@ -246,6 +273,8 @@ class BookingController extends Controller
 
             $shippingAddress = $shippingAddressData->house_name . "," . $shippingAddressData->floor_number ." floor" . "," . $shippingAddressData->landmark  . "," . $shippingAddressData->area_name;
 
+            $finalItemPrice   = $item->final_item_price; 
+
             array_push($allData,
                 array(
                     'description' => $description,
@@ -258,7 +287,8 @@ class BookingController extends Controller
                     'total_order_price' => $totalOrderPrice,
                     'shipping_address' => $shippingAddress,
                     'pending_amount' => $pendingAmount,
-                    'item_details'  => json_decode($item->cart_items,true)
+                    'item_details'  => json_decode($item->cart_items,true),
+                    'final_item_price' => $finalItemPrice
                     
                     )
                 );
