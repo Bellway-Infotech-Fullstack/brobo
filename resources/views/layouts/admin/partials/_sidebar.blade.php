@@ -106,7 +106,7 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/order*')?'active':''}}">
+                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/booking*')?'active':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                href="javascript:" title="{{__('messages.order')}}">
                                 {{-- <i class="tio-shopping-cart nav-icon"></i> --}}
@@ -117,44 +117,66 @@
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                 style="display: {{Request::is('admin/order*')?'block':'none'}}">
-                                <li class="nav-item {{Request::is('admin/order/list/ongoing')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['pending'])}}"
+                                <li class="nav-item {{Request::is('admin/booking/list/ongoing') ? 'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['ongoing'])}}"
                                        title="Ongoing {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
                                             Ongoing
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{\App\Models\Order::Pending()->count()}}
+                                                {{\App\Models\Order::ServiceOngoing()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{Request::is('admin/order/list/ongoing')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['pending'])}}"
+                                <li class="nav-item {{Request::is('admin/booking/list/cancelled')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['cancelled'])}}"
                                        title="Cancelled {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
                                             Cancelled
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{\App\Models\Order::Pending()->count()}}
+                                                {{\App\Models\Order::Cancelled()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{Request::is('admin/order/list/ongoing')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.order.list',['pending'])}}"
-                                       title="Delivered {{__('messages.orders')}}">
+                                <li class="nav-item {{Request::is('admin/booking/list/completed')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['completed'])}}"
+                                       title="Completed {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                            Delivered
+                                            Completed
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{\App\Models\Order::Pending()->count()}}
+                                                {{\App\Models\Order::Completed()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                
-                                
+                                <li class="nav-item {{Request::is('admin/booking/list/refunded')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['refunded'])}}"
+                                       title="Refunded">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">
+                                            Refunded
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                {{\App\Models\Order::Refunded()->count()}}
+                                            </span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item {{Request::is('admin/order/list/failed')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.order.list',['failed'])}}"
+                                       title="Payment Failed">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">
+                                            Payment Failed
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                {{\App\Models\Order::Completed()->count()}}
+                                            </span>
+                                        </span>
+                                    </a>
+                                </li>
 
                                
                                 <li class="nav-item {{Request::is('admin/order/list/all')?'active':''}}">
@@ -164,52 +186,16 @@
                                         <span class="text-truncate">
                                             {{__('messages.all')}}
                                             <span class="badge badge-info badge-pill ml-1">
-                                                {{\App\Models\Order::whereIn('status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded'])->count()}}
+                                                {{\App\Models\Order::All()->count()}}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        <!-- Order dispachment -->
-                   {{--      <li class="navbar-vertical-aside-has-menu {{Request::is('admin/dispatch/*')?'active':''}}">
-                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
-                               href="javascript:" title="{{__('messages.dispatchManagement')}}">
-                                <i class="tio-clock nav-icon"></i>
-                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                    {{__('messages.dispatchManagement')}}
-                                </span>
-                            </a>
-                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{Request::is('admin/dispatch*')?'block':'none'}}">
-                                <li class="nav-item {{Request::is('admin/dispatch/list/searching_for_deliverymen')?'active':''}}">
-                                    <a class="nav-link "
-                                       href="{{route('admin.dispatch.list',['searching_for_deliverymen'])}}"
-                                       title="{{__('messages.searchingDM')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                            {{__('messages.searchingDM')}}
-                                            <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{\App\Models\Order::SearchingForDeliveryman()->count()}}
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{Request::is('admin/dispatch/list/on_going')?'active':''}}">
-                                    <a class="nav-link " href="{{route('admin.dispatch.list',['on_going'])}}"
-                                       title="{{__('messages.ongoingOrders')}}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">
-                                            {{__('messages.ongoingOrders')}}
-                                                <span class="badge badge-soft-dark bg-light badge-pill ml-1">
-                                                {{\App\Models\Order::Ongoing()->count()}}
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
-                        <!-- Order dispachment End-->
+                       
+                   
+                  
                     @endif
                 <!-- End Orders -->
               
