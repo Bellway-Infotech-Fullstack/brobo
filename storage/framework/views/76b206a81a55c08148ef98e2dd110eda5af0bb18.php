@@ -107,7 +107,7 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/order*')?'active':''); ?>">
+                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/booking*')?'active':''); ?>">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                href="javascript:" title="<?php echo e(__('messages.order')); ?>">
                                 
@@ -119,47 +119,71 @@
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                 style="display: <?php echo e(Request::is('admin/order*')?'block':'none'); ?>">
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/ongoing')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['pending'])); ?>"
+                                <li class="nav-item <?php echo e(Request::is('admin/booking/list/ongoing') ? 'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['ongoing'])); ?>"
                                        title="Ongoing <?php echo e(__('messages.orders')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
                                             Ongoing
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::Pending()->count()); ?>
+                                                <?php echo e(\App\Models\Order::ServiceOngoing()->count()); ?>
 
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/ongoing')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['pending'])); ?>"
+                                <li class="nav-item <?php echo e(Request::is('admin/booking/list/cancelled')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['cancelled'])); ?>"
                                        title="Cancelled <?php echo e(__('messages.orders')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
                                             Cancelled
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::Pending()->count()); ?>
+                                                <?php echo e(\App\Models\Order::Cancelled()->count()); ?>
 
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item <?php echo e(Request::is('admin/order/list/ongoing')?'active':''); ?>">
-                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['pending'])); ?>"
-                                       title="Delivered <?php echo e(__('messages.orders')); ?>">
+                                <li class="nav-item <?php echo e(Request::is('admin/booking/list/completed')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['completed'])); ?>"
+                                       title="Completed <?php echo e(__('messages.orders')); ?>">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">
-                                            Delivered
+                                            Completed
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::Pending()->count()); ?>
+                                                <?php echo e(\App\Models\Order::Completed()->count()); ?>
 
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                
-                                
+                                <li class="nav-item <?php echo e(Request::is('admin/booking/list/refunded')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['refunded'])); ?>"
+                                       title="Refunded">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">
+                                            Refunded
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                <?php echo e(\App\Models\Order::Refunded()->count()); ?>
+
+                                            </span>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item <?php echo e(Request::is('admin/order/list/failed')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.order.list',['failed'])); ?>"
+                                       title="Payment Failed">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">
+                                            Payment Failed
+                                            <span class="badge badge-soft-info badge-pill ml-1">
+                                                <?php echo e(\App\Models\Order::Completed()->count()); ?>
+
+                                            </span>
+                                        </span>
+                                    </a>
+                                </li>
 
                                
                                 <li class="nav-item <?php echo e(Request::is('admin/order/list/all')?'active':''); ?>">
@@ -170,7 +194,7 @@
                                             <?php echo e(__('messages.all')); ?>
 
                                             <span class="badge badge-info badge-pill ml-1">
-                                                <?php echo e(\App\Models\Order::whereIn('status',['pending', 'failed', 'canceled', 'services_ongoing', 'picked_up', 'service_ongoing', 'processing', 'accepted', 'delivered', 'completed', 'refunded'])->count()); ?>
+                                                <?php echo e(\App\Models\Order::All()->count()); ?>
 
                                             </span>
                                         </span>
@@ -178,9 +202,9 @@
                                 </li>
                             </ul>
                         </li>
-                        <!-- Order dispachment -->
+                       
                    
-                        <!-- Order dispachment End-->
+                  
                     <?php endif; ?>
                 <!-- End Orders -->
               

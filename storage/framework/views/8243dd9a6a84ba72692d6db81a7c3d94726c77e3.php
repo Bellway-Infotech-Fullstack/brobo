@@ -36,34 +36,8 @@
                 <!-- Navbar -->
                 <ul class="navbar-nav align-items-center flex-row">
 
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <!-- Notification -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="<?php echo e(route('admin.message.list')); ?>">
-                                <i class="tio-notifications"></i>
-                                <?php ($message=\App\Models\Conversation::where('checked',0)->count()); ?>
-                                <?php if($message!=0): ?>
-                                    <span class="btn-status btn-sm-status btn-status-danger"></span>
-                                <?php endif; ?>
-                            </a>
-                        </div>
-                        <!-- End Notification -->
-                    </li>
 
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <!-- Notification -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="<?php echo e(route('admin.order.list',['status'=>'pending'])); ?>">
-                                
-                                
-                                <img src="<?php echo e(asset($assetPrefixPath . '/assets/admin/img/booking.png')); ?>" style="width: 20px; height: auto;" />
-                                
-                            </a>
-                        </div>
-                        <!-- End Notification -->
-                    </li>
+             
 
 
                     <li class="nav-item">

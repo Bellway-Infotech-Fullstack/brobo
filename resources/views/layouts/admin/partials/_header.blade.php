@@ -36,34 +36,8 @@
                 <!-- Navbar -->
                 <ul class="navbar-nav align-items-center flex-row">
 
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <!-- Notification -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="{{route('admin.message.list')}}">
-                                <i class="tio-notifications"></i>
-                                @php($message=\App\Models\Conversation::where('checked',0)->count())
-                                @if($message!=0)
-                                    <span class="btn-status btn-sm-status btn-status-danger"></span>
-                                @endif
-                            </a>
-                        </div>
-                        <!-- End Notification -->
-                    </li>
 
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <!-- Notification -->
-                        <div class="hs-unfold">
-                            <a class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle"
-                               href="{{route('admin.order.list',['status'=>'pending'])}}">
-                                {{-- <i class="tio-shopping-cart-outlined"></i> --}}
-                                {{-- <i class="tio-B"></i> --}}
-                                <img src="{{asset($assetPrefixPath . '/assets/admin/img/booking.png')}}" style="width: 20px; height: auto;" />
-                                {{--<span class="btn-status btn-sm-status btn-status-danger"></span>--}}
-                            </a>
-                        </div>
-                        <!-- End Notification -->
-                    </li>
+             
 
 
                     <li class="nav-item">
