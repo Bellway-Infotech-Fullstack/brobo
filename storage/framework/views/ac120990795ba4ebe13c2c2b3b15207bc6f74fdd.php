@@ -602,24 +602,34 @@
                                 $time_slot_data = explode("-",$value);
                                 $from_time_slot = $time_slot_data[0];
                                 $to_time_slot   = $time_slot_data[1];
+                                $time_slot =   $from_time_slot . "-" . $to_time_slot;
                     
                             ?>
 
-<div class="row">
-    <div class="col-md-6 col-12">
-        <div class="form-group">
-            <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot <?php echo e($key+1); ?> </label>
-            <input type="time" value="<?php echo e($from_time_slot ?? ''); ?>" name="order_from_time_slots[]" class="form-control">
-        </div>                         
-    </div>
-    <div class="col-md-6 col-12">
-        <div class="form-group">
-            <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot <?php echo e($key+1); ?></label>
-            <input type="time" value="<?php echo e($to_time_slot ?? ''); ?>" name="order_to_time_slots[]" class="form-control">
-        </div>                           
-    </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot <?php echo e($key+1); ?> </label>
+                                            <input type="time" value="<?php echo e($from_time_slot ?? ''); ?>" name="order_from_time_slots[]" class="form-control">
+                                        </div>                         
+                                    </div>
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot <?php echo e($key+1); ?></label>
+                                            <input type="time" value="<?php echo e($to_time_slot ?? ''); ?>" name="order_to_time_slots[]" class="form-control">
+                                        </div>
+                                        <?php if($key > 0): ?>
+                                        <div  style="float:right;">
+                                            <?php
+                                             
+                                            ?>
+                                            <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot="<?php echo e($time_slot); ?>" data-count="<?php echo e($key+1); ?>"> Remove </a>
+                                        </div> 
+                                        <?php endif; ?>                            
+                                    </div>
+                                      
 
-</div>
+                                </div>
                          
                             
                             <?php }} else { ?>
@@ -749,6 +759,39 @@
                  manageLabels();
                 count--;
             });
+
+            $("#time_slot_data").on("click", "a.remove-dynamic-time-slot", function(e) {
+                e.preventDefault();
+                var time_slot = $(this).attr("data-time-slot");
+                alert(time_slot);
+               // return false;
+               $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo e(route('admin.business-settings.remove-dynamic-time-slot')); ?>',
+                    data: {
+                            "time_slot3": time_slot,
+                            "_token":$('meta[name="_token"]').attr('content')
+                           
+                        },
+                        beforeSend: function () {
+                            $('#loading').show();
+                        },
+                        success: function (data) {
+                            toastr.success(data.message);
+                        },
+                        complete: function () {
+                            $('#loading').hide();
+                        },
+                });
+            });
+
+
+            
        
             function manageLabels(){                
                 // Update the labels for remaining rows

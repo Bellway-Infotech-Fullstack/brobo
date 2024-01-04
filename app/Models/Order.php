@@ -9,7 +9,7 @@ use App\Scopes\ZoneScope;
 class Order extends Model
 {
 
-    protected $fillable = ['start_date', 'end_date','time_duration', 'user_id','status','cart_items','paid_amount','pending_amount','delivery_address_id','coupon_id','delivery_charge','order_installment_percent','transaction_id','order_id','description','extended_order_transaction_id'];
+    protected $fillable = ['start_date', 'end_date','time_duration', 'user_id','status','cart_items','paid_amount','pending_amount','delivery_address_id','coupon_id','delivery_charge','order_installment_percent','transaction_id','order_id','description','extended_order_transaction_id','final_item_price'];
 
     protected $casts = [
         'order_id' => 'string',
@@ -22,6 +22,7 @@ class Order extends Model
         'cart_items' => 'string',
         'paid_amount' => 'float',
         'pending_amount' => 'float',
+        'final_item_price' => 'float',
         'delivery_address_id' => 'integer',
         'coupon_id' => 'integer',
         'delivery_charge'=>'integer',
