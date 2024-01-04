@@ -171,7 +171,7 @@ class BusinessSettingsController extends Controller
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
 
-        echo "<pre>";
+       
 
      
         $time_slots = '';
@@ -1010,5 +1010,29 @@ class BusinessSettingsController extends Controller
         Toastr::success('Updated Successfully');
         return back();
     }
+
+    public function removeDynamicTimeSlot(Request $request)
+    {
+
+        $timeSlot = $request->time_slot;
+
+        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
+        $order_time_slot_data = explode(",",$order_time_slot_data->value);
+
+        echo "<pre>";
+
+        print_r($order_time_slot_data);
+        die;
+
+
+        BusinessSetting::updateOrInsert(['key' => 'order_time_slots'],
+        [
+            'value' => $timeSlot,
+            'updated_at' => now()
+        ]);
+        Toastr::success('Slot removed successfully');
+        return back();
+    }
+
     
 }

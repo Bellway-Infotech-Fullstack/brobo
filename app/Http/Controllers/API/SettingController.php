@@ -140,7 +140,7 @@ class SettingController extends Controller
                     $time_slot = explode("-",$time_slot);
                     $from_time_slot = $time_slot[0];
                     $to_time_slot = $time_slot[1];
-                    $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " - " . date("h:i A", strtotime($to_time_slot));
+                    $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " to " . date("h:i A", strtotime($to_time_slot));
                 }
             }
 
