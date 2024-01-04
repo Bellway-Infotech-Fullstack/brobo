@@ -156,7 +156,7 @@
                                     <div class="card card-sm">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2"><?php echo e(__('messages.order')); ?></span>
+                                                <span class="mr-2"><?php echo e(__('messages.order')); ?> ID</span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_order">
@@ -170,7 +170,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2"><?php echo e(__('messages.date')); ?></span>
+                                                <span class="mr-2">Booking <?php echo e(__('messages.date')); ?></span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_date">
@@ -197,20 +197,7 @@
                                                 </label>
                                                 <!-- End Checkbox Switch -->
                                             </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2"><?php echo e(__('messages.vendor')); ?></span>
-
-                                                <!-- Checkbox Switch -->
-                                                <label class="toggle-switch toggle-switch-sm"
-                                                       for="toggleColumn_restaurant">
-                                                    <input type="checkbox" class="toggle-switch-input"
-                                                           id="toggleColumn_restaurant" checked>
-                                                    <span class="toggle-switch-label">
-                                                    <span class="toggle-switch-indicator"></span>
-                                                  </span>
-                                                </label>
-                                                <!-- End Checkbox Switch -->
-                                            </div>
+                                          
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
                                                 <span class="mr-2 text-capitalize"><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.status')); ?></span>
@@ -228,7 +215,7 @@
                                             </div>
 
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span class="mr-2"><?php echo e(__('messages.total')); ?></span>
+                                                <span class="mr-2">Paid Amount</span>
 
                                                 <!-- Checkbox Switch -->
                                                 <label class="toggle-switch toggle-switch-sm" for="toggleColumn_total">
@@ -306,16 +293,13 @@
                             <?php echo e(__('messages.#')); ?>
 
                         </th>
-                        <th class="table-column-pl-0"><?php echo e(__('messages.order')); ?></th>
-                        <th><?php echo e(__('messages.date')); ?></th>
+                        <th class="table-column-pl-0"><?php echo e(__('messages.order')); ?> ID</th>
+                        <th>Booking Date</th>
                         <th><?php echo e(__('messages.customer')); ?></th>
-                        <th><?php echo e(__('messages.vendor')); ?></th>
-                        <th><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.status')); ?></th>
-                        <th><?php echo e(__('messages.total')); ?></th>
-                        <th><?php echo e(__('messages.wallet')); ?></th>
+                        <th>Paid Amount</th>
                         <th>Due Amount</th>
+                        <th><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.status')); ?></th>                       
                         <th><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.status')); ?></th>
-                        
                         <th><?php echo e(__('messages.actions')); ?></th>
                     </tr>
                     </thead>
@@ -325,68 +309,44 @@
 
                         <tr class="status-<?php echo e($order['order_status']); ?> class-all">
                             <td class="">
-                                <?php echo e($key+$orders->firstItem()); ?>
+                                <?php echo e($key + 1); ?>
 
                             </td>
                             <td class="table-column-pl-0">
-                                <a href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><?php echo e($order['id']); ?></a>
+                                <a href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><?php echo e($order['order_id']); ?></a>
                             </td>
                             <td><?php echo e(date('d M Y',strtotime($order['created_at']))); ?></td>
                             <td>
                                 <?php if($order->customer): ?>
                                     <a class="text-body text-capitalize"
-                                       href="<?php echo e(route('admin.customer.view',[$order['user_id']])); ?>"><?php echo e($order->customer['f_name'].' '.$order->customer['l_name']); ?></a>
+                                       href="<?php echo e(route('admin.customer.view',[$order['user_id']])); ?>"><?php echo e($order->customer['name']); ?></a>
                                 <?php else: ?>
                                     <label class="badge badge-danger"><?php echo e(__('messages.invalid')); ?> <?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.data')); ?></label>
                                 <?php endif; ?>
                             </td>
+                        
+                          
+                            <td>Rs. <?php echo e(number_format($order->paid_amount)); ?> </td>
+                            <td>Rs. <?php echo e(number_format($order->pending_amount)); ?> </td>
                             <td>
+                              
+                                <span class="badge badge-soft-success">
+                                  <span class="legend-indicator bg-success"></span><?php echo e(__('messages.paid')); ?>
 
-                                   <label class="badge badge-soft-primary"><a href="<?php echo e(route('admin.vendor.view', $order->vendor_id)); ?>" alt="view vendor"><?php echo e($order->vendor?$order->vendor->names() :'Vendor deleted!'); ?></a></label> 
-
-                            </td>
-                            <td>
-                                <?php if($order->payment_status=='paid'): ?>
-                                    <span class="badge badge-soft-success">
-                                      <span class="legend-indicator bg-success"></span><?php echo e(__('messages.paid')); ?>
-
-                                    </span>
-                                <?php else: ?>
-                                    <span class="badge badge-soft-danger">
-                                      <span class="legend-indicator bg-danger"></span><?php echo e(__('messages.unpaid')); ?>
-
-                                    </span>
-                                <?php endif; ?>
-                            </td>
-                            <td><?php echo e(\App\CentralLogics\Helpers::format_currency($order->order_amount)); ?></td>
-                            <td><?php echo e(\App\CentralLogics\Helpers::format_currency($order->wallet_amount)); ?></td>
-                            <td><?php echo e(\App\CentralLogics\Helpers::format_currency($order->due_amount)); ?></td>
+                                </span>
+                            
+                        </td>
                             <td class="text-capitalize">
-                                <?php if($order['order_status']=='pending'): ?>
+                                <?php if($order['status']=='ongoing'): ?>
                                     <span class="badge badge-soft-info ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-info"></span><?php echo e(__('messages.pending')); ?>
-
+                                      <span class="legend-indicator bg-info"></span>Ongoing
                                     </span>
-                                <?php elseif($order['order_status']=='confirmed'): ?>
-                                    <span class="badge badge-soft-info ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-info"></span><?php echo e(__('messages.confirmed')); ?>
-
+                                <?php elseif($order['status']=='cancelled'): ?>
+                                    <span class="badge badge-soft-danger ml-2 ml-sm-3">
+                                      <span class="legend-indicator bg-danger"></span>Cancelled
                                     </span>
-                                 <?php elseif($order['order_status']=='accepted'): ?>
-                                    <span class="badge badge-soft-info ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-info"></span>Accepted
-                                    </span>
-                                <?php elseif($order['order_status']=='processing'): ?>
-                                    <span class="badge badge-soft-warning ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-warning"></span><?php echo e(__('messages.processing')); ?>
-
-                                    </span>
-                                <?php elseif($order['order_status']=='picked_up'): ?>
-                                    <span class="badge badge-soft-warning ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-warning"></span><?php echo e(__('messages.out_for_delivery')); ?>
-
-                                    </span>
-                                <?php elseif($order['order_status']=='delivered'): ?>
+                      
+                                <?php elseif($order['order_status']=='completed'): ?>
                                     <span class="badge badge-soft-success ml-2 ml-sm-3">
                                       <span class="legend-indicator bg-success"></span><?php echo e(__('messages.delivered')); ?>
 
@@ -464,28 +424,9 @@
                 <!-- Body -->
                 <form class="card-body sidebar-body sidebar-scrollbar" action="<?php echo e(route('admin.order.filter')); ?>" method="POST" id="order_filter_form">
                     <?php echo csrf_field(); ?>
-                    <small class="text-cap mb-3"><?php echo e(__('messages.zone')); ?></small>
 
-                    <div class="mb-2" style="border: 1px solid #8080803d;border-radius: 5px">
-                        <select name="zone[]" id="zone_ids" class="form-control js-select2-custom" multiple="multiple">
-                        <?php $__currentLoopData = \App\Models\Zone::all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $zone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($zone->id); ?>" <?php echo e(isset($zone_ids)?(in_array($zone->id, $zone_ids)?'selected':''):''); ?>><?php echo e($zone->name); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </select>
-                    </div>
-                    <hr class="my-4">
-                    <small class="text-cap mb-3"><?php echo e(__('messages.vendor')); ?></small>
-                    <div class="mb-2" style="border: 1px solid #8080803d;border-radius: 5px">
-                        <select name="vendor[]" id="vendor_ids" class="form-control js-select2-custom" multiple="multiple">
-                        <?php $__currentLoopData = \App\Models\Restaurant::whereIn('id', $vendor_ids)->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $restaurant): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($restaurant->id); ?>" selected ><?php echo e($restaurant->name); ?></option>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </select>
-                    </div>
 
-                    <hr class="my-4">
                     <?php if($status == 'all'): ?>
-                    <small class="text-cap mb-3"><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.status')); ?></small>
 
                     <!-- Custom Checkbox -->
                     <div class="custom-control custom-radio mb-2">
@@ -529,12 +470,8 @@
                         <label class="custom-control-label" for="orderStatus10"><?php echo e(__('messages.refunded')); ?></label>
                     </div>
 
-                    <hr class="my-4">
 
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="scheduled" name="scheduled" class="custom-control-input" value="1" <?php echo e(isset($scheduled)?($scheduled==1?'checked':''):''); ?>>
-                        <label class="custom-control-label text-uppercase" for="scheduled"><?php echo e(__('messages.scheduled')); ?></label>
-                    </div>
+                 
                     <?php endif; ?>
                    
                    
@@ -722,11 +659,11 @@
             })
 
             $('#toggleColumn_payment_status').change(function (e) {
-                datatable.columns(5).visible(e.target.checked)
+                datatable.columns(6).visible(e.target.checked)
             })
 
             $('#toggleColumn_total').change(function (e) {
-                datatable.columns(6).visible(e.target.checked)
+                datatable.columns(4).visible(e.target.checked)
             })
             $('#toggleColumn_order_status').change(function (e) {
                 datatable.columns(7).visible(e.target.checked)
