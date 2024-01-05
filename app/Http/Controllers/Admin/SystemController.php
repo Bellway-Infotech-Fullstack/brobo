@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\User;
 use App\Models\BusinessSetting;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
@@ -27,7 +28,9 @@ class SystemController extends Controller
 
     public function settings()
     {
-        return view('admin-views.settings');
+        $adminData = User::where('role_id',1)->first();
+        $admin = User::find($adminData->id);
+        return view('admin-views.settings',array('admin'=> $admin));
     }
 
     public function settings_update(Request $request)
@@ -42,7 +45,8 @@ class SystemController extends Controller
             'l_name.required' => 'Last name is required!',
         ]);
 
-        $admin = Admin::find(auth('admin')->id());
+        $adminData = User::where('role_id',1)->first();
+        $admin = User::find($adminData->id);
 
         if ($request->has('image')) {
             $image_name =Helpers::update('admin/', $admin->image, 'png', $request->file('image'));
@@ -51,10 +55,9 @@ class SystemController extends Controller
         }
 
 
-        $admin->f_name = $request->f_name;
-        $admin->l_name = $request->l_name;
+        $admin->name = $request->f_name . " " . $request->l_name;
         $admin->email = $request->email;
-        $admin->phone = $request->phone;
+        $admin->mobile_number = $request->phone;
         $admin->image = $image_name;
         $admin->save();
         Toastr::success(trans('messages.admin_updated_successfully'));
@@ -67,8 +70,10 @@ class SystemController extends Controller
             'password' => 'required|same:confirm_password',
             'confirm_password' => 'required',
         ]);
+        $adminData = User::where('role_id',1)->first();
+        $admin = User::find($adminData->id);
 
-        $admin = Admin::find(auth('admin')->id());
+
         $admin->password = bcrypt($request['password']);
         $admin->save();
         Toastr::success(trans('messages.admin_password_updated_successfully'));

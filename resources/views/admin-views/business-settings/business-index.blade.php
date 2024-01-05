@@ -569,7 +569,7 @@
 
                     <div class="row">
                         @php($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first())
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-4 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
                                 <input type="text" value="{{$delivery_charge->value??''}}"
@@ -577,11 +577,20 @@
                             </div>
                         </div>
                         @php($referred_discount=\App\Models\BusinessSetting::where('key','referred_discount')->first())
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-4 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">Referred Discount (%)</label>
                                 <input type="text" value="{{$referred_discount->value??''}}"
                                        name="referred_discount" class="form-control" placeholder="" required>
+                            </div>
+                        </div>
+
+                        @php($refunded_amount=\App\Models\BusinessSetting::where('key','refunded_amount')->first())
+                        <div class="col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Refunded Amount (%)</label>
+                                <input type="text" value="{{$refunded_amount->value??''}}"
+                                       name="refunded_amount" class="form-control" placeholder="" required>
                             </div>
                         </div>
                     </div>
@@ -661,14 +670,12 @@
                          <a href="javascript:void(0)" class="add-more-time-slot"> Add More </a>
                     </div>
 
-                    <div class="row">
+                    <div class="row" style="display:none">
                         <div class="col-sm-6">
                             @php($address=\App\Models\BusinessSetting::where('key','address')->first())
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">{{__('messages.address')}}</label>
-                                <textarea type="text" id="address"
-                                       name="address" class="form-control" placeholder="" rows="1"
-                                       required>{{$address->value??''}}</textarea>
+                                <textarea id="address" name="address" class="form-control" placeholder="" rows="1" required>{{$address->value??''}}</textarea>
                             </div>
                             @php($default_location=\App\Models\BusinessSetting::where('key','default_location')->first())
                             <?php
@@ -701,17 +708,9 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                    @php($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first())
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">{{__('messages.footer')}} {{__('messages.text')}}</label>
-                                <textarea type="text" value=""
-                                       name="footer_text" class="form-control" placeholder=""
-                                       required>{{$footer_text->value??''}}</textarea>
-                            </div>
-                        </div>
-                    </div>
+                 
+                   
+                   
 
                     @php($logo=\App\Models\BusinessSetting::where('key','logo')->first())
                     @php($logo=$logo->value??'')
@@ -766,21 +765,19 @@
             });
 
             $("#time_slot_data").on("click", "a.remove-dynamic-time-slot", function(e) {
-                e.preventDefault();
+                //e.preventDefault();
                 var time_slot = $(this).attr("data-time-slot");
-                alert(time_slot);
+               // alert(time_slot);
                // return false;
                $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                     }
                 });
-                $.ajax({
-                    type: "POST",
+                $.post({
                     url: '{{route('admin.business-settings.remove-dynamic-time-slot')}}',
                     data: {
-                            "time_slot3": time_slot,
-                            "_token":$('meta[name="_token"]').attr('content')
+                            "time_slot": time_slot,
                            
                         },
                         beforeSend: function () {
@@ -832,16 +829,7 @@
             $("#time_slot_data").append(timeSlotData);
 
         }
-
-        
-               
-        
-
-      
-
- 
-      
-      //  let language = <?php echo($language); ?>;
+        //  let language = <?php echo($language); ?>;
      //   $('[id=language]').val(language);
 
         function maintenance_mode() {

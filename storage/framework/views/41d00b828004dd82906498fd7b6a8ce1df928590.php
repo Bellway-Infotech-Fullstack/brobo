@@ -1189,50 +1189,7 @@
                 position: google.maps.ControlPosition.RIGHT_CENTER
             }
         };
-        function initializeGMap() {
-            
-            map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-            var infowindow = new google.maps.InfoWindow();
-
-            var Restaurantmarker = new google.maps.Marker({
-                position: 6,
-                map: map,
-                title: "<?php echo e($order->vendor->names()); ?>",
-                icon: "<?php echo e(asset($assetPrefixPath . '/admin/img/restaurant_map.png')); ?>"
-            });
-
-            google.maps.event.addListener(Restaurantmarker, 'click', (function(Restaurantmarker) {
-                return function() {
-                    infowindow.setContent("<div style='float:left'><img style='max-height:40px;wide:auto;' src='<?php echo e(asset('storage/app/public/restaurant/'.$order->vendor->image)); ?>'></div><div style='float:right; padding: 10px;'><b><?php echo e($order->vendor->names()); ?></b><br/> <?php echo e($order->vendor->address); ?></div>");
-                    infowindow.open(map, Restaurantmarker);
-                }
-            })(Restaurantmarker));
-            map.fitBounds(dmbounds);
-            for (var i = 0; i < deliveryMan.length; i++) {                  
-                if(deliveryMan[i].lat)
-                {
-                    // var contentString = "<div style='float:left'><img style='max-height:40px;wide:auto;' src='<?php echo e(asset('storage/app/public/delivery-man')); ?>/"+deliveryMan[i].image+"'></div><div style='float:right; padding: 10px;'><b>"+deliveryMan[i].name+"</b><br/> "+deliveryMan[i].location+"</div>";
-                    var point = new google.maps.LatLng(deliveryMan[i].lat, deliveryMan[i].lng);
-                    dmbounds.extend(point);
-                    map.fitBounds(dmbounds);
-                    var marker = new google.maps.Marker({
-                        position: point,
-                        map: map,
-                        title: deliveryMan[i].location,
-                        icon: "<?php echo e(asset($assetPrefixPath . '/admin/img/delivery_boy_map.png')); ?>"
-                    });
-                    dmMarkers[deliveryMan[i].id]=marker;
-                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                        return function() {
-                            infowindow.setContent("<div style='float:left'><img style='max-height:40px;wide:auto;' src='<?php echo e(asset('storage/app/public/delivery-man')); ?>/"+deliveryMan[i].image+"'></div><div style='float:right; padding: 10px;'><b>"+deliveryMan[i].name+"</b><br/> "+deliveryMan[i].location+"</div>");
-                            infowindow.open(map, marker);
-                        }
-                    })(marker, i));
-                }
-
-            };
-        }
+     
         $(document).ready(function() {
 
             // Re-init map before show modal
@@ -1244,7 +1201,7 @@
 
             // Trigger map resize event after modal shown
             $('#myModal').on('shown.bs.modal', function() {
-                initializeGMap();
+               // initializeGMap();
                 google.maps.event.trigger(map, "resize");
                 map.setCenter(myLatlng);
             });
