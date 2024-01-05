@@ -251,18 +251,21 @@
                         const width = this.width;
                         const height = this.height;
 
+                        alert("width="+width)
+                        alert("height="+height)
+
                         // Check if the dimensions meet your criteria         
 
-                        if (width != 343 || height != 100) {
+                       /* if (width != 343 || height != 100) {
                                 // Dimensions are not allowed, handle accordingly (e.g., show an error message)
-                                alert('Invalid dimensions. Width must be  343px and height must be <= 100px.');
+                                alert('Invalid dimensions. Width must be  343px and height must be 100px.');
                                 // Optionally clear the file input if needed
                                 input.value = '';
                                 isequal = 1;
                             } else {
                             // Dimensions are within the allowed range, you can proceed with your logic
                             // ...
-                            }
+                            }*/
                         };
                             img.src = e.target.result;
                             if(isequal == 1){

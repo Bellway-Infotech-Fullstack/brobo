@@ -40,6 +40,7 @@ class BookingController extends Controller
             $orderInstallmentPercent = $request->input('order_installment_percent');
             $transactionId = $request->input('transaction_id');
             $finalItemPrice = $request->input('final_item_price');
+            $isBuildingHaveLift = $request->input('is_building_have_lift');
             $todayDate = date("Y-m-d");
             
 
@@ -50,6 +51,7 @@ class BookingController extends Controller
                 'address_id' => 'required',
                 'transaction_id' => 'required',
                 'final_item_price'=> 'required',
+                'is_building_have_lift' => 'required',
             ];
 
             // Validate the input data
@@ -89,55 +91,60 @@ class BookingController extends Controller
             if(isset($cartItems) && !empty($cartItems)){
                 foreach($cartItems as $key => $val){
                     $itemName = $val['item_name'];
+                    $itemId = $val['item_id'];
+                    $quantity = $val['quantity'];
+                    $productData =  Product::find($itemId);
+                    $productStock = $productData->total_stock;
+                    $remainingStock = $productStock - $quantity;
+                    Product::where('id', $itemId)->update(['total_stock' => $remainingStock]);
                     $itemNames = $itemNames." ".$itemName;
                     $cartTotalItemAmount = $cartTotalItemAmount + $val['item_price'];
                 }
             }            
                 
-                $description = "Thank you for booking with us.You booked <b>".$itemNames."</b> We'll send a confirmation when your items delivered";   
+            $description = "Thank you for booking with us.You booked <b>".$itemNames."</b> We'll send a confirmation when your items delivered";   
+            
+            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
+
+            $orderMinAmountData  = BusinessSetting::where('key','mininum_order_amount')->first();
+
+            $orderMinAmount  = $orderMinAmountData->value;
+
+            if($orderMinAmount >  $finalItemPrice){
+                return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You can not order less than '.$orderMinAmount]);
+            }
+
+
+            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+            $totalAmount = $finalItemPrice + $deliveryCharge;
+
+            if($orderInstallmentPercent == ''){
+                $paidAmount = $totalAmount;
+                
+            } else {
+                $paidAmount =   ($orderInstallmentPercent / 100) * $totalAmount;
+                
+            }
                
-                $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
 
-
-                $orderMinAmountData  = BusinessSetting::where('key','mininum_order_amount')->first();
-
-                $orderMinAmount  = $orderMinAmountData->value;
-
-                if($orderMinAmount >  $finalItemPrice){
-                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You can not order less than '.$orderMinAmount]);
-                }
-
-
-                $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
-                $totalAmount = $finalItemPrice + $deliveryCharge;
-
-                if($orderInstallmentPercent == ''){
-                    $paidAmount = $totalAmount;
-                    
+            if($couponId!=''){
+                $couponMinimumPurchase = $couponData->min_purchase;
+                $couponMinimumPurchase = $couponData->min_purchase;
+                if($couponMinimumPurchase > $paidAmount){
+                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
                 } else {
-                    $paidAmount =   ($orderInstallmentPercent / 100) * $totalAmount;
-                    
-                }
-               
 
-                if($couponId!=''){
-                    $couponMinimumPurchase = $couponData->min_purchase;
-                    $couponMinimumPurchase = $couponData->min_purchase;
-                    if($couponMinimumPurchase > $paidAmount){
-                        return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
+                        // Calculate discount price
+                    if ($couponData->discount_type == 'amount') {
+                        $discountedPrice = number_format($paidAmount - $couponData->discount, 2);
                     } else {
+                        $discountedPrice = number_format(($couponData->discount / 100) * $paidAmount, 2);
+                        $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
 
-                          // Calculate discount price
-                        if ($couponData->discount_type == 'amount') {
-                            $discountedPrice = number_format($paidAmount - $couponData->discount, 2);
-                        } else {
-                            $discountedPrice = number_format(($couponData->discount / 100) * $paidAmount, 2);
-                            $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
-
-                        }
-                        $paidAmount = $discountedPrice;
                     }
+                    $paidAmount = $discountedPrice;
                 }
+            }
 
                 $pendingAmount = $totalAmount - $paidAmount;
 
@@ -159,7 +166,8 @@ class BookingController extends Controller
                     'transaction_id' => $transactionId,
                     'status' => 'ongoing',
                     'description' => $description,
-                    'final_item_price' => $finalItemPrice
+                    'final_item_price' => $finalItemPrice,
+                    'is_building_have_lift' => $isBuildingHaveLift
                 ];
 
                 $newOrder = Order::create($requestData);
@@ -225,12 +233,18 @@ class BookingController extends Controller
             $orderId = $item->order_id;
             $cartTotalItemAmount = number_format(($cartTotalItemAmount), 0);
 
+            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
+
+
+            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+
             return [
                 'description' => $description,
                 'order_id' => $orderId,
                 'arriving_date' => date("D d M Y", strtotime($item->start_date)),
                 'total_items_price' => $cartTotalItemAmount,
-                'final_item_price' => $finalItemPrice
+                'final_item_price' => $finalItemPrice,
+                'delivery_charge' => $deliveryCharge,
             ];
         });
 
@@ -345,13 +359,7 @@ class BookingController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Order cancelled successfully', 'code' => 200]);
     }
 
-    public function getRemainingUserStock(Request $request){
-        $token = JWTAuth::getToken();
-        $user = JWTAuth::toUser($token);
-        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
-        
-
-    }
+ 
 
 
     public function payForDamage(Request $request){
@@ -486,12 +494,42 @@ class BookingController extends Controller
     }
 
 
+    public function payForDueAmount(Request $request){
+        $bookingId = $request->post('booking_id');
+        $transactionId = $request->post('due_amount_transaction_id');
+        $dueAmount = $request->post('due_amount');
 
+         // Define the validation rules
+         $validationRules = [
+            'booking_id' => 'required',
+            'due_amount_transaction_id' => 'required',
+            'due_amount' => 'required',
+        ];
 
+        // Validate the input data
+        $validation = Validator::make($request->all(), $validationRules, [
+            'booking_id.required' => 'booking id is required.',
+            'due_amount_transaction_id.required' => 'due_amount_transaction_id is required.',
+            'due_amount.required' => 'due_amount is required.',
+        ]);
 
+        // Check for validation errors and return error response if any
+        if ($validation->fails()) {
+            return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+        }
+      
+        $bookingData = Order::where('order_id',$bookingId)->get();
+        
+        // Check if the order exists
+        if (count($bookingData) == 0) {
+            return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
+        }
     
 
-    
 
-   
+        Order::where('order_id', $bookingId)->update(['due_amount_transaction_id' => $transactionId, 'pending_amount' => $dueAmount]);
+    
+        return response()->json(['status' => 'success', 'message' => 'Amount paid successfully', 'code' => 200]);
+    }
+
 }
