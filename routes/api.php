@@ -59,6 +59,7 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-setting-data', 'index');
             Route::put('update-notification-setting', 'updateNotificationSetting');
             Route::get('get-order-settings', 'getOrderSettings');
+            Route::get('get-referral-code','getReferralCode');     
         });
 
         Route::controller(ProductController::class)->group(function () {
