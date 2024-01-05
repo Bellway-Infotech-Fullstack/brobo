@@ -9,6 +9,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Notification;
 use App\Models\Coupon;
 use Carbon\Carbon;
+use App\Services\FCMService;
 
 
 class NotificationController extends Controller
@@ -110,6 +111,17 @@ class NotificationController extends Controller
             $user = JWTAuth::toUser($token);
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
             $count = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))->count();
+
+            
+
+
+            FCMService::send(
+                $user->fcm_token,
+                [
+                    'title' => 'your title',
+                    'body' => 'your body',
+                ]
+            );
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $count]);
 
         } catch (\Exception $e) {
