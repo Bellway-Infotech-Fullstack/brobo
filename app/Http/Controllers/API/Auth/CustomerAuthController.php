@@ -40,6 +40,7 @@ class CustomerAuthController extends Controller
                         ->symbols()
                 ],
                 'address' => 'required',
+                'fcm_token' => 'required',
             ], [
                 'name.required' => 'Please enter a name.',
                 'name.regex' => 'Name should only contain letters and spaces.',
@@ -49,6 +50,7 @@ class CustomerAuthController extends Controller
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
                 'address.required' => 'Please enter an address.',
+                'fcm_token.required' => 'Please send fcm_token.',
             ]);
             
             if ($validation->fails()) {
@@ -63,11 +65,7 @@ class CustomerAuthController extends Controller
             $request['name'] = $request->name;
             $request['mobile_number'] = $request->mobile_number;
             $request['remember_token'] = Str::random(10);
-
-
-         
-
-
+            $request['fcm_token'] = $request->fcm_token;
 
             // Create a new user
             $user = User::create($request->toArray());
@@ -76,9 +74,9 @@ class CustomerAuthController extends Controller
             $token = JWTAuth::fromUser($user);
 
             // update auth token
-           $userData = User::where('mobile_number',$request->mobile_number)->first();
-           $userData->auth_token =  $token;
-           $userData->save();
+            $userData = User::where('mobile_number',$request->mobile_number)->first();
+            $userData->auth_token =  $token;
+            $userData->save();
 
              // Save password in user's password table
 
@@ -89,7 +87,7 @@ class CustomerAuthController extends Controller
             ]);
 
             $message = "Hello $request->name,Welcome to brobo.You are registered successfully.";
-         //  dd($messsage);
+
             // send verification code to user's mobile number
            // event(new SendSMS($request->mobile_number,$message));
 
