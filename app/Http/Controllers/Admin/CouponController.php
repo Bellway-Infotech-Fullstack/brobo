@@ -8,6 +8,7 @@ use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\CentralLogics\Helpers;
+use App\Models\User;
 
 class CouponController extends Controller
 {
@@ -41,11 +42,15 @@ class CouponController extends Controller
             $data = $request->product_ids;
         }
 
+
+       
+
+
       
 
     
 
-        DB::table('coupons')->insert([
+       $couponId =  DB::table('coupons')->insertGetId([
             'title' => $request->title,
             'code' => $request->code,
             'limit' => $request->coupon_type=='first_order'?1:$request->limit,
@@ -62,6 +67,24 @@ class CouponController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        $customerData = User::where('role_id',2)->get();
+        $adminData = User::where('role_id',1)->first();
+
+        if(isset($customerData) && !empty($customerData)){
+            foreach($customerData as $key => $value)
+            {   
+                DB::table('notifications')->insert([
+                    'title' => "New offer",
+                    'coupon_id' => $couponId,
+                    'from_user_id' => $adminData->id,
+                    'to_user_id' => $value->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+              
+            }
+        } 
 
         Toastr::success(trans('messages.coupon_added_successfully'));
         return back();
