@@ -70,7 +70,7 @@ class OrderController extends Controller
             });
         })
         ->when(isset($request->orderStatus) && $status == 'all', function($query)use($request){
-            return $query->whereIn('order_status',$request->orderStatus);
+            return $query->whereIn('status',$request->orderStatus);
         })
         ->when(isset($request->scheduled) && $status == 'all', function($query){
             return $query->scheduled();
@@ -116,7 +116,7 @@ class OrderController extends Controller
         ->when($status == 'searching_for_deliverymen', function($query){
             return $query->SearchingForDeliveryman();
         })
-        ->when($status == 'on_going', function($query){
+        ->when($status == 'ongoing', function($query){
             return $query->Ongoing();
         })
         ->when(isset($request->vendor), function($query)use($request){
@@ -265,7 +265,7 @@ class OrderController extends Controller
 
          if(in_array($request->order_status, ['accepted', 'processing', 'services_ongoing', 'pending', 'canceled'])){
 
-            if(in_array($order->order_status, ['delivered','canceled','refund_requested','refunded','failed', 'completed']))
+            if(in_array($order->status, ['delivered','canceled','refund_requested','refunded','failed', 'completed']))
             {
                 Toastr::warning('You cannot change status of a completed order');
                 return back(); 
