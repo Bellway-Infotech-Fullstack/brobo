@@ -148,7 +148,7 @@ class ProductController extends Controller
                     $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
                     return $item;
-                });
+            });
 
                
             
