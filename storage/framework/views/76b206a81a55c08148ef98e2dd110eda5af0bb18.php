@@ -344,27 +344,6 @@
                 </li>
                 <!-- FAQ -->
                     <!-- Notification -->
-                    <?php if(\App\CentralLogics\Helpers::module_permission_check('notification')): ?>
-                        <li class="navbar-vertical-aside-has-menu <?php echo e(Request::is('admin/notification*')?'active':''); ?>">
-                            <a class="js-navbar-vertical-aside-menu-link nav-link"
-                               href="<?php echo e(route('admin.notification.add-new')); ?>"
-                               title="<?php echo e(__('messages.send')); ?> <?php echo e(__('messages.notification')); ?>"
-                            >
-                                <i class="tio-notifications nav-icon"></i>
-                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                    <?php echo e(__('messages.push')); ?> <?php echo e(__('messages.notification')); ?>
-
-                                </span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                <!-- End Notification -->
-
-                    <!-- End marketing section -->
-
-                <!-- End account -->
-
-                    <!-- provide_dm_earning -->
                    
                 <!-- End provide_dm_earning -->
                     <!-- Custommer -->

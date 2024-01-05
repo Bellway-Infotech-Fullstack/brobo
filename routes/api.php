@@ -68,6 +68,7 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-item-in-whishlist', 'getItemInWishList');
             Route::get('get-product-recommendation-list', 'getProductRecommendationList');
             Route::get('get-all-product-list', 'getAllProductList');
+           
         });
 
         Route::controller(CouponController::class)->group(function () {
@@ -93,7 +94,9 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-booking-detail','getBookingDetail');
             Route::put('cancel-order','cancelOrder');
             Route::put('extend-order','extendOrder');
-           
+            Route::get('get-remaining-user-stock','getRemainingUserStock');
+            Route::put('pay-for-damage','payForDamage');
+            Route::get('get-most-ordered-products','getMostOrderedProducts');
             
         });
     });

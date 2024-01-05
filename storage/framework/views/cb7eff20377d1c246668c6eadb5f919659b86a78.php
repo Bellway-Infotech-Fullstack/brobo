@@ -89,9 +89,9 @@
                             class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar"
                             for="avatarUploader">
                             <img id="viewer"
-                                 onerror="this.src='<?php echo e(asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')); ?>'"
+                               
                                  class="avatar-img"
-                                 src="<?php echo e(asset('storage/app/public/admin')); ?>/<?php echo e(auth()->user()->image); ?>"
+                                 src="<?php echo e(asset($assetPrefixPath.'/admin')); ?>/<?php echo e($admin->image); ?>"
                                  alt="Image">
 
                             <input type="file" name="image" class="js-file-attach avatar-uploader-input"
@@ -121,14 +121,23 @@
                                         data-placement="top"
                                         title="Display name"></i></label>
 
+                                        <?php
+
+                                         $name = $admin->name;
+                                         $name = explode(" ",$name);
+                                         
+                                         $f_name = $name[0];
+                                         $l_name = $name[1];
+                                        ?>
+
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm-down-break">
                                         <input type="text" class="form-control" name="f_name" id="firstNameLabel"
                                                placeholder="<?php echo e(__('messages.your_first_name')); ?>" aria-label="<?php echo e(__('messages.your_first_name')); ?>"
-                                               value="<?php echo e(auth()->user()->f_name); ?>">
+                                               value="<?php echo e($f_name); ?>">
                                         <input type="text" class="form-control" name="l_name" id="lastNameLabel"
                                                placeholder="<?php echo e(__('messages.your_last_name')); ?>" aria-label="<?php echo e(__('messages.your_last_name')); ?>"
-                                               value="<?php echo e(auth()->user()->l_name); ?>">
+                                               value="<?php echo e($l_name); ?>">
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +151,7 @@
                                 <div class="col-sm-9">
                                     <input type="text" class="js-masked-input form-control" name="phone" id="phoneLabel"
                                            placeholder="+x(xxx)xxx-xx-xx" aria-label="+(xxx)xx-xxx-xxxxx"
-                                           value="<?php echo e(auth()->user()->phone); ?>"
+                                           value="<?php echo e($admin->mobile_number); ?>"
                                            data-hs-mask-options='{
                                            "template": "+(880)00-000-00000"
                                          }'>
@@ -155,7 +164,7 @@
 
                                 <div class="col-sm-9">
                                     <input type="email" class="form-control" name="email" id="newEmailLabel"
-                                           value="<?php echo e(auth()->user()->email); ?>"
+                                           value="<?php echo e($admin->email); ?>"
                                            placeholder="<?php echo e(__('messages.enter_new_email_address')); ?>" aria-label="<?php echo e(__('messages.enter_new_email_address')); ?>">
                                 </div>
                             </div>

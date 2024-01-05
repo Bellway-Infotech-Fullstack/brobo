@@ -306,13 +306,18 @@
                                 {{$key + 1}}
                             </td>
                             <td class="table-column-pl-0">
-                                <a href="{{route('admin.order.details',['id'=>$order['id']])}}">{{$order['order_id']}}</a>
+                                {{--<a href="{{route('admin.order.details',['id'=>$order['id']])}}">{{$order['order_id']}}</a>--}}
+
+                                <a href="#">{{$order['order_id']}}</a>
                             </td>
                             <td>{{date('d M Y',strtotime($order['created_at']))}}</td>
                             <td>
                                 @if($order->customer)
-                                    <a class="text-body text-capitalize"
-                                       href="{{route('admin.customer.view',[$order['user_id']])}}">{{$order->customer['name']}}</a>
+                                    {{-- <a class="text-body text-capitalize"
+                                       href="{{route('admin.customer.view',[$order['user_id']])}}">{{$order->customer['name']}}</a> --}}
+
+                                       <a class="text-body text-capitalize"
+                                       href="#">{{$order->customer['name']}}</a>
                                 @else
                                     <label class="badge badge-danger">{{__('messages.invalid')}} {{__('messages.customer')}} {{__('messages.data')}}</label>
                                 @endif
@@ -428,36 +433,24 @@
 
                     <!-- Custom Checkbox -->
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus2" name="orderStatus[]" class="custom-control-input" {{isset($orderstatus)?(in_array('pending', $orderstatus)?'checked':''):''}} value="pending">
-                        <label class="custom-control-label" for="orderStatus2">{{__('messages.pending')}}</label>
+                        <input type="checkbox" id="orderStatus2" name="orderStatus[]" class="custom-control-input" {{isset($orderstatus)?(in_array('ongoing', $orderstatus)?'checked':''):''}} value="ongoing">
+                        <label class="custom-control-label" for="orderStatus2">Ongoing</label>
                     </div>
+                 
+                 
+                   
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus1" name="orderStatus[]" class="custom-control-input" value="confirmed" {{isset($orderstatus)?(in_array('confirmed', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus1">{{__('messages.confirmed')}}</label>
+                        <input type="checkbox" id="orderStatus5" name="orderStatus[]" class="custom-control-input" value="completed" {{isset($orderstatus)?(in_array('completed', $orderstatus)?'checked':''):''}}>
+                        <label class="custom-control-label" for="orderStatus5">Completed</label>
                     </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus3" name="orderStatus[]" class="custom-control-input" value="processing" {{isset($orderstatus)?(in_array('processing', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus3">{{__('messages.processing')}}</label>
-                    </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus4" name="orderStatus[]" class="custom-control-input" value="picked_up" {{isset($orderstatus)?(in_array('picked_up', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus4">{{__('messages.out_for_delivery')}}</label>
-                    </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus5" name="orderStatus[]" class="custom-control-input" value="delivered" {{isset($orderstatus)?(in_array('delivered', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus5">{{__('messages.delivered')}}</label>
-                    </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus6" name="orderStatus[]" class="custom-control-input" value="returned" {{isset($orderstatus)?(in_array('returned', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus6">{{__('messages.returned')}}</label>
-                    </div>
+                   
                     <div class="custom-control custom-radio mb-2">
                         <input type="checkbox" id="orderStatus7" name="orderStatus[]" class="custom-control-input" value="failed" {{isset($orderstatus)?(in_array('failed', $orderstatus)?'checked':''):''}}>
                         <label class="custom-control-label" for="orderStatus7">{{__('messages.failed')}}</label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus8" name="orderStatus[]" class="custom-control-input" value="canceled" {{isset($orderstatus)?(in_array('canceled', $orderstatus)?'checked':''):''}}>
-                        <label class="custom-control-label" for="orderStatus8">{{__('messages.canceled')}}</label>
+                        <input type="checkbox" id="orderStatus8" name="orderStatus[]" class="custom-control-input" value="cancelled" {{isset($orderstatus)?(in_array('cancelled', $orderstatus)?'checked':''):''}}>
+                        <label class="custom-control-label" for="orderStatus8">Cancelled</label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
                         <input type="checkbox" id="orderStatus9" name="orderStatus[]" class="custom-control-input" value="refund_requested" {{isset($orderstatus)?(in_array('refund_requested', $orderstatus)?'checked':''):''}}>
@@ -467,20 +460,8 @@
                         <input type="checkbox" id="orderStatus10" name="orderStatus[]" class="custom-control-input" value="refunded" {{isset($orderstatus)?(in_array('refunded', $orderstatus)?'checked':''):''}}>
                         <label class="custom-control-label" for="orderStatus10">{{__('messages.refunded')}}</label>
                     </div>
-
-
-                 
                     @endif
-                   {{--  <hr class="my-4">
-                    <small class="text-cap mb-3">{{__('messages.order')}} {{__('messages.type')}}</small> --}}
-                   {{--  <div class="custom-control custom-radio mb-2">
-                        <input type="radio" id="take_away" name="order_type" class="custom-control-input" value="take_away" {{isset($order_type)?($order_type=='take_away'?'checked':''):''}}>
-                        <label class="custom-control-label text-uppercase" for="take_away">{{__('messages.take_away')}}</label>
-                    </div> --}}
-                    {{-- <div class="custom-control custom-radio mb-2">
-                        <input type="radio" id="delivery" name="order_type" class="custom-control-input" value="service" {{isset($order_type)?($order_type=='service'?'checked':''):''}}>
-                        <label class="custom-control-label text-uppercase" for="delivery">{{__('messages.service')}}</label>
-                    </div> --}}
+                
                     <hr class="my-4">
 
                     <small class="text-cap mb-3">{{__('messages.date')}} {{__('messages.between')}}</small>
@@ -543,31 +524,6 @@
             });
 
 
-            $('#vendor_ids').select2({
-                ajax: {
-                    url: '{{url('/')}}/admin/vendor/get-restaurants',
-                    data: function (params) {
-                        return {
-                            q: params.term, // search term
-                            zone_ids: zone_id,
-                            page: params.page
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                        results: data
-                        };
-                    },
-                    __port: function (params, success, failure) {
-                        var $request = $.ajax(params);
-
-                        $request.then(success);
-                        $request.fail(failure);
-
-                        return $request;
-                    }
-                }
-            });
 
             // INITIALIZATION OF DATATABLES
             // =======================================================
@@ -695,7 +651,7 @@
 
         $('#reset').on('click', function(){
             // e.preventDefault();
-            location.href = '{{url('/')}}/admin/order/filter/reset';
+            location.href = '{{url('/')}}/admin/booking/filter/reset';
         });
     </script>
 
