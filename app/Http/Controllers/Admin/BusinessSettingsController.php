@@ -165,7 +165,9 @@ class BusinessSettingsController extends Controller
             'value' => $request['referred_discount']
         ]);
 
-
+        DB::table('business_settings')->updateOrInsert(['key' => 'refunded_amount'], [
+            'value' => $request['refunded_amount']
+        ]);
       
 
         $order_from_time_slots = $request['order_from_time_slots'];

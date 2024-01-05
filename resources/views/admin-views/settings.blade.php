@@ -88,9 +88,9 @@
                             class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar"
                             for="avatarUploader">
                             <img id="viewer"
-                                 onerror="this.src='{{asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')}}'"
+                               
                                  class="avatar-img"
-                                 src="{{asset('storage/app/public/admin')}}/{{auth()->user()->image}}"
+                                 src="{{asset($assetPrefixPath.'/admin')}}/{{$admin->image}}"
                                  alt="Image">
 
                             <input type="file" name="image" class="js-file-attach avatar-uploader-input"
@@ -120,14 +120,23 @@
                                         data-placement="top"
                                         title="Display name"></i></label>
 
+                                        @php
+
+                                         $name = $admin->name;
+                                         $name = explode(" ",$name);
+                                         
+                                         $f_name = $name[0];
+                                         $l_name = $name[1];
+                                        @endphp
+
                                 <div class="col-sm-9">
                                     <div class="input-group input-group-sm-down-break">
                                         <input type="text" class="form-control" name="f_name" id="firstNameLabel"
                                                placeholder="{{__('messages.your_first_name')}}" aria-label="{{__('messages.your_first_name')}}"
-                                               value="{{auth()->user()->f_name}}">
+                                               value="{{$f_name}}">
                                         <input type="text" class="form-control" name="l_name" id="lastNameLabel"
                                                placeholder="{{__('messages.your_last_name')}}" aria-label="{{__('messages.your_last_name')}}"
-                                               value="{{auth()->user()->l_name}}">
+                                               value="{{$l_name}}">
                                     </div>
                                 </div>
                             </div>
@@ -141,7 +150,7 @@
                                 <div class="col-sm-9">
                                     <input type="text" class="js-masked-input form-control" name="phone" id="phoneLabel"
                                            placeholder="+x(xxx)xxx-xx-xx" aria-label="+(xxx)xx-xxx-xxxxx"
-                                           value="{{auth()->user()->phone}}"
+                                           value="{{$admin->mobile_number}}"
                                            data-hs-mask-options='{
                                            "template": "+(880)00-000-00000"
                                          }'>
@@ -154,7 +163,7 @@
 
                                 <div class="col-sm-9">
                                     <input type="email" class="form-control" name="email" id="newEmailLabel"
-                                           value="{{auth()->user()->email}}"
+                                           value="{{$admin->email}}"
                                            placeholder="{{__('messages.enter_new_email_address')}}" aria-label="{{__('messages.enter_new_email_address')}}">
                                 </div>
                             </div>

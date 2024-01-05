@@ -60,7 +60,7 @@
 
 <div class="col-sm-4 col-lg-4 mb-3 mb-lg-5">
     <!-- Card -->
-    <a class="card card-hover-shadow h-100" href="{{route('admin.order.list',['food_on_the_way'])}}"
+    <a class="card card-hover-shadow h-100" href="{{route('admin.order.list',['all'])}}"
        style="background: #334257">
         <div class="card-body">
             <h6 class="card-subtitle"
@@ -109,7 +109,7 @@
                 <div class="media" style="cursor: pointer"
                      onclick="location.href='{{route('admin.order.list',['cancelled'])}}'">
                     <div class="media-body">
-                        <h6 class="card-subtitle">{{__('messages.canceled')}}</h6>
+                        <h6 class="card-subtitle">Cancelled</h6>
                         <span
                             class="card-title h3">{{$data['cancelled']}}</span>
                     </div>

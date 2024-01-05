@@ -313,13 +313,17 @@
 
                             </td>
                             <td class="table-column-pl-0">
-                                <a href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><?php echo e($order['order_id']); ?></a>
+                                
+
+                                <a href="#"><?php echo e($order['order_id']); ?></a>
                             </td>
                             <td><?php echo e(date('d M Y',strtotime($order['created_at']))); ?></td>
                             <td>
                                 <?php if($order->customer): ?>
-                                    <a class="text-body text-capitalize"
-                                       href="<?php echo e(route('admin.customer.view',[$order['user_id']])); ?>"><?php echo e($order->customer['name']); ?></a>
+                                    
+
+                                       <a class="text-body text-capitalize"
+                                       href="#"><?php echo e($order->customer['name']); ?></a>
                                 <?php else: ?>
                                     <label class="badge badge-danger"><?php echo e(__('messages.invalid')); ?> <?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.data')); ?></label>
                                 <?php endif; ?>
@@ -430,36 +434,24 @@
 
                     <!-- Custom Checkbox -->
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus2" name="orderStatus[]" class="custom-control-input" <?php echo e(isset($orderstatus)?(in_array('pending', $orderstatus)?'checked':''):''); ?> value="pending">
-                        <label class="custom-control-label" for="orderStatus2"><?php echo e(__('messages.pending')); ?></label>
+                        <input type="checkbox" id="orderStatus2" name="orderStatus[]" class="custom-control-input" <?php echo e(isset($orderstatus)?(in_array('ongoing', $orderstatus)?'checked':''):''); ?> value="ongoing">
+                        <label class="custom-control-label" for="orderStatus2">Ongoing</label>
                     </div>
+                 
+                 
+                   
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus1" name="orderStatus[]" class="custom-control-input" value="confirmed" <?php echo e(isset($orderstatus)?(in_array('confirmed', $orderstatus)?'checked':''):''); ?>>
-                        <label class="custom-control-label" for="orderStatus1"><?php echo e(__('messages.confirmed')); ?></label>
+                        <input type="checkbox" id="orderStatus5" name="orderStatus[]" class="custom-control-input" value="completed" <?php echo e(isset($orderstatus)?(in_array('completed', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus5">Completed</label>
                     </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus3" name="orderStatus[]" class="custom-control-input" value="processing" <?php echo e(isset($orderstatus)?(in_array('processing', $orderstatus)?'checked':''):''); ?>>
-                        <label class="custom-control-label" for="orderStatus3"><?php echo e(__('messages.processing')); ?></label>
-                    </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus4" name="orderStatus[]" class="custom-control-input" value="picked_up" <?php echo e(isset($orderstatus)?(in_array('picked_up', $orderstatus)?'checked':''):''); ?>>
-                        <label class="custom-control-label" for="orderStatus4"><?php echo e(__('messages.out_for_delivery')); ?></label>
-                    </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus5" name="orderStatus[]" class="custom-control-input" value="delivered" <?php echo e(isset($orderstatus)?(in_array('delivered', $orderstatus)?'checked':''):''); ?>>
-                        <label class="custom-control-label" for="orderStatus5"><?php echo e(__('messages.delivered')); ?></label>
-                    </div>
-                    <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus6" name="orderStatus[]" class="custom-control-input" value="returned" <?php echo e(isset($orderstatus)?(in_array('returned', $orderstatus)?'checked':''):''); ?>>
-                        <label class="custom-control-label" for="orderStatus6"><?php echo e(__('messages.returned')); ?></label>
-                    </div>
+                   
                     <div class="custom-control custom-radio mb-2">
                         <input type="checkbox" id="orderStatus7" name="orderStatus[]" class="custom-control-input" value="failed" <?php echo e(isset($orderstatus)?(in_array('failed', $orderstatus)?'checked':''):''); ?>>
                         <label class="custom-control-label" for="orderStatus7"><?php echo e(__('messages.failed')); ?></label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
-                        <input type="checkbox" id="orderStatus8" name="orderStatus[]" class="custom-control-input" value="canceled" <?php echo e(isset($orderstatus)?(in_array('canceled', $orderstatus)?'checked':''):''); ?>>
-                        <label class="custom-control-label" for="orderStatus8"><?php echo e(__('messages.canceled')); ?></label>
+                        <input type="checkbox" id="orderStatus8" name="orderStatus[]" class="custom-control-input" value="cancelled" <?php echo e(isset($orderstatus)?(in_array('cancelled', $orderstatus)?'checked':''):''); ?>>
+                        <label class="custom-control-label" for="orderStatus8">Cancelled</label>
                     </div>
                     <div class="custom-control custom-radio mb-2">
                         <input type="checkbox" id="orderStatus9" name="orderStatus[]" class="custom-control-input" value="refund_requested" <?php echo e(isset($orderstatus)?(in_array('refund_requested', $orderstatus)?'checked':''):''); ?>>
@@ -469,13 +461,8 @@
                         <input type="checkbox" id="orderStatus10" name="orderStatus[]" class="custom-control-input" value="refunded" <?php echo e(isset($orderstatus)?(in_array('refunded', $orderstatus)?'checked':''):''); ?>>
                         <label class="custom-control-label" for="orderStatus10"><?php echo e(__('messages.refunded')); ?></label>
                     </div>
-
-
-                 
                     <?php endif; ?>
-                   
-                   
-                    
+                
                     <hr class="my-4">
 
                     <small class="text-cap mb-3"><?php echo e(__('messages.date')); ?> <?php echo e(__('messages.between')); ?></small>
@@ -538,31 +525,6 @@
             });
 
 
-            $('#vendor_ids').select2({
-                ajax: {
-                    url: '<?php echo e(url('/')); ?>/admin/vendor/get-restaurants',
-                    data: function (params) {
-                        return {
-                            q: params.term, // search term
-                            zone_ids: zone_id,
-                            page: params.page
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                        results: data
-                        };
-                    },
-                    __port: function (params, success, failure) {
-                        var $request = $.ajax(params);
-
-                        $request.then(success);
-                        $request.fail(failure);
-
-                        return $request;
-                    }
-                }
-            });
 
             // INITIALIZATION OF DATATABLES
             // =======================================================
@@ -690,7 +652,7 @@
 
         $('#reset').on('click', function(){
             // e.preventDefault();
-            location.href = '<?php echo e(url('/')); ?>/admin/order/filter/reset';
+            location.href = '<?php echo e(url('/')); ?>/admin/booking/filter/reset';
         });
     </script>
 

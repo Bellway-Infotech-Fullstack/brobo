@@ -3,7 +3,10 @@
 <?php $__env->startPush('css_or_js'); ?>
 
 <?php $__env->stopPush(); ?>
-
+<?php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+?>
 <?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
