@@ -93,11 +93,15 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-bookings','getBookings');
             Route::get('get-booking-detail','getBookingDetail');
             Route::put('cancel-order','cancelOrder');
-            Route::put('extend-order','extendOrder');
-            Route::get('get-remaining-user-stock','getRemainingUserStock');
+            Route::put('extend-order','extendOrder');           
             Route::put('pay-for-damage','payForDamage');
-            Route::get('get-most-ordered-products','getMostOrderedProducts');
-            
+            Route::put('pay-for-due-amount','payForDueAmount');
+            Route::get('get-most-ordered-products','getMostOrderedProducts');            
+        });
+
+        Route::controller(NotificationController::class)->group(function () {
+            Route::get('get-notifications', 'index');
+            Route::get('get-unread-notification-count', 'getUnreadNotificationsCount');
         });
     });
 });
