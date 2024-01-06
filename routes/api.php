@@ -40,7 +40,6 @@ Route::group(['namespace' => 'API'], function () {
     });
 
     Route::group(['middleware' => 'custom.jwt'], function () {
-
         Route::controller(UsersAddressController::class)->group(function () {
             Route::post('manage-delivery-address', 'manageAddress');
             Route::get('get-delivery-address', 'getAddress');

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
+use App\Models\Order;
 
 class CustomerController extends Controller
 {
@@ -154,4 +155,40 @@ class CustomerController extends Controller
             'count'=>$customers->count()
         ]);
     }
+
+    public function refereddsearch(Request $request){
+        $key = explode(' ', $request['search']);
+        $userList = Order::where('orders.is_reffered', '=', '1')
+            ->latest()
+            ->join('users', 'orders.user_id', '=', 'users.id') // Assuming 'user_id' is the foreign key in the 'orders' table
+            ->select('users.*') // Select the columns from the 'users' table that you need
+            ->where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('users.name', 'like', "%{$value}%");
+                    $q->orWhere('users.mobile_number', 'like', "%{$value}%");
+                    $q->orWhere('users.email', 'like', "%{$value}%");
+                }
+            })
+            ->distinct() // Ensure unique results based on the users.id column
+            ->paginate(config('default_pagination'));
+
+        return response()->json([
+            'view'=>view('admin-views.customer.partials._rtable',compact('userList'))->render(),
+            'count'=>$userList->count()
+        ]);
+    }
+
+    function refereed_list()
+    {
+        $user_list = Order::where('orders.is_reffered', '=', '1')
+        ->latest()
+        ->join('users', 'orders.user_id', '=', 'users.id') // Assuming 'user_id' is the foreign key in the 'orders' table
+        ->select('users.*') // Select the columns from the 'users' table that you need
+        ->distinct() // Ensure unique results based on the users.id column
+
+        ->paginate(config('default_pagination'));
+        
+        return view('admin-views.customer.referedd-list', compact('user_list'));
+    }
+
 }
