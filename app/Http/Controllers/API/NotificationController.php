@@ -10,7 +10,8 @@ use App\Models\Notification;
 use App\Models\Coupon;
 use Carbon\Carbon;
 use App\Services\FCMService;
-
+use App\Models\Order;
+use App\Models\User;
 
 class NotificationController extends Controller
 {
@@ -71,7 +72,7 @@ class NotificationController extends Controller
                 $couponDiscountType = $couponData->discount_type;
                 $couponCode = $couponData->code;
 
-                if($couponDiscountType == "discount"){
+                if($couponDiscountType == "percentage"){
                     $couponDiscount = $couponData->discount. " %";
                 } else {
                     $couponDiscount = "Rs. ".$couponData->discount;
@@ -111,18 +112,80 @@ class NotificationController extends Controller
             $user = JWTAuth::toUser($token);
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
             $count = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))->count();
-
-            
-
-
-            FCMService::send(
-                $user->fcm_token,
-                [
-                    'title' => 'your title',
-                    'body' => 'your body',
-                ]
-            );
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $count]);
+
+        } catch (\Exception $e) {
+           
+            return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function sendNotificationOfCompletedOrder(Request $request){
+        try {            
+
+            $ongoingOrders = Order::where(array('status' => 'ongoing'))->get();
+
+            if(isset($ongoingOrders) && !empty($ongoingOrders)){
+                foreach($ongoingOrders as $key =>$value){
+                     $userId = $value->user_id;
+                     $userData = User::find($userId);
+                     $userFcmToken = $userData->fcm_token;
+                     $todayDate =  date("Y-m-d");
+                     $endDate = $value->endDate;
+                     $orderId = $value->id;
+                    
+                     if($value->due_amount == 0 && $endDate == $todayDate){
+
+                        Order::where('id',$orderId)->update(['status'=>'completed']);
+
+                          FCMService::send(
+                            $userFcmToken,
+                            [
+                                'title' => 'Order Completed',
+                                'body' => 'Your order has been completed',
+                            ]
+                        );
+                     }
+
+
+
+                }
+            }
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully']);
+
+        } catch (\Exception $e) {
+           
+            return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+        }
+    }
+
+
+    public function sendNotificationOfDueAmountPending(Request $request){
+        try {            
+
+            $ongoingOrders = Order::where(array('status' => 'ongoing'))->get();
+
+            if(isset($ongoingOrders) && !empty($ongoingOrders)){
+                foreach($ongoingOrders as $key =>$value){
+                     $userId = $value->user_id;
+                     $userData = User::find($userId);
+                     $userFcmToken = $userData->fcm_token;
+                     $dueAmount = $value->due_amount;
+                    
+                     if($dueAmount > 0){
+
+                          FCMService::send(
+                            $userFcmToken,
+                            [
+                                'title' => 'Due amount pending',
+                                'body' => "Your Rs. $dueAmount is pending . Please pay your remaining amount",
+                            ]
+                        );
+                     }
+
+                }
+            }
+             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully']);
 
         } catch (\Exception $e) {
            

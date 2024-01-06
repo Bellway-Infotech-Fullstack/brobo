@@ -13,6 +13,7 @@ use App\Models\UsersAddress;
 use App\Models\BusinessSetting;
 use App\Models\Product;
 use App\Models\Wishlist;
+use App\Models\User;
 
 class BookingController extends Controller
 {
@@ -42,6 +43,9 @@ class BookingController extends Controller
             $finalItemPrice = $request->input('final_item_price');
             $isBuildingHaveLift = $request->input('is_building_have_lift');
             $todayDate = date("Y-m-d");
+
+
+
             
 
             // Define the validation rules
@@ -70,6 +74,37 @@ class BookingController extends Controller
                 return response()->json(['status' => 'error', 'code' => 422, 'message' => 'Start date should be greater than or equal to current date']);
             }*/
               
+
+            $loginUserData = User::find($customerId);
+            $referredCode = $loginUserData->referred_code;
+
+
+            $allCustomers = User::where('role_id',2)->get();
+
+            $allOrders = Order::where('user_id',$customerId)->get();
+
+            $referredCodes = $allOrders->pluck('referred_code')->toArray();
+       
+
+            $isReferred = 0;
+            if(isset($allCustomers) && !empty($allCustomers)){
+                foreach($allCustomers as $key => $value){
+                    $referralCode = $value->referral_code;
+                    if($referredCode == $referralCode){
+                        $isReferred = 1;                     
+                        if(in_array($referredCode,$referredCodes)){                        
+                            $isReferred = 0;    
+                        }
+                       break;
+                    }                   
+                }
+            }
+
+      
+
+
+
+
 
             if($couponId!=''){
                 $couponData = Coupon::where(['status' => 1,'id' => $couponId])->first();   
@@ -146,7 +181,20 @@ class BookingController extends Controller
                 }
             }
 
-                $pendingAmount = $totalAmount - $paidAmount;
+
+
+          //  echo "paidAmount before=".$paidAmount;
+           if($isReferred == '1'){
+                $referredDiscountData  = BusinessSetting::where('key','referred_discount')->first();
+                $referredDiscount      = $referredDiscountData->value;
+                $discountedPrice = number_format(($referredDiscount / 100) * $paidAmount, 2);
+                $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
+                $paidAmount = $discountedPrice;
+            }
+           // echo "paidAmount after=".$paidAmount;
+          //  echo "referredCode after=".$referredCode;
+
+            $pendingAmount = $totalAmount - $paidAmount;
 
                
                 
@@ -162,6 +210,8 @@ class BookingController extends Controller
                     'delivery_address_id' => $addressId,
                     'coupon_id' => $couponId,
                     'delivery_charge' => $deliveryCharge,
+                    'is_reffered' => $isReferred,
+                    'referred_code' => $referredCode,
                     'order_installment_percent' => $orderInstallmentPercent,
                     'transaction_id' => $transactionId,
                     'status' => 'ongoing',
