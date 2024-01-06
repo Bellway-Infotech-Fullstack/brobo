@@ -1,10 +1,8 @@
-@extends('layouts.admin.app')
+<?php $__env->startSection('title',''); ?>
 
-@section('title','')
-
-@push('css_or_js')
+<?php $__env->startPush('css_or_js'); ?>
     <style>
-        @media print {
+        @media  print {
             .non-printable {
                 display: none;
             }
@@ -23,22 +21,22 @@
     </style>
 
     <style type="text/css" media="print">
-        @page {
+        @page  {
             size: auto;   /* auto is the initial value */
             margin: 2px;  /* this affects the margin in the printer settings */
             font-family: emoji !important;
         }
 
     </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-@include('admin-views.order.partials._invoice')
+<?php echo $__env->make('admin-views.order.partials._invoice', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script')
+<?php $__env->startPush('script'); ?>
     <script>
         function printDiv(divName) {
             var printContents = document.getElementById(divName).innerHTML;
@@ -48,4 +46,6 @@
             document.body.innerHTML = originalContents;
         }
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/order/invoice.blade.php ENDPATH**/ ?>

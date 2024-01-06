@@ -306,9 +306,9 @@
                                 {{$key + 1}}
                             </td>
                             <td class="table-column-pl-0">
-                                {{--<a href="{{route('admin.order.details',['id'=>$order['id']])}}">{{$order['order_id']}}</a>--}}
+                             <a href="{{route('admin.order.details',['id'=>$order['id']])}}">{{$order['order_id']}}</a>
 
-                                <a href="#">{{$order['order_id']}}</a>
+                      
                             </td>
                             <td>{{date('d M Y',strtotime($order['created_at']))}}</td>
                             <td>

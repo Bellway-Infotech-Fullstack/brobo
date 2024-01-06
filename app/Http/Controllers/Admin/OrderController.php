@@ -6,10 +6,8 @@ use App\CentralLogics\Helpers;
 use App\CentralLogics\OrderLogic;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\Admin;
 use App\Models\Zone;
 use App\Models\Product;
-
 use App\Models\DeliveryManWallet;
 use App\Models\DeliveryMan;
 use App\Models\Category;
@@ -20,7 +18,7 @@ use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Support\Facades\DB;
-use App\Scopes\RestaurantScope;
+use PDF;
 
 class OrderController extends Controller
 {
@@ -429,141 +427,9 @@ class OrderController extends Controller
         return back();
     }
 
-    public function add_delivery_man($order_id, $delivery_man_id)
-    {
-        if ($delivery_man_id == 0) {
-            return response()->json([
-                    'errors'=>[
-                        ['delivery_man_id'=> trans('messages.deliveryman').' '.trans('messages.not_found')]
-                    ]
-                ], 404);
-        }
-        $order = Order::find($order_id);
+ 
 
-        $deliveryman = DeliveryMan::where('id', $delivery_man_id)->available()->active()->first();
-        if($order->delivery_man_id == $delivery_man_id)
-        {
-            return response()->json([
-                'errors'=>[
-                    ['delivery_man_id'=> trans('messages.order_already_assign_to_this_deliveryman')]
-                ]
-            ], 400);
-        }
-        if($deliveryman)
-        {
-            if($deliveryman->current_orders >= config('dm_maximum_orders'))
-            {
-                return response()->json([
-                    'errors'=>[
-                        ['current_orders'=> trans('messages.dm_maximum_order_exceed_warning')]
-                    ]
-                ], 404);
-            }
-            if($order->delivery_man)
-            {
-                $dm = $order->delivery_man;
-                $dm->current_orders = $dm->current_orders>1?$dm->current_orders-1:0;
-                $dm->save();
 
-                $data = [
-                    'title' =>trans('messages.order_push_title'),
-                    'description' => trans('messages.you_are_unassigned_from_a_order'),
-                    'order_id' => '',
-                    'image' => '',
-                    'type'=> 'assign'
-                ];
-                Helpers::send_push_notif_to_device($dm->fcm_token, $data);
-
-                DB::table('user_notifications')->insert([
-                    'data'=> json_encode($data),
-                    'delivery_man_id'=>$dm->id,
-                    'created_at'=>now(),
-                    'updated_at'=>now()
-                ]);
-            }
-            $order->delivery_man_id = $delivery_man_id;
-            $order->order_status = in_array($order->order_status, ['pending', 'confirmed'])?'accepted':$order->order_status;
-            $order->accepted = now();
-            $order->save();
-
-            $deliveryman->current_orders = $deliveryman->current_orders + 1;
-            $deliveryman->save();
-            $fcm_token = $order->customer->cm_firebase_token;
-            $value = Helpers::order_status_update_message('accepted');
-            try {
-                if ($value) {
-                    $data = [
-                        'title' =>trans('messages.order_push_title'),
-                        'description' => $value,
-                        'order_id' => $order['id'],
-                        'image' => '',
-                        'type'=> 'order_status'
-                    ];
-                    Helpers::send_push_notif_to_device($fcm_token, $data);
-                    
-                    DB::table('user_notifications')->insert([
-                        'data'=> json_encode($data),
-                        'user_id'=>$order->customer->id,
-                        'created_at'=>now(),
-                        'updated_at'=>now()
-                    ]);
-                }
-                $data = [
-                    'title' =>trans('messages.order_push_title'),
-                    'description' => trans('messages.you_are_assigned_to_a_order'),
-                    'order_id' => $order['id'],
-                    'image' => '',
-                    'type'=> 'assign'
-                ];
-                Helpers::send_push_notif_to_device($deliveryman->fcm_token, $data);
-                DB::table('user_notifications')->insert([
-                    'data'=> json_encode($data),
-                    'delivery_man_id'=>$deliveryman->id,
-                    'created_at'=>now(),
-                    'updated_at'=>now()
-                ]);
-
-            } catch (\Exception $e) {
-                info($e);
-                Toastr::warning(trans('messages.push_notification_faild'));
-            }
-            return response()->json([], 200);
-        }
-        return response()->json(['message'=> 'Deliveryman not available!'], 400);
-
-    }
-
-    public function update_shipping(Request $request,Order $order)
-    {
-        $request->validate([
-            'contact_person_name' => 'required',
-            'address_type' => 'required',
-            'contact_person_number' => 'required',
-        ]);
-        if($request->latitude && $request->longitude)
-        {
-            $point = new Point($request->latitude,$request->longitude);
-            $zone = Zone::where('id', $order->restaurant->zone_id)->contains('coordinates', $point)->first();
-            if(!$zone)
-            {
-                Toastr::error(trans('messages.out_of_coverage'));
-                return back();
-            }
-        }
-        $address = [
-            'contact_person_name' => $request->contact_person_name,
-            'contact_person_number' => $request->contact_person_number,
-            'address_type' => $request->address_type,
-            'address' => $request->address,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude
-        ];
-
-        $order->delivery_address = json_encode($address);
-        $order->save();
-        Toastr::success(trans('messages.delivery_address_updated'));
-        return back();
-    }
 
     public function generate_invoice($id)
     {
@@ -605,207 +471,9 @@ class OrderController extends Controller
 
 
 
-    public function edit(Request $request, Order $order)
-    {
-        if($request->cancle)
-        {
-            if ($request->session()->has(['order_cart'])) {
-                session()->forget(['order_cart']);
-            }
-            return back();
-        }
-        $cart = collect([]);
-        foreach($order->details as $details)
-        {
-            unset($details['food_details']);
-            $details['status']=true;
-            $cart->push($details);
-        }
 
-        if ($request->session()->has('order_cart')) {
-            session()->forget('order_cart');
-        } else {
-            $request->session()->put('order_cart', $cart);
-        }
-        return back();
-    }
 
-    public function update(Request $request, Order $order)
-    {
-        if(!$request->session()->has('order_cart'))
-        {
-            Toastr::error(trans('messages.order_data_not_found'));
-            return back();
-        }
-        $cart = $request->session()->get('order_cart', collect([]));
-        $restaurant = $order->restaurant;
-        $coupon = null;
-        $total_addon_price = 0;
-        $product_price = 0;
-        $restaurant_discount_amount = 0;
-        if($order->coupon_code)
-        {
-            $coupon = Coupon::where(['code' => $request['coupon_code']])->first();
-        }
 
-        foreach ($cart as $c) {
-            if($c['status'] == true)
-            {
-                unset($c['status']);
-                if ($c['item_campaign_id'] != null) 
-                {
-                    $product = ItemCampaign::find($c['item_campaign_id']);
-                    if ($product) {
-
-                        $price = $c['price'];
-
-                        $product = Helpers::product_data_formatting($product);
-            
-                        $c->food_details = json_encode($product);
-                        $c->updated_at = now();
-                        if(isset($c->id))
-                        {   
-                            OrderDetail::where('id', $c->id)->update(
-                                [
-                                    'service_id' => $c->service_id,
-                                    'item_campaign_id' => $c->item_campaign_id,
-                                    'food_details' => $c->food_details,
-                                    'quantity' => $c->quantity,
-                                    'price' => $c->price,
-                                    'tax_amount' => $c->tax_amount,
-                                    'discount_on_food' => $c->discount_on_food,
-                                    'discount_type' => $c->discount_type,
-                                    'variant' => $c->variant,
-                                    'variation' => $c->variation,
-                                    'add_ons' => $c->add_ons,
-                                    'total_add_on_price' => $c->total_add_on_price,
-                                    'updated_at' => $c->updated_at
-                                ]
-                            );
-                        }
-                        else
-                        {
-                            $c->save();
-                        }
-                        
-                        $total_addon_price += $c['total_add_on_price'];
-                        $product_price += $price*$c['quantity'];
-                        $restaurant_discount_amount += $c['discount_on_food']*$c['quantity'];
-                    } else {
-                        Toastr::error(trans('messages.food_not_found'));
-                        return back();
-                    }
-                } else {
-                    $product = Food::find($c['service_id']);
-                    if ($product) {
-
-                        $price = $c['price'];
-
-                        $product = Helpers::product_data_formatting($product);
-            
-                        $c->food_details = json_encode($product);
-                        $c->updated_at = now();
-                        if(isset($c->id))
-                        {   
-                            OrderDetail::where('id', $c->id)->update(
-                                [
-                                'service_id' => $c->service_id,
-                                'item_campaign_id' => $c->item_campaign_id,
-                                'food_details' => $c->food_details,
-                                'quantity' => $c->quantity,
-                                'price' => $c->price,
-                                'tax_amount' => $c->tax_amount,
-                                'discount_on_food' => $c->discount_on_food,
-                                'discount_type' => $c->discount_type,
-                                'variant' => $c->variant,
-                                'variation' => $c->variation,
-                                'add_ons' => $c->add_ons,
-                                'total_add_on_price' => $c->total_add_on_price,
-                                'updated_at' => $c->updated_at
-                            ]
-                            );
-                        }
-                        else
-                        {
-                            $c->save();
-                        }
-
-                        $total_addon_price += $c['total_add_on_price'];
-                        $product_price += $price*$c['quantity'];
-                        $restaurant_discount_amount += $c['discount_on_food']*$c['quantity'];
-                    } else {
-                        Toastr::error(trans('messages.food_not_found'));
-                        return back();
-                    }
-                }
-            }
-            else
-            {
-                $c->delete();
-            }
-        }
-
-        $restaurant_discount = Helpers::get_restaurant_discount($restaurant);
-        if(isset($restaurant_discount))
-        {
-            if($product_price + $total_addon_price < $restaurant_discount['min_purchase'])
-            {
-                $restaurant_discount_amount = 0;
-            }
-
-            if($restaurant_discount_amount > $restaurant_discount['max_discount'])
-            {
-                $restaurant_discount_amount = $restaurant_discount['max_discount'];
-            }
-        }
-        $order->delivery_charge = $order->original_delivery_charge;
-        if($coupon)
-        {
-            if($coupon->coupon_type == 'free_delivery')
-            {
-                $order->delivery_charge = 0;
-                $coupon = null;
-            }
-        }
-        
-        if($order->restaurant->free_delivery)
-        {
-            $order->delivery_charge = 0;
-        }
-
-        $coupon_discount_amount = $coupon ? CouponLogic::get_discount($coupon, $product_price + $total_addon_price - $restaurant_discount_amount) : 0; 
-        $total_price = $product_price + $total_addon_price - $restaurant_discount_amount - $coupon_discount_amount;
-
-        $tax = $restaurant->tax;
-        $total_tax_amount= ($tax > 0)?(($total_price * $tax)/100):0;
-        if($restaurant->minimum_order > $product_price + $total_addon_price )
-        {
-            Toastr::error(trans('messages.you_need_to_order_at_least', ['amount'=>$restaurant->minimum_order.' '.Helpers::currency_code()]));
-            return back();
-        }
-
-        $free_delivery_over = BusinessSetting::where('key', 'free_delivery_over')->first()->value;
-        if(isset($free_delivery_over))
-        {
-            if($free_delivery_over <= $product_price + $total_addon_price - $coupon_discount_amount - $restaurant_discount_amount)
-            {
-                $order->delivery_charge = 0;
-            }
-        }
-        $total_order_ammount = $total_price + $total_tax_amount + $order->delivery_charge;
-        $adjustment = $order->order_amount - $total_order_ammount;
-
-        $order->coupon_discount_amount = $coupon_discount_amount;
-        $order->restaurant_discount_amount= $restaurant_discount_amount;
-        $order->total_tax_amount= $total_tax_amount;
-        $order->order_amount = $total_order_ammount;
-        $order->adjusment = $adjustment;
-        $order->edited = true;
-        $order->save();
-        session()->forget('order_cart');
-        Toastr::success(trans('messages.order_updated_successfully'));
-        return back();
-    }
 
     public function quick_view(Request $request)
     {
@@ -820,17 +488,23 @@ class OrderController extends Controller
         ]);
     }
 
-    public function quick_view_cart_item(Request $request)
-    {
-        $cart_item = session('order_cart')[$request->key];
-        $order_id = $request->order_id;
-        $item_key = $request->key;
-        $product = $cart_item->food?$cart_item->food:$cart_item->campaign;
-        $item_type = $cart_item->food?'food':'campaign';
-        
-        return response()->json([
-            'success' => 1,
-            'view' => view('admin-views.order.partials._quick-view-cart-item', compact('order_id','product', 'cart_item', 'item_key','item_type'))->render(),
-        ]);
-    }
+
+
+    function downloadInvoice(Request $request,$orderId){
+         
+        $order = Order::where('id',$orderId)->first();
+        if (isset($order)) { 
+           $businessSettingData = BusinessSetting::where('key','logo')->first(); 
+           $businessSettingLogoPath = (isset($businessSettingData) && !empty($businessSettingData)) ? "/storage/app/public/business/".$businessSettingData->value : '';
+           
+          
+           $path = base_path($businessSettingLogoPath);;
+           $type = pathinfo($path,PATHINFO_EXTENSION);
+          
+           $data = file_get_contents($path);
+           $logoPath = 'data:image/'. $type .';base64,'. base64_encode($data);
+           $pdf = PDF::setOptions(['debugKeepTemp' => true,'defaultFont' => 'sans-serif','isHtml5ParserEnabled' => true, 'isPhpEnabled' => true])->loadView('admin-views.order.order-invoice',compact('order','logoPath'));
+          return $pdf->download('Invoice'.'# '.$orderId.'.pdf');
+         }
+    } 
 }

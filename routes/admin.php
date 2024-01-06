@@ -51,6 +51,8 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('update/{id}', 'CustomerController@update')->name('update');
             Route::delete('delete/{id}', 'CustomerController@distroy')->name('delete');
             Route::post('search', 'CustomerController@search')->name('search');
+            Route::post('refereddsearch', 'CustomerController@refereddsearch')->name('refereddsearch');
+            Route::get('referedd-list', 'CustomerController@refereed_list')->name('referedd-list');
         });
         Route::post('food/variant-price', 'ProductController@variant_price')->name('food.variant-price');
 
@@ -212,6 +214,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('details/{id}', 'OrderController@details')->name('details');
             Route::get('status', 'OrderController@status')->name('status');
             // Route::put('status-update/{id}', 'OrderController@status')->name('status-update');
+            Route::get('download-invoice/{id}', 'OrderController@downloadInvoice')->name('download-invoice');
             Route::get('view/{id}', 'OrderController@view')->name('view');
             Route::post('update-shipping/{order}', 'OrderController@update_shipping')->name('update-shipping');
             Route::delete('delete/{id}', 'OrderController@delete')->name('delete');
