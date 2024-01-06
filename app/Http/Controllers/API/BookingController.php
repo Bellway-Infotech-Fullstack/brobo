@@ -512,7 +512,7 @@ class BookingController extends Controller
             'due_amount_transaction_id.required' => 'due_amount_transaction_id is required.',
             'due_amount.required' => 'due_amount is required.',
         ]);
-    
+
         // Check for validation errors and return error response if any
         if ($validation->fails()) {
             return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
@@ -524,7 +524,10 @@ class BookingController extends Controller
         if (count($bookingData) == 0) {
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
+        
+        $oldDueAmount = $bookingData[0]['pending_amount'];
     
+        $dueAmount = $oldDueAmount - $dueAmount;
 
 
         Order::where('order_id', $bookingId)->update(['due_amount_transaction_id' => $transactionId, 'pending_amount' => $dueAmount]);

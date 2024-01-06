@@ -10,7 +10,10 @@ use App\Models\Notification;
 use App\Models\Coupon;
 use Carbon\Carbon;
 use App\Services\FCMService;
-
+use App\Models\Order;
+use App\Models\User;
+use App\Models\BusinessSetting;
+include 'cron_job.php';
 
 class NotificationController extends Controller
 {
@@ -38,7 +41,8 @@ class NotificationController extends Controller
              $orderBy =  'desc';
              $orderColumn = 'created_at';
              $perPage = 10; // Number of items to load per page
-
+             
+             
 
             
              // Define the validation rules
@@ -60,18 +64,24 @@ class NotificationController extends Controller
              $data = Notification::where('to_user_id',$customerId)
                 ->orderBy($orderColumn, $orderBy)
                 ->paginate($perPage, ['*'], 'page', $page);
+                
+              
 
             $data = $data->map(function ($notification) {
+                
+         
 
                 if($notification->coupon_id == ''){
                 $notification->description = $notification->description;
                 } else {
 
-                $couponData = Coupon::find($notification->coupon_id);                            
+                $couponData = Coupon::find($notification->coupon_id);    
+
+             
                 $couponDiscountType = $couponData->discount_type;
                 $couponCode = $couponData->code;
 
-                if($couponDiscountType == "discount"){
+                if($couponDiscountType == "percentage"){
                     $couponDiscount = $couponData->discount. " %";
                 } else {
                     $couponDiscount = "Rs. ".$couponData->discount;
@@ -83,7 +93,7 @@ class NotificationController extends Controller
                 
                 $notification->description = $description;
                  // Calculate time ago
-                $notification->time_ago = Carbon::parse($notification->created_at)->diffForHumans();
+              //  $notification->time_ago = Carbon::parse($notification->created_at)->diffForHumans();
 
                 return $notification;
              });
@@ -110,24 +120,128 @@ class NotificationController extends Controller
             $token = JWTAuth::getToken();
             $user = JWTAuth::toUser($token);
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
-            $count = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))->count();
-
             
+            $count = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))->count();
+            
+        $data = ['notification_count' => $count]; // Corrected the syntax of the array
 
-
-            FCMService::send(
-                $user->fcm_token,
-                [
-                    'title' => 'your title',
-                    'body' => 'your body',
-                ]
-            );
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $count]);
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $data]);
 
         } catch (\Exception $e) {
            
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
+    }
+
+    public function sendNotificationOfPeningDueAmountOrder(Request $request){
+         $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+           $customerId = 94;
+           
+           $customerData = User::find($customerId);
+           
+           $fcmToken = $customerData->fcm_token;
+           
+       $data =  sendNotificationOfPendingDueAmountOrder();
+       // Filter notifications based on $customerId
+        $filteredNotifications = array_filter($data, function ($notification) use ($customerId) {
+            return $notification['user_id'] == $customerId;
+        });
+        
+        // Convert the filtered array to indexed array
+        $filteredNotifications = array_values($filteredNotifications);
+        
+        
+      
+        
+        
+        $this->sendPushNotifcation($fcmToken,$filteredNotifications);
+        
+       
+        return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Notification send successfully']);
+    }
+    
+    
+    public function sendNotificationOfCompletedOrder(Request $request){
+         $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+           $customerId = 94;
+           
+           $customerData = User::find($customerId);
+           
+           $fcmToken = $customerData->fcm_token;
+           
+       $data =  sendNotificationOfCompletedOrder();
+       // Filter notifications based on $customerId
+        $filteredNotifications = array_filter($data, function ($notification) use ($customerId) {
+            return $notification['user_id'] == $customerId;
+        });
+        
+        // Convert the filtered array to indexed array
+        $filteredNotifications = array_values($filteredNotifications);
+        
+        
+      
+        
+        
+        $this->sendPushNotifcation($fcmToken,$filteredNotifications);
+        
+       
+        return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Notification send successfully']);
+    }
+
+
+  private static function sendPushNotifcation($fcmToken, $data)
+    {
+        $key = BusinessSetting::where(['key' => 'push_notification_key'])->first()->value;
+        
+        $url = "https://fcm.googleapis.com/fcm/send";
+        $header = array("authorization: key=" . $key . "",
+            "content-type: application/json"
+        );
+          if(isset($data) && !empty($data)){
+            foreach($data as $key => $value){
+                $postdata = '{
+            "to" : "' . $fcmToken . '",
+            "mutable_content": true,
+            "data" : {
+                "title":"' . $value['title'] . '",
+                "body" : "' . $value['body'] . '",
+                "order_id":"' . $value['order_id'] . '",
+                "is_read": 0
+            },
+            "notification" : {
+                "title" :"' . $value['title'] . '",
+                "body" : "' . $value['body'] . '",
+                "order_id":"' . $value['order_id'] . '",
+                "title_loc_key":"' . $value['order_id'] . '",
+                "is_read": 0,
+                "icon" : "new",
+                "sound" : "default"
+            }
+        }';
+        $ch = curl_init();
+        $timeout = 120;
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+        // Get URL content
+        $result = curl_exec($ch);
+        // close handle to release resources
+        curl_close($ch);
+                
+            }
+        }
+
+        
+
+       // return $result;
     }
 
 
