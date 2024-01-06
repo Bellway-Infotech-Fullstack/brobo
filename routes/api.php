@@ -40,7 +40,6 @@ Route::group(['namespace' => 'API'], function () {
     });
 
     Route::group(['middleware' => 'custom.jwt'], function () {
-
         Route::controller(UsersAddressController::class)->group(function () {
             Route::post('manage-delivery-address', 'manageAddress');
             Route::get('get-delivery-address', 'getAddress');
@@ -59,7 +58,6 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-setting-data', 'index');
             Route::put('update-notification-setting', 'updateNotificationSetting');
             Route::get('get-order-settings', 'getOrderSettings');
-            Route::get('get-referral-code','getReferralCode');     
         });
 
         Route::controller(ProductController::class)->group(function () {
@@ -103,6 +101,13 @@ Route::group(['namespace' => 'API'], function () {
         Route::controller(NotificationController::class)->group(function () {
             Route::get('get-notifications', 'index');
             Route::get('get-unread-notification-count', 'getUnreadNotificationsCount');
+            Route::post('send-notification-of-completed-order', 'sendNotificationOfCompletedOrder');
+            Route::post('send-notification-of-due-amount', 'sendNotificationOfDueAmountPending');
+        });
+
+        Route::controller(BankController::class)->group(function () {
+            Route::post('manage-bank-details','manageBankDetails');
+            Route::get('get-bank-details','getBankDetails');
         });
     });
 });

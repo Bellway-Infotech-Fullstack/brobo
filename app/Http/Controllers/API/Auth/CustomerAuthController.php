@@ -41,6 +41,8 @@ class CustomerAuthController extends Controller
                 ],
                 'address' => 'required',
                 'fcm_token' => 'required',
+        
+                
             ], [
                 'name.required' => 'Please enter a name.',
                 'name.regex' => 'Name should only contain letters and spaces.',
@@ -50,7 +52,7 @@ class CustomerAuthController extends Controller
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
                 'address.required' => 'Please enter an address.',
-                'fcm_token.required' => 'Please send fcm_token.',
+                'fcm_token.required' => 'Please send fcm token.',
             ]);
             
             if ($validation->fails()) {
@@ -66,6 +68,20 @@ class CustomerAuthController extends Controller
             $request['mobile_number'] = $request->mobile_number;
             $request['remember_token'] = Str::random(10);
             $request['fcm_token'] = $request->fcm_token;
+            $referralCode = Str::random(10);
+            $request['referral_code'] = $referralCode;
+
+            
+
+            $count = User::where('referral_code', $referralCode)->count();
+
+            if($count > 0){
+                return response()->json(['status' => 'error', 'code' => 500, 'message' => 'Referral code already exists']);
+            }
+
+            $request['referred_code'] = $request->referred_code;
+
+
 
             // Create a new user
             $user = User::create($request->toArray());
@@ -126,12 +142,14 @@ class CustomerAuthController extends Controller
                         ->numbers()
                         ->symbols()
                 ],
+                'fcm_token' => 'required',
             ], [
                 'mobile_number.required' => 'Please enter mobile number.',
                 'mobile_number.regex' => 'The mobile number ••••••••should start with +91 and have 10 digits.',
                 'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
+                'fcm_token.required' => 'Please send fcm token.',
             ]);
             
             
@@ -154,7 +172,11 @@ class CustomerAuthController extends Controller
 
             // Generate a token for the user
             $token = JWTAuth::fromUser($user);
-            $user->update(['auth_token' => $token]);
+
+          
+
+
+            $user->update(['auth_token' => $token,'fcm_token' => $request->fcm_token]);
 
             if ($user->role_id != $request->role_id) {
                 // The user has an invalid role

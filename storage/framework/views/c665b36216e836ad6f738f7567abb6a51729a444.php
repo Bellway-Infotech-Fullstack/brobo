@@ -313,9 +313,9 @@
 
                             </td>
                             <td class="table-column-pl-0">
-                                
+                             <a href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><?php echo e($order['order_id']); ?></a>
 
-                                <a href="#"><?php echo e($order['order_id']); ?></a>
+                      
                             </td>
                             <td><?php echo e(date('d M Y',strtotime($order['created_at']))); ?></td>
                             <td>
