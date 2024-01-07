@@ -89,7 +89,7 @@
                </tr>
                <tr>
                   <td width="50%">Invoice </td>
-                  <td width="50%">#{{ $order['id'] }}</td> 
+                  <td width="50%">#{{ $order['order_id'] }}</td> 
                </tr>
                <tr>
                   <td>Customer ID</td>

@@ -24,7 +24,12 @@
     <?php
     $campaign_order = isset($order->details[0]->campaign) ? true : false;
     $parcel_order = $order->order_type == 'parcel' ? true : false;
+ 
+    $cartItems = json_decode($order->cart_items,true);  
+    $product_price = 0;
+    $total_item_price = 0;
     ?>
+  
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header d-print-none">
@@ -45,7 +50,7 @@
                     </nav>
 
                     <div class="d-sm-flex align-items-sm-center">
-                        <h1 class="page-header-title"><?php echo e(__('messages.order')); ?> #<?php echo e($order['id']); ?></h1>
+                        <h1 class="page-header-title"><?php echo e(__('messages.order')); ?> #<?php echo e($order['order_id']); ?></h1>
 
                             <span class="badge badge-soft-success ml-sm-3">
                                 <span class="legend-indicator bg-success"></span><?php echo e(__('messages.paid')); ?>
@@ -58,7 +63,7 @@
                                 <span class="legend-indicator bg-info text"></span>Ongoing
                             </span>
                         <?php elseif($order['status'] == 'cancelled'): ?>
-                            <span class="badge badge-soft-info ml-2 ml-sm-3 text-capitalize">
+                            <span class="badge badge-soft-danger ml-2 ml-sm-3 text-capitalize">
                                 <span class="legend-indicator bg-danger"></span>Cancelled
                             </span>
                
@@ -71,22 +76,12 @@
                         <?php else: ?>
                             <span class="badge badge-soft-danger ml-2 ml-sm-3 text-capitalize">
                                 <span
-                                    class="legend-indicator bg-danger"></span><?php echo e(str_replace('_', ' ', $order['order_status'])); ?>
+                                    class="legend-indicator bg-danger"></span><?php echo e(str_replace('_', ' ', $order['status'])); ?>
 
                             </span>
                         <?php endif; ?>
-                        <?php if($campaign_order): ?>
-                            <span class="badge badge-soft-success ml-sm-3">
-                                <span class="legend-indicator bg-success"></span><?php echo e(__('messages.campaign_order')); ?>
-
-                            </span>
-                        <?php endif; ?>
-                        <?php if($order->edited): ?>
-                            <span class="badge badge-soft-dark ml-sm-3">
-                                <span class="legend-indicator bg-dark"></span><?php echo e(__('messages.edited')); ?>
-
-                            </span>
-                        <?php endif; ?>
+                       
+                     
                         <span class="ml-2 ml-sm-3">
                             <i class="tio-date-range"></i>
                             <?php echo e(date('d M Y ' . config('timeformat'), strtotime($order['created_at']))); ?>
@@ -123,27 +118,17 @@
                                     </button>
                                     <?php ($order_delivery_verification = (bool) \App\Models\BusinessSetting::where(['key' => 'order_delivery_verification'])->first()->value); ?>
                                     <div class="dropdown-menu text-capitalize" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'pending' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'pending'])); ?>','Change status to pending ?')"
-                                            href="javascript:"><?php echo e(__('messages.pending')); ?></a>
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'confirmed' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'confirmed'])); ?>','Change status to confirmed ?')"
-                                            href="javascript:"><?php echo e(__('messages.confirmed')); ?></a>
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'processing' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'processing'])); ?>','Change status to processing ?')"
-                                            href="javascript:"><?php echo e(__('messages.processing')); ?></a>
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'handover' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'handover'])); ?>','Change status to handover ?')"
-                                            href="javascript:"><?php echo e(__('messages.handover')); ?></a>
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'picked_up' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'picked_up'])); ?>','Change status to out for delivery ?')"
-                                            href="javascript:"><?php echo e(__('messages.out_for_delivery')); ?></a>
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'delivered' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'delivered'])); ?>','Change status to delivered (payment status will be paid if not)?')"
-                                            href="javascript:"><?php echo e(__('messages.delivered')); ?></a>
-                                        <a class="dropdown-item <?php echo e($order['order_status'] == 'canceled' ? 'active' : ''); ?>"
-                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'order_status' => 'canceled'])); ?>','Change status to canceled ?')"
-                                            href="javascript:"><?php echo e(__('messages.canceled')); ?></a>
+                                        <a class="dropdown-item <?php echo e($order['status'] == 'ongoing' ? 'active' : ''); ?>"
+                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'status' => 'ongoing'])); ?>','Change status to ongoing ?')"
+                                            href="javascript:">Ongoing</a>
+                                    
+                                 
+                                   
+                                   
+                                 
+                                        <a class="dropdown-item <?php echo e($order['status'] == 'cancelled' ? 'active' : ''); ?>"
+                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'status' => 'cancelled'])); ?>','Change status to cancelled ?')"
+                                            href="javascript:">Cancelled</a>
                                     </div>
                                 </div>
                             </div>
@@ -177,185 +162,27 @@
                         <div class="row">
                             <div class="col-12 pb-2 border-bottom  d-flex justify-content-between">
                                 <h4 class="card-header-title">
-                                
-                                
-                                
+                                   
+                                  
                                     <?php echo e(__('messages.order')); ?> <?php echo e(__('messages.details')); ?>
 
                                     <span
-                                        class="badge badge-soft-dark rounded-circle ml-1">  <?php echo e((count($products))); ?> </span>
+                                        class="badge badge-soft-dark rounded-circle ml-1">  <?php echo e((count($cartItems))); ?> </span>
                                 </h4>
-                                <?php if(!$parcel_order && !$editing && in_array($order->order_status, ['pending', 'confirmed', 'processing', 'accepted']) && isset($order->store)): ?>
-                                    <button class="btn btn-sm btn-primary" type="button" onclick="edit_order()">
-                                        <i class="tio-edit"></i> <?php echo e(__('messages.edit')); ?>
-
-                                    </button>
-                                <?php endif; ?>
+                           
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-6 pt-2">
-                         
-                                <?php if($order->order_attachment): ?>
-                                    <h5 class="text-dark">
-                                        <?php echo e(__('messages.prescription')); ?>:
-                                    </h5>
-                                    <button class="btn w-100" data-toggle="modal" data-target="#imagemodal"
-                                        title="<?php echo e(__('messages.order')); ?> <?php echo e(__('messages.attachment')); ?>">
-                                        <div class="gallary-card">
-                                            <img src="<?php echo e(asset('storage/app/' . 'public/order/' . $order->order_attachment)); ?>"
-                                                alt="<?php echo e(__('messages.prescription')); ?>" style="height:auto;width:50%;">
-                                        </div>
-                                    </button>
-                                    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog"
-                                        aria-labelledby="myModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title" id="myModalLabel">
-                                                        <?php echo e(__('messages.prescription')); ?></h4>
-                                                    <button type="button" class="close" data-dismiss="modal"><span
-                                                            aria-hidden="true">&times;</span><span
-                                                            class="sr-only">Close</span></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <img src="<?php echo e(asset('storage/app/' . 'public/order/' . $order->order_attachment)); ?>"
-                                                        style="width: 100%; height: auto;">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <a class="btn btn-primary"
-                                                        href="<?php echo e(route('admin.file-manager.download', base64_encode('public/order/' . $order->order_attachment))); ?>"><i
-                                                            class="tio-download"></i> <?php echo e(__('messages.download')); ?> </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="col-6 pt-2">
-                                <div class="text-right">
-                                    
-                                   
-                                </div>
-                            </div>
-                        </div>
-                        <!-- item cart -->
-                        <?php if($editing && !$campaign_order): ?>
-                            <div class="row border-top pt-1">
-                                <div class="col-12 d-flex flex-wrap justify-content-between ">
-                                    <form id="search-form" class="header-item">
-                                        <!-- Search -->
-                                        <div class="input-group input-group-merge input-group-flush">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="tio-search"></i>
-                                                </div>
-                                            </div>
-                                            <input id="datatableSearch" type="search" value="<?php echo e($keyword ? $keyword : ''); ?>"
-                                                name="search" class="form-control" placeholder="Search here"
-                                                aria-label="Search here">
-                                        </div>
-                                        <!-- End Search -->
-                                    </form>
-                                    <div class="input-group header-item">
-                                        <select name="category" id="category" class="form-control js-select2-custom mx-1"
-                                            title="<?php echo e(__('messages.select')); ?> <?php echo e(__('messages.category')); ?>"
-                                            onchange="set_category_filter(this.value)">
-                                            <option value=""><?php echo e(__('messages.all')); ?> <?php echo e(__('messages.categories')); ?>
-
-                                            </option>
-                                            <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($item->id); ?>"
-                                                    <?php echo e($category == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-
-                                </div>
-                                <div class="col-12" id="items">
-                                    <div class="d-flex flex-wrap mt-2 mb-3" style="justify-content: space-around;">
-                                        <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <div class="item-box">
-                             
-                                                <?php echo $__env->make(
-                                                    'admin-views.order.partials._single_product',
-                                                    [
-                                                        'product' => $product,
-                                                        'store_data' => $order->store,
-                                                    ]
-                                                , \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                
-                                            </div>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <?php echo $products->withQueryString()->links(); ?>
-
-                                </div>
-                            </div>
-                        <?php endif; ?>
+                     
                     </div>
                     <!-- End Header -->
 
                     <!-- Body -->
                     <div class="card-body">
-                        <?php if($order->order_type=='parcel'): ?>
-                            <?php
-                            $coupon = null;
-                            $total_addon_price = 0;
-                            $product_price = 0;
-                            $store_discount_amount = 0;
-                            $del_c = $order['delivery_charge'];
-                            $total_tax_amount = 0;
-                            $total_addon_price = 0;
-                            $coupon_discount_amount = 0;
-                            ?>
-                            <div class="media">
-                                <div class="avatar avatar-xl mr-3" title="<?php echo e($order->parcel_category?$order->parcel_category->name:__('messages.parcel_category_not_found')); ?>">
-                                    <img class="img-fluid"
-                                        src="<?php echo e(asset('storage/app/public/parcel_category')); ?>/<?php echo e($order->parcel_category?$order->parcel_category->image:''); ?>"
-                                        onerror="this.src='<?php echo e(asset('public/assets/admin/img/160x160/img2.jpg')); ?>'">
-                                </div>
-                                <div class="media-body">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3 mb-md-0">
-                                            <strong> <?php echo e(Str::limit($order->parcel_category?$order->parcel_category->name:__('messages.parcel_category_not_found'), 25, '...')); ?></strong><br>
-                                            <div class="font-size-sm text-body">
-                                                <span><?php echo e($order->parcel_category?$order->parcel_category->description:__('messages.parcel_category_not_found')); ?></span>
-                                            </div>
-                                        </div>
+                    
 
-                                        <div class="col col-md-2 align-self-center">
-                                            <h6><?php echo e(__('messages.distance')); ?></h6>
-                                            <span><?php echo e($order->distance); ?> km</span>
-                                        </div>
-                                        <div class="col col-md-1 align-self-center">
-
-                                        </div>
-
-                                        <div class="col col-md-3 align-self-center text-right ">
-                                            <h6><?php echo e(__('messages.delivery_charge')); ?></h6>
-                                            <span><?php echo e(\App\CentralLogics\Helpers::format_currency($del_c)); ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                        <?php else: ?>
-                            <?php
-                            $product_price = 0;
-                         
-                       
-                           
-                            $details = \App\Models\Order::where('id',$order->id)->get();
-                            $total_item_price = 0;
-                            ?>
-                            <?php $__currentLoopData = $details; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                <?php
-                                  $delivery_charge = $detail['delivery_charge'];
-                                $cartItems = json_decode($detail->cart_items,true);
-                                   
+                                  $delivery_charge = $order->delivery_charge;
+                                 
                                     
                                 ?>
    
@@ -363,45 +190,46 @@
                                     <!-- Media -->
                                     <div class="media">
 
-                                        <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $detail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php
-                                        $amount = $detail['item_price'] * $detail['quantity'];
-                                        $total_item_price = $total_item_price + $detail['item_price'];
-                                         ?>
-                                 
-                                            <img class="img-fluid" src="<?php echo e($detail['item_image']); ?>"  alt="Image Description">
+                                      
                                     
                                       
                                         <div class="media-body">
+                                            <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php
+                                            $amount = $value['item_price'] * $value['quantity'];
+                                            $total_item_price = $total_item_price + $value['item_price'];
+                                             ?>
+                                     
+                                                <img class="img-fluid" src="<?php echo e($value['item_image']); ?>"  alt="Product Image" height="100" width="100">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3 mb-md-0">
                                                     <strong>
-                                                        <?php echo e(Str::limit($detail['item_name'], 20, '...')); ?></strong><br>
+                                                        <?php echo e(Str::limit($value['item_name'], 20, '...')); ?></strong><br>
                                                 </div>
 
                                                 <div class="col col-md-2 align-self-center">
-                                                    <h6>    Rs . <?php echo e($detail['item_price'] / $detail['quantity']); ?>
+                                                    <h6>    Rs . <?php echo e($value['item_price'] / $value['quantity']); ?>
 
                                                     </h6>
                                                 </div>
                                                 <div class="col col-md-1 align-self-center">
-                                                    <h5><?php echo e($detail['quantity']); ?></h5>
+                                                    <h5><?php echo e($value['quantity']); ?></h5>
                                                 </div>
 
                                                 <div class="col col-md-3 align-self-center text-right">
                                                   
-                                                    <h5> Rs . <?php echo e($detail['item_price']); ?></h5>
+                                                    <h5> Rs . <?php echo e($value['item_price']); ?></h5>
                                                 </div>
                                             </div>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                      
                                     </div>
-                                   
+                                
                                   
                                     <!-- End Media -->
                                     <hr>
                                
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                             <?php
 
@@ -430,7 +258,7 @@
                          
 
                             ?>
-                        <?php endif; ?>
+                     
 
                         <div class="row justify-content-md-end mb-3">
                             <div class="col-md-9 col-lg-8">

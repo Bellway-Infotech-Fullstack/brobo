@@ -14,24 +14,10 @@
                 <hr class="non-printable">
             </div>
             <div class="col-5">
-                @if ($order->store)
-                <div class="text-center pt-4 mb-3">
-                  
-                    <h5 style="font-size: 16px;font-weight: lighter;line-height: 1">
-                        {{__('messages.phone')}} : {{$order->store->phone}}
-                    </h5>
-               
-		        </h5>
-           
-		     
-                </div>                    
-                
-
-                <span>---------------------------------------------------------------------------------</span>
-                @endif
+             
                 <div class="row mt-3">
                     <div class="col-6">
-                        <h5>{{__('order_id')}} : {{$order['id']}}</h5>
+                        <h5>Booking ID  {{$order['order_id']}}</h5>
                     </div>
                     <div class="col-6">
                         <h5 style="font-weight: lighter">
@@ -46,9 +32,11 @@
                 <table class="table table-bordered mt-3" style="width: 98%; color:#000000">
                     <thead>
                     <tr>
+                        <th class="">S. No.</th>
+                        <th class="">Item Name</th>
                         <th style="width: 10%">Quantity</th>
-                        <th class="">Name</th>
                         <th class="">{{__('messages.price')}}</th>
+                        <th class="">Sub Total</th>
                     </tr>
                     </thead>
 
@@ -64,28 +52,29 @@
                         @php($total_tax=0)
                         @php($total_dis_on_pro=0)
                         @php($add_ons_cost=0)
+                        @php($count=0)
                         @foreach(json_decode($order->cart_items,true) as $detail)
-                           
+                        @php($count++)
                                 <tr>
-                                    <td class="">
-                                        {{$detail['quantity']}}
-                                    </td>
                                     <td class="text-break">
-                                        {{$detail['item_name']}} <br>
-                                      
-                                        
-                                        
+                                        {{$count}} <br>  </td>
 
-                                    </td>
+                                    <td class="text-break">
+                                        {{$detail['item_name']}} <br>  </td>
+                                        <td class="">
+                                            {{$detail['quantity']}}
+                                        </td>
                                     <td style="width: 28%">
                                         @php($amount=($detail['item_price']))
-                                        {{\App\CentralLogics\Helpers::format_currency($amount)}}
+                                        Rs . {{$detail['item_price']/ $detail['quantity']}}
                                     </td>
-                                   
+                                    <td style="width: 28%">
+                                        Rs . {{$detail['item_price']}}
+                                    </td>
                                     
                                    
                                 </tr>
-                                @php($sub_total=$amount)
+                                @php($sub_total=$sub_total+$amount)
                             
                            
                         @endforeach                        
@@ -98,36 +87,29 @@
                     <div class="col-md-7 col-lg-7">
                         <dl class="row text-right">
                             @if ($order->order_type !='parcel')
-                            <dt class="col-6">{{__('item_price')}}:</dt>
-                            <dd class="col-6">{{\App\CentralLogics\Helpers::format_currency($sub_total)}}</dd>
-
+                          
                             <?php
 
                                 $coupon_data = \App\Models\Coupon::where('id',$order->coupon_id)->first();
-
-
-                                                        
-
-                                                    
-
                                 $coupon_discount_amount = (isset($coupon_data)) ?  $coupon_data['discount'] : 0;
                                 ?>
                             
                             <dt class="col-6">{{__('messages.subtotal')}}:</dt>
                             <dd class="col-6">
-                                {{\App\CentralLogics\Helpers::format_currency($sub_total)}}</dd>
+                                Rs.  {{$sub_total}}</dd>
                             <dt class="col-6"></dt>
                             <dd class="col-6">
-                            <dt class="col-6">Coupon Discount:</dt>
-                            <dd class="col-6">
-                                - {{($coupon_discount_amount)}}</dd>
+                          
                        
                             <dt class="col-6">{{__('messages.delivery_charge')}}:</dt>
                             <dd class="col-6">
                                 @php($del_c=$order['delivery_charge'])
-                                {{\App\CentralLogics\Helpers::format_currency($del_c)}}
+                               Rs. {{$del_c}}
                                 <hr>
-                            </dd>                                
+                            </dd>      
+                            <dt class="col-6">Coupon Discount:</dt>
+                            <dd class="col-6">
+                                - {{($coupon_discount_amount)}}</dd>                          
                             @endif
 
 
