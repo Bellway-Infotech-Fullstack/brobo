@@ -57,6 +57,7 @@ Route::group(['namespace' => 'API'], function () {
         Route::controller(SettingController::class)->group(function () {
             Route::get('get-setting-data', 'index');
             Route::put('update-notification-setting', 'updateNotificationSetting');
+            Route::get('get-payment-keys', 'getPaymentKeys');
             Route::get('get-order-settings', 'getOrderSettings');
         });
 

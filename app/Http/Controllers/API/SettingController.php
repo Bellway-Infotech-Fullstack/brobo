@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BusinessSetting;
 use App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SettingController extends Controller
 {
@@ -68,18 +69,21 @@ class SettingController extends Controller
     {
         // Try to update customer details
         try {
-            // Get customer_id from the request
-            $customerId = $request->post('customer_id');           
+            // Get customer_id from the token
+            
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $userId = (isset($user) && !empty($user)) ? $user->id : '';
+
+
             $isNotificationSettingOn = $request->post('is_notification_setting_on');  
             
 
             // Validate the input data
             $validation = Validator::make($request->all(), [
-                'customer_id' => 'required',
                 'is_notification_setting_on' => 'required',
 
             ], [
-                'customer_id.required' => 'Please enter a customer id.',
                 'is_notification_setting_on.required' => 'Please enter a starus.',
             ]);
             
@@ -89,15 +93,26 @@ class SettingController extends Controller
                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
             }
 
-            $userData   = User::find($customerId);
+            $userData   = User::find($userId);
              
              if ($userData) {
                  // Update notification setting details
+                if($isNotificationSettingOn == 'no'){
+                  //  date_default_timezone_set("Asia/Kolkata");
+                    $userData->notification_off_time = date("Y-m-d H:i:s"); 
+                    $message = "Notification disabled successfully";
+                } else {
+                    $userData->notification_off_time = NULL; 
+                    $message = "Notification enabled successfully";
+                }
+
+
                  $userData->is_notification_setting_on = $isNotificationSettingOn; 
+                 
                  $userData->save();
              }          
             
-             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Setting updated successfully']);
+             return response()->json(['status' => 'success', 'code' => 200, 'message' =>  $message ]);
             
         } catch (\Exception $e) {
             // Handle exceptions, if any
@@ -153,6 +168,44 @@ class SettingController extends Controller
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function getPaymentKeys(Request $request){
+        try {
+
+            $payment_gateway_name = $request->get('payment_gateway_name');
+            
+            $payment_keys_data = BusinessSetting::where(['key' => $payment_gateway_name])->first();
+            $payment_keys_data = (isset($payment_keys_data) && !empty($payment_keys_data)) ? json_decode($payment_keys_data->value,true) : '';
+            $data = null;
+
+            if($payment_gateway_name == 'razor_pay'){
+                $data = array('key' => $payment_keys_data['razor_key'],'secret' => $payment_keys_data['razor_secret']);
+
+            }
+
+            if($payment_gateway_name == 'stripe'){
+                $data = array('key' => $payment_keys_data['api_key'],'secret' => $payment_keys_data['published_key']);
+
+            }
+
+            if($payment_gateway_name == 'paypal'){
+                $data = array('key' => $payment_keys_data['paypal_client_id'],'secret' => $payment_keys_data['paypal_secret']);
+
+            }
+            if($data == null){
+                return response()->json(['status' => 'error', 'code' => 500, 'data' =>  $data ]);
+            }
+
+            return response()->json(['status' => 'success', 'code' => 200, 'data' =>  $data ]);
+   
+
+
+         } catch (\Exception $e) {
+            // Handle exceptions, if any
+            return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
+        }
+
     }
 
      

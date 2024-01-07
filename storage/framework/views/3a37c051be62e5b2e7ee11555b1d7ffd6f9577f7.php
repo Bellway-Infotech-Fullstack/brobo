@@ -48,7 +48,7 @@
             </div>
 
             <hr>
-            <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
+            <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2 d-none">
 
                 <div class="card">
                     <div class="card-header">
