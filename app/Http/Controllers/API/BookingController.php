@@ -13,6 +13,7 @@ use App\Models\UsersAddress;
 use App\Models\BusinessSetting;
 use App\Models\Product;
 use App\Models\Wishlist;
+use App\Models\User;
 
 class BookingController extends Controller
 {
@@ -147,6 +148,29 @@ class BookingController extends Controller
             }
 
                 $pendingAmount = $totalAmount - $paidAmount;
+                $allCustomers = User::where('role_id','2')->get();
+                $loginUserData = User::find( $customerId);
+                $loginUserReferredCode = $loginUserData->referred_code ?? '';
+               
+                if(isset($allCustomers) && !empty($allCustomers)){
+                    foreach($allCustomers as $key => $value){
+                        echo "loginUserReferredCode = ";
+                        echo "<br>";
+                        echo $loginUserReferredCode;
+                        echo "<br>";
+                        echo "user referral_code = ";
+                        echo "<br>";
+                        echo $value->referral_code;
+                        if($loginUserReferredCode == $value->referral_code){
+                            echo "<br>";
+                            echo "user id =".$value->id;
+                            echo "<br>";
+                        }
+                    }
+                }
+
+
+                die;
 
                
                 

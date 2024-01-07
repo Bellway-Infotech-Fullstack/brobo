@@ -55,10 +55,7 @@ class BannerController extends Controller
 
     public function update(Request $request, Banner $banner)
     {
-        
-
-
-        $banner->image = $request->has('image') ? Helpers::update('banner/', $banner->image, 'png', $request->file('image')) : $banner->image;
+       $banner->image = $request->has('image') ?  Helpers::upload('banner/', 'png', $request->file('image')) : $banner->image;
         $banner->save();
         Toastr::success(trans('messages.banner_updated_successfully'));
         return redirect('admin/banner/add-new');

@@ -85,6 +85,7 @@
                                             class="text-truncate"><?php echo e(__('messages.add')); ?> <?php echo e(__('messages.new')); ?></span>
                                     </a>
                                 </li>
+                                
                                 <li class="nav-item <?php echo e(Request::is('admin/customer/list')?'active':''); ?>">
                                     <a class="nav-link " href="<?php echo e(route('admin.customer.list')); ?>"
                                        title="<?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.list')); ?>">
@@ -93,6 +94,13 @@
                                     </a>
                                 </li>
 
+                                <li class="nav-item <?php echo e(Request::is('admin/customer/list')?'active':''); ?>">
+                                    <a class="nav-link " href="<?php echo e(route('admin.customer.refereed-list')); ?>"
+                                       title="<?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.list')); ?>">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">Referred Customer <?php echo e(__('messages.list')); ?></span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                 <?php endif; ?>
