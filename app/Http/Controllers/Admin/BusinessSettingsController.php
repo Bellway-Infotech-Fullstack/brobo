@@ -177,18 +177,60 @@ class BusinessSettingsController extends Controller
 
      
         $time_slots = '';
-        if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
+
+
+        $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
+        $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ?  explode(",",$order_time_slot_data->value) : array();
+
+
+
+        /*if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
-               $time_slots =  $time_slots . $value."-".$order_to_time_slots[$key] . ",";
+               $time_slot = $value."-".$order_to_time_slots[$key]; 
+               echo "<pre>";
+
+               print_r($time_slot);
+               print_r($order_time_slot_data);
+               if(in_array($time_slot,$order_time_slot_data)){
+                echo "here";
+               // Toastr::error(trans('Slot already exist'));
+               // return back();
+               }
+               $time_slots =  $time_slots . $time_slot  . ",";
                 
             }
             $time_slots = rtrim($time_slots, ',');
-
-           
+            die;
             DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
                 'value' => $time_slots
             ]);
 
+        }*/
+        if (isset($order_from_time_slots) && !empty($order_from_time_slots)) {
+            foreach ($order_from_time_slots as $key => $value) {
+                $time_slot = $value . "-" . $order_to_time_slots[$key];
+        
+                echo "<pre>";
+                print_r($time_slot);
+                print_r($order_time_slot_data);
+        
+                // Check uniqueness against both arrays
+                if (in_array($time_slot, $order_time_slot_data)) {
+                          Toastr::error(trans('Slot already exist'));
+                return back();
+                    // Handle error or return response
+                } else {
+                    $order_time_slot_data[] = $time_slot;
+                    $time_slots .= $time_slot . ",";
+                }
+            }
+        
+            $time_slots = rtrim($time_slots, ',');
+        
+            // Update or insert the time slots into the database
+            DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
+                'value' => $time_slots
+            ]);
         }
         
 
@@ -1021,19 +1063,26 @@ class BusinessSettingsController extends Controller
         $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
         $order_time_slot_data = explode(",",$order_time_slot_data->value);
 
-        echo "<pre>";
 
-        print_r($order_time_slot_data);
-        die;
+       
+ 
 
+        if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+            foreach($order_time_slot_data as $key => $value){
+                if($value == $timeSlot){
+                    unset($order_time_slot_data[$key]);
 
+                }
+            } 
+        }
+      
         BusinessSetting::updateOrInsert(['key' => 'order_time_slots'],
         [
-            'value' => $timeSlot,
+            'value' => isset($order_time_slot_data) && !empty($order_time_slot_data) ? implode(",",$order_time_slot_data) : '',
             'updated_at' => now()
         ]);
-        Toastr::success('Slot removed successfully');
-        return back();
+        return json_encode(['status' => true,'message' => 'Slot removed successfully']);
+       
     }
 
     

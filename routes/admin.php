@@ -52,7 +52,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::delete('delete/{id}', 'CustomerController@distroy')->name('delete');
             Route::post('search', 'CustomerController@search')->name('search');
             Route::post('refereddsearch', 'CustomerController@refereddsearch')->name('refereddsearch');
-            Route::get('referedd-list', 'CustomerController@refereed_list')->name('referedd-list');
+            Route::get('refereed-list', 'CustomerController@refereed_list')->name('refereed-list');
         });
         Route::post('food/variant-price', 'ProductController@variant_price')->name('food.variant-price');
 

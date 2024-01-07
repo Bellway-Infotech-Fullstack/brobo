@@ -290,8 +290,10 @@
                         <th class="table-column-pl-0">{{__('messages.order')}} ID</th>
                         <th>Booking Date</th>
                         <th>{{__('messages.customer')}}</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Time Slot</th>
                         <th>Paid Amount</th>
-                        <th>Due Amount</th>
                         <th>{{__('messages.payment')}} {{__('messages.status')}}</th>                       
                         <th>{{__('messages.order')}} {{__('messages.status')}}</th>
                         <th>{{__('messages.actions')}}</th>
@@ -313,19 +315,19 @@
                             <td>{{date('d M Y',strtotime($order['created_at']))}}</td>
                             <td>
                                 @if($order->customer)
-                                    {{-- <a class="text-body text-capitalize"
-                                       href="{{route('admin.customer.view',[$order['user_id']])}}">{{$order->customer['name']}}</a> --}}
+                                 <a class="text-body text-capitalize"
+                                       href="{{route('admin.customer.view',[$order['user_id']])}}">{{$order->customer['name']}}</a> 
 
-                                       <a class="text-body text-capitalize"
-                                       href="#">{{$order->customer['name']}}</a>
+                                  
                                 @else
                                     <label class="badge badge-danger">{{__('messages.invalid')}} {{__('messages.customer')}} {{__('messages.data')}}</label>
                                 @endif
                             </td>
                         
-                          
+                            <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
+                            <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
+                            <td>{{ $order['time_duration'] }}</td>
                             <td>Rs. {{ number_format($order->paid_amount)  }} </td>
-                            <td>Rs. {{ number_format($order->pending_amount)  }} </td>
                             <td>
                               
                                 <span class="badge badge-soft-success">

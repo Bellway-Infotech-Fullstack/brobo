@@ -1,16 +1,14 @@
-@extends('layouts.admin.app')
+<?php $__env->startSection('title','Customer Details'); ?>
 
-@section('title','Customer Details')
+<?php $__env->startPush('css_or_js'); ?>
 
-@push('css_or_js')
+<?php $__env->stopPush(); ?>
 
-@endpush
-
-@php
+<?php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
-@endphp
-@section('content')
+?>
+<?php $__env->startSection('content'); ?>
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="d-print-none pb-2">
@@ -20,19 +18,21 @@
                         <ol class="breadcrumb breadcrumb-no-gutter">
                             <li class="breadcrumb-item">
                                 <a class="breadcrumb-link"
-                                   href="{{route('admin.customer.list')}}">
-                                    {{__('messages.customers')}}
+                                   href="<?php echo e(route('admin.customer.list')); ?>">
+                                    <?php echo e(__('messages.customers')); ?>
+
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">{{__('messages.customer')}} {{__('messages.details')}}</li>
+                            <li class="breadcrumb-item active" aria-current="page"><?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.details')); ?></li>
                         </ol>
                     </nav>
 
                     <div class="d-sm-flex align-items-sm-center">
-                        <h1 class="page-header-title">{{__('messages.customer')}} {{__('messages.id')}} #{{$customer['id']}}</h1>
+                        <h1 class="page-header-title"><?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.id')); ?> #<?php echo e($customer['id']); ?></h1>
                         <span class="ml-2 ml-sm-3">
                         <i class="tio-date-range">
-                        </i> {{__('messages.joined_at')}} : {{date('d M Y '.config('timeformat'),strtotime($customer['created_at']))}}
+                        </i> <?php echo e(__('messages.joined_at')); ?> : <?php echo e(date('d M Y '.config('timeformat'),strtotime($customer['created_at']))); ?>
+
                         </span>
                     </div>
                     
@@ -40,12 +40,12 @@
 
                 <div class="col-sm-auto">
                     <a class="btn btn-icon btn-sm btn-ghost-secondary rounded-circle mr-1"
-                       href="{{route('admin.customer.view',[$customer['id']-1])}}"
+                       href="<?php echo e(route('admin.customer.view',[$customer['id']-1])); ?>"
                        data-toggle="tooltip" data-placement="top" title="Previous customer">
                         <i class="tio-arrow-backward"></i>
                     </a>
                     <a class="btn btn-icon btn-sm btn-ghost-secondary rounded-circle"
-                       href="{{route('admin.customer.view',[$customer['id']+1])}}" data-toggle="tooltip"
+                       href="<?php echo e(route('admin.customer.view',[$customer['id']+1])); ?>" data-toggle="tooltip"
                        data-placement="top" title="Next customer">
                         <i class="tio-arrow-forward"></i>
                     </a>
@@ -70,10 +70,10 @@
                                }'>
                             <thead class="thead-light">
                             <tr>
-                                <th>{{__('messages.#')}}</th>
-                                <th style="width: 50%" class="text-center">{{__('messages.order')}} {{__('messages.id')}}</th>
-                                <th style="width: 50%">{{__('messages.total')}}</th>
-                                <th style="width: 10%">{{__('messages.action')}}</th>
+                                <th><?php echo e(__('messages.#')); ?></th>
+                                <th style="width: 50%" class="text-center"><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.id')); ?></th>
+                                <th style="width: 50%"><?php echo e(__('messages.total')); ?></th>
+                                <th style="width: 10%"><?php echo e(__('messages.action')); ?></th>
                             </tr>
                             <tr>
                                 <th></th>
@@ -83,36 +83,36 @@
                                 </th>
                                 <th></th>
                                 <th>
-                                    {{--<input type="text" id="column4_search" class="form-control form-control-sm"
-                                           placeholder="Search countries">--}}
+                                    
                                 </th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            @foreach($orders as $key=>$order)
+                            <?php $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    <td>{{$key+1}}</td>
+                                    <td><?php echo e($key+1); ?></td>
                                     <td class="table-column-pl-0 text-center">
-                                        <a href="{{route('admin.order.details',['id'=>$order['id']])}}">{{$order['order_id']}}</a>
+                                        <a href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><?php echo e($order['order_id']); ?></a>
                                     </td>
-                                    <td>Rs. {{$order['paid_amount'] }}</td>
+                                    <td>Rs. <?php echo e($order['paid_amount']); ?></td>
                                     <td>
                                         <a class="btn btn-sm btn-white"
-                                                    href="{{route('admin.order.details',['id'=>$order['id']])}}" title="{{__('messages.view')}}"><i
+                                                    href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>" title="<?php echo e(__('messages.view')); ?>"><i
                                                             class="tio-visible"></i></a>
                                         <a class="btn btn-sm btn-white" target="_blank"
-                                                    href="{{route('admin.order.generate-invoice',[$order['id']])}}" title="{{__('messages.invoice')}}"><i
+                                                    href="<?php echo e(route('admin.order.generate-invoice',[$order['id']])); ?>" title="<?php echo e(__('messages.invoice')); ?>"><i
                                                             class="tio-download"></i> </a>
                                     </td>
                                 </tr>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>
                         <!-- Footer -->
                         <div class="card-footer">
                             <!-- Pagination -->
-                        {!! $orders->links() !!}
+                        <?php echo $orders->links(); ?>
+
                         <!-- End Pagination -->
                         </div>
                         <!-- End Footer -->
@@ -125,21 +125,21 @@
                 <div class="card">
                     <!-- Header -->
                     <div class="card-header">
-                        <h4 class="card-header-title">{{__('messages.customer')}}</h4>
+                        <h4 class="card-header-title"><?php echo e(__('messages.customer')); ?></h4>
                     </div>
                     <!-- End Header -->
 
                     <!-- Body -->
-                    @if($customer)
+                    <?php if($customer): ?>
                         <div class="card-body">
                             <div class="media align-items-center" href="javascript:">
                               
                                 <div class="media-body">
                                 <span
-                                    class="text-body text-hover-primary">{{$customer['name'] }}</span>
+                                    class="text-body text-hover-primary"><?php echo e($customer['name']); ?></span>
                                 </div>
                                 <div class="media-body text-right">
-                                    {{--<i class="tio-chevron-right text-body"></i>--}}
+                                    
                                 </div>
                             </div>
 
@@ -151,59 +151,42 @@
                                 </div>
                                 <div class="media-body">
                                     <span
-                                        class="text-body text-hover-primary">{{count($orders)}} {{__('messages.orders')}}</span>
+                                        class="text-body text-hover-primary"><?php echo e(count($orders)); ?> <?php echo e(__('messages.orders')); ?></span>
                                 </div>
                                 <div class="media-body text-right">
-                                    {{--<i class="tio-chevron-right text-body"></i>--}}
+                                    
                                 </div>
                             </div>
 
                             <hr>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <h5>{{__('messages.contact')}} {{__('messages.info')}}</h5>
+                                <h5><?php echo e(__('messages.contact')); ?> <?php echo e(__('messages.info')); ?></h5>
                             </div>
 
                             <ul class="list-unstyled list-unstyled-py-2">
                                 <li>
                                     <i class="tio-online mr-2"></i>
-                                    {{$customer['email']}}
+                                    <?php echo e($customer['email']); ?>
+
                                 </li>
                                 <li>
                                     <i class="tio-android-phone-vs mr-2"></i>
-                                    {{$customer['mobile_number']}}
+                                    <?php echo e($customer['mobile_number']); ?>
+
                                 </li>
                                 <li>
                                     <i class="fa fa-location mr-2"></i>
-                                    {{$customer['address']}}
+                                    <?php echo e($customer['address']); ?>
+
                                 </li>
                             </ul>
 
                            
                             
-{{-- 
-                            @foreach($customer->addresses as $address)
-                                <ul class="list-unstyled list-unstyled-py-2">
-                                    <li>
-                                        <i class="tio-tab mr-2"></i>
-                                        {{$address['address_type']}}
-                                    </li>
-                                    <li>
-                                        <i class="tio-android-phone-vs mr-2"></i>
-                                        {{$address['contact_person_umber']}}
-                                    </li>
-                                    <li style="cursor: pointer">
-                                        <a target="_blank" href="http://maps.google.com/maps?z=12&t=m&q=loc:{{$address['latitude']}}+{{$address['longitude']}}">
-                                            <i class="tio-map mr-2"></i>
-                                            {{$address['address']}}
-                                        </a>
-                                    </li>
-                                </ul>
-                                <hr>
-                            @endforeach
---}}
+
                         </div>
-                @endif
+                <?php endif; ?>
                 <!-- End Body -->
                 </div>
                 <!-- End Card -->
@@ -211,9 +194,9 @@
         </div>
         <!-- End Row -->
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('script_2')
+<?php $__env->startPush('script_2'); ?>
 
     <script>
         $(document).on('ready', function () {
@@ -244,4 +227,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/customer/customer-view.blade.php ENDPATH**/ ?>

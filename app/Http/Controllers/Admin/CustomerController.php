@@ -191,4 +191,15 @@ class CustomerController extends Controller
         return view('admin-views.customer.referedd-list', compact('user_list'));
     }
 
+    public function view($id)
+    {
+        $customer = User::find($id);
+        if (isset($customer)) {
+            $orders = Order::latest()->where(['user_id' => $id])->paginate(config('default_pagination'));
+            return view('admin-views.customer.customer-view', compact('customer', 'orders'));
+        }
+        Toastr::error(__('messages.customer_not_found'));
+        return back();
+    }
+
 }
