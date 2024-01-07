@@ -184,15 +184,15 @@ class BusinessSettingsController extends Controller
 
 
 
-        /*if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
+        if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
                $time_slot = $value."-".$order_to_time_slots[$key]; 
-               echo "<pre>";
+              // echo "<pre>";
 
-               print_r($time_slot);
-               print_r($order_time_slot_data);
+               //print_r($time_slot);
+              // print_r($order_time_slot_data);
                if(in_array($time_slot,$order_time_slot_data)){
-                echo "here";
+                
                // Toastr::error(trans('Slot already exist'));
                // return back();
                }
@@ -200,38 +200,13 @@ class BusinessSettingsController extends Controller
                 
             }
             $time_slots = rtrim($time_slots, ',');
-            die;
+            //die;
             DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
                 'value' => $time_slots
             ]);
 
-        }*/
-        if (isset($order_from_time_slots) && !empty($order_from_time_slots)) {
-            foreach ($order_from_time_slots as $key => $value) {
-                $time_slot = $value . "-" . $order_to_time_slots[$key];
-        
-                echo "<pre>";
-                print_r($time_slot);
-                print_r($order_time_slot_data);
-        
-                // Check uniqueness against both arrays
-                if (in_array($time_slot, $order_time_slot_data)) {
-                          Toastr::error(trans('Slot already exist'));
-                return back();
-                    // Handle error or return response
-                } else {
-                    $order_time_slot_data[] = $time_slot;
-                    $time_slots .= $time_slot . ",";
-                }
-            }
-        
-            $time_slots = rtrim($time_slots, ',');
-        
-            // Update or insert the time slots into the database
-            DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
-                'value' => $time_slots
-            ]);
         }
+       
         
 
         // $languages = $request['language'];

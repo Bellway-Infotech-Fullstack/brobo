@@ -1,5 +1,5 @@
 @extends('layouts.admin.app')
-@section('title','Refereed User List')
+@section('title','Refereed Customer List')
 @push('css_or_js')
 
 @endpush
@@ -16,7 +16,7 @@
     <div class="d-md-flex_ align-items-center justify-content-between mb-2">
         <div class="row">
             <div class="col-md-8">
-                <h3 class="h3 mb-0 text-black-50">Refereed User {{trans('messages.list')}}</h3>
+                <h3 class="h3 mb-0 text-black-50">Refereed Customer {{trans('messages.list')}}</h3>
             </div>
 
           
