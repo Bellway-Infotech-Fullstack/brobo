@@ -31,7 +31,9 @@ class User extends Authenticatable implements JWTSubject
         'auth_token',
         'fcm_token',
         'referral_code',
-        'referred_code'
+        'referred_code',
+        'is_notification_setting_on',
+        'notification_off_time'
     ];
 
     /**

@@ -13,7 +13,7 @@ use App\Services\FCMService;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\BusinessSetting;
-include 'cron_job.php';
+//include 'cron_job.php';
 
 class NotificationController extends Controller
 {
@@ -41,9 +41,13 @@ class NotificationController extends Controller
              $orderBy =  'desc';
              $orderColumn = 'created_at';
              $perPage = 10; // Number of items to load per page
-             
-             
 
+
+             $loginUserData = User::find($customerId);
+
+
+             
+           
             
              // Define the validation rules
              $validationRules = [
@@ -60,10 +64,23 @@ class NotificationController extends Controller
              if ($validation->fails()) {
                  return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
              }
-            
-             $data = Notification::where('to_user_id',$customerId)
+
+
+             if($loginUserData->is_notification_setting_on == "no"){
+                $notificationOffTime = $loginUserData->notification_off_time; 
+                $data = Notification::where('to_user_id', $customerId)
+                ->where('created_at', '<', $notificationOffTime)
                 ->orderBy($orderColumn, $orderBy)
                 ->paginate($perPage, ['*'], 'page', $page);
+             }
+             else {
+                $data = Notification::where('to_user_id', $customerId)
+                ->orderBy($orderColumn, $orderBy)
+                ->paginate($perPage, ['*'], 'page', $page);
+             }
+            
+     
+        
                 
               
 

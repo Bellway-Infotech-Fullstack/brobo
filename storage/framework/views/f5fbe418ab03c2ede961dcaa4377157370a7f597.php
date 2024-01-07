@@ -252,8 +252,8 @@
                         const width = this.width;
                         const height = this.height;
 
-                        alert("width="+width)
-                        alert("height="+height)
+                       // alert("width="+width)
+                      //  alert("height="+height)
 
                         // Check if the dimensions meet your criteria         
 

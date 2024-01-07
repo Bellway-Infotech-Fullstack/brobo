@@ -1,4 +1,4 @@
-<?php $__env->startSection('title','Refereed User List'); ?>
+<?php $__env->startSection('title','Refereed Customer List'); ?>
 <?php $__env->startPush('css_or_js'); ?>
 
 <?php $__env->stopPush(); ?>
@@ -15,7 +15,7 @@
     <div class="d-md-flex_ align-items-center justify-content-between mb-2">
         <div class="row">
             <div class="col-md-8">
-                <h3 class="h3 mb-0 text-black-50">Refereed User <?php echo e(trans('messages.list')); ?></h3>
+                <h3 class="h3 mb-0 text-black-50">Refereed Customer <?php echo e(trans('messages.list')); ?></h3>
             </div>
 
           
