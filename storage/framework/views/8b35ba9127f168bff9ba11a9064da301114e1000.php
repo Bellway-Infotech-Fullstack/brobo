@@ -90,7 +90,7 @@
                </tr>
                <tr>
                   <td width="50%">Invoice </td>
-                  <td width="50%">#<?php echo e($order['id']); ?></td> 
+                  <td width="50%">#<?php echo e($order['order_id']); ?></td> 
                </tr>
                <tr>
                   <td>Customer ID</td>
@@ -199,7 +199,6 @@
                   $total_item_price = $total_item_price + $detail['item_price'];
                   
      
-                   $productPrice =  \App\CentralLogics\Helpers::format_currency($detail['item_price']);
 
                    ?>
                    <tr>

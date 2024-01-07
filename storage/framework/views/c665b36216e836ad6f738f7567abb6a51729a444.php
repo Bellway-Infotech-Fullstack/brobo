@@ -296,8 +296,10 @@
                         <th class="table-column-pl-0"><?php echo e(__('messages.order')); ?> ID</th>
                         <th>Booking Date</th>
                         <th><?php echo e(__('messages.customer')); ?></th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Time Slot</th>
                         <th>Paid Amount</th>
-                        <th>Due Amount</th>
                         <th><?php echo e(__('messages.payment')); ?> <?php echo e(__('messages.status')); ?></th>                       
                         <th><?php echo e(__('messages.order')); ?> <?php echo e(__('messages.status')); ?></th>
                         <th><?php echo e(__('messages.actions')); ?></th>
@@ -320,18 +322,19 @@
                             <td><?php echo e(date('d M Y',strtotime($order['created_at']))); ?></td>
                             <td>
                                 <?php if($order->customer): ?>
-                                    
+                                 <a class="text-body text-capitalize"
+                                       href="<?php echo e(route('admin.customer.view',[$order['user_id']])); ?>"><?php echo e($order->customer['name']); ?></a> 
 
-                                       <a class="text-body text-capitalize"
-                                       href="#"><?php echo e($order->customer['name']); ?></a>
+                                  
                                 <?php else: ?>
                                     <label class="badge badge-danger"><?php echo e(__('messages.invalid')); ?> <?php echo e(__('messages.customer')); ?> <?php echo e(__('messages.data')); ?></label>
                                 <?php endif; ?>
                             </td>
                         
-                          
+                            <td><?php echo e(date('d M Y',strtotime($order['start_date']))); ?></td>
+                            <td><?php echo e(date('d M Y',strtotime($order['end_date']))); ?></td>
+                            <td><?php echo e($order['time_duration']); ?></td>
                             <td>Rs. <?php echo e(number_format($order->paid_amount)); ?> </td>
-                            <td>Rs. <?php echo e(number_format($order->pending_amount)); ?> </td>
                             <td>
                               
                                 <span class="badge badge-soft-success">

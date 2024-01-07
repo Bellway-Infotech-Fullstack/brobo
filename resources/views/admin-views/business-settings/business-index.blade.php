@@ -600,15 +600,16 @@
                         
                             $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ? explode(",",$order_time_slot_data->value) : array();
 
+                    
+
                     ?>
                     <input type="hidden" id="time_slot_length"  value="{{count($order_time_slot_data)}}">
 
                     <div  id="time_slot_data">
                         
                             <?php
-                            
-                          
-                            if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+     
+                         if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
                                     
                             foreach($order_time_slot_data as $key => $value){
                                 $time_slot_data = explode("-",$value);
@@ -767,24 +768,20 @@
             $("#time_slot_data").on("click", "a.remove-dynamic-time-slot", function(e) {
                 //e.preventDefault();
                 var time_slot = $(this).attr("data-time-slot");
-               // alert(time_slot);
-               // return false;
-               $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                    }
-                });
+              
                 $.post({
                     url: '{{route('admin.business-settings.remove-dynamic-time-slot')}}',
                     data: {
                             "time_slot": time_slot,
+                            "_token": "{{csrf_token()}}"
                            
                         },
                         beforeSend: function () {
                             $('#loading').show();
                         },
                         success: function (data) {
-                            toastr.success(data.message);
+                            var json_data = JSON.parse(data);
+                            toastr.success(json_data.message);
                         },
                         complete: function () {
                             $('#loading').hide();
@@ -829,8 +826,7 @@
             $("#time_slot_data").append(timeSlotData);
 
         }
-        //  let language = <?php echo($language); ?>;
-     //   $('[id=language]').val(language);
+  
 
         function maintenance_mode() {
         @if(env('APP_MODE')=='demo')
@@ -887,112 +883,8 @@
     </script>
 
 
-    <script src="https://maps.googleapis.com/maps/api/js?key={{$map_api_key}}&libraries=places&v=3.45.8"></script>
     <script>
-        function initAutocomplete() {
-            var myLatLng = { lat: {{$default_location?$default_location['lat']:'-33.8688'}}, lng: {{$default_location?$default_location['lng']:'151.2195'}} };
-            const map = new google.maps.Map(document.getElementById("location_map_canvas"), {
-                center: { lat: {{$default_location?$default_location['lat']:'-33.8688'}}, lng: {{$default_location?$default_location['lng']:'151.2195'}} },
-                zoom: 13,
-                mapTypeId: "roadmap",
-            });
-
-            var marker = new google.maps.Marker({
-                position: myLatLng,
-                map: map,
-            });
-
-            marker.setMap( map );
-            var geocoder = geocoder = new google.maps.Geocoder();
-            google.maps.event.addListener(map, 'click', function (mapsMouseEvent) {
-                var coordinates = JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2);
-                var coordinates = JSON.parse(coordinates);
-                var latlng = new google.maps.LatLng( coordinates['lat'], coordinates['lng'] ) ;
-                marker.setPosition( latlng );
-                map.panTo( latlng );
-
-                document.getElementById('latitude').value = coordinates['lat'];
-                document.getElementById('longitude').value = coordinates['lng'];
-
-
-                geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        if (results[1]) {
-                            document.getElementById('address').innerHtml = results[1].formatted_address;
-                        }
-                    }
-                });
-            });
-            // Create the search box and link it to the UI element.
-            const input = document.getElementById("pac-input");
-            const searchBox = new google.maps.places.SearchBox(input);
-            map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-            // Bias the SearchBox results towards current map's viewport.
-            map.addListener("bounds_changed", () => {
-                searchBox.setBounds(map.getBounds());
-            });
-            let markers = [];
-            // Listen for the event fired when the user selects a prediction and retrieve
-            // more details for that place.
-            searchBox.addListener("places_changed", () => {
-                const places = searchBox.getPlaces();
-
-                if (places.length == 0) {
-                return;
-                }
-                // Clear out the old markers.
-                markers.forEach((marker) => {
-                marker.setMap(null);
-                });
-                markers = [];
-                // For each place, get the icon, name and location.
-                const bounds = new google.maps.LatLngBounds();
-                places.forEach((place) => {
-                    if (!place.geometry || !place.geometry.location) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-                    var mrkr = new google.maps.Marker({
-                        map,
-                        title: place.name,
-                        position: place.geometry.location,
-                    });
-                    google.maps.event.addListener(mrkr, "click", function (event) {
-                        document.getElementById('latitude').value = this.position.lat();
-                        document.getElementById('longitude').value = this.position.lng();
-                    });
-
-                    markers.push(mrkr);
-
-                    if (place.geometry.viewport) {
-                        // Only geocodes have viewport.
-                        bounds.union(place.geometry.viewport);
-                    } else {
-                        bounds.extend(place.geometry.location);
-                    }
-                });
-                map.fitBounds(bounds);
-            });
-        };
-        $(document).on('ready', function () {
-            initAutocomplete();
-            @php($country=\App\Models\BusinessSetting::where('key','country')->first())
-
-            @if($country)
-            $("#country option[value='{{$country->value}}']").attr('selected', 'selected').change();
-            @endif
-
-
-
-            $("#free_delivery_over_status").on('change', function(){
-                if($("#free_delivery_over_status").is(':checked')){
-                    $('#free_delivery_over').removeAttr('readonly');
-                } else {
-                    $('#free_delivery_over').attr('readonly', true);
-                    $('#free_delivery_over').val('0');
-                }
-            });
-        });
+      
 
         $(document).on("keydown", "input", function(e) {
           if (e.which==13) e.preventDefault();

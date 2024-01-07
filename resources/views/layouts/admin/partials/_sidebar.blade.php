@@ -84,6 +84,7 @@
                                             class="text-truncate">{{__('messages.add')}} {{__('messages.new')}}</span>
                                     </a>
                                 </li>
+                                
                                 <li class="nav-item {{Request::is('admin/customer/list')?'active':''}}">
                                     <a class="nav-link " href="{{route('admin.customer.list')}}"
                                        title="{{__('messages.customer')}} {{__('messages.list')}}">
@@ -92,6 +93,13 @@
                                     </a>
                                 </li>
 
+                                <li class="nav-item {{Request::is('admin/customer/list')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.customer.refereed-list')}}"
+                                       title="{{__('messages.customer')}} {{__('messages.list')}}">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">Referred Customer {{__('messages.list')}}</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                 @endif

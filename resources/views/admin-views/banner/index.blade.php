@@ -25,7 +25,7 @@
             <div class="col-sm-12 col-lg-12 mb-3 mb-lg-2">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{route('admin.banner.store')}}" method="post" id="banner_form">
+                        <form action="{{route('admin.banner.store')}}" method="post" id="banner_form" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                
