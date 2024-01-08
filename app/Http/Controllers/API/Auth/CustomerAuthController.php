@@ -71,6 +71,7 @@ class CustomerAuthController extends Controller
             $referralCode = Str::random(10);
             $request['referral_code'] = $referralCode;
 
+         
             
 
             $count = User::where('referral_code', $referralCode)->count();

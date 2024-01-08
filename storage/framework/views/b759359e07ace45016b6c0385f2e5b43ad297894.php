@@ -17,14 +17,71 @@
              
                 <div class="row mt-3">
                     <div class="col-6">
-                        <h5>Booking ID  <?php echo e($order['order_id']); ?></h5>
+                        <h5>Booking ID : <?php echo e($order['order_id']); ?></h5>
                     </div>
+
+
+
                     <div class="col-6">
-                        <h5 style="font-weight: lighter">
-                            <?php echo e(date('d/M/Y '.config('timeformat'),strtotime($order['created_at']))); ?>
+                        <h5>
+                            Booking Date :  <?php echo e(date('d M Y ',strtotime($order['created_at']))); ?>
 
                         </h5>
                     </div>
+                    
+
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5>Booking From <?php echo e(date('d M Y',strtotime($order['start_date']))); ?> To  <?php echo e(date('d M Y',strtotime($order['end_date']))); ?></h5>
+                    </div>
+                 </div>
+
+                 <div class="row mt-3">
+                    <div class="col-12">
+                        <h5>Time Slot :  <?php echo e($order['time_duration']); ?></h5>
+                    </div>
+                 </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <?php
+                           $addressData  =   \App\Models\UsersAddress::where(['id' => $order['delivery_address_id']])->first();
+                           if(isset($addressData) && !empty($addressData)){
+                            $deliveryAddress = $addressData->house_name . ",";
+
+                            // Add floor number with suffix
+                            $floorNumber = $addressData->floor_number;
+                            if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                $suffix = 'th';
+                            } else {
+                                switch ($floorNumber % 10) {
+                                    case 1:
+                                        $suffix = 'st';
+                                        break;
+                                    case 2:
+                                        $suffix = 'nd';
+                                        break;
+                                    case 3:
+                                        $suffix = 'rd';
+                                        break;
+                                    default:
+                                        $suffix = 'th';
+                                        break;
+                                }
+                            }
+
+                            $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                            } else {
+                                $deliveryAddress = '';
+                            }
+    
+                        ?>
+                            <h5>Delivery Address : <?php echo $deliveryAddress; ?></h5>
+
+                    </div>
+                    
+                  
                     
 
                 </div>

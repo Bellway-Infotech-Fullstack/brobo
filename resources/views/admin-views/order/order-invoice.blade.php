@@ -80,9 +80,28 @@
             <h2 style="color:#687cbf;font-weight: bold;font-size:30px; text-align:right; padding-right: 30px;" style="color:#687cbf;font-weight: bold;font-size:30px; text-align:right; padding-right: 30px;" id="invoice">INVOICE</h2>
             <table width="100%" height="70" border="0" class="table_pad" style="margin-top:20px;">
                <tr>
-                  <td> Date</td>
+                  <td> Start Date</td>
                   <td>
-                  {{ date('d M Y ' . config('timeformat'), strtotime($order['created_at'])) }}
+                     {{date('d M Y',strtotime($order['start_date']))}}
+                  </td>
+              </tr>
+              <tr>
+                  <td> End Date</td>
+                  <td>
+                     {{date('d M Y',strtotime($order['end_date']))}}
+                  </td>
+              </tr>
+              <tr>
+                  <td> Time Slot</td>
+                  <td>
+                     {{ $order['time_duration'] }}
+                  </td>
+              </tr>
+               
+               <tr>
+                  <td>Booking Date</td>
+                  <td>
+                     {{date('d M Y ',strtotime($order['created_at']))}}
 
 
                   </td>
@@ -91,35 +110,26 @@
                   <td width="50%">Invoice </td>
                   <td width="50%">#{{ $order['order_id'] }}</td> 
                </tr>
-               <tr>
-                  <td>Customer ID</td>
-                  <td>{{ $order->customer['id'] }} </td>
-               </tr>
+             
             </table>
          </div>
       </div>
-      <div class="row" style="right:15px;position:relative">
+      <div class="row" style="margin-top:130px;right:15px;position:relative">
          <div class="">
             <table width="100%" border="0">
                <tr>
                   <td colspan="2">
-                     <div class="bg_color1" style="text-indent:10px;font-size: 14px;width: 50%;height: 26px;line-height: 18px; ">BILL TO </div>
+                     <div class="bg_color1" style="text-indent:10px;font-size: 14px;width: 50%;height: 26px;line-height: 18px; ">Bill To - </div>
                      <table width="100%" border="0">
-                         <?php
-                           $address = json_decode($order->delivery_address, true);     
-                         ?>
+                       
                         <tr>
-                        
-                           <td width="18%">Name</td>
-                           <td width="82%"> {{ $order->customer['name'] }}</td>
+                           <td>Name : {{ $order->customer['name'] }}</td>
                         </tr>
                         <tr>
-                           <td>Phone</td>
-                           <td>{{$order->customer['mobile_number']}}</td>
+                           <td>Phone : {{ $order->customer['mobile_number'] }}</td>
                         </tr>
                         <tr>
-                           <td>Email</td>
-                           <td>{{$order->customer['email'] ?? 'N/A'}}</td>
+                           <td>Email : {{$order->customer['email'] ?? 'N/A'}}</td>
                         </tr>
                       
                      </table>
@@ -131,9 +141,63 @@
             </table>
          </div>
       </div>
+
+      <div class="row" style="right:15px;position:relative">
+         <div class="">
+            <table width="100%" border="0">
+               <tr>
+                  <td colspan="2">
+                     <div class="bg_color1" style="text-indent:10px;font-size: 14px;width: 50%;height: 26px;line-height: 18px; ">Delivery Address -</div>
+                     <table width="100%" border="0">
+                         
+                        <tr>
+                        
+                           @php
+                           $addressData  =   \App\Models\UsersAddress::where('id' , $order->delivery_address_id)->first();
+                           if(isset($addressData) && !empty($addressData)){
+                            $deliveryAddress = $addressData->house_name . ",";
+
+                            // Add floor number with suffix
+                            $floorNumber = $addressData->floor_number;
+                            if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                $suffix = 'th';
+                            } else {
+                                switch ($floorNumber % 10) {
+                                    case 1:
+                                        $suffix = 'st';
+                                        break;
+                                    case 2:
+                                        $suffix = 'nd';
+                                        break;
+                                    case 3:
+                                        $suffix = 'rd';
+                                        break;
+                                    default:
+                                        $suffix = 'th';
+                                        break;
+                                }
+                            }
+
+                            $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                            } else {
+                                $deliveryAddress = '';
+                            }
+    
+                        @endphp
+                        <td width="82%">  {!! $deliveryAddress !!}</td>
+                         </tr>
+                     </table>
+                  </td>
+               </tr>
+               <tr>
+                  <td colspan="2"> </td>
+               </tr>
+            </table>
+         </div>
+      </div>
       <dd style="clear:both;"></dd>
       <div class="row" style="right:15px;position:relative">
-      <div class="bg_color1" style="text-indent:10px;font-size: 14px;width: 50%;height: 26px;line-height: 18px; ">Order Details</div>
+      <div class="bg_color1" style="text-indent:10px;font-size: 14px;width: 50%;height: 26px;line-height: 18px; ">Booking Details - </div>
          <table height="82"  style="width:100%;margin-top:10px;" border="1" cellpadding="0" cellspacing="0">
             <tr class="bg_color1">
                <td width="18%">S. No.</td>
