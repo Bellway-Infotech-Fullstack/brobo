@@ -147,31 +147,75 @@ class BookingController extends Controller
                 }
             }
 
-                $pendingAmount = $totalAmount - $paidAmount;
+            
                 $allCustomers = User::where('role_id','2')->get();
                 $loginUserData = User::find( $customerId);
-                $loginUserReferredCode = $loginUserData->referred_code ?? '';
+                $loginUserReferralCode = $loginUserData->referral_code ?? '';
+                $isReferred = 0;                
                
                 if(isset($allCustomers) && !empty($allCustomers)){
-                    foreach($allCustomers as $key => $value){
-                        echo "loginUserReferredCode = ";
-                        echo "<br>";
-                        echo $loginUserReferredCode;
-                        echo "<br>";
-                        echo "user referral_code = ";
-                        echo "<br>";
-                        echo $value->referral_code;
-                        if($loginUserReferredCode == $value->referral_code){
-                            echo "<br>";
-                            echo "user id =".$value->id;
-                            echo "<br>";
+                    foreach($allCustomers as $key => $value){                       
+                        if($loginUserReferralCode == $value->referred_code){
+                            $isReferred = 1;       
+                            $referredCode = $loginUserReferralCode;                     
                         }
                     }
                 }
 
 
-                die;
+                
 
+      
+
+             $userOrderData = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->where('orders.user_id', $customerId)
+                ->pluck('orders.referred_code')->toArray();
+
+               
+
+                if(!in_array($referredCode,$userOrderData)){
+                    if($isReferred == '1'){
+                        $discountData  = BusinessSetting::where('key','referred_discount')->first();
+                        $referredDiscount =  $discountData->value;                  
+    
+                        $discountedPrice = number_format(($referredDiscount / 100) * $paidAmount, 2);
+                        $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
+                        $paidAmount =  $discountedPrice;
+    
+                    } 
+                } else {
+                    $referredCode = NULL;
+                }   
+
+
+
+          
+
+
+
+
+
+
+               
+                
+
+                if($orderInstallmentPercent == ''){
+                    $pendingAmount =  0;
+                } else {
+                    
+                    $pendingAmount = $totalAmount - $paidAmount;
+                }
+
+             
+
+               /* echo "paid amount ". $paidAmount;
+                echo "pending amount ". $pendingAmount;
+
+                
+
+
+              
+                die;*/
                
                 
                 $requestData = [
@@ -191,7 +235,8 @@ class BookingController extends Controller
                     'status' => 'ongoing',
                     'description' => $description,
                     'final_item_price' => $finalItemPrice,
-                    'is_building_have_lift' => $isBuildingHaveLift
+                    'is_building_have_lift' => $isBuildingHaveLift,
+                    'referred_code' => $referredCode
                 ];
 
                 $newOrder = Order::create($requestData);
