@@ -59,7 +59,6 @@
                                 <th>{{trans('messages.name')}}</th>
                                 <th>{{trans('messages.email')}}</th>
                                 <th>{{trans('messages.phone')}}</th>
-                                <th>Refereed Amount</th>
                             </tr>
                             </thead>
                             <tbody id="set-rows">
@@ -69,7 +68,6 @@
                                     <td class="text-capitalize">{{$e['name']}}</td>
                                     <td >{{$e['email'] ?? 'N/A'}}</td>
                                     <td>{{$e['mobile_number'] ?? 'N/A'}}</td>
-                                    <td>Rs. 100</td>
                                 </tr>
                             @endforeach
                             </tbody>
