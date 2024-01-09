@@ -353,6 +353,14 @@ class OrderController extends Controller
         $payment_keys_data = (isset($payment_keys_data) && !empty($payment_keys_data)) ? json_decode($payment_keys_data->value, true) : '';
         $orderData = Order::where('id', $orderId)->first();
         $transactionId = $orderData->transaction_id;
+        
+       // $transactionId = "pay_NMOBUtNolVhGHN";
+        
+      //  echo  $transactionId;
+        
+        
+     
+ 
 
 
         $refundedData = BusinessSetting::where(['key' => 'refunded_amount'])->first();
@@ -389,14 +397,26 @@ class OrderController extends Controller
         $razorpayKey = $payment_keys_data['razor_key'];
         $razorpaySecret = $payment_keys_data['razor_secret'];
         
- 
-
+       $api = new Api($razorpayKey,  $razorpaySecret);
+       
+       $payment = $api->payment->fetch($transactionId);
+       
+       echo "amount". $payment->amount;
+       
+       
+       // Check if the payment is authorized
+        if ($payment->status === 'authorized') {
+            // Capture the payment
+            $payment->capture(array('amount' => $payment->amount));
+        }
+      echo "refund amount". $refundAmount;
+       
         // Initiate refund using cURL
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://api.razorpay.com/v1/payments/$transactionId/refund");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-            'amount' => $refundAmount * 100,
+            'amount' => $refundAmount*100,
             'speed' => 'normal',
         ]));
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -416,11 +436,14 @@ class OrderController extends Controller
 
         $refundResult = json_decode($result, true);
         
+        
        
         
 
         // Handle the refund response
         if (isset($refundResult['status']) && $refundResult['status'] == 'processed') {
+            Order::where('id' , $orderId)->update(['refund_requested' => 'yes']);
+            
             // Refund processed successfully
             return response()->json(['status' => 'success', 'message' => 'Refund processed successfully']);
         } else {
