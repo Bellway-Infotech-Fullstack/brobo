@@ -345,17 +345,17 @@
                                       <span class="legend-indicator bg-danger"></span>Cancelled
                                     </span>
                       
-                                @elseif($order['order_status']=='completed')
+                                @elseif($order['status']=='completed')
                                     <span class="badge badge-soft-success ml-2 ml-sm-3">
                                       <span class="legend-indicator bg-success"></span>{{__('messages.delivered')}}
                                     </span>
-                                @elseif($order['order_status']=='failed')
+                                @elseif($order['status']=='failed')
                                     <span class="badge badge-soft-danger ml-2 ml-sm-3">
                                       <span class="legend-indicator bg-danger text-capitalize"></span>{{__('messages.payment')}}  {{__('messages.failed')}}
                                     </span>
                                 @else
                                     <span class="badge badge-soft-danger ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-danger"></span>{{str_replace('_',' ',$order['order_status'])}}
+                                      <span class="legend-indicator bg-danger"></span>{{str_replace('_',' ',$order['status'])}}
                                     </span>
                                 @endif
                             </td>
@@ -374,6 +374,14 @@
                                 <a class="btn btn-sm btn-white"
                                            href="{{route('admin.order.details',['id'=>$order['id']])}}"><i
                                                 class="tio-visible"></i> {{__('messages.view')}}</a>
+
+                              @if($order['status']=='cancelled')
+                              <a class="btn btn-sm btn-white ml-2 refund-money"
+                              data-order-id="{{ $order['id'] }}"><i
+                                   class="tio-visible"></i> Refund
+                               </a>
+
+                              @endif
                             </td>
                         </tr>
 
@@ -504,6 +512,62 @@
     <!-- <script src="{{asset($assetPrefixPath . '/assets/admin')}}/js/bootstrap-select.min.js"></script> -->
     <script>
         $(document).on('ready', function () {
+
+            
+            $(".refund-money").on("click",function(){
+
+
+                var order_id = $(this).attr("data-order-id");
+                Swal.fire({
+                title: 'Are you sure?',
+                text: 'Dou you want to refund amount ?',
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: 'default',
+                confirmButtonColor: '#377dff',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.post({
+                        url: '{{route('admin.order.initiate-refund')}}',
+                        data : {
+                            "order_id":order_id,
+                            "_token": "{{csrf_token()}}"
+                        },
+                        
+                        beforeSend: function () {
+                            $('#loading').show();
+                        },
+                        success: function (data) {
+                            if(data.status == 'success'){
+                                toastr.success(data.message);     
+                            } else {
+                                toastr.error(data.message);
+                            }
+                           
+                        },
+                        complete: function () {
+                            $('#loading').hide();
+                        },
+                    });
+                } else {
+                    location.reload();
+                }
+            })
+
+            });
+           
+
+
+
+
+
+
+
+
+
             @if($filter_count>0)
             $('#filter_count').html({{$filter_count}});
             @endif

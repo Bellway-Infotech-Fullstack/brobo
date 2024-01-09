@@ -7,6 +7,5 @@
 
     </td>
     <td><?php echo e($e['mobile_number']); ?></td>
-    <td>Rs. 100</td>
 </tr>
 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/customer/partials/_rtable.blade.php ENDPATH**/ ?>

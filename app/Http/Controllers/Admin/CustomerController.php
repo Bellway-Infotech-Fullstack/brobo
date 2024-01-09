@@ -180,7 +180,7 @@ class CustomerController extends Controller
 
     function refereed_list()
     {
-        $user_list = Order::where('orders.is_reffered', '=', '1')
+        $user_list = Order::where('orders.referred_code', '!=', NULL)
         ->latest()
         ->join('users', 'orders.user_id', '=', 'users.id') // Assuming 'user_id' is the foreign key in the 'orders' table
         ->select('users.*') // Select the columns from the 'users' table that you need
