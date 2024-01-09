@@ -375,7 +375,7 @@
                                            href="{{route('admin.order.details',['id'=>$order['id']])}}"><i
                                                 class="tio-visible"></i> {{__('messages.view')}}</a>
 
-                              @if($order['status']=='cancelled' && $order['refund_requested'] == NULL)
+                              @if($order['status']=='cancelled' && $order['refunded'] == NULL)
                               <a class="btn btn-sm btn-white ml-2 refund-money"
                               data-order-id="{{ $order['id'] }}"><i
                                    class="tio-visible"></i> Refund

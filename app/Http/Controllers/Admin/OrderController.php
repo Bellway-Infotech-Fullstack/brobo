@@ -401,7 +401,7 @@ class OrderController extends Controller
        
        $payment = $api->payment->fetch($transactionId);
        
-       echo "amount". $payment->amount;
+     //  echo "amount". $payment->amount;
        
        
        // Check if the payment is authorized
@@ -409,7 +409,10 @@ class OrderController extends Controller
             // Capture the payment
             $payment->capture(array('amount' => $payment->amount));
         }
-      echo "refund amount". $refundAmount;
+     // echo "refund amount". $refundAmount*100;
+      
+      
+     // die;
        
         // Initiate refund using cURL
         $ch = curl_init();
@@ -436,13 +439,17 @@ class OrderController extends Controller
 
         $refundResult = json_decode($result, true);
         
+       // echo "<pre>";
         
+        //print_r($refundResult);
+        //die;
        
         
 
         // Handle the refund response
-        if (isset($refundResult['status']) && $refundResult['status'] == 'processed') {
-            Order::where('id' , $orderId)->update(['refund_requested' => 'yes']);
+        if (isset($refundResult['status'])) {
+           Order::where('id', $orderId)->update(['refunded' => 'yes']);
+
             
             // Refund processed successfully
             return response()->json(['status' => 'success', 'message' => 'Refund processed successfully']);

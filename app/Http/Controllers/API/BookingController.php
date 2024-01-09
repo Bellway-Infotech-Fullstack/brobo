@@ -110,14 +110,15 @@ class BookingController extends Controller
             $orderMinAmountData  = BusinessSetting::where('key','mininum_order_amount')->first();
 
             $orderMinAmount  = $orderMinAmountData->value;
-
+          //  echo $finalItemPrice;
+            
             if($orderMinAmount >  $finalItemPrice){
                 return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You can not order less than '.$orderMinAmount]);
             }
 
 
             $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
-            $totalAmount = $finalItemPrice + $deliveryCharge;
+            $totalAmount = $finalItemPrice;
 
             if($orderInstallmentPercent == ''){
                 $paidAmount = $totalAmount;
@@ -189,17 +190,6 @@ class BookingController extends Controller
                 }   
 
 
-
-          
-
-
-
-
-
-
-               
-                
-
                 if($orderInstallmentPercent == ''){
                     $pendingAmount =  0;
                 } else {
@@ -207,16 +197,6 @@ class BookingController extends Controller
                     $pendingAmount = $totalAmount - $paidAmount;
                 }
 
-             
-
-               /* echo "paid amount ". $paidAmount;
-                echo "pending amount ". $pendingAmount;
-
-                
-
-
-              
-                die;*/
                
                 
                 $requestData = [
@@ -313,7 +293,7 @@ class BookingController extends Controller
                 'order_id' => $orderId,
                 'arriving_date' => date("D d M Y", strtotime($item->start_date)),
                 'total_items_price' => $cartTotalItemAmount,
-                'final_item_price' => $finalItemPrice,
+                'final_item_price' => $finalItemPrice - $deliveryCharge,
                 'delivery_charge' => $deliveryCharge,
             ];
         });
@@ -380,7 +360,7 @@ class BookingController extends Controller
                     'shipping_address' => $shippingAddress,
                     'pending_amount' => $pendingAmount,
                     'item_details'  => json_decode($item->cart_items,true),
-                    'final_item_price' => $finalItemPrice
+                    'final_item_price' => $finalItemPrice - $deliveryCharge
                     
                     )
                 );
