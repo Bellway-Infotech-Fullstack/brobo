@@ -9,7 +9,7 @@ use App\Scopes\ZoneScope;
 class Order extends Model
 {
 
-    protected $fillable = ['start_date', 'end_date','time_duration', 'user_id','status','cart_items','paid_amount','pending_amount','delivery_address_id','coupon_id','delivery_charge','order_installment_percent','transaction_id','order_id','description','extended_order_transaction_id','final_item_price','damage_amount','labour_charge','damage_order_transaction_id','is_building_have_lift','due_amount_transaction_id','referred_code'];
+    protected $fillable = ['start_date', 'end_date','time_duration', 'user_id','status','cart_items','paid_amount','pending_amount','delivery_address_id','coupon_id','delivery_charge','order_installment_percent','transaction_id','order_id','description','extended_order_transaction_id','final_item_price','damage_amount','labour_charge','damage_order_transaction_id','is_building_have_lift','due_amount_transaction_id','referred_code','refunded'];
 
     protected $casts = [
         'order_id' => 'string',
@@ -36,6 +36,7 @@ class Order extends Model
         'damage_order_transaction_id' => 'string',
         'due_amount_transaction_id' => 'string',
         'is_building_have_lift' => 'string',
+         'refunded' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
