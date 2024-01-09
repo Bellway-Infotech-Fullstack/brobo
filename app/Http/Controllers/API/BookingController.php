@@ -151,7 +151,8 @@ class BookingController extends Controller
                 $allCustomers = User::where('role_id','2')->get();
                 $loginUserData = User::find( $customerId);
                 $loginUserReferralCode = $loginUserData->referral_code ?? '';
-                $isReferred = 0;                
+                $isReferred = 0;   
+                $referredCode =  NULL;
                
                 if(isset($allCustomers) && !empty($allCustomers)){
                     foreach($allCustomers as $key => $value){                       

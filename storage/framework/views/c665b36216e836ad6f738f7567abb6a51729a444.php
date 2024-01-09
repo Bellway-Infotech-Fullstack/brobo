@@ -353,19 +353,19 @@
                                       <span class="legend-indicator bg-danger"></span>Cancelled
                                     </span>
                       
-                                <?php elseif($order['order_status']=='completed'): ?>
+                                <?php elseif($order['status']=='completed'): ?>
                                     <span class="badge badge-soft-success ml-2 ml-sm-3">
                                       <span class="legend-indicator bg-success"></span><?php echo e(__('messages.delivered')); ?>
 
                                     </span>
-                                <?php elseif($order['order_status']=='failed'): ?>
+                                <?php elseif($order['status']=='failed'): ?>
                                     <span class="badge badge-soft-danger ml-2 ml-sm-3">
                                       <span class="legend-indicator bg-danger text-capitalize"></span><?php echo e(__('messages.payment')); ?>  <?php echo e(__('messages.failed')); ?>
 
                                     </span>
                                 <?php else: ?>
                                     <span class="badge badge-soft-danger ml-2 ml-sm-3">
-                                      <span class="legend-indicator bg-danger"></span><?php echo e(str_replace('_',' ',$order['order_status'])); ?>
+                                      <span class="legend-indicator bg-danger"></span><?php echo e(str_replace('_',' ',$order['status'])); ?>
 
                                     </span>
                                 <?php endif; ?>
@@ -375,6 +375,14 @@
                                 <a class="btn btn-sm btn-white"
                                            href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><i
                                                 class="tio-visible"></i> <?php echo e(__('messages.view')); ?></a>
+
+                              <?php if($order['status']=='cancelled'): ?>
+                              <a class="btn btn-sm btn-white ml-2 refund-money"
+                              data-order-id="<?php echo e($order['id']); ?>"><i
+                                   class="tio-visible"></i> Refund
+                               </a>
+
+                              <?php endif; ?>
                             </td>
                         </tr>
 
@@ -506,6 +514,62 @@
     <!-- <script src="<?php echo e(asset($assetPrefixPath . '/assets/admin')); ?>/js/bootstrap-select.min.js"></script> -->
     <script>
         $(document).on('ready', function () {
+
+            
+            $(".refund-money").on("click",function(){
+
+
+                var order_id = $(this).attr("data-order-id");
+                Swal.fire({
+                title: 'Are you sure?',
+                text: 'Dou you want to refund amount ?',
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: 'default',
+                confirmButtonColor: '#377dff',
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.post({
+                        url: '<?php echo e(route('admin.order.initiate-refund')); ?>',
+                        data : {
+                            "order_id":order_id,
+                            "_token": "<?php echo e(csrf_token()); ?>"
+                        },
+                        
+                        beforeSend: function () {
+                            $('#loading').show();
+                        },
+                        success: function (data) {
+                            if(data.status == 'success'){
+                                toastr.success(data.message);     
+                            } else {
+                                toastr.error(data.message);
+                            }
+                           
+                        },
+                        complete: function () {
+                            $('#loading').hide();
+                        },
+                    });
+                } else {
+                    location.reload();
+                }
+            })
+
+            });
+           
+
+
+
+
+
+
+
+
+
             <?php if($filter_count>0): ?>
             $('#filter_count').html(<?php echo e($filter_count); ?>);
             <?php endif; ?>

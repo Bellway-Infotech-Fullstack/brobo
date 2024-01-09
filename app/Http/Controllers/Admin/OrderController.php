@@ -18,6 +18,8 @@ use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Support\Facades\DB;
+use Razorpay\Api\Api;
+
 use PDF;
 
 class OrderController extends Controller
@@ -341,4 +343,94 @@ class OrderController extends Controller
           return $pdf->download('Invoice'.'# '.$orderId.'.pdf');
          }
     } 
+
+
+  public function initiateRefund(Request $request)
+{
+    try {
+        $orderId = $request->post('order_id');
+        $payment_keys_data = BusinessSetting::where(['key' => 'razor_pay'])->first();
+        $payment_keys_data = (isset($payment_keys_data) && !empty($payment_keys_data)) ? json_decode($payment_keys_data->value, true) : '';
+        $orderData = Order::where('id', $orderId)->first();
+        $transactionId = $orderData->transaction_id;
+
+
+        $refundedData = BusinessSetting::where(['key' => 'refunded_amount'])->first();
+
+        // Check if 'refund' index exists in $refundedData
+        if (isset($refundedData['refund'])) {
+            $refundedDiscount = $refundedData['refund'];
+        } else {
+            // Handle the case when 'refund' index is not present
+            $refundedDiscount = 0; // Set a default value or handle it accordingly
+        }
+
+        $paidAmount = $orderData->paid_amount;
+
+        $orderStartDate = $orderData->start_date;
+        $startDate = new \DateTime($orderStartDate);
+        $currentDate = new \DateTime();
+        $dateDifference = $startDate->diff($currentDate)->days;
+
+        if ($dateDifference > 0) {
+            $refundAmount = $paidAmount;
+        } else {
+            $refundAmount = number_format(($refundedDiscount / 100) * $paidAmount, 2);
+            $refundAmount = str_replace(',', '', $refundAmount);
+            $refundAmount = number_format(($paidAmount - $refundAmount), 2);
+            $refundAmount = str_replace(',', '', $refundAmount);
+        }
+
+        // Check if payment status is captured
+       /* if (!$orderData->payment_status || $orderData->payment_status != 'captured') {
+            return response()->json(['status' => 'error', 'message' => 'The payment status should be captured for action to be taken']);
+        }*/
+
+        $razorpayKey = $payment_keys_data['razor_key'];
+        $razorpaySecret = $payment_keys_data['razor_secret'];
+        
+ 
+
+        // Initiate refund using cURL
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://api.razorpay.com/v1/payments/$transactionId/refund");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+            'amount' => $refundAmount * 100,
+            'speed' => 'normal',
+        ]));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_USERPWD, "$razorpayKey:$razorpaySecret");
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            return response()->json(['status' => 'error', 'message' => 'Refund failed: ' . curl_error($ch)]);
+        }
+        curl_close($ch);
+        
+        
+
+        $refundResult = json_decode($result, true);
+        
+       
+        
+
+        // Handle the refund response
+        if (isset($refundResult['status']) && $refundResult['status'] == 'processed') {
+            // Refund processed successfully
+            return response()->json(['status' => 'success', 'message' => 'Refund processed successfully']);
+        } else {
+            // Refund failed
+            return response()->json(['status' => 'error', 'message' => $refundResult['error']['description']]);
+        }
+    } catch (\Exception $e) {
+        // Handle exceptions
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+}
+
 }

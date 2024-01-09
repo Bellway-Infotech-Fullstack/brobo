@@ -58,7 +58,6 @@
                                 <th><?php echo e(trans('messages.name')); ?></th>
                                 <th><?php echo e(trans('messages.email')); ?></th>
                                 <th><?php echo e(trans('messages.phone')); ?></th>
-                                <th>Refereed Amount</th>
                             </tr>
                             </thead>
                             <tbody id="set-rows">
@@ -68,7 +67,6 @@
                                     <td class="text-capitalize"><?php echo e($e['name']); ?></td>
                                     <td ><?php echo e($e['email'] ?? 'N/A'); ?></td>
                                     <td><?php echo e($e['mobile_number'] ?? 'N/A'); ?></td>
-                                    <td>Rs. 100</td>
                                 </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
