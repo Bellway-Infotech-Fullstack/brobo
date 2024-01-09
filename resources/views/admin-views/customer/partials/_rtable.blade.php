@@ -6,6 +6,5 @@
         {{$e['email'] ?? 'N/A'}}
     </td>
     <td>{{$e['mobile_number']}}</td>
-    <td>Rs. 100</td>
 </tr>
 @endforeach
