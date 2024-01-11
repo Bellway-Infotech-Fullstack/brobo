@@ -136,7 +136,7 @@ class CustomerController extends Controller
     public function distroy($id)
     {
          User::where(['id'=>$id])->delete();
-        Toastr::info(trans('messages.customer_deleted_successfully'));
+        Toastr::info('Customer deleted succesfully');
         return back();
     }
 

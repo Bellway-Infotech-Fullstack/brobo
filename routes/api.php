@@ -79,6 +79,7 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-dashboard-coupon-data', 'index');
             Route::get('get-all-coupons', 'getAllCoupons');
             Route::get('get-coupon-detail', 'getCouponDetail');
+           
         });
 
         Route::controller(FAQController::class)->group(function () {
@@ -101,7 +102,8 @@ Route::group(['namespace' => 'API'], function () {
             Route::put('extend-order','extendOrder');           
             Route::put('pay-for-damage','payForDamage');
             Route::put('pay-for-due-amount','payForDueAmount');
-            Route::get('get-most-ordered-products','getMostOrderedProducts');            
+            Route::get('get-most-ordered-products','getMostOrderedProducts');  
+            Route::get('get-referral-discount', 'getReferrallDiscount');          
         });
 
         Route::controller(NotificationController::class)->group(function () {
