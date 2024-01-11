@@ -399,6 +399,7 @@ class BookingController extends Controller
                     'arriving_date' => date("M d,Y",strtotime($item->start_date)),
                     'start_date' => $item->start_date,
                     'end_date' => $item->end_date,
+                    'time_duration' => $item->time_duration,
                     'total_items_price' => $cartTotalItemAmount,
                     'delivery_charge' => $deliveryCharge,
                     'total_order_price' => $totalOrderPrice,
@@ -676,9 +677,11 @@ class BookingController extends Controller
                 } else {
                     return response()->json(['status' => 'success', 'message' => 'No Data found', 'code' => 200,'data' => null]);
                 }
-        }   
+        }    else {
+                    return response()->json(['status' => 'success', 'message' => 'No Data found', 'code' => 200,'data' => null]);
+                }
 
-        }
+    }
 
      
 
