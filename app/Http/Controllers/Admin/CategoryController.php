@@ -28,15 +28,34 @@ class CategoryController extends Controller
 
     public function search(Request $request){
         $key = explode(' ', $request['search']);
-        $categories=Category::where(function ($q) use ($key) {
-            foreach ($key as $value) {
-                $q->orWhere('name', 'like', "%{$value}%");
-            }
-        })->limit(50)->get();
-        return response()->json([
-            'view'=>view('admin-views.category.partials._table',compact('categories'))->render(),
-            'count'=>$categories->count()
-        ]);
+
+       
+        $search_by_subcategory = (isset($request['search_by_subcategory']) && !empty($request['search_by_subcategory'])) ?? '';
+
+        if($search_by_subcategory == ''){
+            $categories = Category::where(function ($q) use ($key) {
+           
+                foreach ($key as $value) {
+                    $q->orWhere('name', 'like', "%{$value}%");
+                }
+            })->where('parent_id',0)->limit(50)->get();
+            return response()->json([
+                'view'=>view('admin-views.category.partials._table',compact('categories'))->render(),
+                'count'=>$categories->count()
+            ]);
+        } else {
+            $categories = Category::where(function ($q) use ($key) {
+           
+                foreach ($key as $value) {
+                    $q->orWhere('name', 'like', "%{$value}%");
+                }
+            })->where('parent_id','>',0)->limit(50)->get();
+            return response()->json([
+                'view'=> view('admin-views.category.partials._subcategory_table',compact('categories'))->render(),
+                'count'=> $categories->count()
+            ]);
+        }
+        
     }
 
     function sub_sub_index()

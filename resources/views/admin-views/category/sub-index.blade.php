@@ -74,7 +74,8 @@
                 <div class="card">
                     <div class="card-header pb-0">
                         <h5>{{__('messages.sub_category')}} {{__('messages.list')}}<span class="badge badge-soft-dark ml-2" id="itemCount">{{$categories->total()}}</span></h5>
-                        <form>
+                        <form id="search-form" method="post">
+                            <input type="hidden" name="search_by_subcategory" value ="yes">
                             <!-- Search -->
                             <div class="input-group input-group-merge input-group-flush">
                                 <div class="input-group-prepend">
@@ -82,7 +83,7 @@
                                         <i class="tio-search"></i>
                                     </div>
                                 </div>
-                                <input id="datatableSearch" type="search" class="form-control" placeholder="{{__('messages.search_sub_categories')}}" aria-label="{{__('messages.search_sub_categories')}}">
+                                <input id="datatableSearch"  name="search"  type="search" class="form-control" placeholder="{{__('messages.search_sub_categories')}}" aria-label="{{__('messages.search_sub_categories')}}">
                                 <button type="submit" class="btn btn-light">{{__('messages.search')}}</button>
                             </div>
                             <!-- End Search -->
@@ -111,17 +112,13 @@
                                     </tr>
                                 </thead>
 
-                                <tbody>
+                                <tbody id="table-div">
                                 @foreach($categories as $key=>$category)
                                     <tr>
                                         <td>{{$key+$categories->firstItem()}}</td>
                                         <td>{{$category->id}}</td>
                                         <td>
                                             <span class="d-block font-size-sm text-body">
-                                               
-
-
-
                                                 {{$category->parent->name ?? 'N/A'}}
                                             </span>
                                         </td>
@@ -195,7 +192,7 @@
             
             // INITIALIZATION OF DATATABLES
             // =======================================================
-            var datatable = $.HSCore.components.HSDatatables.init($('#columnSearchDatatable'), {
+           /* var datatable = $.HSCore.components.HSDatatables.init($('#columnSearchDatatable'), {
                 select: {
                     style: 'multi',
                     classMap: {
@@ -210,7 +207,9 @@
                     '<p class="mb-0">No data to show</p>' +
                     '</div>'
                 }
-            });
+            });*/
+
+
 
             $('#datatableSearch').on('mouseup', function (e) {
                 var $input = $(this),
@@ -238,30 +237,33 @@
     </script>
 
     <script>
-        $('#search-form').on('submit', function () {
-            var formData = new FormData(this);
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
+         $('#search-form').on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.post({
+                    url: '{{route('admin.category.search')}}',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $('#loading').show();
+                    },
+                    success: function (data) {
+                        $('#table-div').html(data.view);
+                        $('#itemCount').html(data.count);
+                        $('.page-area').hide();
+                    },
+                    complete: function () {
+                        $('#loading').hide();
+                    },
+                });
             });
-            $.post({
-                url: '{{route('admin.category.search')}}',
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                beforeSend: function () {
-                    $('#loading').show();
-                },
-                success: function (data) {
-                    $('#set-rows').html(data.view);
-                    $('.page-area').hide();
-                },
-                complete: function () {
-                    $('#loading').hide();
-                },
-            });
-        });
+        
     </script>
 @endpush
