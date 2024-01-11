@@ -79,7 +79,7 @@ class BookingController extends Controller
                 if (empty($couponData)) {
                     return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Invalid coupon id']);
                 }
-                $orderCouponDataCount = Order::where(['coupon_id' => $couponId,'user_id' => $customerId])->count();  
+                 $orderCouponDataCount = Order::where(['coupon_id' => $couponId,'user_id' => $customerId])->count();  
               
                 $couponLimit = $couponData->limit;
            
@@ -632,5 +632,54 @@ class BookingController extends Controller
     
         return response()->json(['status' => 'success', 'message' => 'Amount paid successfully', 'code' => 200]);
     }
+
+
+    public function getReferrallDiscount(Request $request){
+        $token = JWTAuth::getToken();
+        $user = JWTAuth::toUser($token);
+        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+
+        $loginUserData = User::find($customerId);
+
+
+
+        $loginUserReferralCode = $loginUserData->referral_code ?? '';
+        $isReferred = 0;   
+        $referredCode =  NULL;
+        $allCustomers = User::where('role_id','2')->get();
+        
+       
+        if(isset($allCustomers) && !empty($allCustomers)){
+            foreach($allCustomers as $key => $value){                
+                if($loginUserReferralCode == $value->referred_code){
+                    $isReferred = 1;     
+                    $referredCode = $loginUserReferralCode;  
+                           
+                }
+            }
+        }
+
+        if($isReferred == '1'){
+            $discountData  = BusinessSetting::where('key','referred_discount')->first();
+            $referredDiscount =  $discountData->value; 
+            
+            $userOrderData = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->where('orders.user_id', $customerId)
+                ->pluck('orders.referred_code')->toArray();
+
+               
+
+                if(!in_array($referredCode,$userOrderData)){
+                    $data = array('referred_discount' => $referredDiscount);
+                    return response()->json(['status' => 'success', 'message' => 'Data found', 'code' => 200,'data' => $data]);
+
+                } else {
+                    return response()->json(['status' => 'success', 'message' => 'No Data found', 'code' => 200,'data' => null]);
+                }
+        }   
+
+        }
+
+     
 
 }

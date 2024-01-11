@@ -5,8 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Coupon;
+use App\Models\Order;
 use DB;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CouponController extends Controller
 {
@@ -65,20 +67,41 @@ class CouponController extends Controller
          }
      }
 
-     public function get_all_coupons(){
+     public function getAllCoupons(){
 
         $todayDate = date("Y-m-d");
 
         $couponData = Coupon::where(['status' => 1])
         ->whereDate('start_date', '<=', $todayDate)
         ->whereDate('expire_date', '>=', $todayDate)
-        ->orderBy('created_at', 'desc')->get();   
+        ->orderBy('created_at', 'desc')->get();  
+        if(count($couponData) > 0) {         
+            $allData = array();    
+            foreach($couponData as $key => $value){
+                $data = array(
+                    
+                        'id' => $value->id,
+                        'title' => $value->title,
+                        'code' => $value->code,
+                        'start_date' => $value->start_date,
+                        'expire_date' => $value->expire_date,
+                        'min_purchase' => $value->min_purchase,
+                        'max_discount' => $value->max_discount,
+                        'discount' => $value->discount,
+                        'discount_type' => $value->discount_type,
+                        'coupon_type' => $value->coupon_type,
+                        'limit' => $value->limit,
+                        'background_image' => (env('APP_ENV') == 'local') ? asset('storage/coupon_background_image/' . $value->background_image) : asset('storage/app/public/coupon_background_image/' . $value->background_image),
+                        'status' => $value->status,
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at
+                                        
+                    );
 
-
-
-                           
-        if(count($couponData) > 0) {
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'data found','data' => $couponData], 200);
+                    array_push($allData,$data);
+                
+            }
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found','data' => $allData], 200);
             
         } else {
             return response()->json(['status' => 'error', 'code' => 404, 'message' => 'No data found'], 404);
@@ -92,6 +115,7 @@ class CouponController extends Controller
              // get coupon data 
 
              $code = $request->code;
+             $todayDate = date("Y-m-d");
 
                // Define the validation rules
                $validationRules = [
@@ -111,9 +135,30 @@ class CouponController extends Controller
 
             
              
-             $couponData = Coupon::where(['status' => 1])->where('code', '<=', $code)->first();            
+            $couponData = Coupon::where(['status' => 1])->where('code', $code)
+            
+            ->whereDate('start_date', '<=', $todayDate)
+            ->whereDate('expire_date', '>=', $todayDate)->first();  
 
-             if (isset($couponData) && !empty($couponData)) {
+            if (isset($couponData) && !empty($couponData)) {
+                $couponLimit = $couponData->limit;
+
+                $couponId = $couponData->id;
+
+                $token = JWTAuth::getToken();
+                $user = JWTAuth::toUser($token);
+                $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+    
+                $userOrderedCouponIdsCount = Order::where(array('user_id' => $customerId , 'coupon_id' => $couponId))->count();
+
+                if($userOrderedCouponIdsCount >= $couponLimit){
+                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You can not apply this coupon', 'data' => null], 400);
+                }
+          
+    
+                
+    
+                
                  $data = array(
                     "status"=> "success",
                     "code"=> 200,
