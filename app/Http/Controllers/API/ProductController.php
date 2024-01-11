@@ -430,11 +430,15 @@ class ProductController extends Controller
                   // Remove commas from discounted_price
                     $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
-                // get catefory name
+                // get sub catefory name
+
+                $item->sub_category_id = $item->category_id;
 
                 $category_data = Category::find($item->category_id);
 
-                $item->category_name = $category_data->name ?? '';
+                $item->category_id = $category_data->parent_id;
+
+                $item->sub_category_name = $category_data->name ?? '';
 
                 return $item;
             });
