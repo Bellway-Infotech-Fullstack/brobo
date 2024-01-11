@@ -376,7 +376,7 @@
                                            href="<?php echo e(route('admin.order.details',['id'=>$order['id']])); ?>"><i
                                                 class="tio-visible"></i> <?php echo e(__('messages.view')); ?></a>
 
-                              <?php if($order['status']=='cancelled'): ?>
+                              <?php if($order['status']=='cancelled' && $order['refunded'] == NULL): ?>
                               <a class="btn btn-sm btn-white ml-2 refund-money"
                               data-order-id="<?php echo e($order['id']); ?>"><i
                                    class="tio-visible"></i> Refund
@@ -515,14 +515,14 @@
     <script>
         $(document).on('ready', function () {
 
-            
+           
             $(".refund-money").on("click",function(){
 
 
                 var order_id = $(this).attr("data-order-id");
                 Swal.fire({
                 title: 'Are you sure?',
-                text: 'Dou you want to refund amount ?',
+                text: 'Do you want to refund amount ?',
                 type: 'warning',
                 showCancelButton: true,
                 cancelButtonColor: 'default',
@@ -544,7 +544,8 @@
                         },
                         success: function (data) {
                             if(data.status == 'success'){
-                                toastr.success(data.message);     
+                                toastr.success(data.message);  
+                                location.href = "<?php echo e(route('admin.order.list',['refunded'])); ?>";
                             } else {
                                 toastr.error(data.message);
                             }

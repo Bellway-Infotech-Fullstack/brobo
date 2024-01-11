@@ -118,7 +118,7 @@ class Order extends Model
     
     public function scopeRefunded($query)
     {
-        return $query->where('status','refunded');
+        return $query->where('refunded','yes');
     }
     
     public function scopeSearchingForDeliveryman($query)

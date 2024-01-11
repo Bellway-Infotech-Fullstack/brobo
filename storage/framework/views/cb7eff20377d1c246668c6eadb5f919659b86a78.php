@@ -91,7 +91,7 @@
                             <img id="viewer"
                                
                                  class="avatar-img"
-                                 src="<?php echo e(asset($assetPrefixPath.'/admin')); ?>/<?php echo e($admin->image); ?>"
+                                 src="<?php echo e(asset($assetPrefixPath.'/storage/admin')); ?>/<?php echo e($admin->image); ?>"
                                  alt="Image">
 
                             <input type="file" name="image" class="js-file-attach avatar-uploader-input"

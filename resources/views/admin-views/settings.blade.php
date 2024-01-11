@@ -90,7 +90,7 @@
                             <img id="viewer"
                                
                                  class="avatar-img"
-                                 src="{{asset($assetPrefixPath.'/admin')}}/{{$admin->image}}"
+                                 src="{{asset($assetPrefixPath.'/storage/admin')}}/{{$admin->image}}"
                                  alt="Image">
 
                             <input type="file" name="image" class="js-file-attach avatar-uploader-input"

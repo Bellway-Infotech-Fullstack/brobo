@@ -235,7 +235,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('quick-view', 'OrderController@quick_view')->name('quick-view');
             Route::get('quick-view-cart-item', 'OrderController@quick_view_cart_item')->name('quick-view-cart-item');
             Route::post('initiate-refund', 'OrderController@initiateRefund')->name('initiate-refund');
-
+            
 
 
         });
