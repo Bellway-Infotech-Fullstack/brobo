@@ -28,6 +28,11 @@ Route::group(['namespace' => 'API'], function () {
 });
 
 Route::group(['namespace' => 'API'], function () {
+
+    Route::controller(SettingController::class)->group(function () {
+        Route::get('get-setting-data', 'index');
+    });
+
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth', 'middleware' => 'custom.jwt'], function () {
         Route::controller(CustomerAuthController::class)->group(function () {
             Route::get('view-profile', 'getCustomerDetails');
@@ -55,7 +60,6 @@ Route::group(['namespace' => 'API'], function () {
         });
 
         Route::controller(SettingController::class)->group(function () {
-            Route::get('get-setting-data', 'index');
             Route::put('update-notification-setting', 'updateNotificationSetting');
             Route::get('get-payment-keys', 'getPaymentKeys');
             Route::get('get-order-settings', 'getOrderSettings');
@@ -73,7 +77,8 @@ Route::group(['namespace' => 'API'], function () {
 
         Route::controller(CouponController::class)->group(function () {
             Route::get('get-dashboard-coupon-data', 'index');
-            Route::get('get-all-coupons', 'get_all_coupons');
+            Route::get('get-all-coupons', 'getAllCoupons');
+            Route::get('get-coupon-detail', 'getCouponDetail');
         });
 
         Route::controller(FAQController::class)->group(function () {

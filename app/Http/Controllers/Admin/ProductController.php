@@ -503,13 +503,13 @@ class ProductController extends Controller
 
     public function search(Request $request){
         $key = explode(' ', $request['search']);
-        $Products=Product::withoutGlobalScope(RestaurantScope::class)->where(function ($q) use ($key) {
+        $products = Product::where(function ($q) use ($key) {
             foreach ($key as $value) {
                 $q->where('name', 'like', "%{$value}%");
             }
         })->limit(50)->get();
-        return response()->json(['count'=>count($Products),
-            'view'=>view('admin-views.product.partials._table',compact('Products'))->render()
+        return response()->json(['count'=> count($products),
+            'view'=>view('admin-views.product.partials._table',compact('products'))->render()
         ]);
     }
 

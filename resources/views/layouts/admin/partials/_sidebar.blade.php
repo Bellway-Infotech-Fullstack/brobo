@@ -107,7 +107,6 @@
 
 
                     <!-- Orders -->
-                    @if(\App\CentralLogics\Helpers::module_permission_check('order'))
                         <li class="nav-item">
                             <small
                                 class="nav-subtitle">{{__('messages.booking')}} {{__('messages.section')}}</small>
@@ -124,7 +123,7 @@
                                 </span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{Request::is('admin/order*')?'block':'none'}}">
+                                style="display: {{Request::is('admin/booking*')?'block':'none'}}">
                                 <li class="nav-item {{Request::is('admin/booking/list/ongoing') ? 'active':''}}">
                                     <a class="nav-link " href="{{route('admin.order.list',['ongoing'])}}"
                                        title="Ongoing {{__('messages.orders')}}">
@@ -173,7 +172,7 @@
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{Request::is('admin/order/list/failed')?'active':''}}">
+                                <li class="nav-item {{Request::is('admin/booking/list/failed')?'active':''}}">
                                     <a class="nav-link " href="{{route('admin.order.list',['failed'])}}"
                                        title="Payment Failed">
                                         <span class="tio-circle nav-indicator-icon"></span>
@@ -187,7 +186,7 @@
                                 </li>
 
                                
-                                <li class="nav-item {{Request::is('admin/order/list/all')?'active':''}}">
+                                <li class="nav-item {{Request::is('admin/booking/list/all')?'active':''}}">
                                     <a class="nav-link" href="{{route('admin.order.list',['all'])}}"
                                        title="{{__('messages.all')}} {{__('messages.orders')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
@@ -204,7 +203,6 @@
                        
                    
                   
-                    @endif
                 <!-- End Orders -->
               
                     <!-- End Restaurant -->
@@ -481,7 +479,7 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/business-settings/business-setup')?'active':''}}">
+                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/business-settings/business-setup')?'active':'s'}}">
                             <a class="nav-link " href="{{route('admin.business-settings.business-setup')}}"
                                title="{{__('messages.business')}} {{__('messages.setup')}}"
                             >
@@ -564,9 +562,9 @@
                                     class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{__('messages.pages')}} {{__('messages.setup')}}</span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{Request::is('admin/business-settings/pages*')?'block':'none'}}">
+                                style="display: {{Request::is('admin/web-app-settings//pages*')?'block':'none'}}">
 
-                                <li class="nav-item {{Request::is('admin/business-settings/pages/terms-and-conditions')?'active':''}}">
+                                <li class="nav-item {{Request::is('admin/web-app-settings//pages/terms-and-conditions')?'active':''}}">
                                     <a class="nav-link "
                                        href="{{route('admin.business-settings.terms-and-conditions')}}"
                                        title="{{__('messages.terms_and_condition')}}">
@@ -575,7 +573,7 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item {{Request::is('admin/business-settings/pages/privacy-policy')?'active':''}}">
+                                <li class="nav-item {{Request::is('admin/web-app-settings//pages/privacy-policy')?'active':''}}">
                                     <a class="nav-link "
                                        href="{{route('admin.business-settings.privacy-policy')}}"
                                        title="{{__('messages.privacy_policy')}}">

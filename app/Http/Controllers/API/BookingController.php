@@ -28,10 +28,12 @@ class BookingController extends Controller
     
     public function bookItems(Request $request){
         try {
-            // Get requested data
+
             $token = JWTAuth::getToken();
             $user = JWTAuth::toUser($token);
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+
+            // Get requested data      
             $starDate = $request->input('start_date');
             $endDate = $request->input('end_date');
             $timeDuration = $request->input('time_duration');
@@ -95,7 +97,11 @@ class BookingController extends Controller
                     $itemId = $val['item_id'];
                     $quantity = $val['quantity'];
                     $productData =  Product::find($itemId);
-                    $productStock = $productData->total_stock;
+                    $productName = $productData->name;
+                     $productStock = $productData->total_stock;
+                    if($productStock <= 0){
+                        return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Product ' .  $productName . ' is out of stock']);
+                    }
                     $remainingStock = $productStock - $quantity;
                     Product::where('id', $itemId)->update(['total_stock' => $remainingStock]);
                     $itemNames = $itemNames." ".$itemName;
@@ -241,6 +247,10 @@ class BookingController extends Controller
 
        
     public function getBookings(Request $request){
+        $token = JWTAuth::getToken();
+        $user = JWTAuth::toUser($token);
+        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+
         $status = $request->get('status');
         $page = $request->get('page');
         $orderBy = 'desc';
@@ -264,7 +274,8 @@ class BookingController extends Controller
             return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
         }
 
-        $bookingData = Order::select('*')->where('status', $status)
+        $bookingData = Order::select('*')
+            ->where(array('status' => $status,'user_id' => $customerId))
             ->orderBy($orderColumn, $orderBy)
             ->paginate($perPage, ['*'], 'page', $page);
 
@@ -299,7 +310,7 @@ class BookingController extends Controller
         });
 
         if ($bookingData->isEmpty()) {
-            return response()->json(['status' => 'error', 'message' => 'No data found', 'code' => 404]);
+            return response()->json(['status' => 'error', 'message' => 'No bookings found', 'code' => 404]);
         }
 
         return response()->json(['status' => 'success', 'message' => 'Data found successfully', 'code' => 200, 'data' => $bookingData->all()]);
@@ -307,8 +318,13 @@ class BookingController extends Controller
 
 
     public function getBookingDetail(Request $request){
+        $token = JWTAuth::getToken();
+        $user = JWTAuth::toUser($token);
+        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+
+
         $bookingId = $request->get('booking_id');
-        $bookingData = Order::where('order_id',$bookingId)->get();
+        $bookingData = Order::where(array('order_id' => $bookingId,'user_id' => $customerId))->get();
     
         // Check if the order exists
         if (count($bookingData) == 0) {
@@ -343,7 +359,36 @@ class BookingController extends Controller
 
             $shippingAddressData = UsersAddress::find($addressId);
 
-            $shippingAddress = $shippingAddressData->house_name . "," . $shippingAddressData->floor_number ." floor" . "," . $shippingAddressData->landmark  . "," . $shippingAddressData->area_name;
+            if(isset($shippingAddressData) && !empty($shippingAddressData)){
+
+                $shippingAddress = $shippingAddressData->house_name . ",";
+
+
+                // Add floor number with suffix
+                $floorNumber = $shippingAddressData->floor_number;
+                if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                    $suffix = 'th';
+                    } else {
+                    switch ($floorNumber % 10) {
+                    case 1:
+                        $suffix = 'st';
+                        break;
+                    case 2:
+                        $suffix = 'nd';
+                        break;
+                    case 3:
+                        $suffix = 'rd';
+                        break;
+                    default:
+                        $suffix = 'th';
+                        break;
+                    }
+                }
+
+                $shippingAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $shippingAddressData->landmark . "," . $shippingAddressData->area_name;
+            } else {
+                $shippingAddress = '';
+            }
 
             $finalItemPrice   = $item->final_item_price; 
 
@@ -457,7 +502,7 @@ class BookingController extends Controller
         $user = JWTAuth::toUser($token);
         $customerId = $user ? $user->id : '';
     
-        $orders = Order::where('user_id', $customerId)->get();
+        $orders = Order::get();
     
         $productCounts = [];
     
@@ -474,12 +519,15 @@ class BookingController extends Controller
     
         // Filter products with counts greater than 2
         $mostOrderedProducts = collect($productCounts)
-            ->filter(function ($count) {
-                return $count > 2;
-            })
-            ->keys();
+                    ->filter(function ($count) {
+                        return $count > 2;
+                    })
+                    ->keys()
+            ->toArray();  // Convert the collection to an array
 
-        // Retrieve product details for the most ordered products
+        $mostOrderedProducts = array_unique($mostOrderedProducts);
+
+   
         $mostOrderedProductDetails = Product::whereIn('id', $mostOrderedProducts)->get();
 
         $mostOrderedProductDetails = $mostOrderedProductDetails->map(function ($item) use ($customerId) {
