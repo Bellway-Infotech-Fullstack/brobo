@@ -27,7 +27,7 @@
                             <?php echo csrf_field(); ?>
                             <div class="row">
                                
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label><?php echo e(__('messages.banner')); ?> <?php echo e(__('messages.image')); ?></label>
                                         <small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 3:1 )</small>

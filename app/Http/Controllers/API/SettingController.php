@@ -163,7 +163,14 @@ class SettingController extends Controller
             $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
             $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
 
-            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge' => $deliveryCharge]]);
+            $logo= BusinessSetting::where('key','logo')->first();
+
+             $logo = $logo->value??'';
+            
+        
+            $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $logo) : asset('storage/app/public/business/' . $logo);     
+
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge' => $deliveryCharge,'logo' => $logoPath]]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);

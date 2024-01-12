@@ -193,7 +193,15 @@ class CartController extends Controller
         if (!$cartData) {
             return response()->json(['status' => 'error', 'message' => 'Cart not found', 'code' => 404]);
         }
-    
+
+        $itemId = $cartData->item_id;
+        $itemData = Product::find($itemId);
+        $totalStock = $itemData->total_stock;
+        if($quantity > $totalStock){
+            return response()->json(['status' => 'error', 'code' => 400,'message' => 'You can not add quantity more than total stock']);
+        }
+
+        
     
         $cartData->quantity = $quantity;
         $cartData->save();

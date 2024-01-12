@@ -29,7 +29,7 @@
                             @csrf
                             <div class="row">
                                
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{__('messages.banner')}} {{__('messages.image')}}</label>
                                         <small style="color: red">* ( {{__('messages.ratio')}} 3:1 )</small>
