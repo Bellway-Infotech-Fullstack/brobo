@@ -28,7 +28,7 @@ class NotificationController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function indexold(Request $request){
+    public function index(Request $request){
         try {
             
              
@@ -90,7 +90,7 @@ class NotificationController extends Controller
          
 
                 if($notification->coupon_id == ''){
-                $notification->description = $notification->description;
+                $description = $notification->description;
                 } else {
 
                 $couponData = Coupon::find($notification->coupon_id);    
@@ -133,7 +133,7 @@ class NotificationController extends Controller
     }
 
  
-    public function index(Request $request)
+    public function index_new(Request $request)
     {
         try {
             $token = JWTAuth::getToken();
@@ -146,7 +146,7 @@ class NotificationController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json(['status' => false, 'code' => 422, 'message' => $validator->errors()->first()]);
+                return response()->json(['status' =>  'error', 'code' => 422, 'message' => $validator->errors()->first()]);
             }
 
             $loginUserData = User::find($customerId);
@@ -191,7 +191,7 @@ class NotificationController extends Controller
             });
 
             $response = [
-                'status' => true,
+                'status' => 'success',
                 'code' => 200,
                 'message' => 'Data found successfully',
                 'data' => [
@@ -212,7 +212,7 @@ class NotificationController extends Controller
 
             return response()->json($response);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'code' => 500, 'message' => $e->getMessage()]);
+            return response()->json(['status' =>  'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
     }
     
