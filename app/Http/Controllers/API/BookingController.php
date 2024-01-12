@@ -14,6 +14,8 @@ use App\Models\BusinessSetting;
 use App\Models\Product;
 use App\Models\Wishlist;
 use App\Models\User;
+use App\CentralLogics\Helpers;
+use DB;
 
 class BookingController extends Controller
 {
@@ -150,7 +152,7 @@ class BookingController extends Controller
                         $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
 
                     }
-                    $paidAmount = $discountedPrice;
+                  //  $paidAmount = $discountedPrice;
                 }
             }
 
@@ -158,21 +160,31 @@ class BookingController extends Controller
                 $allCustomers = User::where('role_id','2')->get();
                 $loginUserData = User::find( $customerId);
                 $loginUserReferralCode = $loginUserData->referral_code ?? '';
-                $isReferred = 0;   
-                $referredCode =  NULL;
-               
-                if(isset($allCustomers) && !empty($allCustomers)){
-                    foreach($allCustomers as $key => $value){                       
-                        if($loginUserReferralCode == $value->referred_code){
-                            $isReferred = 1;       
-                            $referredCode = $loginUserReferralCode;                     
-                        }
-                    }
-                }
 
 
-                
 
+              $allCustomersReferralCodes = User::where('referred_code', $loginUserReferralCode)
+              ->orderBy('created_at', 'desc')
+              ->pluck('referral_code') 
+              ->toArray();
+          
+          
+           $usedReferredCodes = Order::where('user_id', $customerId)
+              ->pluck('referred_code') 
+              ->toArray();
+          
+              $unusedReferredCodes = array_diff($allCustomersReferralCodes, $usedReferredCodes);
+
+              if(isset($unusedReferredCodes) && !empty($unusedReferredCodes)){
+                $referredCode = reset($unusedReferredCodes);
+              } else {
+                $referredCode = NULL;
+              }
+              
+              
+
+
+            
       
 
              $userOrderData = Order::join('users', 'orders.user_id', '=', 'users.id')
@@ -181,19 +193,19 @@ class BookingController extends Controller
 
                
 
-                if(!in_array($referredCode,$userOrderData)){
+               /* if(!in_array($referredCode,$userOrderData)){
                     if($isReferred == '1'){
                         $discountData  = BusinessSetting::where('key','referred_discount')->first();
                         $referredDiscount =  $discountData->value;                  
     
                         $discountedPrice = number_format(($referredDiscount / 100) * $paidAmount, 2);
                         $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
-                        $paidAmount =  $discountedPrice;
+                       // $paidAmount =  $discountedPrice;
     
                     } 
                 } else {
                     $referredCode = NULL;
-                }   
+                }   */
 
 
                 if($orderInstallmentPercent == ''){
@@ -202,6 +214,9 @@ class BookingController extends Controller
                     
                     $pendingAmount = $totalAmount - $paidAmount;
                 }
+
+               // echo "referred_code".$referredCode;
+            //    die;
 
                
                 
@@ -223,7 +238,8 @@ class BookingController extends Controller
                     'description' => $description,
                     'final_item_price' => $finalItemPrice,
                     'is_building_have_lift' => $isBuildingHaveLift,
-                    'referred_code' => $referredCode
+                    'referred_code' => $referredCode,
+                    'referral_code' => $loginUserReferralCode
                 ];
 
                 $newOrder = Order::create($requestData);
@@ -236,6 +252,36 @@ class BookingController extends Controller
                 // clear cart
 
                 Cart::where('customer_id',$customerId)->delete();
+
+
+                // send push notification 
+
+                $loginUserFcmToken = $loginUserData->fcm_token ?? '';
+
+                $data = [
+                    'title' => 'Order Placed',
+                    'description' => 'Order placed successfully',
+                    'order_id' => $orderId,
+                    'image' => '',
+                    'type'=> 'order_status'
+                ];
+
+                Helpers::send_push_notif_to_device($loginUserFcmToken,$data);
+
+
+                // send system notification
+
+                DB::table('notifications')->insert([
+                    'title' => "Order Placed",
+                    'description' => "Order No. #$orderId  placed successfully",
+                    'coupon_id' => NULL,
+                    'from_user_id' => $customerId,
+                    'to_user_id' => $customerId,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+               
 
 
             return response()->json(['status' => 'success','message' => 'Order placed successfully', 'code' => 200]);
@@ -442,6 +488,12 @@ class BookingController extends Controller
         $bookingId = $request->post('booking_id');
       
         $bookingData = Order::where('order_id',$bookingId)->get();
+
+        $token = JWTAuth::getToken();
+        $user = JWTAuth::toUser($token);
+        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
+
+        $loginUserData = User::find( $customerId);
     
         // Check if the order exists
         if (count($bookingData) == 0) {
@@ -452,6 +504,35 @@ class BookingController extends Controller
 
         Order::where('order_id', $bookingId)->update(['status' => 'cancelled', 'description' => 'Your order has been cancelled']);
     
+
+           // send push notification 
+
+           $loginUserFcmToken = $loginUserData->fcm_token ?? '';
+
+           $data = [
+               'title' => 'Order Placed',
+               'description' => 'Order cancelled successfully. Please contact admin to refund your amount',
+               'order_id' => $bookingId,
+               'image' => '',
+               'type'=> 'order_status'
+           ];
+
+           Helpers::send_push_notif_to_device($loginUserFcmToken,$data);
+
+
+           // send system notification
+
+           DB::table('notifications')->insert([
+               'title' => "Order Cancelled",
+               'description' => "Order No. #$bookingId cancelled successfully . Please contact admin to refund your amount",
+               'coupon_id' => NULL,
+               'from_user_id' => $customerId,
+               'to_user_id' => $customerId,
+               'created_at' => now(),
+               'updated_at' => now()
+           ]);
+
+
         return response()->json(['status' => 'success', 'message' => 'Order cancelled successfully', 'code' => 200]);
     }
 
@@ -638,51 +719,35 @@ class BookingController extends Controller
     public function getReferrallDiscount(Request $request){
         $token = JWTAuth::getToken();
         $user = JWTAuth::toUser($token);
-        $customerId = (isset($user) && !empty($user)) ? $user->id : '';
-
-        $loginUserData = User::find($customerId);
-
-
-
+        $customerId = ($user) ? $user->id : '';
+    
+        $loginUserData = User::find($customerId);    
         $loginUserReferralCode = $loginUserData->referral_code ?? '';
-        $isReferred = 0;   
-        $referredCode =  NULL;
-        $allCustomers = User::where('role_id','2')->get();
-        
+     
        
-        if(isset($allCustomers) && !empty($allCustomers)){
-            foreach($allCustomers as $key => $value){                
-                if($loginUserReferralCode == $value->referred_code){
-                    $isReferred = 1;     
-                    $referredCode = $loginUserReferralCode;  
-                           
-                }
-            }
-        }
-
-        if($isReferred == '1'){
-            $discountData  = BusinessSetting::where('key','referred_discount')->first();
-            $referredDiscount =  $discountData->value; 
-            
-            $userOrderData = Order::join('users', 'orders.user_id', '=', 'users.id')
-                ->where('orders.user_id', $customerId)
-                ->pluck('orders.referred_code')->toArray();
-
-               
-
-                if(!in_array($referredCode,$userOrderData)){
-                    $data = array('referred_discount' => $referredDiscount);
-                    return response()->json(['status' => 'success', 'message' => 'Data found', 'code' => 200,'data' => $data]);
-
-                } else {
-                    return response()->json(['status' => 'success', 'message' => 'No Data found', 'code' => 200,'data' => null]);
-                }
-        }    else {
-                    return response()->json(['status' => 'success', 'message' => 'No Data found', 'code' => 200,'data' => null]);
-                }
-
-    }
-
+       $allCustomersReferralCodes = User::where('referred_code', $loginUserReferralCode)
+           ->orderBy('created_at', 'desc')
+           ->pluck('referral_code') 
+           ->toArray();
+       
+       
+        $usedReferredCodes = Order::where('user_id', $customerId)
+           ->pluck('referred_code') 
+           ->toArray();
+       
+        $unusedReferralCodes = array_diff($allCustomersReferralCodes, $usedReferredCodes);
+ 
+        $discountData = BusinessSetting::where('key', 'referred_discount')->first();
+        $referredDiscount = $discountData->value;
      
 
+        if (count($unusedReferralCodes) > 0 ) {
+            $data = ['referred_discount' => $referredDiscount];
+            return response()->json(['status' => 'success', 'message' => 'Referral discount available', 'code' => 200, 'data' => $data]);
+        } else {
+            return response()->json(['status' => 'success', 'message' => 'Referral discount already used', 'code' => 200, 'data' => null]);
+        }
+    }
+
 }
+
