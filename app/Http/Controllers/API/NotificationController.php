@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\BusinessSetting;
 //include 'cron_job.php';
 
+
 class NotificationController extends Controller
 {
     //
@@ -27,7 +28,7 @@ class NotificationController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function index(Request $request){
+    public function indexold(Request $request){
         try {
             
              
@@ -110,7 +111,7 @@ class NotificationController extends Controller
                 
                 $notification->description = $description;
                  // Calculate time ago
-              //  $notification->time_ago = Carbon::parse($notification->created_at)->diffForHumans();
+              //=  $notification->time_ago = Carbon::parse($notification->created_at)->diffForHumans();
 
                 return $notification;
              });
@@ -130,6 +131,94 @@ class NotificationController extends Controller
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
     }
+
+ 
+    public function index(Request $request)
+    {
+        try {
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = ($user) ? $user->id : '';
+
+            // Validate the input data
+            $validator = Validator::make($request->all(), [
+                'page' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['status' => false, 'code' => 422, 'message' => $validator->errors()->first()]);
+            }
+
+            $loginUserData = User::find($customerId);
+
+            $notificationsQuery = Notification::where('to_user_id', $customerId)
+                ->when($loginUserData->is_notification_setting_on == "no", function ($query) use ($loginUserData) {
+                    $notificationOffTime = $loginUserData->notification_off_time;
+                    return $query->where('created_at', '<', $notificationOffTime);
+                })
+                ->orderBy('created_at', 'desc');
+
+            $perPage = 10;
+            $notifications = $notificationsQuery->paginate($perPage);
+
+            $data = $notifications->map(function ($notification) {
+                $couponDescription = '';
+
+                if (isset($notification->coupon_id)) {
+                    $coupon = Coupon::find($notification->coupon_id);
+
+                    if ($coupon) {
+                        $couponDiscountType = $coupon->discount_type;
+                        $couponCode = $coupon->code;
+
+                        $couponDiscount = ($couponDiscountType == "percentage") ? $coupon->discount . " %" : "Rs. " . $coupon->discount;
+
+                        $couponDescription = "Get upto $couponDiscount off using code $couponCode";
+                    }
+
+                    $description = $couponDescription;
+                } else {
+                    $description = $notification->description;
+                }
+
+
+                return [
+                    'description' => $description,
+                    'created_at' => $notification->created_at,
+                  // 'time_ago' => Carbon::parse($notification->created_at)->diffForHumans()
+                    // Add other fields as needed
+                ];
+            });
+
+            $response = [
+                'status' => true,
+                'code' => 200,
+                'message' => 'Data found successfully',
+                'data' => [
+                    'data' => $data,
+                    'paginator' => [
+                        'totalDocs' => $notifications->total(),
+                        'limit' => $notifications->perPage(),
+                        'page' => $notifications->currentPage(),
+                        'totalPages' => $notifications->lastPage(),
+                        'slNo' => $notifications->firstItem(),
+                        'hasPrevPage' => $notifications->previousPageUrl() !== null,
+                        'hasNextPage' => $notifications->nextPageUrl() !== null,
+                        'prevPage' => $notifications->previousPageUrl(),
+                        'nextPage' => $notifications->nextPageUrl(),
+                    ]
+                ],
+            ];
+
+            return response()->json($response);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'code' => 500, 'message' => $e->getMessage()]);
+        }
+    }
+    
+
+    
+
 
 
     public function getUnreadNotificationsCount(Request $request){
@@ -210,8 +299,7 @@ class NotificationController extends Controller
     }
 
 
-  private static function sendPushNotifcation($fcmToken, $data)
-    {
+    private static function sendPushNotifcation($fcmToken, $data){
         $key = BusinessSetting::where(['key' => 'push_notification_key'])->first()->value;
         
         $url = "https://fcm.googleapis.com/fcm/send";
@@ -255,10 +343,7 @@ class NotificationController extends Controller
                 
             }
         }
-
-        
-
-       // return $result;
+        // return $result;
     }
 
 
