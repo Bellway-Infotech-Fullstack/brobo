@@ -225,12 +225,13 @@ class OrderController extends Controller
         ->when($status == 'scheduled', function($query){
             return $query->Scheduled();
         })
-        // ->Where('id', 100350)
         ->where(function ($q) use ($key) {
             foreach ($key as $value) {
-                $q->Where('id', 'like', "%{$value}%")
-                // ->orWhere('order_status', 'like', "%{$value}%")
-                ->orWhere('transaction_reference', 'like', "%{$value}%");
+                $q->Where('order_id', 'like', "%{$value}%");
+                // Add the condition to search by customer name
+                $q->orWhereHas('customer', function ($subQuery) use ($value) {
+                    $subQuery->where('name', 'like', "%{$value}%");
+                });
             }
         })
      
@@ -250,13 +251,26 @@ class OrderController extends Controller
     public function status(Request $request)
     {
         $order = Order::find($request->id);
+        
 
-        if($order->status == 'completed')
-        {
-            Toastr::warning('You cannot change status of a completed order');
-            return back(); 
+        
+        if($request->status == 'completed'){
+            if($order->pending_amount > 0){
+                Toastr::warning('You cannot change status of order as completed until customer have not paid pending amount');
+                return back(); 
+            }
+            
+            $order_description = "Your order has been completed";
+            
         }
+        
+        if($request->status == 'cancelled'){
+            $order_description = "Your order has been cancelled";
+        }
+
+        
         $order->status = $request->status;
+        $order->description = $order_description;
         $order->save();        
       
         Toastr::success(trans('messages.order').trans('messages.status_updated'));

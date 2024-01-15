@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\UserPassword;
+use App\Models\UsersAddress;
 
 class CustomerController extends Controller
 {
@@ -51,7 +53,7 @@ class CustomerController extends Controller
 
         ]);
 
-        DB::table('users')->insert([
+       $userId =  DB::table('users')->insertGetId([
             'name' => $request->name,
             'mobile_number' => $request->mobile_number,
             'gender' => $request->gender,
@@ -62,8 +64,16 @@ class CustomerController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        
+         // Save password in user's password table
 
-        Toastr::success(trans('messages.customer_added_successfully'));
+        UserPassword::create([
+            "customer_id" =>  $userId,
+            "password" =>  bcrypt($request->password),
+
+        ]);
+
+        Toastr::success('Customer added succesfully');
         return redirect()->route('admin.customer.list');
     }
 
@@ -104,14 +114,6 @@ class CustomerController extends Controller
             'name' => 'required|regex:/^[A-Za-z\s]+$/',
             'email' => $emailValidation,
             'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users,mobile_number,'.$id,
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->mixedCase()
-                    ->letters()
-                    ->numbers()
-                    ->symbols()
-            ],
             'address' =>'required'
 
         ]);
@@ -128,14 +130,26 @@ class CustomerController extends Controller
             'address' => $request->address,
             'updated_at' => now(),
         ]);
-
-        Toastr::success(trans('messages.customer_updated_successfully'));
+        
+     
+        Toastr::success('Customer updated succesfully');
         return redirect()->route('admin.customer.list');
     }
 
     public function distroy($id)
     {
          User::where(['id'=>$id])->delete();
+         // delete user's booking data
+         
+         Order::where(['user_id'=>$id])->delete();
+         
+         // delete user's password data 
+          UserPassword::where(['customer_id'=>$id])->delete();
+         
+          // delete user's address data 
+          
+         UsersAddress::where(['customer_id'=>$id])->delete();
+         
         Toastr::info('Customer deleted succesfully');
         return back();
     }
@@ -158,38 +172,41 @@ class CustomerController extends Controller
 
     public function refereddsearch(Request $request){
         $key = explode(' ', $request['search']);
-        $userList = Order::where('orders.is_reffered', '=', '1')
-            ->latest()
-            ->join('users', 'orders.user_id', '=', 'users.id') // Assuming 'user_id' is the foreign key in the 'orders' table
-            ->select('users.*') // Select the columns from the 'users' table that you need
-            ->where(function ($q) use ($key) {
-                foreach ($key as $value) {
-                    $q->orWhere('users.name', 'like', "%{$value}%");
-                    $q->orWhere('users.mobile_number', 'like', "%{$value}%");
-                    $q->orWhere('users.email', 'like', "%{$value}%");
-                }
-            })
-            ->distinct() // Ensure unique results based on the users.id column
-            ->paginate(config('default_pagination'));
+   $user_list = User::select('users.id', 'users.name', 'users.referral_code', 'users.referred_code')
+    ->join('users as referrer', 'users.referred_code', '=', 'referrer.referral_code')
+    ->whereNotNull('users.referred_code')
+    ->where(function ($q) use ($key) {
+        foreach ($key as $value) {
+            $q->orWhere('referrer.name', 'like', "%{$value}%")
+              ->orWhere('users.name', 'like', "%{$value}%");
+        }
+    })
+    ->paginate(config('default_pagination'));
+
 
         return response()->json([
-            'view'=>view('admin-views.customer.partials._rtable',compact('userList'))->render(),
-            'count'=>$userList->count()
+            'view'=>view('admin-views.customer.partials._rtable',compact('user_list'))->render(),
+            'count'=>$user_list->count()
         ]);
     }
 
+ 
+   
     function refereed_list()
     {
-        $user_list = Order::where('orders.referred_code', '!=', NULL)
-        ->latest()
-        ->join('users', 'orders.user_id', '=', 'users.id') // Assuming 'user_id' is the foreign key in the 'orders' table
-        ->select('users.*') // Select the columns from the 'users' table that you need
-        ->distinct() // Ensure unique results based on the users.id column
+        $user_list  =  User::select('id', 'name', 'referral_code', 'referred_code')
+    ->whereNotNull('referred_code')
+    ->whereExists(function ($query) {
+        $query->select(DB::raw(1))
+            ->from('users as referrer')
+            ->whereColumn('referrer.referral_code', '=', 'users.referred_code');
+    })
+    ->paginate(config('default_pagination'));
+       
+                return view('admin-views.customer.referedd-list', compact('user_list'));
 
-        ->paginate(config('default_pagination'));
-        
-        return view('admin-views.customer.referedd-list', compact('user_list'));
     }
+
 
     public function view($id)
     {

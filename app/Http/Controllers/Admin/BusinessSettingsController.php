@@ -70,6 +70,15 @@ class BusinessSettingsController extends Controller
             'value' => $image_name
         ]);
 
+
+        $fav_icon_val = BusinessSetting::where(['key' => 'fav_icon'])->first();
+
+        if ($request->has('fav_icon')) {
+            $fav_icon = Helpers::update('business/', $request->file('fav_icon')->getClientOriginalName(), 'png', $request->file('fav_icon'));
+        } else {
+            $fav_icon = $fav_icon_val['value'];
+        }
+
         DB::table('business_settings')->updateOrInsert(['key' => 'phone'], [
             'value' => $request['phone']
         ]);

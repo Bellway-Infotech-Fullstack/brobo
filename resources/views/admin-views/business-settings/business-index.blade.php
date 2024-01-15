@@ -135,7 +135,8 @@
                         <div class="col-md-4 col-sm-6 col-12">
                             @php
                               $countryData =    \App\Models\BusinessSetting::where('key','country')->first();   
-                              $country = (isset($countryData) && !empty($countryData)) ?? $countryData->value ;
+                              $country = (isset($countryData) && !empty($countryData)) ? $countryData->value : '' ;
+                            
                               
                             @endphp
                             <div class="form-group">
@@ -710,10 +711,18 @@
                     </div>
 
                  
-                   
-                   
+                            <div class="form-group col-12" style="margin-left: -15px;">
+                                            @php($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first())
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Footer
+                                    Text</label>
+                                <textarea  name="footer_text" class="form-control"  placeholder="" required="">{{  $footer_text->value??''  }}</textarea>
+                            </div>
 
-                    @php($logo=\App\Models\BusinessSetting::where('key','logo')->first())
+
+                
+                    <div class="row">
+                        <div class="col-sm-6">
+                                @php($logo=\App\Models\BusinessSetting::where('key','logo')->first())
                     @php($logo=$logo->value??'')
                     <div class="form-group">
                         <label class="input-label d-inline">{{__('messages.logo')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 3:1 )</small>
@@ -729,9 +738,35 @@
                     ?>
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
                                  src="{{$logoPath}}" alt="logo image"/>
                         </center>
+                    </div>
+                        </div>
+                        <div class="col-sm-6">
+                    @php($favIconData = \App\Models\BusinessSetting::where('key','fav_icon')->first())
+                    @php($favIcon =$favIconData->value??'')
+                    <div class="form-group">
+                        <label class="input-label d-inline">Fav Icon</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
+                        <div class="custom-file">
+                            <input type="file" name="fav_icon" id="customFileEg2" class="custom-file-input"
+                                   accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                            <label class="custom-file-label" for="customFileEg2">{{__('messages.choose')}} {{__('messages.file')}}</label>
+                        </div>
+                        <hr>
+                        <?php
+                
+                        $favIconPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $favIcon) : asset('storage/app/public/business/' . $favIcon);        
+                    ?>
+                    
+                   
+                        <center>
+                           <img style="height: 100px; border: 1px solid; border-radius: 10px;" id="viewer2"
+     src="{{$favIconPath}}" alt="fav icon" class="{{ $favIcon ? 'd-block' : 'd-none' }}">
+
+                        </center>
+                       
+                    </div>
+                        </div>
                     </div>
                     <hr>
                     <button type="{{env('APP_MODE')!='demo'?'submit':'button'}}" onclick="{{env('APP_MODE')!='demo'?'':'call_demo()'}}" class="btn btn-primary mb-2">{{trans('messages.submit')}}</button>
@@ -876,18 +911,34 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+        
+        function previewFavIcon(input) {
+            if (input.files && input.files[0]) {
+                $("#viewer2").removeClass("d-none");
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#viewer2').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
         $("#customFileEg1").change(function () {
             readURL(this);
         });
-    </script>
+        
+         $("#customFileEg2").change(function () {
+            previewFavIcon(this);
+        });
+   
 
-
-    <script>
       
 
         $(document).on("keydown", "input", function(e) {
           if (e.which==13) e.preventDefault();
         });
-    </script>
+         </script>
+
 @endpush

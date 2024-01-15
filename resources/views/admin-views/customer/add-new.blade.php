@@ -54,7 +54,7 @@
                                            placeholder="Name" value="{{old('name')}}" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="input-label qcont" for="phmobile_numberone">{{__('messages.mobile_number')}}</label>
+                                    <label class="input-label qcont" for="phmobile_numberone">Mobile Number</label>
                                     <input type="text" name="mobile_number" value="{{old('mobile_number')}}" class="form-control" id="mobile_number"
                                            placeholder="Ex : +91017********" required>
                                 </div>
