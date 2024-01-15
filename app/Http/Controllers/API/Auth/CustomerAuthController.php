@@ -12,7 +12,9 @@ use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Validation\Rules\Password;
 use App\Events\sendSMS;
+use App\Models\Order;
 use App\Models\UserPassword;
+use App\Models\UsersAddress;
 
 class CustomerAuthController extends Controller
 {
@@ -71,7 +73,29 @@ class CustomerAuthController extends Controller
             $referralCode = Str::random(10);
             $request['referral_code'] = $referralCode;
 
-         
+            /*
+
+            $allCustomers = User::where('role_id','2')->get();
+            $loginUserData = User::find( $customerId);
+            $loginUserReferredCode = $loginUserData->referred_code ?? '';
+           
+            if(isset($allCustomers) && !empty($allCustomers)){
+                foreach($allCustomers as $key => $value){
+                    echo "loginUserReferredCode = ";
+                    echo "<br>";
+                    echo $loginUserReferredCode;
+                    echo "<br>";
+                    echo "user referral_code = ";
+                    echo "<br>";
+                    echo $value->referral_code;
+                    if($loginUserReferredCode == $value->referral_code){
+                        echo "<br>";
+                        echo "user id =".$value->id;
+                        echo "<br>";
+                    }
+                }
+            }*/
+
             
 
             $count = User::where('referral_code', $referralCode)->count();
@@ -717,11 +741,26 @@ class CustomerAuthController extends Controller
                 // Invalidate the user's token
                 JWTAuth::invalidate(JWTAuth::getToken());
 
-                // Log the user out
-                Auth::logout();
+              
 
-                // Delete the account
+                // Delete the user 
                 $user->delete();
+                
+                 // delete user's booking data
+         
+         Order::where(['user_id'=>$customerId])->delete();
+         
+         // delete user's password data 
+          UserPassword::where(['customer_id'=>$customerId])->delete();
+         
+          // delete user's address data 
+          
+         UsersAddress::where(['customer_id'=>$customerId])->delete();
+         
+           // Log the user out
+                Auth::logout();
+                
+                
 
                 return response()->json(['code' => 200, 'status' => 'success', 'message' => 'Account deleted successfully']);
             } else {

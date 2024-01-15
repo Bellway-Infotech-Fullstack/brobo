@@ -56,18 +56,22 @@
                             <thead class="thead-light">
                             <tr>
                                 <th>{{trans('messages.#')}}</th>
-                                <th>{{trans('messages.name')}}</th>
-                                <th>{{trans('messages.email')}}</th>
-                                <th>{{trans('messages.phone')}}</th>
+                                <th>Refer By</th>
+                                <th>Refer To</th>
                             </tr>
                             </thead>
                             <tbody id="set-rows">
                             @foreach($user_list as $k=>$e)
+                            
+                            @php
+                                   $referrer = \APP\Models\User::select('id', 'name')
+        ->where('referral_code', $e->referred_code)
+        ->first();
+                            @endphp
                                 <tr>
                                     <th scope="row">{{$k+$user_list->firstItem()}}</th>
-                                    <td class="text-capitalize">{{$e['name']}}</td>
-                                    <td >{{$e['email'] ?? 'N/A'}}</td>
-                                    <td>{{$e['mobile_number'] ?? 'N/A'}}</td>
+                                    <td class="text-capitalize">{{$referrer->name}}</td>
+                                    <td >{{$e['name'] ?? 'N/A'}}</td>
                                 </tr>
                             @endforeach
                             </tbody>

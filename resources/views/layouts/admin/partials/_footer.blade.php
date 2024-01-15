@@ -6,10 +6,9 @@ $footerText = (isset($businessSetting) && !empty($businessSetting)) ? $businessS
     <div class="row justify-content-between align-items-center">
         <div class="col">
             <p class="font-size-sm mb-0">
-                {{-- &copy; {!!\App\Models\BusinessSetting::where(['key'=>'business_name'])->first()->value}}.  --}}
+                 &copy; {{ \App\Models\BusinessSetting::where(['key'=>'business_name'])->first()->value }} 2023. {{ \App\Models\BusinessSetting::where(['key'=>'footer_text'])->first()->value }}.  
 
-                <span
-                    class="d-none d-sm-inline-block">Copyright © 2023 Brobo, All Rights Reserved</span>
+
             </p>
         </div>
         <div class="col-auto">

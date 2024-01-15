@@ -55,7 +55,7 @@
                                                placeholder="Name" value="{{$user_record['name']}}"  required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="input-label qcont" for="phmobile_numberone">{{__('messages.mobile_number')}}</label>
+                                        <label class="input-label qcont" for="phmobile_numberone">Mobile Number</label>
                                         <input type="text" name="mobile_number" value="{{$user_record['mobile_number']}}"  class="form-control" id="mobile_number"
                                                placeholder="Ex : +91017********" required>
                                     </div>
@@ -72,16 +72,7 @@
                             <br>
                             <div class="form-group">
                                 <div class="row">                            
-                                    <div class="col-md-4">
-                                        <label class="input-label qcont" for="password">{{__('messages.password')}}</label>
-                                        <input type="password" name="password" class="form-control" id="password" value="{{old('password')}}"
-                                               placeholder="{{__('messages.password_length_placeholder',['length'=>'8+'])}}" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="input-label qcont" for="confirm_password">Confirm Password</label>
-                                        <input type="password" name="confirm_password" class="form-control" id="confirm_password" value="{{old('confirm_password')}}"
-                                               placeholder="{{__('messages.password_length_placeholder',['length'=>'8+'])}}" required>
-                                    </div>
+                                 
                                     <div class="col-md-4">
                                         <label class="input-label qcont" for="password">Gender</label>
                                         <select name="gender" class="form-control" id="gender" required>
@@ -90,21 +81,16 @@
                                             <option value="Female" {{ ($user_record['gender'] == 'Female') ? 'selected' : '' }}>Female</option>
                                         </select>
                                     </div>
-                                </div>
-                            </div>          
-                            
-                            <small class="nav-subtitle border-bottom">{{__('messages.login')}} {{__('messages.info')}}</small>
-                            <br>
-                            <div class="form-group">
-                                <div class="row">                            
-                                    <div class="col-md-4">
-                                        <label class="input-label qcont" for="address">Addreess</label>
+                                     <div class="col-md-4">
+                                          <label class="input-label qcont" for="address">Addreess</label>
                                         <textarea name="address" class="form-control" placeholder="Address" required>{{$user_record['address']}}</textarea>
                                         
                                     </div>
-                                    
                                 </div>
-                            </div>  
+                            </div>          
+                            
+                            <br>
+
     
                             <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
                         </form> 
