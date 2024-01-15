@@ -1,68 +1,32 @@
 <?php
+require_once('db_connect.php');  // Include the database connection file
 
 
 function sendNotificationOfPendingDueAmountOrder(){
-    // Assuming you have a database connection
-    $host = "localhost";
-    $user = "u929863268_brobo";
-    $password = "47/vjTXh5/";
-    $database = "u929863268_brobo";
-    
-    // Create connection
-    $conn = mysqli_connect($host, $user, $password, $database);
-    
-    // Check connection
-    if (!$conn) {
-        echo("Connection failed: " . mysqli_connect_error());
-    }
-    
-    
-    
-    // Get ongoing orders
-    $query = "SELECT * FROM orders WHERE status = 'ongoing'";
+    $conn = connectToDatabase();
+    $query = "SELECT o.user_id,u.fcm_token,o.order_id,o.id,o.pending_amount  FROM `orders` AS o INNER JOIN `users` AS u ON o.user_id = u.id WHERE o.status = 'ongoing' AND o.pending_amount > 0 ";
     $result = mysqli_query($conn, $query);
     
     if (!$result) {
         echo("Error in SQL query: " . mysqli_error($conn));
     }
-    $allData = [];
     
     while ($row = mysqli_fetch_assoc($result)) {
         $userId = $row['user_id'];
-        $userDataQuery = "SELECT * FROM users WHERE id = $userId";
-        $userDataResult = mysqli_query($conn, $userDataQuery);
-    
-        if (!$userDataResult) {
-            echo("Error in SQL query: " . mysqli_error($conn));
-        }
-    
-        $userData = mysqli_fetch_assoc($userDataResult);
-        $userFcmToken = $userData['fcm_token'];
-        $todayDate = date("Y-m-d");
-        $endDate = $row['end_date'];
-        $orderId = $row['id'];
-        $dueAmount = $row['pending_amount'];
+        $userFcmToken = $row['fcm_token'];
         $customOrderId = $row['order_id'];
-    
-        if ($dueAmount > 0) {
-       
-            
-            $data = [
-                'user_id' => $userId,
-                'order_id' => $customOrderId,
-                'title' => "Due amount pending for order no, #$customOrderId",
-                'body' => "Your Rs. $dueAmount is pending . Please pay your remaining amount",
-            ];
+        $orderId = $row['id']; 
+        $dueAmount =  $row['pending_amount']; 
+        $data = [
+            'user_id' => $userId,
+            'order_id' => $customOrderId,
+            'title' => "Due amount pending for order no, #$customOrderId",
+            'body' => "Your Rs. $dueAmount is pending . Please pay your remaining amount",
+        ];
 
-            sendPushNotifcation($userFcmToken,$data);
-            
-           // array_push($allData,$data);
-    
-         
-        }
+        sendPushNotifcation($userFcmToken,$data);
+        
     }
-    
-    //return $allData; // Output the data
     
     // Close the connection
     mysqli_close($conn);
@@ -72,67 +36,36 @@ function sendNotificationOfPendingDueAmountOrder(){
 
 
 function sendNotificationOfCompletedOrder(){
-    // Assuming you have a database connection
-    $host = "localhost";
-    $user = "u929863268_brobo";
-    $password = "47/vjTXh5/";
-    $database = "u929863268_brobo";
+
     
-    // Create connection
-    $conn = mysqli_connect($host, $user, $password, $database);
+    $conn = connectToDatabase();
     
-    // Check connection
-    if (!$conn) {
-        echo("Connection failed: " . mysqli_connect_error());
-    }
+    $query = "SELECT o.user_id,u.fcm_token,o.order_id,o.id  FROM `orders` AS o INNER JOIN `users` AS u ON o.user_id = u.id WHERE o.status = 'ongoing' AND o.pending_amount = 0 AND DATE(o.end_date) = CURDATE()";
     
-    
-    
-    // Get ongoing orders
-    $query = "SELECT * FROM orders WHERE status = 'ongoing'";
     $result = mysqli_query($conn, $query);
     
     if (!$result) {
         echo("Error in SQL query: " . mysqli_error($conn));
     }
-    $allData = [];
-    
+
     while ($row = mysqli_fetch_assoc($result)) {
         $userId = $row['user_id'];
-        $userDataQuery = "SELECT * FROM users WHERE id = $userId";
-        $userDataResult = mysqli_query($conn, $userDataQuery);
-    
-        if (!$userDataResult) {
-            echo("Error in SQL query: " . mysqli_error($conn));
-        }
-    
-        $userData = mysqli_fetch_assoc($userDataResult);
-        $userFcmToken = $userData['fcm_token'];
-        $todayDate = date("Y-m-d");
-        $endDate = $row['end_date'];
-        $dueAmount = $row['pending_amount'];
+        $userFcmToken = $row['fcm_token'];
         $customOrderId = $row['order_id'];
-         if($dueAmount == 0 && $endDate == $todayDate){
-             
-            $data = [
-                'user_id' => $userId,
-                 'title' => 'Order Completed',
-                 'body' => "Order No. # $customOrderId has been completed",
-            ];
+        $orderId = $row['id']; 
+        /*$description = "Your order has been completed. . We hope you enjoy our services. If you have any questions or concerns, feel free to reach out. We appreciate your business and look forward to serving you again in the future";
+        $query = "UPDATE `orders` set `status` = 'completed' and `description` = $description where `id` = $orderId";
 
-            sendPushNotifcation($userFcmToken,$data);
-            
-           // array_push($allData,$data);
-                       
-        }
-    
-       
-    }
+        $result = mysqli_query($conn, $query);*/
 
-    
-    
-   // return $allData; // Output the data
-    
+        $data = [
+            'user_id' => $userId,
+             'title' => 'Order Completed',
+             'body' => "Order No. # $customOrderId has been completed",
+        ];
+
+        sendPushNotifcation($userFcmToken,$data);
+     }
     // Close the connection
     mysqli_close($conn);
 
@@ -140,22 +73,14 @@ function sendNotificationOfCompletedOrder(){
 
 
 function sendPushNotifcation($fcmToken, $data){
-
-     // Assuming you have a database connection
-     $host = "localhost";
-     $user = "u929863268_brobo";
-     $password = "47/vjTXh5/";
-     $database = "u929863268_brobo";
+    
+   
+    
      
-     // Create connection
-     $conn = mysqli_connect($host, $user, $password, $database);
+     $conn = connectToDatabase();
      
-     // Check connection
-     if (!$conn) {
-         echo("Connection failed: " . mysqli_connect_error());
-     }
-      // Get ongoing orders
-    $query = "SELECT * FROM business_settings WHERE key = 'push_notification_key'";
+    $query = "SELECT * FROM `business_settings` WHERE `key` = 'push_notification_key'";
+  
     $result = mysqli_query($conn, $query);
     
     if (!$result) {
@@ -208,6 +133,6 @@ function sendPushNotifcation($fcmToken, $data){
     // return $result;
 }
 
-sendNotificationOfPendingDueAmountOrder();
+//sendNotificationOfPendingDueAmountOrder();
 sendNotificationOfCompletedOrder();
 ?>

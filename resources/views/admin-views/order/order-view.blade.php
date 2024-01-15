@@ -80,8 +80,26 @@
                      
                         <span class="ml-2 ml-sm-3">
                             <i class="tio-date-range"></i>
-                            {{ date('d M Y ' . config('timeformat'), strtotime($order['created_at'])) }}
+                           Booking Date - {{ date('d M Y ' , strtotime($order['created_at'])) }}
                         </span>
+                        
+                     
+                    </div>
+                    
+                    <div class="row">
+                        
+                            <span class="ml-2 ml-sm-3">
+                           Start Date - {{ date('d M Y ' , strtotime($order['start_date'])) }}
+                        </span>
+                        
+                         <span class="ml-2 ml-sm-3">
+                           End Date - {{ date('d M Y ' , strtotime($order['end_date'])) }}
+                        </span>
+                        
+                        <span class="ml-2 ml-sm-3">
+                          Time Slot - {{ $order['time_duration'] }}
+                        </span>
+                        
                     </div>
 
                     <div class="mt-2">
@@ -121,6 +139,11 @@
                                         <a class="dropdown-item {{ $order['status'] == 'cancelled' ? 'active' : '' }}"
                                             onclick="route_alert('{{ route('admin.order.status', ['id' => $order['id'], 'status' => 'cancelled']) }}','Change status to cancelled ?')"
                                             href="javascript:">Cancelled</a>
+                                            
+                                        <a class="dropdown-item {{ $order['status'] == 'completed' ? 'active' : '' }}"
+                                            onclick="route_alert('{{ route('admin.order.status', ['id' => $order['id'], 'status' => 'completed']) }}','Change status to completed ?')"
+                                            href="javascript:">Completed</a>
+                                            
                                     </div>
                                 </div>
                             </div>
@@ -257,7 +280,20 @@
 
                                         <dt class="col-sm-6">{{ __('messages.subtotal') }}:</dt>
                                         <dd class="col-sm-6">
-                                            Rs.  {{  $total_item_price}}
+                                            
+                                      <?php
+                                            $start_timestamp = strtotime($order['start_date']);
+                                            $end_timestamp = strtotime($order['end_date']);
+                                            
+                                            // Calculate the difference in seconds
+                                            $difference_in_seconds = $end_timestamp - $start_timestamp;
+                                            
+                                            // Convert seconds to days
+                                             $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
+
+                                            
+                                  ?>
+                                            Rs.  {{  $total_item_price*$difference_in_days}}
                                         </dd>
                                       
                                         <dt class="col-sm-6">{{ __('messages.coupon') }}
@@ -292,7 +328,7 @@
 
                                     <dt class="col-sm-6">{{ __('messages.total') }}:</dt>
                                     <dd class="col-sm-6">
-                                        Rs.  {{ $total_item_price + $delivery_charge  - $coupon_discount_amount  }}
+                                        Rs.  {{ $total_item_price*$difference_in_days + $delivery_charge  - $coupon_discount_amount  }}
                                     </dd>
                                 </dl>
                                 <!-- End Row -->
