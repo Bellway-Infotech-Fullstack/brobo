@@ -65,12 +65,7 @@ class BusinessSettingsController extends Controller
         } else {
             $image_name = $curr_logo['value'];
         }
-
-        DB::table('business_settings')->updateOrInsert(['key' => 'logo'], [
-            'value' => $image_name
-        ]);
-
-
+        
         $fav_icon_val = BusinessSetting::where(['key' => 'fav_icon'])->first();
 
         if ($request->has('fav_icon')) {
@@ -78,6 +73,10 @@ class BusinessSettingsController extends Controller
         } else {
             $fav_icon = $fav_icon_val['value'];
         }
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'fav_icon'], [
+            'value' => $fav_icon
+        ]);
 
         DB::table('business_settings')->updateOrInsert(['key' => 'phone'], [
             'value' => $request['phone']
@@ -168,6 +167,10 @@ class BusinessSettingsController extends Controller
 
         DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge'], [
             'value' => $request['delivery_charge']
+        ]);
+        
+        DB::table('business_settings')->updateOrInsert(['key' => 'gst_percent'], [
+            'value' => $request['gst_percent']
         ]);
 
         DB::table('business_settings')->updateOrInsert(['key' => 'referred_discount'], [
@@ -1071,3 +1074,4 @@ class BusinessSettingsController extends Controller
 
     
 }
+
