@@ -137,6 +137,8 @@ class SettingController extends Controller
             $order_installment_percents_data = BusinessSetting::whereIn('key', ['order_installment_percent_1', 'order_installment_percent_2', 'order_installment_percent_3'])->get();
 
             $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
+            
+            
 
             
 
@@ -166,11 +168,13 @@ class SettingController extends Controller
             $logo= BusinessSetting::where('key','logo')->first();
 
              $logo = $logo->value??'';
-            
+             
+             $gst_percent_data = BusinessSetting::where('key','gst_percent')->first();
+            $gst_percent = $gst_percent_data->value ?? '';
         
             $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $logo) : asset('storage/app/public/business/' . $logo);     
 
-            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge' => $deliveryCharge,'logo' => $logoPath]]);
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge' => $deliveryCharge,'logo' => $logoPath,'gst_percent' => $gst_percent]]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
@@ -218,3 +222,4 @@ class SettingController extends Controller
      
 
 }
+

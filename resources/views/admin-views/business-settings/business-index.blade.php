@@ -569,12 +569,14 @@
                     </div>
 
                     <div class="row">
-                        @php($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first())
+                      
+                        
+                        @php($gst_percent=\App\Models\BusinessSetting::where('key','gst_percent')->first())
                         <div class="col-md-4 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
-                                <input type="text" value="{{$delivery_charge->value??''}}"
-                                       name="delivery_charge" class="form-control" placeholder="">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">GST for rented items (%)</label>
+                                <input type="text" value="{{$gst_percent->value??''}}"
+                                       name="gst_percent" class="form-control" placeholder="">
                             </div>
                         </div>
                         @php($referred_discount=\App\Models\BusinessSetting::where('key','referred_discount')->first())
@@ -595,6 +597,39 @@
                             </div>
                         </div>
                     </div>
+                    <div id="delivery_charge_section">
+                        <div class="row">
+                          @php($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first())
+                        
+                         <div class="col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                <input type="text"  name="min_amount[]" class="form-control">
+                            </div>                         
+                        </div>
+                        <div class="col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                <input type="text"  name="max_amount[]" class="form-control">
+                            </div>                           
+                        </div>
+                        <div class="col-md-4 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                <input type="text" value="{{$delivery_charge->value??''}}"
+                                       name="delivery_charge[]" class="form-control" placeholder="">
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+             
+                    </div>
+                            <div>
+                             <a href="javascript:void(0)" class="add-more-section"> Add More </a>
+                    </div>
+                    
+                    
                     <?php
 
                         $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
@@ -710,13 +745,14 @@
                         </div>
                     </div>
 
-                 
-                            <div class="form-group col-12" style="margin-left: -15px;">
-                                            @php($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first())
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Footer
-                                    Text</label>
-                                <textarea  name="footer_text" class="form-control"  placeholder="" required="">{{  $footer_text->value??''  }}</textarea>
-                            </div>
+                     <div class="row">
+                        <div class="form-group col-12" style="margin-left: -15px;">
+                                        @php($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first())
+                            <label class="input-label d-inline" for="exampleFormControlInput1">Footer
+                                Text</label>
+                            <textarea  name="footer_text" class="form-control"  placeholder="" required="">{{  $footer_text->value??''  }}</textarea>
+                        </div>
+                    </div>
 
 
                 
@@ -779,12 +815,31 @@
 
 @push('script_2')
     <script>
+    
+           var delivery_charge_section_count = 1;
+           
+             // Add more rows
+            $(".add-more-section").click(function(e) {
+                e.preventDefault();
+                addRowForDeliverChargeSection();
+            });
+
+            // Remove rows 
+            $("#delivery_charge_section").on("click", "a.remove-section", function(e) {
+                e.preventDefault();
+                $(this).closest('.row').remove();
+                delivery_charge_section_count--;
+            });
+    
+    
 
             if($("#time_slot_length").val() > 0){
                 var count = parseInt($("#time_slot_length").val());
             }   else {
                 var count = 1;
             } 
+            
+           
 
              // Add more rows
             $(".add-more-time-slot").click(function(e) {
@@ -859,6 +914,37 @@
                        
                         
             $("#time_slot_data").append(timeSlotData);
+
+        }
+        
+        function addRowForDeliverChargeSection(){
+            delivery_charge_section_count++;  
+            var htmlData = '<div class="row">'+
+                                    '<div class="col-md-4 col-12 deilvery-charge-section'+delivery_charge_section_count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>'+
+                                            '<input type="text" name="min_amount[]" class="form-control">'+
+                                        '</div>'+                    
+                                    '</div>'+
+                                    '<div class="col-md-4 col-12 deilvery-charge-section'+delivery_charge_section_count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>'+
+                                            '<input type="text" name="max_amount[]" class="form-control">'+
+                                        '</div>'+                    
+                                    '</div>'+
+                                    '<div class="col-md-4 col-12 deilvery-charge-section'+delivery_charge_section_count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>'+
+                                            '<input type="text"  name="delivery_charge[]" class="form-control">'+
+                                        '</div>'+   
+                                    '<div  style="float:right;">'+
+                                        '<a href="javascript:void(0)" class="remove-section" data-count="'+delivery_charge_section_count+'"> Remove </a>'+
+                                    '</div>'+              
+                                '</div>';
+                       
+                       
+                        
+            $("#delivery_charge_section").append(htmlData);
 
         }
   
