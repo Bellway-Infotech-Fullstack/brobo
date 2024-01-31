@@ -616,7 +616,7 @@
                         <div class="col-md-4 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
-                                <input type="text" value="{{$delivery_charge->value??''}}"
+                                <input type="text" 
                                        name="delivery_charge[]" class="form-control" placeholder="">
                             </div>
                         </div>
