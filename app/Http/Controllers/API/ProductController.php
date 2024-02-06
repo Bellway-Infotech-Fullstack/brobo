@@ -64,7 +64,7 @@ class ProductController extends Controller
 
             if($isDefaultSort == '1'){
                  $orderBy = 'desc';
-                 $orderColumn = 'created_at';   
+                 $orderColumn = 'products.created_at';   
             }
  
 
@@ -73,27 +73,30 @@ class ProductController extends Controller
             $userId = (isset($user) && !empty($user)) ? $user->id : '';
        
             $items = Product::select('products.*')
+                ->leftJoin('product_colored_image', 'products.id', '=', 'product_colored_image.product_id')
                 ->whereHas('category', function ($query) use ($categoryId) {
                     $query->where('parent_id', $categoryId);
                 })
                 ->when($isHideOutOfStockItem == '1', function ($query) {
-                    $query->where('total_stock', '>', 0);
+                    $query->where('products.total_stock', '>', 0);
                 }, function ($query) {
-                    $query->where('total_stock', '=', 0);
+                    $query->where('products.total_stock', '=', 0);
                 })
                 ->leftJoin('wishlists', function ($join) use ($userId) {
                     $join->on('products.id', '=', 'wishlists.item_id')
                         ->where('wishlists.user_id', '=', $userId);
                 })
                 ->when(!empty($desiredCategoryId), function ($query) use ($desiredCategoryId) {
-                    $query->where('category_id', '=', $desiredCategoryId);
+                    $query->where('products.category_id', '=', $desiredCategoryId);
                 })
 
                 ->when(!empty($searchKey), function ($query) use ($searchKey) {
-                    $query->where('name', 'like', '%' . $searchKey . '%');
+                    $query->where('products.name', 'like', '%' . $searchKey . '%')
+                    ->orWhere('product_colored_image.color_name', $searchKey);
+
                 })
                 ->orderBy($orderColumn, $orderBy)
-                ->where('status',1)
+                ->where('products.status',1)
                 ->paginate($perPage, ['*'], 'page', $page);
 
                 $items = $items->map(function ($item) use ($userId) {
@@ -617,7 +620,7 @@ class ProductController extends Controller
             $userId = (isset($user) && !empty($user)) ? $user->id : '';
        
             $items = Product::select('products.*')
-               
+            ->leftJoin('product_colored_image', 'products.id', '=', 'product_colored_image.product_id')
                 
                 ->leftJoin('wishlists', function ($join) use ($userId) {
                     $join->on('products.id', '=', 'wishlists.item_id')
@@ -625,11 +628,12 @@ class ProductController extends Controller
                 })
               
                 ->when(!empty($searchKey), function ($query) use ($searchKey) {
-                    $query->where('name', 'like', '%' . $searchKey . '%');
+                    $query->where('products.name', 'like', '%' . $searchKey . '%')
+                    ->orWhere('product_colored_image.color_name', $searchKey);
                 })
-                ->orderBy('created_at', 'desc')
-                ->where('status',1)
-                ->where('total_stock','>',0)
+                ->orderBy('products.created_at', 'desc')
+                ->where('products.status',1)
+                ->where('products.total_stock','>',0)
                 ->paginate($perPage, ['*'], 'page', $page);
 
                 $items = $items->map(function ($item) use ($userId) {

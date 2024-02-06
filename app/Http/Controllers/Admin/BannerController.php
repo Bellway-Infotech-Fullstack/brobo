@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Banner;
+use App\Models\Product;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -15,8 +16,9 @@ class BannerController extends Controller
 {
     function index()
     {
+        $products = Product::where('status', '1')->orderBy('id','desc')->get();
         $banners = Banner::latest()->paginate(config('default_pagination'));
-        return view('admin-views.banner.index', compact('banners'));
+        return view('admin-views.banner.index', compact('banners','products'));
     }
 
     public function store(Request $request)
