@@ -470,13 +470,17 @@ class BookingController extends Controller
         $endDate = $request->post('end_date');
         $transactionId = $request->post('extended_order_transaction_id');
         $bookingData = Order::where('order_id',$bookingId)->get();
+        $amount = $request->post('amount');
     
         // Check if the order exists
         if (count($bookingData) == 0) {
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
+
+        $paidAmount = $bookingData[0]->pad_amount;
+        $totalAmount = $paidAmount + $amount;
     
-        Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate]);
+        Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'paid_amount' => $totalAmount]);
 
     
         return response()->json(['status' => 'success', 'message' => 'Order extended successfully', 'code' => 200, 'data' => $bookingData]);

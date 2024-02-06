@@ -28,6 +28,16 @@
                         <form action="{{route('admin.banner.store')}}" method="post" id="banner_form" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
+                                <div class="col-md-6">
+                                    <select name="product_id" id="product_id" class="form-control js-select2-custom">
+                                        <option value="">Select Product</option>
+                                        @if(count($products) > 0)
+                                            @foreach($products as $product)
+                                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
                                
                                 <div class="col-md-6">
                                     <div class="form-group">
