@@ -134,7 +134,8 @@
                         <div class="col-md-4 col-sm-6 col-12">
                             <?php
                               $countryData =    \App\Models\BusinessSetting::where('key','country')->first();   
-                              $country = (isset($countryData) && !empty($countryData)) ?? $countryData->value ;
+                              $country = (isset($countryData) && !empty($countryData)) ? $countryData->value : '' ;
+                            
                               
                             ?>
                             <div class="form-group">
@@ -567,12 +568,14 @@
                     </div>
 
                     <div class="row">
-                        <?php ($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first()); ?>
+                      
+                        
+                        <?php ($gst_percent=\App\Models\BusinessSetting::where('key','gst_percent')->first()); ?>
                         <div class="col-md-4 col-12">
                             <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
-                                <input type="text" value="<?php echo e($delivery_charge->value??''); ?>"
-                                       name="delivery_charge" class="form-control" placeholder="">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">GST for rented items (%)</label>
+                                <input type="text" value="<?php echo e($gst_percent->value??''); ?>"
+                                       name="gst_percent" class="form-control" placeholder="">
                             </div>
                         </div>
                         <?php ($referred_discount=\App\Models\BusinessSetting::where('key','referred_discount')->first()); ?>
@@ -594,8 +597,88 @@
                         </div>
                     </div>
                     <?php
+                    $delivery_charge_slab_data = \App\Models\BusinessSetting::where('key','delivery_charge_slabs')->first();
+                         $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
 
-                        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
+                    ?>
+
+                    <div id="delivery_charge_section">
+                        <input type="hidden" id="delivery_charge_section_count_length"  value="<?php echo e(count($delivery_charge_slab_data)); ?>">
+
+                    <?php
+                    if(isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)){
+                           foreach($delivery_charge_slab_data as $key => $value){
+                                $delivery_charge_slab = explode("-",$value);
+                                
+                                $delivery_charge = $delivery_charge_slab[0];
+                                $min_amount = $delivery_charge_slab[1];
+                                $max_amount   = $delivery_charge_slab[2];
+
+                        ?>
+                        <div class="row">
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                    <input type="text"  name="min_amount[]" class="form-control" value="<?php echo e($min_amount ?? ''); ?>">
+                                </div>                         
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                    <input type="text"  name="max_amount[]" class="form-control" value="<?php echo e($max_amount ?? ''); ?>">
+                                </div>                           
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                    <input type="text" 
+                                        name="delivery_charge[]" class="form-control" placeholder="" value="<?php echo e($delivery_charge ?? ''); ?>">
+                                </div>
+                            </div>
+                            <?php if($key > 0): ?>
+                            <div  style="float:right;">
+                                <?php
+                                 
+                                ?>
+                                <a href="javascript:void(0)" class="remove-delivery-charge-slab remove-dynamic-delivery-charge-slab" data-min-amount="<?php echo e($min_amount ?? ''); ?>" data-count="<?php echo e($key+1); ?>"> Remove </a>
+                            </div> 
+                            <?php endif; ?>  
+                        </div>
+                    <?php }} else { ?>
+                        <div class="row">
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                    <input type="text"  name="min_amount[]" class="form-control">
+                                </div>                         
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                    <input type="text"  name="max_amount[]" class="form-control">
+                                </div>                           
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                    <input type="text" 
+                                        name="delivery_charge[]" class="form-control" placeholder="">
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                    <?php } ?>
+             
+                    </div>
+                            <div>
+                             <a href="javascript:void(0)" class="add-more-section"> Add More </a>
+                    </div>
+                    
+                    
+                  <?php
+
+                        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();  
                         
                             $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ? explode(",",$order_time_slot_data->value) : array();
 
@@ -708,11 +791,20 @@
                         </div>
                     </div>
 
-                 
-                   
-                   
+                     <div class="row">
+                        <div class="form-group col-12" style="margin-left: -15px;">
+                                        <?php ($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first()); ?>
+                            <label class="input-label d-inline" for="exampleFormControlInput1">Footer
+                                Text</label>
+                            <textarea  name="footer_text" class="form-control"  placeholder="" required=""><?php echo e($footer_text->value??''); ?></textarea>
+                        </div>
+                    </div>
 
-                    <?php ($logo=\App\Models\BusinessSetting::where('key','logo')->first()); ?>
+
+                
+                    <div class="row">
+                        <div class="col-sm-6">
+                                <?php ($logo=\App\Models\BusinessSetting::where('key','logo')->first()); ?>
                     <?php ($logo=$logo->value??''); ?>
                     <div class="form-group">
                         <label class="input-label d-inline"><?php echo e(__('messages.logo')); ?></label><small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 3:1 )</small>
@@ -728,9 +820,35 @@
                     ?>
                         <center>
                             <img style="height: 100px;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 onerror="this.src='<?php echo e(asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')); ?>'"
                                  src="<?php echo e($logoPath); ?>" alt="logo image"/>
                         </center>
+                    </div>
+                        </div>
+                        <div class="col-sm-6">
+                    <?php ($favIconData = \App\Models\BusinessSetting::where('key','fav_icon')->first()); ?>
+                    <?php ($favIcon =$favIconData->value??''); ?>
+                    <div class="form-group">
+                        <label class="input-label d-inline">Fav Icon</label><small style="color: red">* ( <?php echo e(__('messages.ratio')); ?> 1:1 )</small>
+                        <div class="custom-file">
+                            <input type="file" name="fav_icon" id="customFileEg2" class="custom-file-input"
+                                   accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                            <label class="custom-file-label" for="customFileEg2"><?php echo e(__('messages.choose')); ?> <?php echo e(__('messages.file')); ?></label>
+                        </div>
+                        <hr>
+                        <?php
+                
+                        $favIconPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $favIcon) : asset('storage/app/public/business/' . $favIcon);        
+                    ?>
+                    
+                   
+                        <center>
+                           <img style="height: 100px; border: 1px solid; border-radius: 10px;" id="viewer2"
+     src="<?php echo e($favIconPath); ?>" alt="fav icon" class="<?php echo e($favIcon ? 'd-block' : 'd-none'); ?>">
+
+                        </center>
+                       
+                    </div>
+                        </div>
                     </div>
                     <hr>
                     <button type="<?php echo e(env('APP_MODE')!='demo'?'submit':'button'); ?>" onclick="<?php echo e(env('APP_MODE')!='demo'?'':'call_demo()'); ?>" class="btn btn-primary mb-2"><?php echo e(trans('messages.submit')); ?></button>
@@ -743,12 +861,39 @@
 
 <?php $__env->startPush('script_2'); ?>
     <script>
+    
+           var delivery_charge_section_count = 1;
+
+           if($("#delivery_charge_section_count_length").val() > 0){
+                var delivery_charge_section_count = parseInt($("#delivery_charge_section_count_length").val());
+            }   else {
+                var delivery_charge_section_count = 1;
+            } 
+
+
+           
+             // Add more rows
+            $(".add-more-section").click(function(e) {
+                e.preventDefault();
+                addRowForDeliverChargeSection();
+            });
+
+            // Remove rows 
+            $("#delivery_charge_section").on("click", "a.remove-section", function(e) {
+                e.preventDefault();
+                $(this).closest('.row').remove();
+                delivery_charge_section_count--;
+            });
+    
+    
 
             if($("#time_slot_length").val() > 0){
                 var count = parseInt($("#time_slot_length").val());
             }   else {
                 var count = 1;
             } 
+            
+           
 
              // Add more rows
             $(".add-more-time-slot").click(function(e) {
@@ -825,6 +970,37 @@
             $("#time_slot_data").append(timeSlotData);
 
         }
+        
+        function addRowForDeliverChargeSection(){
+            delivery_charge_section_count++;  
+            var htmlData = '<div class="row">'+
+                                    '<div class="col-md-4 col-12 deilvery-charge-section'+delivery_charge_section_count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>'+
+                                            '<input type="text" name="min_amount[]" class="form-control">'+
+                                        '</div>'+                    
+                                    '</div>'+
+                                    '<div class="col-md-4 col-12 deilvery-charge-section'+delivery_charge_section_count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>'+
+                                            '<input type="text" name="max_amount[]" class="form-control">'+
+                                        '</div>'+                    
+                                    '</div>'+
+                                    '<div class="col-md-4 col-12 deilvery-charge-section'+delivery_charge_section_count+'">'+
+                                        '<div class="form-group">'+
+                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>'+
+                                            '<input type="text"  name="delivery_charge[]" class="form-control">'+
+                                        '</div>'+   
+                                    '<div  style="float:right;">'+
+                                        '<a href="javascript:void(0)" class="remove-section" data-count="'+delivery_charge_section_count+'"> Remove </a>'+
+                                    '</div>'+              
+                                '</div>';
+                       
+                       
+                        
+            $("#delivery_charge_section").append(htmlData);
+
+        }
   
 
         function maintenance_mode() {
@@ -875,20 +1051,36 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+        
+        function previewFavIcon(input) {
+            if (input.files && input.files[0]) {
+                $("#viewer2").removeClass("d-none");
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#viewer2').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
         $("#customFileEg1").change(function () {
             readURL(this);
         });
-    </script>
+        
+         $("#customFileEg2").change(function () {
+            previewFavIcon(this);
+        });
+   
 
-
-    <script>
       
 
         $(document).on("keydown", "input", function(e) {
           if (e.which==13) e.preventDefault();
         });
-    </script>
+         </script>
+
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.admin.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /opt/lampp/htdocs/brobo/resources/views/admin-views/business-settings/business-index.blade.php ENDPATH**/ ?>

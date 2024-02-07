@@ -14,7 +14,7 @@
        $favIconData = \App\Models\BusinessSetting::where(['key'=>'fav_icon'])->first();
        $favIcon  = $favIconData->value ?? ''; 
        $favIconPath = (env('APP_ENV') == 'local') ?  asset('storage/business/' . $favIcon) : asset('storage/app/public/business/' . $favIcon); 
-       $favIconPath =  $favIconData->value ? $favIconPath : ''; 
+   
      ?>
     <link rel="shortcut icon" href="{{ $favIconPath }}">
     <!-- Font -->
