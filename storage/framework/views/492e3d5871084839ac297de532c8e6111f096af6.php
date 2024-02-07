@@ -10,7 +10,13 @@
     <!-- Title -->
     <title><?php echo $__env->yieldContent('title'); ?></title>
     <!-- Favicon -->
-    <link rel="shortcut icon" href="">
+    <?php
+       $favIconData = \App\Models\BusinessSetting::where(['key'=>'fav_icon'])->first();
+       $favIcon  = $favIconData->value ?? ''; 
+       $favIconPath = (env('APP_ENV') == 'local') ?  asset('storage/business/' . $favIcon) : asset('storage/app/public/business/' . $favIcon); 
+   
+     ?>
+    <link rel="shortcut icon" href="<?php echo e($favIconPath); ?>">
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
     <!-- CSS Implementing Plugins -->

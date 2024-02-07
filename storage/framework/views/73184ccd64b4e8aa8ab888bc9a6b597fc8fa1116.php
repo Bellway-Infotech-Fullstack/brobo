@@ -26,6 +26,16 @@
                         <form action="<?php echo e(route('admin.banner.store')); ?>" method="post" id="banner_form" enctype="multipart/form-data">
                             <?php echo csrf_field(); ?>
                             <div class="row">
+                                <div class="col-md-6">
+                                    <select name="product_id" id="product_id" class="form-control js-select2-custom">
+                                        <option value="">Select Product</option>
+                                        <?php if(count($products) > 0): ?>
+                                            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($product->id); ?>"><?php echo e($product->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
                                
                                 <div class="col-md-6">
                                     <div class="form-group">

@@ -165,9 +165,9 @@ class BusinessSettingsController extends Controller
             'value' => $request['order_installment_percent_3']
         ]);
 
-        DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge'], [
+       /* DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge'], [
             'value' => $request['delivery_charge']
-        ]);
+        ]);*/
         
         DB::table('business_settings')->updateOrInsert(['key' => 'gst_percent'], [
             'value' => $request['gst_percent']
@@ -184,10 +184,6 @@ class BusinessSettingsController extends Controller
 
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
-
-       
-
-     
         $time_slots = '';
 
 
@@ -199,10 +195,6 @@ class BusinessSettingsController extends Controller
         if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
                $time_slot = $value."-".$order_to_time_slots[$key]; 
-              // echo "<pre>";
-
-               //print_r($time_slot);
-              // print_r($order_time_slot_data);
                if(in_array($time_slot,$order_time_slot_data)){
                 
                // Toastr::error(trans('Slot already exist'));
@@ -217,6 +209,24 @@ class BusinessSettingsController extends Controller
                 'value' => $time_slots
             ]);
 
+        }
+
+        $min_amount = $request['min_amount'];
+        $max_amount = $request['max_amount'];
+        $delivery_charge = $request['delivery_charge'];
+
+        $delivery_charge_slabs = '';
+
+        if(isset($min_amount) && !empty($min_amount)){
+            foreach($min_amount as $key => $value){
+               $delivery_charge_slab = $delivery_charge[$key]."-".$value."-".$max_amount[$key]; 
+               $delivery_charge_slabs =  $delivery_charge_slabs . $delivery_charge_slab  . ",";    
+            }
+            $delivery_charge_slabs = rtrim($delivery_charge_slabs, ',');
+            //die;
+            DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge_slabs'], [
+                'value' => $delivery_charge_slabs
+            ]);
         }
        
         
