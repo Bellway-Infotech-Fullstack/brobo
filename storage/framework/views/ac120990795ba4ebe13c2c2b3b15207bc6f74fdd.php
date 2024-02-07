@@ -598,7 +598,7 @@
                     </div>
                     <?php
                     $delivery_charge_slab_data = \App\Models\BusinessSetting::where('key','delivery_charge_slabs')->first();
-                         $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
+                    $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
 
                     ?>
 
@@ -883,6 +883,29 @@
                 e.preventDefault();
                 $(this).closest('.row').remove();
                 delivery_charge_section_count--;
+            });
+            $("#delivery_charge_section").on("click", "a.remove-dynamic-delivery-charge-slab", function(e) {
+                //e.preventDefault();
+                var min_amount = $(this).attr("data-min-amount");
+              
+                $.post({
+                    url: '<?php echo e(route('admin.business-settings.remove-dynamic-delivery-charge-slab')); ?>',
+                    data: {
+                            "min_amount": min_amount,
+                            "_token": "<?php echo e(csrf_token()); ?>"
+                           
+                        },
+                        beforeSend: function () {
+                            $('#loading').show();
+                        },
+                        success: function (data) {
+                            var json_data = JSON.parse(data);
+                            toastr.success(json_data.message);
+                        },
+                        complete: function () {
+                            $('#loading').hide();
+                        },
+                });
             });
     
     

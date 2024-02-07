@@ -1082,6 +1082,32 @@ class BusinessSettingsController extends Controller
        
     }
 
-    
+    public function removeDynamicDeliveryChargeSlab(Request $request)
+    {
+
+        $minAmount = $request->min_amount;
+
+        $delivery_charge_slab_data = \App\Models\BusinessSetting::where('key','delivery_charge_slabs')->first();
+        $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
+        
+        if(isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)){
+            foreach($delivery_charge_slab_data as $key => $value){
+                $delivery_charge_slab = explode("-",$value);
+                $min_amount = $delivery_charge_slab[1];
+                if($min_amount == $minAmount){
+                    unset($delivery_charge_slab_data[$key]);
+                }
+            } 
+        }
+        // 20-100-150,30-151-200
+      
+        BusinessSetting::updateOrInsert(['key' => 'delivery_charge_slabs'],
+        [
+            'value' => isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data) ? implode(",",$delivery_charge_slab_data) : '',
+            'updated_at' => now()
+        ]);
+        return json_encode(['status' => true,'message' => 'Slab removed successfully']);
+       
+    }
 }
 
