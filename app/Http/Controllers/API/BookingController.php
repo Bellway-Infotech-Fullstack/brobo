@@ -477,10 +477,10 @@ class BookingController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
 
-        $paidAmount = $bookingData[0]->pad_amount;
+        $paidAmount = $bookingData[0]->final_item_price;
         $totalAmount = $paidAmount + $amount;
     
-        Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'paid_amount' => $totalAmount]);
+        Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'final_item_price' => $totalAmount]);
 
     
         return response()->json(['status' => 'success', 'message' => 'Order extended successfully', 'code' => 200, 'data' => $bookingData]);

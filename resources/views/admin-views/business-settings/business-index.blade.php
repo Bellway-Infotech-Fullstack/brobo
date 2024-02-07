@@ -597,32 +597,79 @@
                             </div>
                         </div>
                     </div>
+                    <?php
+                    $delivery_charge_slab_data = \App\Models\BusinessSetting::where('key','delivery_charge_slabs')->first();
+                         $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
+
+                    ?>
+
                     <div id="delivery_charge_section">
+                        <input type="hidden" id="delivery_charge_section_count_length"  value="{{count($delivery_charge_slab_data)}}">
+
+                    <?php
+                    if(isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)){
+                           foreach($delivery_charge_slab_data as $key => $value){
+                                $delivery_charge_slab = explode("-",$value);
+                                
+                                $delivery_charge = $delivery_charge_slab[0];
+                                $min_amount = $delivery_charge_slab[1];
+                                $max_amount   = $delivery_charge_slab[2];
+
+                        ?>
                         <div class="row">
-                          @php($delivery_charge=\App\Models\BusinessSetting::where('key','delivery_charge')->first())
-                        
-                         <div class="col-md-4 col-12">
-                            <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
-                                <input type="text"  name="min_amount[]" class="form-control">
-                            </div>                         
-                        </div>
-                        <div class="col-md-4 col-12">
-                            <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
-                                <input type="text"  name="max_amount[]" class="form-control">
-                            </div>                           
-                        </div>
-                        <div class="col-md-4 col-12">
-                            <div class="form-group">
-                                <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
-                                <input type="text" 
-                                       name="delivery_charge[]" class="form-control" placeholder="">
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                    <input type="text"  name="min_amount[]" class="form-control" value="{{ $min_amount ?? ''}}">
+                                </div>                         
                             </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                    <input type="text"  name="max_amount[]" class="form-control" value="{{ $max_amount ?? ''}}">
+                                </div>                           
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                    <input type="text" 
+                                        name="delivery_charge[]" class="form-control" placeholder="" value="{{ $delivery_charge ?? ''}}">
+                                </div>
+                            </div>
+                            @if($key > 0)
+                            <div  style="float:right;">
+                                <?php
+                                 
+                                ?>
+                                <a href="javascript:void(0)" class="remove-delivery-charge-slab remove-dynamic-delivery-charge-slab" data-min-amount="{{ $min_amount ?? '' }}" data-count="{{$key+1}}"> Remove </a>
+                            </div> 
+                            @endif  
                         </div>
-                        
-                        
-                    </div>
+                    <?php }} else { ?>
+                        <div class="row">
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                    <input type="text"  name="min_amount[]" class="form-control">
+                                </div>                         
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                    <input type="text"  name="max_amount[]" class="form-control">
+                                </div>                           
+                            </div>
+                            <div class="col-md-4 col-12">
+                                <div class="form-group">
+                                    <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                    <input type="text" 
+                                        name="delivery_charge[]" class="form-control" placeholder="">
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                    <?php } ?>
              
                     </div>
                             <div>
@@ -630,9 +677,9 @@
                     </div>
                     
                     
-                    <?php
+                  <?php
 
-                        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
+                        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();  
                         
                             $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ? explode(",",$order_time_slot_data->value) : array();
 
@@ -817,6 +864,14 @@
     <script>
     
            var delivery_charge_section_count = 1;
+
+           if($("#delivery_charge_section_count_length").val() > 0){
+                var delivery_charge_section_count = parseInt($("#delivery_charge_section_count_length").val());
+            }   else {
+                var delivery_charge_section_count = 1;
+            } 
+
+
            
              // Add more rows
             $(".add-more-section").click(function(e) {
