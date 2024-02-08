@@ -157,7 +157,20 @@
                             
                             <dt class="col-6"><?php echo e(__('messages.subtotal')); ?>:</dt>
                             <dd class="col-6">
-                                Rs.  <?php echo e($sub_total); ?></dd>
+                                       
+                                      <?php
+                                            $start_timestamp = strtotime($order['start_date']);
+                                            $end_timestamp = strtotime($order['end_date']);
+                                            
+                                            // Calculate the difference in seconds
+                                            $difference_in_seconds = $end_timestamp - $start_timestamp;
+                                            
+                                            // Convert seconds to days
+                                             $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
+
+                                            
+                                  ?>
+                                Rs.  <?php echo e($sub_total*$difference_in_days); ?></dd>
                             <dt class="col-6"></dt>
                             <dd class="col-6">
                           
@@ -178,7 +191,9 @@
                             <dt class="col-6" style="font-size: 20px"><?php echo e(__('messages.total')); ?>:</dt>
                             <dd class="col-6" style="font-size: 20px">
                                <?php  
-                                $grandTotal = ($sub_total + $del_c)  - $coupon_discount_amount;
+                               
+                               
+                                $grandTotal = ($sub_total*$difference_in_days + $del_c)  - $coupon_discount_amount;
 
                                 ?>
                                Rs.  <?php echo e($grandTotal); ?>

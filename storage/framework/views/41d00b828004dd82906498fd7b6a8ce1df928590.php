@@ -84,9 +84,30 @@
                      
                         <span class="ml-2 ml-sm-3">
                             <i class="tio-date-range"></i>
-                            <?php echo e(date('d M Y ' . config('timeformat'), strtotime($order['created_at']))); ?>
+                           Booking Date - <?php echo e(date('d M Y ' , strtotime($order['created_at']))); ?>
 
                         </span>
+                        
+                     
+                    </div>
+                    
+                    <div class="row">
+                        
+                            <span class="ml-2 ml-sm-3">
+                           Start Date - <?php echo e(date('d M Y ' , strtotime($order['start_date']))); ?>
+
+                        </span>
+                        
+                         <span class="ml-2 ml-sm-3">
+                           End Date - <?php echo e(date('d M Y ' , strtotime($order['end_date']))); ?>
+
+                        </span>
+                        
+                        <span class="ml-2 ml-sm-3">
+                          Time Slot - <?php echo e($order['time_duration']); ?>
+
+                        </span>
+                        
                     </div>
 
                     <div class="mt-2">
@@ -129,6 +150,11 @@
                                         <a class="dropdown-item <?php echo e($order['status'] == 'cancelled' ? 'active' : ''); ?>"
                                             onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'status' => 'cancelled'])); ?>','Change status to cancelled ?')"
                                             href="javascript:">Cancelled</a>
+                                            
+                                        <a class="dropdown-item <?php echo e($order['status'] == 'completed' ? 'active' : ''); ?>"
+                                            onclick="route_alert('<?php echo e(route('admin.order.status', ['id' => $order['id'], 'status' => 'completed'])); ?>','Change status to completed ?')"
+                                            href="javascript:">Completed</a>
+                                            
                                     </div>
                                 </div>
                             </div>
@@ -198,9 +224,18 @@
                                             <?php
                                             $amount = $value['item_price'] * $value['quantity'];
                                             $total_item_price = $total_item_price + $value['item_price'];
+                                            $itemColorImageId = (isset($value['item_color_image_id']) && !empty($value['item_color_image_id'])) ? $value['item_color_image_id'] :  0 ;
+                                            $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
+                                            $itemColorImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImageData->image : '';
+                                            $itemColorImage = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $itemColorImage) : asset('storage/app/public/product/colored_images/' . $itemColorImage); 
+                                            $itemImage = (isset($itemColorImageId) && !empty($itemColorImageId)) ? $itemColorImage : $value['item_image'];
+
+
+
+
                                              ?>
                                      
-                                                <img class="img-fluid" src="<?php echo e($value['item_image']); ?>"  alt="Product Image" height="100" width="100">
+                                                <img class="img-fluid" src="<?php echo e($itemImage); ?>"  alt="Product Image" height="100" width="100">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3 mb-md-0">
                                                     <strong>
@@ -267,7 +302,20 @@
 
                                         <dt class="col-sm-6"><?php echo e(__('messages.subtotal')); ?>:</dt>
                                         <dd class="col-sm-6">
-                                            Rs.  <?php echo e($total_item_price); ?>
+                                            
+                                      <?php
+                                            $start_timestamp = strtotime($order['start_date']);
+                                            $end_timestamp = strtotime($order['end_date']);
+                                            
+                                            // Calculate the difference in seconds
+                                            $difference_in_seconds = $end_timestamp - $start_timestamp;
+                                            
+                                            // Convert seconds to days
+                                             $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
+
+                                            
+                                  ?>
+                                            Rs.  <?php echo e($total_item_price*$difference_in_days); ?>
 
                                         </dd>
                                       
@@ -308,7 +356,7 @@
 
                                     <dt class="col-sm-6"><?php echo e(__('messages.total')); ?>:</dt>
                                     <dd class="col-sm-6">
-                                        Rs.  <?php echo e($total_item_price + $delivery_charge  - $coupon_discount_amount); ?>
+                                        Rs.  <?php echo e($total_item_price*$difference_in_days + $delivery_charge  - $coupon_discount_amount); ?>
 
                                     </dd>
                                 </dl>
@@ -475,66 +523,47 @@
                                 </li>
                             </ul>
 
-                            <?php if($order->delivery_address): ?>
-                                <hr>
-                                <?php ($address = json_decode($order->delivery_address, true)); ?>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5><?php echo e(__($parcel_order ? 'messages.sender' : 'messages.delivery')); ?>
+                            <?php
+                                $deliveryAddressData =  \App\Models\UsersAddress::where('customer_id',$order->user_id)->first();
+                                $houseName = $deliveryAddressData->house_name . ",";
+                                // Add floor number with suffix
+                                $floorNumber = $deliveryAddressData->floor_number;
+                                if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                    $suffix = 'th';
+                                    } else {
+                                    switch ($floorNumber % 10) {
+                                    case 1:
+                                        $suffix = 'st';
+                                        break;
+                                    case 2:
+                                        $suffix = 'nd';
+                                        break;
+                                    case 3:
+                                        $suffix = 'rd';
+                                        break;
+                                    default:
+                                        $suffix = 'th';
+                                        break;
+                                    }
+                                }
 
-                                        <?php echo e(__('messages.info')); ?></h5>
-                                    <?php if(isset($address) && !$parcel_order): ?>
-                                        <a class="link" data-toggle="modal" data-target="#shipping-address-modal"
-                                            href="javascript:"><?php echo e(__('messages.edit')); ?></a>
-                                    <?php endif; ?>
-                                </div>
-                                <?php if(isset($address)): ?>
-                                    <span class="d-block">
-                                        <?php echo e(__('messages.name')); ?> : <?php echo e($address['contact_person_name']); ?><br>
-                                        <?php echo e(__('messages.contact')); ?>:<a class="deco-none"
-                                            href="tel:<?php echo e($address['contact_person_number']); ?>">
-                                            <?php echo e($address['contact_person_number']); ?></a><br>
-                                            <?php echo e(__('Floor')); ?>: <?php echo e(isset($address['floor'])?$address['floor']:''); ?><br>
-                                            <?php echo e(__('Road')); ?>: <?php echo e(isset($address['road'])?$address['road']:''); ?><br>
-                                            <?php echo e(__('House')); ?>: <?php echo e(isset($address['house'])?$address['house']:''); ?><br>
-                                        <?php if(isset($address['address'])): ?>
-                                            <?php if(isset($address['latitude']) && isset($address['longitude'])): ?>
-                                                <a target="_blank"
-                                                    href="http://maps.google.com/maps?z=12&t=m&q=loc:<?php echo e($address['latitude']); ?>+<?php echo e($address['longitude']); ?>">
-                                                    <i class="tio-map"></i><?php echo e($address['address']); ?><br>
-                                                </a>
-                                            <?php else: ?>
-                                                <i class="tio-map"></i><?php echo e($address['address']); ?><br>
-                                            <?php endif; ?>
+                                $deliveryAddress = $floorNumber."<sup>".trim($suffix)."</sup>"."&nbsp;&nbsp;&nbsp; floor " . "," . $deliveryAddressData->landmark . "," . $deliveryAddressData->area_name;
 
-                                        <?php endif; ?>
-                                    </span>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                            <?php if($order->receiver_details): ?>
+
+
+
+                                
+                            ?>
+
+                            <?php if($deliveryAddressData): ?>
                                 <hr>
-                                <?php ($receiver_details = $order->receiver_details); ?>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h5><?php echo e(__('messages.receiver')); ?> <?php echo e(__('messages.info')); ?></h5>
+                                    <h5><?php echo e(__( 'messages.delivery')); ?> <?php echo e(__('messages.address')); ?></h5>
+                                   
                                 </div>
-                                <?php if(isset($receiver_details)): ?>
-                                    <span class="d-block">
-                                        <?php echo e(__('messages.name')); ?>: <?php echo e($receiver_details['contact_person_name']); ?><br>
-                                        <?php echo e(__('messages.contact')); ?>:<a class="deco-none"
-                                            href="tel:<?php echo e($receiver_details['contact_person_number']); ?>">
-                                            <?php echo e($receiver_details['contact_person_number']); ?></a><br>
-                                        <?php if(isset($receiver_details['address'])): ?>
-                                            <?php if(isset($receiver_details['latitude']) && isset($receiver_details['longitude'])): ?>
-                                                <a target="_blank"
-                                                    href="http://maps.google.com/maps?z=12&t=m&q=loc:<?php echo e($receiver_details['latitude']); ?>+<?php echo e($receiver_details['longitude']); ?>">
-                                                    <i class="tio-map"></i><?php echo e($receiver_details['address']); ?><br>
-                                                </a>
-                                            <?php else: ?>
-                                                <i class="tio-map"></i><?php echo e($receiver_details['address']); ?><br>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
-                                    </span>
-                                <?php endif; ?>
+                                    <span class="d-block"> <?php echo $deliveryAddress; ?> </span>
                             <?php endif; ?>
+                          
                         </div>
                     <?php endif; ?>
                     <!-- End Body -->
