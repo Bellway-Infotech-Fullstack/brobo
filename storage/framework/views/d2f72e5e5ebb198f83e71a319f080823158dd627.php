@@ -29,6 +29,22 @@
                         <form action="<?php echo e(route('admin.banner.update', [$banner->id])); ?>" method="post" id="banner_form" enctype="multipart/form-data">
                             <?php echo csrf_field(); ?>
                             <div class="row">
+                                <div class="col-md-6">
+                                    <label><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.name')); ?></label>
+                                    <small style="color: red">* </small>
+                                    <select name="product_id" id="product_id" class="form-control js-select2-custom" required>
+                                        <option value="">Select Product</option>
+                                        <?php if(count($products) > 0): ?>
+                                            <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php
+                                                 $selected =  ($product->id == $banner['product_id']) ? 'selected' : '';
+                                                ?>
+                                                <option value="<?php echo e($product->id); ?>" <?php echo e($selected); ?>><?php echo e($product->name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
+                                    </select>
+                                </div>
+                                
                                
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -42,7 +58,7 @@
                                     </div>
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
-                                            <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer"  src="<?php echo e(asset($assetPrefixPath .'/storage/banner')); ?>/<?php echo e($banner['image']); ?>" alt="campaign image"/>
+                                            <img style="border: 1px solid; border-radius: 10px;" id="viewer"  src="<?php echo e(asset($assetPrefixPath .'/storage/banner')); ?>/<?php echo e($banner['image']); ?>" alt="campaign image"/>
                                         </center>
                                     </div>
                                 </div>

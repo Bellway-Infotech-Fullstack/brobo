@@ -29,7 +29,9 @@
                             @csrf
                             <div class="row">
                                 <div class="col-md-6">
-                                    <select name="product_id" id="product_id" class="form-control js-select2-custom">
+                                    <label>{{__('messages.product')}} {{__('messages.name')}}</label>
+                                    <small style="color: red">* </small>
+                                    <select name="product_id" id="product_id" class="form-control js-select2-custom" required>
                                         <option value="">Select Product</option>
                                         @if(count($products) > 0)
                                             @foreach($products as $product)
@@ -97,6 +99,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>{{__('messages.#')}}</th>
+                                    <th>Product Name</th>
                                     <th>{{__('messages.image')}}</th>
                                     <th>{{__('messages.status')}}</th>
                                     <th>{{__('messages.action')}}</th>
@@ -105,8 +108,12 @@
 
                             <tbody id="set-rows">
                             @foreach($banners as $key=>$banner)
+                                @php
+                                   $productData  =   \App\Models\Product::where('id' , $banner['product_id'])->first();
+                                @endphp
                                 <tr>
                                     <td>{{$key+$banners->firstItem()}}</td>
+                                    <td>{{$productData->name}}</td>
                                     <td>
                                         <span class="media align-items-center">
                                             <img class="avatar avatar-lg mr-3" src="{{$storagePath}}/{{$banner['image']}}" 
@@ -115,9 +122,7 @@
                                                 <h5 class="text-hover-primary mb-0">{{$banner['title']}}</h5>
                                             </div>
                                         </span>
-                                    <span class="d-block font-size-sm text-body">
-                                        
-                                    </span>
+                                    <span class="d-block font-size-sm text-body"> </span>
                                     </td>
                                     <td>
                                         <label class="toggle-switch toggle-switch-sm" for="statusCheckbox{{$banner->id}}">
