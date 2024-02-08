@@ -212,9 +212,18 @@
                                             <?php
                                             $amount = $value['item_price'] * $value['quantity'];
                                             $total_item_price = $total_item_price + $value['item_price'];
+                                            $itemColorImageId = (isset($value['item_color_image_id']) && !empty($value['item_color_image_id'])) ? $value['item_color_image_id'] :  0 ;
+                                            $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
+                                            $itemColorImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImageData->image : '';
+                                            $itemColorImage = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $itemColorImage) : asset('storage/app/public/product/colored_images/' . $itemColorImage); 
+                                            $itemImage = (isset($itemColorImageId) && !empty($itemColorImageId)) ? $itemColorImage : $value['item_image'];
+
+
+
+
                                              ?>
                                      
-                                                <img class="img-fluid" src="{{ $value['item_image']}}"  alt="Product Image" height="100" width="100">
+                                                <img class="img-fluid" src="{{ $itemImage }}"  alt="Product Image" height="100" width="100">
                                             <div class="row">
                                                 <div class="col-md-6 mb-3 mb-md-0">
                                                     <strong>
@@ -486,65 +495,51 @@
                                 </li>
                             </ul>
 
-                            @if ($order->delivery_address)
-                                <hr>
-                                @php($address = json_decode($order->delivery_address, true))
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5>{{ __($parcel_order ? 'messages.sender' : 'messages.delivery') }}
-                                        {{ __('messages.info') }}</h5>
-                                    @if (isset($address) && !$parcel_order)
-                                        <a class="link" data-toggle="modal" data-target="#shipping-address-modal"
-                                            href="javascript:">{{ __('messages.edit') }}</a>
-                                    @endif
-                                </div>
-                                @if (isset($address))
-                                    <span class="d-block">
-                                        {{ __('messages.name') }} : {{ $address['contact_person_name'] }}<br>
-                                        {{ __('messages.contact') }}:<a class="deco-none"
-                                            href="tel:{{ $address['contact_person_number'] }}">
-                                            {{ $address['contact_person_number'] }}</a><br>
-                                            {{ __('Floor') }}: {{ isset($address['floor'])?$address['floor']:'' }}<br>
-                                            {{ __('Road') }}: {{ isset($address['road'])?$address['road']:'' }}<br>
-                                            {{ __('House') }}: {{ isset($address['house'])?$address['house']:'' }}<br>
-                                        @if (isset($address['address']))
-                                            @if (isset($address['latitude']) && isset($address['longitude']))
-                                                <a target="_blank"
-                                                    href="http://maps.google.com/maps?z=12&t=m&q=loc:{{ $address['latitude'] }}+{{ $address['longitude'] }}">
-                                                    <i class="tio-map"></i>{{ $address['address'] }}<br>
-                                                </a>
-                                            @else
-                                                <i class="tio-map"></i>{{ $address['address'] }}<br>
-                                            @endif
+                            <?php
+                                $addressData  =   \App\Models\UsersAddress::where('id' , $order->delivery_address_id)->first();
+                                if(isset($addressData) && !empty($addressData)){
+                                        $deliveryAddress = $addressData->house_name . ",";
 
-                                        @endif
-                                    </span>
-                                @endif
-                            @endif
-                            @if ($order->receiver_details)
+                                        // Add floor number with suffix
+                                        $floorNumber = $addressData->floor_number;
+                                        if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                            $suffix = 'th';
+                                        } else {
+                                            switch ($floorNumber % 10) {
+                                                case 1:
+                                                    $suffix = 'st';
+                                                    break;
+                                                case 2:
+                                                    $suffix = 'nd';
+                                                    break;
+                                                case 3:
+                                                    $suffix = 'rd';
+                                                    break;
+                                                default:
+                                                    $suffix = 'th';
+                                                    break;
+                                            }
+                                        }
+
+                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+
+                                    } else {
+                                        $deliveryAddress = '';
+                                    }
+                            ?>
+
+                           
                                 <hr>
-                                @php($receiver_details = $order->receiver_details)
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <h5>{{ __('messages.receiver') }} {{ __('messages.info') }}</h5>
+                                    <h5>{{ __( 'messages.delivery') }} {{ __('messages.address') }}</h5>
+                                   
                                 </div>
-                                @if (isset($receiver_details))
-                                    <span class="d-block">
-                                        {{ __('messages.name') }}: {{ $receiver_details['contact_person_name'] }}<br>
-                                        {{ __('messages.contact') }}:<a class="deco-none"
-                                            href="tel:{{ $receiver_details['contact_person_number'] }}">
-                                            {{ $receiver_details['contact_person_number'] }}</a><br>
-                                        @if (isset($receiver_details['address']))
-                                            @if (isset($receiver_details['latitude']) && isset($receiver_details['longitude']))
-                                                <a target="_blank"
-                                                    href="http://maps.google.com/maps?z=12&t=m&q=loc:{{ $receiver_details['latitude'] }}+{{ $receiver_details['longitude'] }}">
-                                                    <i class="tio-map"></i>{{ $receiver_details['address'] }}<br>
-                                                </a>
-                                            @else
-                                                <i class="tio-map"></i>{{ $receiver_details['address'] }}<br>
-                                            @endif
-                                        @endif
-                                    </span>
+                                @if ($deliveryAddress)
+                                    <span class="d-block"> {!! $deliveryAddress !!} </span>
+                                    @else
+                                    <span class="d-block"> N/A </span>
                                 @endif
-                            @endif
+                          
                         </div>
                     @endif
                     <!-- End Body -->
