@@ -28,6 +28,7 @@ class CartController extends Controller
             $user = JWTAuth::toUser($token);
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
             $itemId = $request->input('item_id');
+            $itemColoImageId = $request->input('item_color_image_id');
             $quantity = $request->input('quantity');
             
             
@@ -36,12 +37,14 @@ class CartController extends Controller
             $validationRules = [
                 'item_id' => 'required',
                 'quantity' => 'required',
+                'item_color_image_id' => 'required'
             ];
 
             // Validate the input data
             $validation = Validator::make($request->all(), $validationRules, [
                 'item_id.required' => 'Item id is required.',
                 'quantity.required' => 'Quantity is required.',
+                'item_color_image_id.required' => 'Item color image id is required.',
             ]);
 
             // Check for validation errors and return error response if any
@@ -62,6 +65,7 @@ class CartController extends Controller
             // Check if the cart item already exists for the customer and item
             $existingCartItem = Cart::where('customer_id', $customerId)
                 ->where('item_id', $itemId)
+                ->orwhere('item_color_image_id', $itemColoImageId)
                 ->first();
 
             if ($existingCartItem) {
@@ -75,6 +79,7 @@ class CartController extends Controller
             // If the cart item doesn't exist, create a new one
             $requestData = [
                 'item_id' => $itemId,
+                'item_color_image_id' => $itemColoImageId,
                 'quantity' => $quantity,
                 'customer_id' => $customerId,
             ];
