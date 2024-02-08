@@ -27,7 +27,9 @@
                             <?php echo csrf_field(); ?>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <select name="product_id" id="product_id" class="form-control js-select2-custom">
+                                    <label><?php echo e(__('messages.product')); ?> <?php echo e(__('messages.name')); ?></label>
+                                    <small style="color: red">* </small>
+                                    <select name="product_id" id="product_id" class="form-control js-select2-custom" required>
                                         <option value="">Select Product</option>
                                         <?php if(count($products) > 0): ?>
                                             <?php $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -95,6 +97,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th><?php echo e(__('messages.#')); ?></th>
+                                    <th>Product Name</th>
                                     <th><?php echo e(__('messages.image')); ?></th>
                                     <th><?php echo e(__('messages.status')); ?></th>
                                     <th><?php echo e(__('messages.action')); ?></th>
@@ -103,8 +106,12 @@
 
                             <tbody id="set-rows">
                             <?php $__currentLoopData = $banners; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$banner): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php
+                                   $productData  =   \App\Models\Product::where('id' , $banner['product_id'])->first();
+                                ?>
                                 <tr>
                                     <td><?php echo e($key+$banners->firstItem()); ?></td>
+                                    <td><?php echo e($productData->name); ?></td>
                                     <td>
                                         <span class="media align-items-center">
                                             <img class="avatar avatar-lg mr-3" src="<?php echo e($storagePath); ?>/<?php echo e($banner['image']); ?>" 
@@ -113,9 +120,7 @@
                                                 <h5 class="text-hover-primary mb-0"><?php echo e($banner['title']); ?></h5>
                                             </div>
                                         </span>
-                                    <span class="d-block font-size-sm text-body">
-                                        
-                                    </span>
+                                    <span class="d-block font-size-sm text-body"> </span>
                                     </td>
                                     <td>
                                         <label class="toggle-switch toggle-switch-sm" for="statusCheckbox<?php echo e($banner->id); ?>">

@@ -31,6 +31,22 @@
                         <form action="{{route('admin.banner.update', [$banner->id])}}" method="post" id="banner_form" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
+                                <div class="col-md-6">
+                                    <label>{{__('messages.product')}} {{__('messages.name')}}</label>
+                                    <small style="color: red">* </small>
+                                    <select name="product_id" id="product_id" class="form-control js-select2-custom" required>
+                                        <option value="">Select Product</option>
+                                        @if(count($products) > 0)
+                                            @foreach($products as $product)
+                                                @php
+                                                 $selected =  ($product->id == $banner['product_id']) ? 'selected' : '';
+                                                @endphp
+                                                <option value="{{ $product->id }}" {{ $selected  }}>{{ $product->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                
                                
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -44,7 +60,7 @@
                                     </div>
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
-                                            <img style="width: 80%;border: 1px solid; border-radius: 10px;" id="viewer"  src="{{asset($assetPrefixPath .'/storage/banner')}}/{{$banner['image']}}" alt="campaign image"/>
+                                            <img style="border: 1px solid; border-radius: 10px;" id="viewer"  src="{{asset($assetPrefixPath .'/storage/banner')}}/{{$banner['image']}}" alt="campaign image"/>
                                         </center>
                                     </div>
                                 </div>

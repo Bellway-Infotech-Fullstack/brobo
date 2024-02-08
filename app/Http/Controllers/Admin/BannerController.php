@@ -25,8 +25,10 @@ class BannerController extends Controller
     {        
         $validator = Validator::make($request->all(), [
             'image' => 'required',
+            'product_id' => 'required',
         ], [
-            'image.required_if'=> "Iage is required!",
+            'image.required_if'=> "Image is required!",
+            'product_id.required'=> "Product id is required!",
         ]);
 
         if ($validator->fails()) {
@@ -35,6 +37,7 @@ class BannerController extends Controller
 
         $banner = new Banner;
         $banner->image = Helpers::upload('banner/', 'png', $request->file('image'));
+        $banner->product_id = $request->product_id;
         $banner->save();
  
         return response()->json([], 200);
@@ -43,7 +46,8 @@ class BannerController extends Controller
     public function edit(Banner $banner)
     {
         $banner = Banner::find($banner->id);
-        return view('admin-views.banner.edit', compact('banner'));
+        $products = Product::where('status', '1')->orderBy('id','desc')->get();
+        return view('admin-views.banner.edit', compact('banner','products'));
     }
 
     public function status(Request $request)
@@ -58,6 +62,7 @@ class BannerController extends Controller
     public function update(Request $request, Banner $banner)
     {
        $banner->image = $request->has('image') ?  Helpers::upload('banner/', 'png', $request->file('image')) : $banner->image;
+       $banner->product_id = $request->product_id;
         $banner->save();
         Toastr::success(trans('messages.banner_updated_successfully'));
         return redirect('admin/banner/add-new');
@@ -74,12 +79,13 @@ class BannerController extends Controller
     }
 
     public function search(Request $request){
-        $key = explode(' ', $request['search']);
-        $banners=Banner::where(function ($q) use ($key) {
-            foreach ($key as $value) {
-                $q->orWhere('title', 'like', "%{$value}%");
-            }
-        })->limit(50)->get();
+        $key = $request['search'];
+        
+        $banners = Banner::join('products', 'banners.product_id', '=', 'products.id')
+        ->select('banners.*')
+        ->where('products.name', 'like', "%$key%")
+        ->limit(50)
+        ->get();
         return response()->json([
             'view'=>view('admin-views.banner.partials._table',compact('banners'))->render(),
             'count'=>$banners->count()
