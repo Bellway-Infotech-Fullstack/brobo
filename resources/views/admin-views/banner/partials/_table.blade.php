@@ -1,22 +1,26 @@
 @foreach($banners as $key=>$banner)
+@php
+$productData = \App\Models\Product::where('id' , $banner['product_id'])->first();
+$appEnv = env('APP_ENV');
+$assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+$storagePath = ($appEnv == 'local') ? asset('/storage/banner') : asset('/storage/app/public/banner');
+@endphp
     <tr>
         <td>{{$key+1}}</td>
+        <td>{{$productData->name}}</td>
         <td>
             <span class="media align-items-center">
-                <img class="avatar avatar-lg mr-3" src="{{asset('storage/app/public/banner')}}/{{$banner['image']}}" 
-                        onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'" alt="{{$banner->name}} image">
+                <img class="avatar avatar-lg mr-3" src="{{$storagePath}}/{{$banner->image}}" 
+                      alt="{{$banner->name}} image">
                 <div class="media-body">
                     <h5 class="text-hover-primary mb-0">{{$banner['title']}}</h5>
                 </div>
             </span>
-        <span class="d-block font-size-sm text-body">
-            
-        </span>
+        <span class="d-block font-size-sm text-body"> </span>
         </td>
-        <td>{{$banner['type']}}</td>
         <td>
-            <label class="toggle-switch toggle-switch-sm" for="stocksCheckbox18">
-                <input type="checkbox" onclick="location.href='{{route('admin.banner.status',[$banner['id'],$banner->status?0:1])}}'"class="toggle-switch-input" id="stocksCheckbox18" {{$banner->status?'checked':''}}>
+            <label class="toggle-switch toggle-switch-sm" for="statusCheckbox{{$banner->id}}">
+                <input type="checkbox" onclick="location.href='{{route('admin.banner.status',[$banner['id'],$banner->status?0:1])}}'" class="toggle-switch-input" id="statusCheckbox{{$banner->id}}" {{$banner->status?'checked':''}}>
                 <span class="toggle-switch-label">
                     <span class="toggle-switch-indicator"></span>
                 </span>
