@@ -165,4 +165,5 @@ class Order extends Model
     {
         static::addGlobalScope(new ZoneScope);
     }
+
 }
