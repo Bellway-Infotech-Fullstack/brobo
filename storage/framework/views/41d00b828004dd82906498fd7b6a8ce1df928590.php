@@ -524,30 +524,35 @@
                             </ul>
 
                             <?php
-                                $deliveryAddressData =  \App\Models\UsersAddress::where('customer_id',$order->user_id)->first();
-                                $houseName = $deliveryAddressData->house_name . ",";
-                                // Add floor number with suffix
-                                $floorNumber = $deliveryAddressData->floor_number;
-                                if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
-                                    $suffix = 'th';
-                                    } else {
-                                    switch ($floorNumber % 10) {
-                                    case 1:
-                                        $suffix = 'st';
-                                        break;
-                                    case 2:
-                                        $suffix = 'nd';
-                                        break;
-                                    case 3:
-                                        $suffix = 'rd';
-                                        break;
-                                    default:
-                                        $suffix = 'th';
-                                        break;
-                                    }
-                                }
+                                $addressData  =   \App\Models\UsersAddress::where('id' , $order->delivery_address_id)->first();
+                                        if(isset($addressData) && !empty($addressData)){
+                                            $deliveryAddress = $addressData->house_name . ",";
 
-                                $deliveryAddress = $floorNumber."<sup>".trim($suffix)."</sup>"."&nbsp;&nbsp;&nbsp; floor " . "," . $deliveryAddressData->landmark . "," . $deliveryAddressData->area_name;
+                                            // Add floor number with suffix
+                                            $floorNumber = $addressData->floor_number;
+                                            if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                                $suffix = 'th';
+                                            } else {
+                                                switch ($floorNumber % 10) {
+                                                    case 1:
+                                                        $suffix = 'st';
+                                                        break;
+                                                    case 2:
+                                                        $suffix = 'nd';
+                                                        break;
+                                                    case 3:
+                                                        $suffix = 'rd';
+                                                        break;
+                                                    default:
+                                                        $suffix = 'th';
+                                                        break;
+                                                }
+                                            }
+
+                                            $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                                        } else {
+                                            $deliveryAddress = '';
+                                        }
 
 
 
@@ -555,13 +560,17 @@
                                 
                             ?>
 
-                            <?php if($deliveryAddressData): ?>
+                           
                                 <hr>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5><?php echo e(__( 'messages.delivery')); ?> <?php echo e(__('messages.address')); ?></h5>
                                    
                                 </div>
+                                <?php if($deliveryAddress): ?>
                                     <span class="d-block"> <?php echo $deliveryAddress; ?> </span>
+                                    <?php else: ?>
+                                    <span class="d-block"> N/A </span>
+
                             <?php endif; ?>
                           
                         </div>
