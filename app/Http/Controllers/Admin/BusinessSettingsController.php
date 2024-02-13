@@ -181,7 +181,10 @@ class BusinessSettingsController extends Controller
             'value' => $request['refunded_amount']
         ]);
       
-
+         DB::table('business_settings')->updateOrInsert(['key' => 'whatsapp_number'], [
+            'value' => $request['whatsapp_number']
+        ]);
+        
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
         $time_slots = '';
@@ -274,6 +277,336 @@ class BusinessSettingsController extends Controller
         Toastr::success(trans('messages.successfully_updated_to_changes_restart_user_app'));
         return back();
     }
+    
+     public function business_index_test()
+    {
+        $country = BusinessSetting::where('key','country')->first();
+
+        return view('admin-views.business-settings.business-index-test',array('country' => $country));
+    }
+
+    public function business_setup_test(Request $request)
+    {
+
+        if(env('APP_MODE')=='demo')
+        {
+            Toastr::info(trans('messages.update_option_is_disable_for_demo'));
+            return back();
+        }
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'business_name'], [
+            'value' => $request['restaurant_name']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'service_coin_on_registration'], [
+            'value' => $request['service_coin_on_registration']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'minimum_coin_transfer'], [
+            'value' => $request['minimum_coin_transfer']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'service_coin_on_referral'], [
+            'value' => $request['service_coin_on_referral']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'currency'], [
+            'value' => $request['currency']
+        ]);
+        
+        DB::table('business_settings')->updateOrInsert(['key' => 'timezone'], [
+            'value' => $request['timezone']
+        ]);
+        
+        $curr_logo = BusinessSetting::where(['key' => 'logo'])->first();
+
+        if ($request->has('logo')) {
+            $image_name = Helpers::update('business/', $request->file('logo')->getClientOriginalName(), 'png', $request->file('logo'));
+        } else {
+            $image_name = $curr_logo['value'];
+        }
+        
+        $fav_icon_val = BusinessSetting::where(['key' => 'fav_icon'])->first();
+
+        if ($request->has('fav_icon')) {
+            $fav_icon = Helpers::update('business/', $request->file('fav_icon')->getClientOriginalName(), 'png', $request->file('fav_icon'));
+        } else {
+            $fav_icon = $fav_icon_val['value'];
+        }
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'fav_icon'], [
+            'value' => $fav_icon
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'phone'], [
+            'value' => $request['phone']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'email_address'], [
+            'value' => $request['email']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'address'], [
+            'value' => $request['address']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'footer_text'], [
+            'value' => $request['footer_text']
+        ]);
+        
+        DB::table('business_settings')->updateOrInsert(['key' => 'customer_verification'], [
+            'value' => $request['customer_verification']
+        ]);
+        
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_delivery_verification'], [
+            'value' => $request['odc']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'minimum_shipping_charge'], [
+            'value' => $request['minimum_shipping_charge']
+        ]);
+        DB::table('business_settings')->updateOrInsert(['key' => 'per_km_shipping_charge'], [
+            'value' => $request['per_km_shipping_charge']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'currency_symbol_position'], [
+            'value' => $request['currency_symbol_position']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'schedule_order'], [
+            'value' => $request['schedule_order']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_confirmation_model'], [
+            'value' => $request['order_confirmation_model']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'tax'], [
+            'value' => $request['tax']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'admin_commission'], [
+            'value' => $request['admin_commission']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'country'], [
+            'value' => $request['country']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'default_location'], [
+            'value' => json_encode(['lat'=>$request['latitude'], 'lng'=>$request['longitude']]) 
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'admin_order_notification'], [
+            'value' => $request['admin_order_notification']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'free_delivery_over'], [
+            'value' => $request['free_delivery_over_status']?$request['free_delivery_over']:null
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'dm_maximum_orders'], [
+            'value' => $request['dm_maximum_orders']
+        ]);
+          
+        DB::table('business_settings')->updateOrInsert(['key' => 'mininum_order_amount'], [
+            'value' => $request['mininum_order_amount']
+        ]);
+        
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_1'], [
+            'value' => $request['order_installment_percent_1']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_2'], [
+            'value' => $request['order_installment_percent_2']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'order_installment_percent_3'], [
+            'value' => $request['order_installment_percent_3']
+        ]);
+
+       /* DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge'], [
+            'value' => $request['delivery_charge']
+        ]);*/
+        
+        DB::table('business_settings')->updateOrInsert(['key' => 'gst_percent'], [
+            'value' => $request['gst_percent']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'referred_discount'], [
+            'value' => $request['referred_discount']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'refunded_amount'], [
+            'value' => $request['refunded_amount']
+        ]);
+      
+
+        $order_from_time_slots = $request['order_from_time_slots'];
+        $order_to_time_slots = $request['order_to_time_slots'];
+        $time_slots = '';
+
+
+        $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
+        $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ?  explode(",",$order_time_slot_data->value) : array();
+        $orderFromTimeSlots = $_POST['order_from_time_slots'];
+        $orderToTimeSlots = $_POST['order_to_time_slots'];
+        
+        $numSlots = count($orderFromTimeSlots);
+        $isValid = true;
+        $isGreater = false;
+        
+        for ($i = 0; $i < $numSlots; $i++) {
+            $start = date("H:i", strtotime($orderFromTimeSlots[$i]));
+            $end = date("H:i", strtotime($orderToTimeSlots[$i]));
+            
+            if ($start >= $end) {
+                $isGreater = true;
+                break;
+            }
+        
+            // Check if new time slot falls within existing time slot
+            if ($i > 0) {
+                $start = strtotime($orderFromTimeSlots[$i]);
+                $end = strtotime($orderToTimeSlots[$i - 1]);
+                
+                if ($start <= $end) {
+                    $isValid = false;
+                    break;
+                }
+            }
+        }
+        
+        if ($isGreater) {
+            echo "Greater slot";
+        } else if (!$isValid) {
+            echo "Slots Overlap!";
+        }
+        $min_amount = $request['min_amount'];
+        $max_amount = $request['max_amount'];
+        
+        $isValidSlab = true;
+        $isGreaterSlab = false;
+        
+        $numSlabs = count($min_amount);
+        
+        for ($j = 0; $j < $numSlabs; $j++) {
+            $min = $min_amount[$j];
+            $max = $max_amount[$j];
+            
+            if ($min >= $max) {
+                $isGreaterSlab = true;
+                break;
+            }
+        
+            if ($j > 0) {
+                $min = strtotime($min_amount[$j]);
+                $max = strtotime($max_amount[$j - 1]);
+                
+                if ($min <= $max) {
+                    $isValidSlab = false;
+                    break;
+                }
+            }
+        }
+        
+        if ($isGreaterSlab) {
+            echo "Greater slab";
+        } else if (!$isValidSlab) {
+            echo "Slab Overlap!";
+        }
+
+
+ 
+        die;
+
+        if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
+            foreach($order_from_time_slots as $key => $value){
+               $time_slot = $value."-".$order_to_time_slots[$key]; 
+               if(in_array($time_slot,$order_time_slot_data)){
+                
+               // Toastr::error(trans('Slot already exist'));
+               // return back();
+               }
+               $time_slots =  $time_slots . $time_slot  . ",";
+                
+            }
+            $time_slots = rtrim($time_slots, ',');
+            //die;
+            DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
+                'value' => $time_slots
+            ]);
+
+        }
+
+        $min_amount = $request['min_amount'];
+        $max_amount = $request['max_amount'];
+        $delivery_charge = $request['delivery_charge'];
+
+        $delivery_charge_slabs = '';
+
+        if(isset($min_amount) && !empty($min_amount)){
+            foreach($min_amount as $key => $value){
+               $delivery_charge_slab = $delivery_charge[$key]."-".$value."-".$max_amount[$key]; 
+               $delivery_charge_slabs =  $delivery_charge_slabs . $delivery_charge_slab  . ",";    
+            }
+            $delivery_charge_slabs = rtrim($delivery_charge_slabs, ',');
+            //die;
+            DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge_slabs'], [
+                'value' => $delivery_charge_slabs
+            ]);
+        }
+       
+        
+
+        // $languages = $request['language'];
+
+        // if(in_array('en',$languages))
+        // {
+        //     unset($languages[array_search('en',$languages)]);
+        // }
+        // array_unshift($languages, 'en');
+
+        // DB::table('business_settings')->updateOrInsert(['key' => 'language'], [
+        //     'value' => json_encode($languages),
+        // ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'timeformat'], [
+            'value' => $request['time_format']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'canceled_by_restaurant'], [
+            'value' => $request['canceled_by_restaurant']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'canceled_by_deliveryman'], [
+            'value' => $request['canceled_by_deliveryman']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'show_dm_earning'], [
+            'value' => $request['show_dm_earning']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'toggle_veg_non_veg'], [
+            'value' => $request['vnv']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'toggle_dm_registration'], [
+            'value' => $request['dm_self_registration']
+        ]);
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'toggle_restaurant_registration'], [
+            'value' => $request['restaurant_self_registration']
+        ]);
+
+        Toastr::success(trans('messages.successfully_updated_to_changes_restart_user_app'));
+        return back();
+    }
+
+
+
+    
+    
 
     public function mail_index()
     {
@@ -1110,4 +1443,5 @@ class BusinessSettingsController extends Controller
        
     }
 }
+
 

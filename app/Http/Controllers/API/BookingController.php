@@ -661,12 +661,9 @@ class BookingController extends Controller
             if ($item->discount_type == 'amount') {
                 $item->discounted_price = number_format($item->price - $item->discount, 2);
             } else {
-                if($item->discount > 0){
-                
-                   $discounted_price = number_format(($item->discount / 100) * $item->price, 2);
-                   
-               
-                   $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
+                if($item->discount > 0){                
+                   $discounted_price = (($item->discount / 100) * $item->price);
+                  $item->discounted_price = number_format(($item->price- $discounted_price),2);
                 } else {
                      $item->discounted_price = 0;
                 }
@@ -763,4 +760,5 @@ class BookingController extends Controller
     }
 
 }
+
 

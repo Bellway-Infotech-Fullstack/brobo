@@ -191,7 +191,12 @@ class ProductController extends Controller
         $product_category = json_decode($product->category_ids);
         $product_category_id = $product->category_id;
         $product_category_data = Category::where(['id' => $product_category_id])->first();
-        $product_category_parent_id = $product_category_data->parent_id;
+        if($product_category_data){
+             $product_category_parent_id = $product_category_data->parent_id;
+        } else {
+           $product_category_parent_id = '';
+        }
+       
      
         $categories = Category::where(['parent_id' => 0])->get();
         return view('admin-views.product.edit', compact('product', 'product_category', 'categories','product_color_image_data','product_category_parent_id'));
@@ -597,3 +602,4 @@ class ProductController extends Controller
         return (new FastExcel(ProductLogic::format_export_foods($products)))->download('Products.xlsx');
     }
 }
+

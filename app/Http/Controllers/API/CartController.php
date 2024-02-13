@@ -37,7 +37,7 @@ class CartController extends Controller
             $validationRules = [
                 'item_id' => 'required',
                 'quantity' => 'required',
-                'item_color_image_id' => 'required'
+
             ];
 
             // Validate the input data
@@ -116,21 +116,39 @@ class CartController extends Controller
                 if ($product->discount_type == 'amount') {
                     $product->discounted_price = number_format($product->price - $product->discount, 2);
                 } else {
-                    $product->discounted_price = number_format(($product->discount / 100) * $product->price, 2);
-                    $product->discounted_price = number_format(($product->price- $product->discounted_price),2);
+                    if($product->discount > 0){                
+                        $discounted_price = (($product->discount / 100) * $product->price);
+                       $product->discounted_price = number_format(($product->price- $discounted_price),2);
+                     } else {
+                          $product->discounted_price = 0;
+                     }
+                    
 
                 }
                 // Remove commas from discounted_price
                 $product->discounted_price = str_replace(',', '', $product->discounted_price);
                 $main_category_data = Category::find($product->category_id);
+
+
+                $itemColorImageId = (isset($cartItem->item_color_image_id) && !empty($cartItem->item_color_image_id)) ? $cartItem->item_color_image_id :  0 ;
+                $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
+                $itemColorImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImageData->image : '';
+                $itemColorImage = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $itemColorImage) : asset('storage/app/public/product/colored_images/' . $itemColorImage); 
+                $itemImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImage : $product->image;
+
+
+
+
+                                             
                 
                 return [
                     'id' => $cartItem->id,
                     'quantity' => $cartItem->quantity,
                     'item_id' => $product->id,
                     'category_id' => $main_category_data->parent_id,
+                    'item_color_image_id' => $itemColorImageId,
                     'item_name' => $product->name,
-                    'item_image' => $product->image,
+                    'item_image' => $itemImage,
                     'customer_id' => $customerId,
                     'item_price' => $cartItem->quantity*$product->discounted_price,
                 ];
