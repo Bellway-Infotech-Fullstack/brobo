@@ -65,7 +65,6 @@ class CartController extends Controller
             // Check if the cart item already exists for the customer and item
             $existingCartItem = Cart::where('customer_id', $customerId)
                 ->where('item_id', $itemId)
-                ->orwhere('item_color_image_id', $itemColoImageId)
                 ->first();
 
             if ($existingCartItem) {
