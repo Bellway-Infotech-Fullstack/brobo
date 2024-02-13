@@ -525,39 +525,35 @@
 
                             <?php
                                 $addressData  =   \App\Models\UsersAddress::where('id' , $order->delivery_address_id)->first();
-                                        if(isset($addressData) && !empty($addressData)){
-                                            $deliveryAddress = $addressData->house_name . ",";
+                                if(isset($addressData) && !empty($addressData)){
+                                        $deliveryAddress = $addressData->house_name . ",";
 
-                                            // Add floor number with suffix
-                                            $floorNumber = $addressData->floor_number;
-                                            if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
-                                                $suffix = 'th';
-                                            } else {
-                                                switch ($floorNumber % 10) {
-                                                    case 1:
-                                                        $suffix = 'st';
-                                                        break;
-                                                    case 2:
-                                                        $suffix = 'nd';
-                                                        break;
-                                                    case 3:
-                                                        $suffix = 'rd';
-                                                        break;
-                                                    default:
-                                                        $suffix = 'th';
-                                                        break;
-                                                }
-                                            }
-
-                                            $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                                        // Add floor number with suffix
+                                        $floorNumber = $addressData->floor_number;
+                                        if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                            $suffix = 'th';
                                         } else {
-                                            $deliveryAddress = '';
+                                            switch ($floorNumber % 10) {
+                                                case 1:
+                                                    $suffix = 'st';
+                                                    break;
+                                                case 2:
+                                                    $suffix = 'nd';
+                                                    break;
+                                                case 3:
+                                                    $suffix = 'rd';
+                                                    break;
+                                                default:
+                                                    $suffix = 'th';
+                                                    break;
+                                            }
                                         }
 
+                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name;
 
-
-
-                                
+                                    } else {
+                                        $deliveryAddress = '';
+                                    }
                             ?>
 
                            
@@ -570,8 +566,7 @@
                                     <span class="d-block"> <?php echo $deliveryAddress; ?> </span>
                                     <?php else: ?>
                                     <span class="d-block"> N/A </span>
-
-                            <?php endif; ?>
+                                <?php endif; ?>
                           
                         </div>
                     <?php endif; ?>
