@@ -185,9 +185,10 @@ class SettingController extends Controller
         
             $logoPath = (env('APP_ENV') == 'local') ? asset('storage/business/' . $logo) : asset('storage/app/public/business/' . $logo);     
 
-            
+             $whatsapp_number_data = BusinessSetting::where('key','whatsapp_number')->first();
+            $whatsapp_number = $whatsapp_number_data->value ?? '';
 
-            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge_slabs' => $slabs,'logo' => $logoPath,'gst_percent' => $gst_percent]]);
+            return response()->json(['status' => 'success', 'code' => 200, 'data' => ['mininum_order_amount' => $mininum_order_amount, 'order_installment_percents' => $order_installment_percents,'order_time_slot_data' => $formatted_time_slots,'delivery_charge_slabs' => $slabs,'logo' => $logoPath,'gst_percent' => $gst_percent,'whatsapp_number' => $whatsapp_number]]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);
@@ -235,4 +236,5 @@ class SettingController extends Controller
      
 
 }
+
 
