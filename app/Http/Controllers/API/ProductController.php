@@ -139,16 +139,22 @@ class ProductController extends Controller
                         $item->description = '';
                     }
 
-                    // Calculate discount price
-                    if ($item->discount_type == 'amount') {
-                        $item->discounted_price = number_format($item->price - $item->discount, 2);
+                // Calculate discount price
+             
+                if ($item->discount_type == 'amount') {
+                    $item->discounted_price = number_format($item->price - $item->discount, 2);
+                } else {
+                    if($item->discount > 0){
+                    
+                       $discounted_price = (($item->discount / 100) * $item->price);
+                       $item->discounted_price = number_format(($item->price- $discounted_price),2);
                     } else {
-                        $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
-                        $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
-
+                         $item->discounted_price = 0;
                     }
-                      // Remove commas from discounted_price
-                    $item->discounted_price = str_replace(',', '', $item->discounted_price);
+    
+                }
+                // Remove commas from discounted_price
+                $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
                     return $item;
             });
@@ -160,7 +166,7 @@ class ProductController extends Controller
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
              
          } catch (\Exception $e) {
-           
+
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
          }
      }
@@ -421,27 +427,36 @@ class ProductController extends Controller
                     $item->description = '';
                 }
 
-                // Calculate discount price
+                   // Calculate discount price
+             
                 if ($item->discount_type == 'amount') {
                     $item->discounted_price = number_format($item->price - $item->discount, 2);
                 } else {
-                    $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
-                    $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
-
+                    if($item->discount > 0){
+                       $discounted_price = (($item->discount / 100) * $item->price);
+                       $item->discounted_price = number_format(($item->price- $discounted_price),2);
+                    } else {
+                         $item->discounted_price = 0;
+                    }
                 }
-                
-                  // Remove commas from discounted_price
-                    $item->discounted_price = str_replace(',', '', $item->discounted_price);
+                // Remove commas from discounted_price
+                $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
                 // get sub catefory name
 
                 $item->sub_category_id = $item->category_id;
 
                 $category_data = Category::find($item->category_id);
-
-                $item->category_id = $category_data->parent_id;
+                if($category_data){
+                     $item->category_id = $category_data->parent_id;
 
                 $item->sub_category_name = $category_data->name ?? '';
+                } else {
+                    $item->category_id =  '';
+                    $item->sub_category_name = '';
+                }
+
+               
 
                 return $item;
             });
@@ -546,15 +561,22 @@ class ProductController extends Controller
                                $item->description = '';
                            }
            
-                           // Calculate discount price
-                           if ($item->discount_type == 'amount') {
-                               $item->discounted_price = number_format($item->price - $item->discount, 2);
-                           } else {
-                               $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
-                           }
-                           
-                             // Remove commas from discounted_price
-                            $item->discounted_price = str_replace(',', '', $item->discounted_price);
+                               // Calculate discount price
+             
+                if ($item->discount_type == 'amount') {
+                    $item->discounted_price = number_format($item->price - $item->discount, 2);
+                } else {
+                    if($item->discount > 0){
+                    
+                       $discounted_price = (($item->discount / 100) * $item->price);
+                       $item->discounted_price = number_format(($item->price- $discounted_price),2);
+                    } else {
+                         $item->discounted_price = 0;
+                    }
+    
+                }
+                // Remove commas from discounted_price
+                $item->discounted_price = str_replace(',', '', $item->discounted_price);
            
                            // get catefory name
            
@@ -676,16 +698,24 @@ class ProductController extends Controller
                         $item->description = '';
                     }
 
-                    // Calculate discount price
-                    if ($item->discount_type == 'amount') {
-                        $item->discounted_price = number_format($item->price - $item->discount, 2);
+                      // Calculate discount price
+             
+                if ($item->discount_type == 'amount') {
+                    $item->discounted_price = number_format($item->price - $item->discount, 2);
+                } else {
+                    if($item->discount > 0){
+                    
+                       $discounted_price = (($item->discount / 100) * $item->price);
+                       
+                   
+                      $item->discounted_price = number_format(($item->price- $discounted_price),2);
                     } else {
-                        $item->discounted_price = number_format(($item->discount / 100) * $item->price, 2);
-                        $item->discounted_price = number_format(($item->price- $item->discounted_price),2);
-
+                         $item->discounted_price = 0;
                     }
-                    // Remove commas from discounted_price
-                    $item->discounted_price = str_replace(',', '', $item->discounted_price);
+    
+                }
+                // Remove commas from discounted_price
+                $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
                     return $item;
                 });
@@ -702,3 +732,4 @@ class ProductController extends Controller
          }
     }
 }
+

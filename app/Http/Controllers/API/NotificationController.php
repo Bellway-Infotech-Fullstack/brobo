@@ -93,19 +93,25 @@ class NotificationController extends Controller
                 $description = $notification->description;
                 } else {
 
-                $couponData = Coupon::find($notification->coupon_id);    
+                    $couponData = Coupon::find($notification->coupon_id);    
 
+                    if(isset($couponData) && !empty($couponData)){
+                        $couponDiscountType = $couponData->discount_type;
+                        $couponCode = $couponData->code;
+        
+                        if($couponDiscountType == "percentage"){
+                            $couponDiscount = $couponData->discount. " %";
+                        } else {
+                            $couponDiscount = "Rs. ".$couponData->discount;
+                        }
+    
+                        $description = "Get upto $couponDiscount off using code $couponCode";
+                    } else {
+                        $description = '';
+                    }
+                
              
-                $couponDiscountType = $couponData->discount_type;
-                $couponCode = $couponData->code;
-
-                if($couponDiscountType == "percentage"){
-                    $couponDiscount = $couponData->discount. " %";
-                } else {
-                    $couponDiscount = "Rs. ".$couponData->discount;
-                }
-
-                $description = "Get upto $couponDiscount off using code $couponCode";
+                
                 }
 
                 
@@ -352,4 +358,5 @@ class NotificationController extends Controller
 
     
   
+
 

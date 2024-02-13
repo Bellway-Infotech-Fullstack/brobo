@@ -572,7 +572,7 @@
                       
                         
                         @php($gst_percent=\App\Models\BusinessSetting::where('key','gst_percent')->first())
-                        <div class="col-md-4 col-12">
+                        <div class="col-md-6 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">GST for rented items (%)</label>
                                 <input type="text" value="{{$gst_percent->value??''}}"
@@ -580,7 +580,7 @@
                             </div>
                         </div>
                         @php($referred_discount=\App\Models\BusinessSetting::where('key','referred_discount')->first())
-                        <div class="col-md-4 col-12">
+                        <div class="col-md-6 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">Referred Discount (%)</label>
                                 <input type="text" value="{{$referred_discount->value??''}}"
@@ -588,12 +588,29 @@
                             </div>
                         </div>
 
+                      
+                    </div>
+                    
+                    <div class="row">
+                      
+                        
+                 
+
                         @php($refunded_amount=\App\Models\BusinessSetting::where('key','refunded_amount')->first())
-                        <div class="col-md-4 col-12">
+                        <div class="col-md-6 col-12">
                             <div class="form-group">
                                 <label class="input-label d-inline" for="exampleFormControlInput1">Refunded Amount (%)</label>
                                 <input type="text" value="{{$refunded_amount->value??''}}"
                                        name="refunded_amount" class="form-control" placeholder="" required>
+                            </div>
+                        </div>
+                        
+                         @php($whatsapp_number=\App\Models\BusinessSetting::where('key','whatsapp_number')->first())
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Whasapp Number</label>
+                                <input type="text" value="{{$whatsapp_number->value??''}}"
+                                       name="whatsapp_number" class="form-control" placeholder="" required>
                             </div>
                         </div>
                     </div>
@@ -1106,3 +1123,4 @@
          </script>
 
 @endpush
+
