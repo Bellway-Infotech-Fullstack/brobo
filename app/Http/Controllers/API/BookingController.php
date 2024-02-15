@@ -46,6 +46,7 @@ class BookingController extends Controller
             $transactionId = $request->input('transaction_id');
             $finalItemPrice = $request->input('final_item_price');
             $isBuildingHaveLift = $request->input('is_building_have_lift');
+            $deliveryCharge = $request->input('delivery_charge');
             $todayDate = date("Y-m-d");
             
 
@@ -113,7 +114,6 @@ class BookingController extends Controller
                 
             $description = "Thank you for booking with us.You booked <b>".$itemNames."</b> We'll send a confirmation when your items delivered";   
             
-            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
 
             $orderMinAmountData  = BusinessSetting::where('key','mininum_order_amount')->first();
 
@@ -125,7 +125,6 @@ class BookingController extends Controller
             }
 
 
-            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
             $totalAmount = $finalItemPrice;
 
             if($orderInstallmentPercent == ''){
@@ -340,10 +339,9 @@ class BookingController extends Controller
             $orderId = $item->order_id;
             $cartTotalItemAmount = number_format(($cartTotalItemAmount), 0);
 
-            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
 
 
-            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+            $deliveryCharge = $item->delivery_charge; 
 
             return [
                 'description' => $description,
@@ -396,10 +394,7 @@ class BookingController extends Controller
             $orderId   = $item->order_id; 
             $cartTotalItemAmount = $cartTotalItemAmount;
 
-            $deliveryChargeData  = BusinessSetting::where('key','delivery_charge')->first();
-
-
-            $deliveryCharge = (isset($deliveryChargeData)) ? $deliveryChargeData->value : 0; 
+            $deliveryCharge = $item->delivery_charge; 
 
             $addressId = $item->delivery_address_id;
 
@@ -661,7 +656,8 @@ class BookingController extends Controller
             if ($item->discount_type == 'amount') {
                 $item->discounted_price = number_format($item->price - $item->discount, 2);
             } else {
-                if($item->discount > 0){                
+                if($item->discount > 0){
+                
                    $discounted_price = (($item->discount / 100) * $item->price);
                   $item->discounted_price = number_format(($item->price- $discounted_price),2);
                 } else {
