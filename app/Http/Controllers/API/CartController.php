@@ -119,7 +119,7 @@ class CartController extends Controller
                         $discounted_price = (($product->discount / 100) * $product->price);
                        $product->discounted_price = number_format(($product->price- $discounted_price),2);
                      } else {
-                          $product->discounted_price = 0;
+                            $product->discounted_price = $product->price;
                      }
                     
 
