@@ -41,7 +41,6 @@ class CustomerAuthController extends Controller
                         ->numbers()
                         ->symbols()
                 ],
-                'address' => 'required',
                 'fcm_token' => 'required',
         
                 
@@ -53,7 +52,6 @@ class CustomerAuthController extends Controller
                 'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
-                'address.required' => 'Please enter an address.',
                 'fcm_token.required' => 'Please send fcm token.',
             ]);
             
@@ -64,7 +62,6 @@ class CustomerAuthController extends Controller
             // Hash the password and set other request attributes
             $password = Hash::make($request->password);
             $request['password'] = $password ;
-            $request['address'] = $request->address;
             $request['role_id'] = '2';
             $request['name'] = $request->name;
             $request['mobile_number'] = $request->mobile_number;
@@ -167,15 +164,17 @@ class CustomerAuthController extends Controller
                         ->numbers()
                         ->symbols()
                 ],
-                'fcm_token' => 'required',
+               /* 'fcm_token' => 'required',*/
             ], [
                 'mobile_number.required' => 'Please enter mobile number.',
-                'mobile_number.regex' => 'The mobile number ••••••••should start with +91 and have 10 digits.',
+                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
                 'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
-                'fcm_token.required' => 'Please send fcm token.',
+              //  'fcm_token.required' => 'Please send fcm token.',
             ]);
+            
+          
             
             
 
@@ -201,7 +200,7 @@ class CustomerAuthController extends Controller
           
 
 
-            $user->update(['auth_token' => $token,'fcm_token' => $request->fcm_token]);
+            $user->update(['auth_token' => $token , 'fcm_token' => $request->fcm_token]);
 
             if ($user->role_id != $request->role_id) {
                 // The user has an invalid role
@@ -211,6 +210,7 @@ class CustomerAuthController extends Controller
             // If the user's role is correct, return the token
             return response()->json(['status' => 'success', 'code' => 200, 'data' => $user, 'message' => 'Login successfully']);
         } catch (\Exception $e) {
+
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
@@ -546,7 +546,6 @@ class CustomerAuthController extends Controller
                 $userData->email = $request->post('email');
                 $userData->gender = $request->post('gender');
                 $userData->mobile_number = $request->post('mobile_number');
-                $userData->address = $request->post('address');
 
                 $userData->save();
 
@@ -798,3 +797,4 @@ class CustomerAuthController extends Controller
         }
     }
 }
+
