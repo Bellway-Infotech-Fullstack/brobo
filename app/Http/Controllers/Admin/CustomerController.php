@@ -49,7 +49,6 @@ class CustomerController extends Controller
                     ->numbers()
                     ->symbols()
             ],
-            'address' =>'required'
 
         ]);
 
@@ -58,7 +57,6 @@ class CustomerController extends Controller
             'mobile_number' => $request->mobile_number,
             'gender' => $request->gender,
             'email' => $request->email,
-            'address' => $request->address,
             'role_id' => 2,
             'password' => bcrypt($request->password),
             'created_at' => now(),
@@ -114,7 +112,6 @@ class CustomerController extends Controller
             'name' => 'required|regex:/^[A-Za-z\s]+$/',
             'email' => $emailValidation,
             'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users,mobile_number,'.$id,
-            'address' =>'required'
 
         ]);
 
@@ -127,7 +124,6 @@ class CustomerController extends Controller
             'mobile_number' => $request->mobile_number,
             'email' => $request->email,
             'gender' => $request->gender,
-            'address' => $request->address,
             'updated_at' => now(),
         ]);
         
@@ -172,16 +168,16 @@ class CustomerController extends Controller
 
     public function refereddsearch(Request $request){
         $key = explode(' ', $request['search']);
-   $user_list = User::select('users.id', 'users.name', 'users.referral_code', 'users.referred_code')
-    ->join('users as referrer', 'users.referred_code', '=', 'referrer.referral_code')
-    ->whereNotNull('users.referred_code')
-    ->where(function ($q) use ($key) {
-        foreach ($key as $value) {
-            $q->orWhere('referrer.name', 'like', "%{$value}%")
-              ->orWhere('users.name', 'like', "%{$value}%");
-        }
-    })
-    ->paginate(config('default_pagination'));
+        $user_list = User::select('users.id', 'users.name', 'users.referral_code', 'users.referred_code')
+            ->join('users as referrer', 'users.referred_code', '=', 'referrer.referral_code')
+            ->whereNotNull('users.referred_code')
+            ->where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('referrer.name', 'like', "%{$value}%")
+                    ->orWhere('users.name', 'like', "%{$value}%");
+                }
+            })
+            ->paginate(config('default_pagination'));
 
 
         return response()->json([

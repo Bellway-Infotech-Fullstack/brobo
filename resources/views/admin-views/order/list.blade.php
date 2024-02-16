@@ -289,7 +289,9 @@
                         </th>
                         <th class="table-column-pl-0">{{__('messages.order')}} ID</th>
                         <th>Booking Date</th>
-                        <th>{{__('messages.customer')}}</th>
+                        <th>{{__('messages.customer')}} Name</th>
+                        <th>{{__('messages.customer')}} Mobile Number</th>
+                        <th>Delivery Address</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Time Slot</th>
@@ -322,6 +324,46 @@
                                 @else
                                     <label class="badge badge-danger">{{__('messages.invalid')}} {{__('messages.customer')}} {{__('messages.data')}}</label>
                                 @endif
+                            </td>
+                            <td> {{ $order->customer['mobile_number'] }}</td>
+                            <td>
+                                <?php
+                                $addressData  =   \App\Models\UsersAddress::where('id' , $order->delivery_address_id)->first();
+                                if(isset($addressData) && !empty($addressData)){
+                                        $deliveryAddress = $addressData->house_name . ",";
+
+                                        // Add floor number with suffix
+                                        $floorNumber = $addressData->floor_number;
+                                        if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                                            $suffix = 'th';
+                                        } else {
+                                            switch ($floorNumber % 10) {
+                                                case 1:
+                                                    $suffix = 'st';
+                                                    break;
+                                                case 2:
+                                                    $suffix = 'nd';
+                                                    break;
+                                                case 3:
+                                                    $suffix = 'rd';
+                                                    break;
+                                                default:
+                                                    $suffix = 'th';
+                                                    break;
+                                            }
+                                        }
+
+                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+
+                                    } else {
+                                        $deliveryAddress = 'N/A';
+                                    }
+
+                                    echo $deliveryAddress;
+                            ?>
+
+                           
+
                             </td>
                         
                             <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
