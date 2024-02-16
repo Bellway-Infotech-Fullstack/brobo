@@ -361,10 +361,7 @@
 
                                     echo $deliveryAddress;
                             ?>
-
-                           
-
-                            </td>
+                             </td>
                         
                             <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
                             <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
