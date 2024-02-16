@@ -92,18 +92,7 @@
                             </div>
                         </div>          
                         
-                        <small class="nav-subtitle border-bottom">{{__('messages.login')}} {{__('messages.info')}}</small>
-                        <br>
-                        <div class="form-group">
-                            <div class="row">                            
-                                <div class="col-md-4">
-                                    <label class="input-label qcont" for="address">Addreess</label>
-                                    <textarea name="address" class="form-control" placeholder="Address" required></textarea>
-                                    
-                                </div>
-                                
-                            </div>
-                        </div>  
+                       
 
                         <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
                     </form>

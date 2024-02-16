@@ -81,11 +81,7 @@
                                             <option value="Female" {{ ($user_record['gender'] == 'Female') ? 'selected' : '' }}>Female</option>
                                         </select>
                                     </div>
-                                     <div class="col-md-4">
-                                          <label class="input-label qcont" for="address">Addreess</label>
-                                        <textarea name="address" class="form-control" placeholder="Address" required>{{$user_record['address']}}</textarea>
-                                        
-                                    </div>
+                                  
                                 </div>
                             </div>          
                             

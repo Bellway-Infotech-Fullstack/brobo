@@ -228,7 +228,7 @@
                                             $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
                                             $itemColorImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImageData->image : '';
                                             $itemColorImage = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $itemColorImage) : asset('storage/app/public/product/colored_images/' . $itemColorImage); 
-                                            $itemImage = (isset($itemColorImageId) && !empty($itemColorImageId)) ? $itemColorImage : $value['item_image'];
+                                            $itemImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImage : $value['item_image'];
 
 
 
