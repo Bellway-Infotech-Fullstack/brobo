@@ -197,6 +197,8 @@ class OrderController extends Controller
         $status = $request->status;
         $search = $request->search;
 
+      
+
         $orders = Order::query()
         ->when($status == 'pending', function($query){
             return $query->Pending();
@@ -231,6 +233,7 @@ class OrderController extends Controller
                 // Add the condition to search by customer name
                 $q->orWhereHas('customer', function ($subQuery) use ($value) {
                     $subQuery->where('name', 'like', "%{$value}%");
+                    $subQuery->orwhere('mobile_number', $value);
                 });
             }
         })

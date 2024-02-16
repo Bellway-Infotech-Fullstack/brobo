@@ -586,6 +586,54 @@ class Helpers
         return $result;
     }
 
+    public static function sendPushNotificationToCustomer($data, $fcmToken)
+    {
+        $key = BusinessSetting::where(['key' => 'push_notification_key'])->first()->value;
+
+        $url = "https://fcm.googleapis.com/fcm/send";
+        $header = array("authorization: key=" . $key . "",
+            "content-type: application/json"
+        );
+        $url = "https://fcm.googleapis.com/fcm/send";
+        $header = array("authorization: key=" . $key . "",
+            "content-type: application/json"
+        );
+       
+        $postdata = '{
+            "to" : "' . $fcmToken . '",
+            "mutable_content": true,
+            "data" : {
+                "title":"' . $data['title'] . '",
+                "body" : "' . $data['body'] . '",
+                "is_read": 0
+            },
+            "notification" : {
+                "title" :"' . $data['title'] . '",
+                "body" : "' . $data['body'] . '",
+                "is_read": 0,
+                "icon" : "new",
+                "sound" : "default"
+            }
+        }';
+
+
+        $ch = curl_init();
+        $timeout = 120;
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+        // Get URL content
+        $result = curl_exec($ch);
+        // close handle to release resources
+        curl_close($ch);
+
+        return $result;
+    }
+
     public static function rating_count($service_id, $rating)
     {
         return Review::where(['service_id' => $service_id, 'rating' => $rating])->count();

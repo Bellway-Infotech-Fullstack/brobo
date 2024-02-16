@@ -33,23 +33,12 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="input-label" for="exampleFormControlInput1">{{__('messages.zone')}}</label>
-                                <select name="zone" class="form-control js-select2-custom" >
-                                    <option value="all">All Zones</option>
-                                    @foreach(\App\Models\Zone::orderBy('name')->get() as $z)
-                                        <option value="{{$z['id']}}">{{$z['name']}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
                                 <label class="input-label" for="tergat">{{__('messages.send')}} {{__('messages.to')}}</label>
-                        
-                                <select name="tergat" class="form-control" id="tergat" data-placeholder="{{__('messages.select')}} {{__('messages.tergat')}}" required>
-                                    <option value="customer">{{__('messages.customer')}}</option>
-                                    {{-- <option value="deliveryman">{{__('messages.deliveryman')}}</option> --}}
-                                    <option value="vendor">{{__('messages.vendor')}}</option>
+                                <select name="target_user_id" id="tergat"  class="form-control js-select2-custom">
+                                    <option value="all">All Users</option>
+                                    @foreach (\App\Models\User::where('role_id', 2)->orderBy('name')->get() as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -57,19 +46,6 @@
                     <div class="form-group">
                         <label class="input-label" for="exampleFormControlInput1">{{__('messages.description')}}</label>
                         <textarea name="description" class="form-control" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>{{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 3:1 )</small>
-                        <div class="custom-file">
-                            <input type="file" name="image" id="customFileEg1" class="custom-file-input"
-                                   accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                            <label class="custom-file-label" for="customFileEg1">{{__('messages.choose')}} {{__('messages.file')}}</label>
-                        </div>
-                        <hr>
-                        <center>
-                            <img style="width: 30%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                 src="{{asset($assetPrefixPath . '/admin/img/900x400/img1.jpg')}}" alt="image"/>
-                        </center>
                     </div>
                     <hr>
                     <button type="submit" id="submit" class="btn btn-primary">{{__('messages.send')}} {{__('messages.notification')}}</button>
@@ -115,10 +91,6 @@
                                     <th>{{__('messages.#')}}</th>
                                     <th style="width: 50%">{{__('messages.title')}}</th>
                                     <th>{{__('messages.description')}}</th>
-                                    <th>{{__('messages.image')}}</th>
-                                    <th>{{__('messages.zone')}}</th>
-                                    <th>{{__('messages.tergat')}}</th>
-                                    <th>{{__('messages.status')}}</th>
                                     <th style="width: 10%">{{__('messages.action')}}</th>
                                 </tr>
                             </thead>
@@ -135,28 +107,10 @@
                                     <td>
                                         {{substr($notification['description'],0,25)}} {{strlen($notification['description'])>25?'...':''}}
                                     </td>
-                                    <td>
-                                        @if($notification['image']!=null)
-                                            <img style="height: 50px"
-                                                 src="{{asset('storage/app/public/notification')}}/{{$notification['image']}}">
-                                        @else
-                                            <label class="badge badge-soft-warning">No {{__('messages.image')}}</label>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{$notification->zone_id==null?__('messages.all'):($notification->zone?$notification->zone->name:__('messages.zone').' '.__('messages.deleted'))}}
-                                    </td>
-                                    <td class="text-uppercase">
-                                        {{$notification->tergat}}
-                                    </td>
-                                    <td>
-                                        <label class="toggle-switch toggle-switch-sm" for="stocksCheckbox{{$notification->id}}">
-                                            <input type="checkbox" onclick="location.href='{{route('admin.notification.status',[$notification['id'],$notification->status?0:1])}}'"class="toggle-switch-input" id="stocksCheckbox{{$notification->id}}" {{$notification->status?'checked':''}}>
-                                            <span class="toggle-switch-label">
-                                                <span class="toggle-switch-indicator"></span>
-                                            </span>
-                                        </label>
-                                    </td>
+                                  
+                                   
+                                    
+                                 
                                     <td>
                                         <a class="btn btn-sm btn-white"
                                             href="{{route('admin.notification.edit',[$notification['id']])}}" title="{{__('messages.edit')}} {{__('messages.notification')}}"><i class="tio-edit"></i>
