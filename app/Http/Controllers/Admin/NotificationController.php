@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\User;
 
 class NotificationController extends Controller
 {
@@ -25,8 +25,6 @@ class NotificationController extends Controller
         $validator = Validator::make($request->all(), [
             'notification_title' => 'required',
             'description' => 'required',
-            'tergat' => 'required',
-            'zone'=>'required'
         ], [
             'notification_title.required' => 'Title is required!',
         ]);
@@ -35,45 +33,36 @@ class NotificationController extends Controller
             return response()->json(['errors' => Helpers::error_processor($validator)]);
         }
 
-        if ($request->has('image')) {
-            $image_name = Helpers::upload('notification/', 'png', $request->file('image'));
-        } else {
-            $image_name = null;
-        }
+     
 
         $notification = new Notification;
         $notification->title = $request->notification_title;
         $notification->description = $request->description;
-        $notification->image = $image_name;
-        $notification->tergat= $request->tergat;
-        $notification->status = 1;
-        $notification->zone_id = $request->zone=='all'?null:$request->zone;
         $notification->save();
 
-        $topic_all_zone=[
-            'customer'=>'all_zone_customer',
-            'deliveryman'=>'all_zone_delivery_man',
-            'restaurant'=>'all_zone_restaurant',
+    
+        $userId = $request->target_user_id;
+        $data = [
+            'title' => $request->notification_title,
+            'body' => $request->description
         ];
 
-        $topic_zone_wise=[
-            'customer'=>'zone_'.$request->zone.'_customer',
-            'deliveryman'=>'zone_'.$request->zone.'_delivery_man',
-            'restaurant'=>'zone_'.$request->zone.'_restaurant',
-        ];
-        $topic = $request->zone == 'all'?$topic_all_zone[$request->tergat]:$topic_zone_wise[$request->tergat];
+        if($userId != 'all'){
+            
+            $userData = User::where('id',$userId)->first();
+            $userFcmToken = $userData->fcm_token;
+            Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
 
-        if($request->has('image'))
-        {
-            $notification->image = url('/').'/storage/app/public/notification/'.$image_name;
+        } else {
+
+            $allUserData = User::where('role_id', 2)->orderBy('id','desc')->get();
+            if(isset($allUserData) && !empty($allUserData)){
+                foreach ($allUserData as $user){
+                    $userFcmToken = $user->fcm_token;
+                    Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                }
+            }
         }
-
-        try {
-            Helpers::send_push_notif_to_topic($notification, $topic, 'general');
-        } catch (\Exception $e) {
-            Toastr::warning(trans('messages.push_notification_faild'));
-        }
-
         return response()->json([], 200);
     }
 
@@ -88,68 +77,50 @@ class NotificationController extends Controller
         $request->validate([
             'notification_title' => 'required',
             'description' => 'required',
-            'tergat' => 'required',
         ], [
-            'title.required' => 'title is required!',
+            'notification_title.required' => 'title is required!',
         ]);
 
         $notification = Notification::find($id);
 
-        if ($request->has('image')) {
-            $image_name = Helpers::update('notification/', $notification->image, 'png', $request->file('image'));
-        } else {
-            $image_name = $notification['image'];
-        }
+   
 
         $notification->title = $request->notification_title;
         $notification->description = $request->description;
-        $notification->image = $image_name;
-        $notification->tergat= $request->tergat;
-        $notification->zone_id = $request->zone=='all'?null:$request->zone;
         $notification->save();
 
-        $topic_all_zone=[
-            'customer'=>'all_zone_customer',
-            'deliveryman'=>'all_zone_delivery_man',
-            'restaurant'=>'all_zone_restaurant',
+       
+        $userId = $request->target_user_id;
+        $data = [
+            'title' => $request->notification_title,
+            'body' => $request->description
         ];
 
-        $topic_zone_wise=[
-            'customer'=>'zone_'.$request->zone.'_customer',
-            'deliveryman'=>'zone_'.$request->zone.'_delivery_man',
-            'restaurant'=>'zone_'.$request->zone.'_restaurant',
-        ];
-        $topic = $request->zone == 'all'?$topic_all_zone[$request->tergat]:$topic_zone_wise[$request->tergat];
+        if($userId != 'all'){
+            
+            $userData = User::where('id',$userId)->first();
+            $userFcmToken = $userData->fcm_token;
+            Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
 
-        if($request->has('image'))
-        {
-            $notification->image = url('/').'/storage/app/public/notification/'.$image_name;
-        }
-        
-        try {
-            Helpers::send_push_notif_to_topic($notification, $topic, 'general');
-        } catch (\Exception $e) {
-            Toastr::warning(trans('messages.push_notification_faild'));
+        } else {
+
+            $allUserData = User::where('role_id', 2)->orderBy('id','desc')->get();
+            if(isset($allUserData) && !empty($allUserData)){
+                foreach ($allUserData as $user){
+                    $userFcmToken = $user->fcm_token;
+                    Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                }
+            }
         }
         Toastr::success(trans('messages.notification').' '.trans('messages.updated_successfully'));
         return back();
     }
 
-    public function status(Request $request)
-    {
-        $notification = Notification::find($request->id);
-        $notification->status = $request->status;
-        $notification->save();
-        Toastr::success(trans('messages.notification_status_updated'));
-        return back();
-    }
 
     public function delete(Request $request)
     {
         $notification = Notification::find($request->id);
-        if (Storage::disk('public')->exists('notification/' . $notification['image'])) {
-            Storage::disk('public')->delete('notification/' . $notification['image']);
-        }
+    
         $notification->delete();
         Toastr::success(trans('messages.notification_deleted_successfully'));
         return back();
