@@ -433,7 +433,6 @@
                 </li>
                 <!-- FAQ -->
                     <!-- Notification -->
-                   {{-- } @if(\App\CentralLogics\Helpers::module_permission_check('notification'))
                         <li class="navbar-vertical-aside-has-menu {{Request::is('admin/notification*')?'active':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                href="{{route('admin.notification.add-new')}}"
@@ -445,9 +444,8 @@
                                 </span>
                             </a>
                         </li>
-                    @endif
                 <!-- End Notification -->
-                --}
+                
 
                     <!-- End marketing section -->
 
