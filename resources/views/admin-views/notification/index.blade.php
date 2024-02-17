@@ -27,6 +27,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
+                                <input type="hidden" id="selectedValue">
                                 <label class="input-label" for="exampleFormControlInput1">{{__('messages.title')}}</label>
                                 <input type="text" name="notification_title" class="form-control" placeholder="{{__('messages.new_notification')}}" required>
                             </div>
@@ -35,9 +36,9 @@
                             <div class="form-group">
                                 <label class="input-label" for="tergat">{{__('messages.send')}} {{__('messages.to')}}</label>
                                 <select name="target_user_id" id="tergat"  class="form-control js-select2-custom">
-                                    <option value="all">All Users</option>
-                                    @foreach (\App\Models\User::where('role_id', 2)->orderBy('name')->get() as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    <option value="all" data-user-name="all users">All Users</option>
+                                    @foreach (\App\Models\User::where('role_id', 2)->orderBy('id','desc')->get() as $user)
+                                        <option value="{{ $user->id }}" data-user-name="{{ $user->name }}" >{{ $user->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -190,14 +191,25 @@
             readURL(this);
         });
 
+        $("#tergat").change(function(){
+            // Get the selected option's text
+            var selectedText = $(this).find("option:selected").text();
+            // Display the selected text
+            $("#selectedValue").val(selectedText);
+        });
+
         $('#notification').on('submit', function (e) {
             
             e.preventDefault();
             var formData = new FormData(this);
+
+            var selectedText = $("#selectedValue").val();
+
+
             
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'you want to sent notification to '+$('#tergat').val()+'?',
+                text: 'you want to sent notification to '+selectedText+'?',
                 type: 'info',
                 showCancelButton: true,
                 cancelButtonColor: 'default',
