@@ -373,7 +373,7 @@
                                   <span class="legend-indicator bg-success"></span>{{__('messages.paid')}}
                                 </span>
                             
-                        </td>
+                            </td>
                             <td class="text-capitalize">
                                 @if($order['status']=='ongoing')
                                     <span class="badge badge-soft-info ml-2 ml-sm-3">
@@ -759,9 +759,8 @@
             // e.preventDefault();
             location.href = '{{url('/')}}/admin/booking/filter/reset';
         });
-    </script>
 
-    <script>
+
         $('#search-form').on('submit', function () {
             //var formData = new FormData(this);
 
