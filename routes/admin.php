@@ -53,6 +53,8 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('search', 'CustomerController@search')->name('search');
             Route::post('refereddsearch', 'CustomerController@refereddsearch')->name('refereddsearch');
             Route::get('refereed-list', 'CustomerController@refereed_list')->name('refereed-list');
+            Route::get('filter/reset', 'CustomerController@filter_reset');
+            Route::post('filter', 'CustomerController@filter')->name('filter');
         });
         Route::post('food/variant-price', 'ProductController@variant_price')->name('food.variant-price');
 
