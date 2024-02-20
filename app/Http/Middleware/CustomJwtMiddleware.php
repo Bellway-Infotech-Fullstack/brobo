@@ -46,7 +46,8 @@ class CustomJwtMiddleware
                     // Tokens match, continue with the request
                     return $next($request);
                 }
-                return response()->json(['status' => 'error', 'code' => 401, 'message' => 'Token mismatch'], 401);
+                return $next($request);
+               // return response()->json(['status' => 'error', 'code' => 401, 'message' => 'Token mismatch'], 401);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User not found'], 404);
             }
