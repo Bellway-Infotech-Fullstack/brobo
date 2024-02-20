@@ -12,6 +12,9 @@
             border-color: #e7eaf300;
             padding: 0 .875rem;
         }
+        .table-nowrap td{
+            white-space:unset;
+        }
     </style>
 @endpush
 @php
