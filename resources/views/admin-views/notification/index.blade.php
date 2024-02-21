@@ -204,7 +204,9 @@
             var formData = new FormData(this);
 
             var selectedText = $("#selectedValue").val();
-
+	   if(selectedText == ''){
+                selectedText = 'all users';
+            }
 
             
             Swal.fire({
