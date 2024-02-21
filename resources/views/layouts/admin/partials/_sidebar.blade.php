@@ -560,7 +560,7 @@
                                     class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{__('messages.pages')}} {{__('messages.setup')}}</span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{Request::is('admin/web-app-settings//pages*')?'block':'none'}}">
+                                style="display: {{Request::is('admin/web-app-settings/pages*')?'block':'none'}}">
 
                                 <li class="nav-item {{Request::is('admin/web-app-settings//pages/terms-and-conditions')?'active':''}}">
                                     <a class="nav-link "
@@ -571,12 +571,30 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item {{Request::is('admin/web-app-settings//pages/privacy-policy')?'active':''}}">
+                                <li class="nav-item {{Request::is('admin/web-app-settings/pages/privacy-policy')?'active':''}}">
                                     <a class="nav-link "
                                        href="{{route('admin.business-settings.privacy-policy')}}"
-                                       title="{{__('messages.privacy_policy')}}">
+                                       title="Privacy Policy">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">{{__('messages.privacy_policy')}}</span>
+                                        <span class="text-truncate">Privacy Policy</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{Request::is('admin/web-app-settings/pages/privacy-policy')?'active':''}}">
+                                    <a class="nav-link "
+                                       href="{{route('admin.business-settings.refunds-and-returns-policy')}}"
+                                       title="Returns and Refunds Policy">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">Returns and Refunds Policy</span>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item {{Request::is('admin/web-app-settings/pages/privacy-policy')?'active':''}}">
+                                    <a class="nav-link "
+                                       href="{{route('admin.business-settings.shipping-policy')}}"
+                                       title="Shipping Policy">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">Shipping Policy</span>
                                     </a>
                                 </li>
 
