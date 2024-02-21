@@ -1442,6 +1442,78 @@ class BusinessSettingsController extends Controller
         return json_encode(['status' => true,'message' => 'Slab removed successfully']);
        
     }
+
+    public function refunds_returns_policy()
+    {
+        $returns_policy_data = BusinessSetting::where(['key' => 'returns_policy'])->first();
+        if ($returns_policy_data == false) {
+            $returns_policy_data = [
+                'key' => 'returns_policy',
+                'value' => '',
+            ];
+            BusinessSetting::insert($returns_policy_data);
+        }
+
+        $replacement_policy_data = BusinessSetting::where(['key' => 'replacement_policy'])->first();
+        if ($replacement_policy_data == false) {
+            $replacement_policy_data = [
+                'key' => 'replacement_policy',
+                'value' => '',
+            ];
+            BusinessSetting::insert($replacement_policy_data);
+        }
+
+        $cancellation_policy_data = BusinessSetting::where(['key' => 'cancellation_policy'])->first();
+        if ($cancellation_policy_data == false) {
+            $cancellation_policy_data = [
+                'key' => 'cancellation_policy',
+                'value' => '',
+            ];
+            BusinessSetting::insert($cancellation_policy_data);
+        }
+        return view('admin-views.business-settings.refunds-and-returns-policy', compact('returns_policy_data','replacement_policy_data','cancellation_policy_data'));
+    }
+
+    public function refunds_returns_policy_update(Request $request)
+    {
+        BusinessSetting::where(['key' => 'returns_policy'])->update([
+            'value' => $request->returns_policy,
+        ]);
+
+        BusinessSetting::where(['key' => 'replacement_policy'])->update([
+            'value' => $request->replacement_policy,
+        ]);
+
+        BusinessSetting::where(['key' => 'cancellation_policy'])->update([
+            'value' => $request->cancellation_policy,
+        ]);
+
+        Toastr::success('Returns and refunds policy updated ');
+        return back();
+    }
+
+    public function shipping_policy()
+    {
+        $data = BusinessSetting::where(['key' => 'shipping_policy'])->first();
+        if ($data == false) {
+            $data = [
+                'key' => 'shipping_policy',
+                'value' => '',
+            ];
+            BusinessSetting::insert($data);
+        }
+        return view('admin-views.business-settings.shipping-policy', compact('data'));
+    }
+
+    public function shipping_policy_update(Request $request)
+    {
+        BusinessSetting::where(['key' => 'shipping_policy'])->update([
+            'value' => $request->shipping_policy,
+        ]);
+
+        Toastr::success("Shipping policy updated");
+        return back();
+    }
 }
 
 

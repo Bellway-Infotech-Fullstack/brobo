@@ -285,6 +285,13 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('pages/privacy-policy', 'BusinessSettingsController@privacy_policy')->name('privacy-policy');
             Route::post('pages/privacy-policy', 'BusinessSettingsController@privacy_policy_update');
 
+
+            Route::get('pages/refunds-and-returns-policy', 'BusinessSettingsController@refunds_returns_policy')->name('refunds-and-returns-policy');
+            Route::post('pages/refunds-and-returns-policy', 'BusinessSettingsController@refunds_returns_policy_update');
+
+            Route::get('pages/shipping-policy', 'BusinessSettingsController@shipping_policy')->name('shipping-policy');
+            Route::post('pages/shipping-policy', 'BusinessSettingsController@shipping_policy_update');
+
             Route::get('pages/about-us', 'BusinessSettingsController@about_us')->name('about-us');
             Route::post('pages/about-us', 'BusinessSettingsController@about_us_update');
 
