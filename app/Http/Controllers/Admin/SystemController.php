@@ -28,8 +28,8 @@ class SystemController extends Controller
 
     public function settings()
     {
-        $adminData = User::where('role_id',1)->first();
-        $admin = User::find($adminData->id);
+        $adminData = Admin::where('role_id',1)->first();
+        $admin = Admin::find($adminData->id);
         return view('admin-views.settings',array('admin'=> $admin));
     }
 
@@ -45,8 +45,8 @@ class SystemController extends Controller
             'l_name.required' => 'Last name is required!',
         ]);
 
-        $adminData = User::where('role_id',1)->first();
-        $admin = User::find($adminData->id);
+        $adminData = Admin::where('role_id',1)->first();
+        $admin = Admin::find($adminData->id);
 
         if ($request->has('image')) {
             $image_name =Helpers::update('admin/', $admin->image, 'png', $request->file('image'));
@@ -55,9 +55,10 @@ class SystemController extends Controller
         }
 
 
-        $admin->name = $request->f_name . " " . $request->l_name;
+        $admin->f_name = $request->f_name;
+        $admin->l_name = $request->l_name;
         $admin->email = $request->email;
-        $admin->mobile_number = $request->phone;
+        $admin->phone = $request->phone;
         $admin->image = $image_name;
         $admin->save();
         Toastr::success(trans('messages.admin_updated_successfully'));
