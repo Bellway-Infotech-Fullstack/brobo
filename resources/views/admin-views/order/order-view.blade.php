@@ -539,6 +539,13 @@
                                     @else
                                     <span class="d-block"> N/A </span>
                                 @endif
+
+                                <hr>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5>Pin Location</h5>
+                                   
+                                </div>
+                                {{ $order->pin_location ?? 'N/A'  }} 
                           
                         </div>
                     @endif
