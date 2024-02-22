@@ -122,11 +122,9 @@
 
                                         @php
 
-                                         $name = $admin->name;
-                                         $name = explode(" ",$name);
                                          
-                                         $f_name = $name[0];
-                                         $l_name = $name[1];
+                                         $f_name =  $admin->f_name;
+                                         $l_name =  $admin->l_name;
                                         @endphp
 
                                 <div class="col-sm-9">
