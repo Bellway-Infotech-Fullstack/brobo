@@ -37,6 +37,10 @@ class CustomRoleController extends Controller
 
     public function edit($id)
     {
+        if($id == 1)
+        {
+            return view('errors.404');
+        }
         $role=AdminRole::where(['id'=>$id])->first(['id','name','modules']);
         return view('admin-views.custom-role.edit',compact('role'));
     }
@@ -61,6 +65,10 @@ class CustomRoleController extends Controller
     }
     public function distroy($id)
     {
+        if($id == 1)
+        {
+            return view('errors.404');
+        }
         $role=AdminRole::where(['id'=>$id])->delete();
         Toastr::success(trans('messages.role_deleted_successfully'));
         return back();
@@ -68,8 +76,8 @@ class CustomRoleController extends Controller
 
     public function search(Request $request){
         $key = explode(' ', $request['search']);
-        $rl=AdminRole::
-        where(function ($q) use ($key) {
+        $rl=AdminRole::where('id','!=','1')
+        ->where(function ($q) use ($key) {
             foreach ($key as $value) {
                 $q->orWhere('name', 'like', "%{$value}%");
             }

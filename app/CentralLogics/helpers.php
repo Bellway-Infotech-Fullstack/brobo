@@ -5,6 +5,7 @@ namespace App\CentralLogics;
 use App\Models\AddOn;
 use App\Models\BusinessSetting;
 use App\Models\Currency;
+use App\Models\AdminRole;
 use App\Models\DMReview;
 use App\Models\Order;
 use App\Models\Review;
@@ -1151,24 +1152,23 @@ class Helpers
 
     public static function module_permission_check($mod_name)
     {
-        if(!auth()->user()->role_id)
-        {
+        if (!auth('admin')->user()->role) {
             return false;
         }
 
-        if($mod_name == 'zone' && auth()->user()->zone_id)
-        {
+        if ($mod_name == 'zone' && auth('admin')->user()->zone_id) {
             return false;
         }
 
-     /*   $permission = auth()->user()->role->modules;
+        $permission = auth('admin')->user()->role->modules;
         if (isset($permission) && in_array($mod_name, (array)json_decode($permission)) == true) {
             return true;
-        }*/
+        }
 
-        if (auth()->user()->role_id == 1) {
+        if (auth('admin')->user()->role_id == 1) {
             return true;
         }
+
         return false;
     }
 
@@ -1453,4 +1453,34 @@ class Helpers
         }
         return $data;
     }
+
+    public static function modules_permission_check($modules)
+    {
+        /*if (!auth('admin')->user()->role) {
+            return false;
+        }*/
+
+
+   $permission = AdminRole::select('modules')->get()->toArray();
+
+
+
+        foreach ($modules as $key => $mod_name) {
+            // if ($mod_name == 'zone' && auth('admin')->user()->zone_id) {
+            //     return false;
+            // }
+
+       
+            if (isset($permission) && in_array($mod_name, (array)($permission)) == true) {
+                return true;
+                break;
+            }
+        }
+
+        
+        return false;
+    }
+
+    
+
 }

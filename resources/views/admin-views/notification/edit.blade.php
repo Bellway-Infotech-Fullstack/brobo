@@ -34,11 +34,34 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="input-label" for="tergat">{{__('messages.send')}} {{__('messages.to')}}</label>
-                                <select name="target_user_id" id="tergat"  class="form-control js-select2-custom">
-                                    <option value="all">All Users</option>
-                                    @foreach (\App\Models\User::where('role_id', 2)->orderBy('name')->get() as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
+                                <select name="target_user_id[]" id="tergat"  class="form-control js-select2-custom" multiple>
+                                    <option value="all" {{ $notification['user_ids'] == 'all' ? "selected=selected" : ''}}>All Users</option>
+                                    <?php
+                                    $notification_user_ids = $notification['user_ids'];
+                                   // die;
+
+                                   $notification_user_ids = explode(",",$notification_user_ids);
+
+                                    foreach (\App\Models\User::where('role_id', 2)->orderBy('name')->get() as $user){
+                                        
+                                        if($notification_user_ids!='all'){
+                                            
+                                            foreach($notification_user_ids as $key => $value){
+                                                echo "value". $value;
+                                                if($user->id == $value){
+                                                    $selected = "selected=selected";
+                                                } else {
+                                                    $selected = "";
+                                                }
+                                            
+                                        
+                                        
+
+                                    ?>
+                                        <option value="{{ $user->id }}" {{ $selected }}>{{ $user->name }}</option>
+
+                                    <?php } } } ?>
+                                   
                                 </select>
                             </div>
                         </div>
@@ -62,6 +85,30 @@
 
 @push('script_2')
     <script>
+        $('.js-select2-custom').select2();
+
+$('.js-select2-custom').on('select2:close', function (e) {
+    if ($(this).val().length === 0) {
+        $(this).find('option').prop('disabled', false);
+    }
+});
+
+
+
+
+$('.js-select2-custom').on('change', function() {
+    if ($(this).val() && $(this).val().includes('all')) {
+        // If "All users" is selected, deselect all other options
+        $(this).val(['all']);
+        $(this).find('option:not(:selected)').prop('disabled', true);
+    } 
+    
+    
+    else {
+        // If no options selected or only "All users" selected, deselect all
+        $(this).find('option[value="all"]').prop('disabled', true);
+    }
+});
         function readURL(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();

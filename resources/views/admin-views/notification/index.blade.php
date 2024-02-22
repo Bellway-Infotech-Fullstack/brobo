@@ -3,12 +3,19 @@
 @section('title','Add new notification')
 
 @push('css_or_js')
+<style>
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+    height: auto; /* Set height to auto to allow the dropdown to expand */
+    min-height: 32px; /* Set a minimum height to ensure it's not too small */
+}
 
+    </style>
 @endpush
 @php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
 @endphp
+
 @section('content')
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -35,7 +42,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="input-label" for="tergat">{{__('messages.send')}} {{__('messages.to')}}</label>
-                                <select name="target_user_id" id="tergat"  class="form-control js-select2-custom">
+                                <select name="target_user_id[]" id="tergat"  class="form-control js-select2-custom" multiple>
                                     <option value="all" data-user-name="all users">All Users</option>
                                     @foreach (\App\Models\User::where('role_id', 2)->orderBy('id','desc')->get() as $user)
                                         <option value="{{ $user->id }}" data-user-name="{{ $user->name }}" >{{ $user->name }}</option>
@@ -168,9 +175,35 @@
 
             // INITIALIZATION OF SELECT2
             // =======================================================
-            $('.js-select2-custom').each(function () {
-                var select2 = $.HSCore.components.HSSelect2.init($(this));
+            $('.js-select2-custom').select2();
+
+            $('.js-select2-custom').on('select2:close', function (e) {
+                if ($(this).val().length === 0) {
+                    $(this).find('option').prop('disabled', false);
+                }
             });
+
+
+           
+
+            $('.js-select2-custom').on('change', function() {
+                if ($(this).val() && $(this).val().includes('all')) {
+                    // If "All users" is selected, deselect all other options
+                    $(this).val(['all']);
+                    $(this).find('option:not(:selected)').prop('disabled', true);
+                } 
+                
+                
+                else {
+                    // If no options selected or only "All users" selected, deselect all
+                    $(this).find('option[value="all"]').prop('disabled', true);
+                }
+            });
+
+
+
+
+
         });
     </script>
 
@@ -204,9 +237,16 @@
             var formData = new FormData(this);
 
             var selectedText = $("#selectedValue").val();
-	   if(selectedText == ''){
+            
+       
+            if(selectedText == ''){
                 selectedText = 'all users';
+            } else {
+                var selectedValues = selectedText.split(", ");
+                var selectedText = selectedValues.join(", ");
             }
+
+           
 
             
             Swal.fire({

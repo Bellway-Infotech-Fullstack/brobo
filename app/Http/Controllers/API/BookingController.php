@@ -48,6 +48,7 @@ class BookingController extends Controller
             $isBuildingHaveLift = $request->input('is_building_have_lift');
             $deliveryCharge = $request->input('delivery_charge');
             $todayDate = date("Y-m-d");
+            $pinLocation = $request->input('pin_location');
             
 
             // Define the validation rules
@@ -238,7 +239,8 @@ class BookingController extends Controller
                     'final_item_price' => $finalItemPrice,
                     'is_building_have_lift' => $isBuildingHaveLift,
                     'referred_code' => $referredCode,
-                    'referral_code' => $loginUserReferralCode
+                    'referral_code' => $loginUserReferralCode,
+                    'pin_location' => $pinLocation
                 ];
 
                 $newOrder = Order::create($requestData);
@@ -756,5 +758,4 @@ class BookingController extends Controller
     }
 
 }
-
 
