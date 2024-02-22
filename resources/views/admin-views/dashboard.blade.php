@@ -28,16 +28,23 @@
 @php
   $appEnv = env('APP_ENV');
   $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+
 @endphp
+
+<?php
+//echo "<pre>";
+  //  print_r(auth('admin')->user()->image);
+ //   die;
+?>
 
 @section('content')
     <div class="content container-fluid">
-        @if(auth('admin')->user()->role_id == 1)
+        @if(auth('admin')->user()->role_id == '1')
         <!-- Page Header -->
         <div class="page-header">
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
-                    <h1 class="page-header-title">{{__('messages.welcome')}}, {{auth('admin')->user()->name}}.</h1>
+                    <h1 class="page-header-title">{{__('messages.welcome')}}, {{auth('admin')->user()->f_name}} {{auth('admin')->user()->l_name}}.</h1>
                     <p class="page-header-text">{{__('messages.welcome_message')}}</p>
                 </div>
 

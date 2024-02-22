@@ -44,7 +44,7 @@
                         <!-- Account -->
                         <div class="hs-unfold">
                             <?php
-                            $def_image = (env('APP_ENV') == 'local') ?  asset('storage/admin/' . auth('admin')->user()->image) : asset('storage/app/public/admin/' . auth()->user()->image); 
+                            $def_image = (env('APP_ENV') == 'local') ?  asset('storage/admin/' . auth('admin')->user()->image) : asset('storage/app/public/admin/' . auth('admin')->user()->image); 
                             ?>
                             <a class="js-hs-unfold-invoker navbar-dropdown-account-wrapper" href="javascript:;"
                                data-hs-unfold-options='{
@@ -72,7 +72,7 @@
                                                  alt="Image Description">
                                         </div>
                                         <div class="media-body">
-                                            <span class="card-title h5">{{auth('admin')->user()->name}}</span>
+                                            <span class="card-title h5">{{auth('admin')->user()->f_name}} {{auth('admin')->user()->l_name}}</span>
                                             <span class="card-text">{{auth('admin')->user()->email}}</span>
                                         </div>
                                     </div>
