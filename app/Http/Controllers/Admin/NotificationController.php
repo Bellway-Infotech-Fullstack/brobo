@@ -4,19 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\CentralLogics\Helpers;
 use App\Http\Controllers\Controller;
-use App\Models\Notification;
+use App\Models\AdminNotification;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 
 class NotificationController extends Controller
 {
     function index()
     {
-        $notifications = Notification::latest()->paginate(config('default_pagination'));
+        $notifications = AdminNotification::latest()->paginate(config('default_pagination'));
         return view('admin-views.notification.index', compact('notifications'));
     }
 
@@ -34,32 +36,61 @@ class NotificationController extends Controller
         }
 
      
+        $userId = $request->target_user_id;
 
-        $notification = new Notification;
+        $notification = new AdminNotification;
         $notification->title = $request->notification_title;
         $notification->description = $request->description;
+        $notification->user_ids = ($userId == 'all') ? 'all' : implode(",",$userId);
         $notification->save();
 
     
-        $userId = $request->target_user_id;
+        
         $data = [
             'title' => $request->notification_title,
             'body' => $request->description
         ];
 
+        $adminData = User::where('role_id',1)->first();
+
         if($userId != 'all'){
+
+           
+            $all_user_id = $userId;
+            foreach ($all_user_id as $user){
+                $userData = User::where('id',$user)->first();
+                $userFcmToken = $userData->fcm_token;
+                Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                DB::table('notifications')->insert([
+                    'title'        =>   $request->notification_title,
+                    'description'  =>  $request->description,
+                    'from_user_id' =>  $adminData->id,
+                    'to_user_id'    => $user,
+                    'created_at'    => now(),
+                    'updated_at'   =>  now()
+                ]);
+
+            }
             
-            $userData = User::where('id',$userId)->first();
-            $userFcmToken = $userData->fcm_token;
-            Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+          
 
         } else {
 
             $allUserData = User::where('role_id', 2)->orderBy('id','desc')->get();
+            
+
             if(isset($allUserData) && !empty($allUserData)){
                 foreach ($allUserData as $user){
                     $userFcmToken = $user->fcm_token;
                     Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                    DB::table('notifications')->insert([
+                        'title'        =>   $request->notification_title,
+                        'description'  =>  $request->description,
+                        'from_user_id' =>  $adminData->id,
+                        'to_user_id'    => $user->id,
+                        'created_at'    => now(),
+                        'updated_at'   =>  now()
+                    ]);
                 }
             }
         }
@@ -68,7 +99,7 @@ class NotificationController extends Controller
 
     public function edit($id)
     {
-        $notification = Notification::find($id);
+        $notification = AdminNotification::find($id);
         return view('admin-views.notification.edit', compact('notification'));
     }
 
@@ -81,26 +112,44 @@ class NotificationController extends Controller
             'notification_title.required' => 'title is required!',
         ]);
 
-        $notification = Notification::find($id);
+        $notification = AdminNotification::find($id);
 
    
+        $userId = $request->target_user_id;
+
+     
 
         $notification->title = $request->notification_title;
         $notification->description = $request->description;
+        $notification->user_ids = ($userId == 'all') ? 'all' : implode(",",$userId);
         $notification->save();
 
        
-        $userId = $request->target_user_id;
+        
         $data = [
             'title' => $request->notification_title,
             'body' => $request->description
         ];
 
+        $adminData = User::where('role_id',1)->first();
+
         if($userId != 'all'){
             
-            $userData = User::where('id',$userId)->first();
-            $userFcmToken = $userData->fcm_token;
-            Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+            $all_user_id = $userId;
+            foreach ($all_user_id as $user){
+                $userData = User::where('id',$user)->first();
+                $userFcmToken = $userData->fcm_token;
+                Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                DB::table('notifications')->insert([
+                    'title'        =>   $request->notification_title,
+                    'description'  =>  $request->description,
+                    'from_user_id' =>  $adminData->id,
+                    'to_user_id'    => $user,
+                    'created_at'    => now(),
+                    'updated_at'   =>  now()
+                ]);
+
+            }
 
         } else {
 
@@ -109,6 +158,14 @@ class NotificationController extends Controller
                 foreach ($allUserData as $user){
                     $userFcmToken = $user->fcm_token;
                     Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                    DB::table('notifications')->insert([
+                        'title'        =>   $request->notification_title,
+                        'description'  =>  $request->description,
+                        'from_user_id' =>  $adminData->id,
+                        'to_user_id'    => $user->id,
+                        'created_at'    => now(),
+                        'updated_at'   =>  now()
+                    ]);
                 }
             }
         }
@@ -119,7 +176,7 @@ class NotificationController extends Controller
 
     public function delete(Request $request)
     {
-        $notification = Notification::find($request->id);
+        $notification = AdminNotification::find($request->id);
     
         $notification->delete();
         Toastr::success(trans('messages.notification_deleted_successfully'));

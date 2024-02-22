@@ -17,6 +17,11 @@ class ModulePermissionMiddleware
      */
     public function handle($request, Closure $next, $module)
     {
-        return $next($request);
+        if(Helpers::module_permission_check($module)){
+            return $next($request);
+        }
+        Toastr::error(__('messages.access_denied'));
+        return back();
+        
     }
 }

@@ -295,6 +295,7 @@
                         <th>{{__('messages.customer')}} Name</th>
                         <th>{{__('messages.customer')}} Mobile Number</th>
                         <th>Delivery Address</th>
+                        <th>Pin Location</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Time Slot</th>
@@ -365,6 +366,8 @@
                                     echo $deliveryAddress;
                             ?>
                              </td>
+
+                             <td>{{ $order->pin_location ?? 'N/A'  }} </td>
                         
                             <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
                             <td>{{date('d M Y',strtotime($order['end_date']))}}</td>

@@ -43,9 +43,8 @@ return [
 
         'admin' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admins',
         ],
-
         'vendor' => [
             'driver' => 'session',
             'provider' => 'vendors',
@@ -87,8 +86,9 @@ return [
 
         'admins' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Admin::class,
         ],
+
 
         'vendors' => [
             'driver' => 'eloquent',
@@ -98,11 +98,6 @@ return [
         'vendor_employees' => [
             'driver' => 'eloquent',
             'model' => App\Models\VendorEmployee::class,
-        ],
-
-        'delivery_men' => [
-            'driver' => 'database',
-            'table' => 'delivery_men',
         ],
     ],
 
