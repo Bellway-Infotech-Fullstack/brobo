@@ -9,13 +9,16 @@ use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Support\Facades\Session;
 use App\CentralLogics\Helpers;
 use App\Models\BusinessSetting;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class LoginController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('guest:admin', ['except' => 'logout']);
+      //  $this->middleware('guest:admin', ['except' => 'logout']);
     }
 
     public function login()
@@ -35,10 +38,16 @@ class LoginController extends Controller
             'password' => 'required|min:6'
         ]);
 
-        if (auth()->attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) {
-            
+        if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
             return redirect()->route('admin.dashboard');
         }
+
+        /*if (auth('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) {
+            return redirect()->route('admin.dashboard');
+        } else {
+           
+        }*/
+        
 
         return redirect()->back()->withInput($request->only('email', 'remember'))
             ->withErrors(['Credentials does not match.']);
