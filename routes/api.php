@@ -33,6 +33,12 @@ Route::group(['namespace' => 'API'], function () {
         Route::get('get-setting-data', 'index');
     });
 
+    Route::controller(LocationController::class)->group(function () {
+        Route::post('manage-location-data', 'manageLocationData');
+        Route::get('get-location-data', 'index');
+        Route::get('match-location-data', 'matchLocationData');
+    });
+
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth', 'middleware' => 'custom.jwt'], function () {
         Route::controller(CustomerAuthController::class)->group(function () {
             Route::get('view-profile', 'getCustomerDetails');

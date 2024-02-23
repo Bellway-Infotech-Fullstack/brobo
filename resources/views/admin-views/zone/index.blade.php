@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title','Add new Service zone')
+@section('title','Add new delivery zone')
 
 @push('css_or_js')
 
@@ -13,7 +13,7 @@
             <div class="row align-items-center">
                 <div class="col-sm mb-2 mb-sm-0">
                     <h1 class="page-header-title"><i
-                            class="tio-add-circle-outlined"></i> {{__('messages.add')}} {{__('messages.new')}} {{__('messages.service')}} {{__('messages.zone')}}
+                            class="tio-add-circle-outlined"></i> {{__('messages.add')}} {{__('messages.new')}} {{__('messages.delivery')}} {{__('messages.zone')}}
                     </h1>
                 </div>
             </div>
@@ -80,7 +80,6 @@
                                 <th>{{__('messages.#')}}</th>
                                 <th>{{__('messages.id')}}</th>
                                 <th >{{__('messages.name')}}</th>
-                                <th >{{__('messages.vendors')}}</th>
                                 <th >{{__('messages.status')}}</th>
                                 <th >{{__('messages.action')}}</th>
                             </tr>
@@ -96,7 +95,6 @@
                                         {{$zone['name']}}
                                     </span>
                                     </td>
-                                    <td>{{$zone->restaurants_count}}</td>
                                     <td>
                                         <label class="toggle-switch toggle-switch-sm" for="stocksCheckbox{{$zone->id}}">
                                             <input type="checkbox" onclick="status_form_alert('status-{{$zone['id']}}','Want to change status for this zone ?', event)" class="toggle-switch-input" id="stocksCheckbox{{$zone->id}}" {{$zone->status?'checked':''}}>
