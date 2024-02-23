@@ -372,7 +372,7 @@
                             <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
                             <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
                             <td>{{ $order['time_duration'] }}</td>
-                            <td>Rs. {{ number_format($order->paid_amount)  }} </td>
+                            <td>Rs. {{ ($order->paid_amount)  }} </td>
                             <td>
                               
                                 <span class="badge badge-soft-success">
