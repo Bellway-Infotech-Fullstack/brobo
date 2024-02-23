@@ -142,6 +142,8 @@ foreach ($coordinatePairs as $coordinatePair) {
 
     $latitudeToCheck = number_format(floatval($latitudeToCheck), 4);
 
+    $latitudeToCheck =abs($latitudeToCheck);
+
 
   //  echo "latitude".$latitude;
    // echo "latitudeToCheck".$latitudeToCheck;

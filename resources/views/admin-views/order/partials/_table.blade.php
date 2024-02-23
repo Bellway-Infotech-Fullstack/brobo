@@ -112,7 +112,7 @@
                         class="tio-visible"></i> {{__('messages.view')}}</a>
 
       @if($order['status']=='cancelled' && $order['refunded'] == NULL)
-      <a class="btn btn-sm btn-white ml-2 refund-money"
+      <a class="btn btn-sm btn-white mt-2 refund-money"
       data-order-id="{{ $order['id'] }}"><i
            class="tio-visible"></i> Refund
        </a>
