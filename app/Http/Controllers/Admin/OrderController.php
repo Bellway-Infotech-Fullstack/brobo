@@ -203,20 +203,15 @@ class OrderController extends Controller
         ->when($status == 'pending', function($query){
             return $query->Pending();
         })
-        ->when($status == 'accepted', function($query){
-            return $query->Accepted();
-        })
-        ->when($status == 'processing', function($query){
-            return $query->Preparing();
-        })
-        ->when($status == 'services_ongoing', function($query){
+
+        ->when($status == 'ongoing', function($query){
             return $query->ServiceOngoing();
         })
         ->when($status == 'completed', function($query){
-            return $query->Delivered();
+            return $query->Completed();
         })
-        ->when($status == 'canceled', function($query){
-            return $query->Canceled();
+        ->when($status == 'cancelled', function($query){
+            return $query->Cancelled();
         })
         ->when($status == 'failed', function($query){
             return $query->failed();
@@ -224,9 +219,11 @@ class OrderController extends Controller
         ->when($status == 'refunded', function($query){
             return $query->Refunded();
         })
-        ->when($status == 'scheduled', function($query){
-            return $query->Scheduled();
+
+        ->when($status == 'all', function($query){
+            return $query->All();
         })
+
         ->where(function ($q) use ($key) {
             foreach ($key as $value) {
                 $q->Where('order_id', 'like', "%{$value}%");

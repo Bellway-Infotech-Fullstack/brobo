@@ -142,9 +142,12 @@ foreach ($coordinatePairs as $coordinatePair) {
 
     $latitudeToCheck = number_format(floatval($latitudeToCheck), 4);
 
-
+    $latitudeToCheck =abs($latitudeToCheck);
+    
+    $latitude =abs($latitude);
+    
   //  echo "latitude".$latitude;
-   // echo "latitudeToCheck".$latitudeToCheck;
+//    echo "latitudeToCheck".$latitudeToCheck;
 
   //  echo "longitude".$longitude;
   //  echo "longitudeToCheck".$longitudeToCheck;

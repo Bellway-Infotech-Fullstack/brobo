@@ -99,6 +99,10 @@
                         <span class="ml-2 ml-sm-3">
                           Time Slot - {{ $order['time_duration'] }}
                         </span>
+                        <span class="ml-2 ml-sm-3 badge badge-soft-success">
+                          Buliding have lift - {{ $order['is_building_have_lift'] }}
+                        </span>
+                        
                         
                     </div>
 
@@ -299,7 +303,7 @@
                                             
                                             // Convert seconds to days
                                              $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
-
+                                            //    echo "difference_in_days".$total_item_price;
                                             
                                   ?>
                                             Rs.  {{  $total_item_price*$difference_in_days}}
