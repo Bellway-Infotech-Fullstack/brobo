@@ -737,21 +737,20 @@ class CustomerAuthController extends Controller
             $user = User::find($customerId);
 
             if ($user) {
-                // Invalidate the user's token
-                JWTAuth::invalidate(JWTAuth::getToken());
-
-              
-
-                // Delete the user 
+                $user->fcm_token = NULL;
+                $user->save();
+                  // Delete the user 
                 $user->delete();
                 
-                 // delete user's booking data
+                // Invalidate the user's token
+                JWTAuth::invalidate(JWTAuth::getToken());
+              // delete user's booking data
          
-         Order::where(['user_id'=>$customerId])->delete();
+              Order::where(['user_id'=>$customerId])->delete();
          
-         // delete user's password data 
-          UserPassword::where(['customer_id'=>$customerId])->delete();
-         
+            // delete user's password data 
+            UserPassword::where(['customer_id'=>$customerId])->delete();
+           
           // delete user's address data 
           
          UsersAddress::where(['customer_id'=>$customerId])->delete();
@@ -780,6 +779,20 @@ class CustomerAuthController extends Controller
     {
         // Try to log out the customer and invalidate the token
         try {
+            
+            
+            $token = JWTAuth::getToken();
+            $user = JWTAuth::toUser($token);
+            $customerId = $user->id;
+
+            // Find the user by customer_id
+            $user = User::find($customerId);
+            
+             $user->fcm_token = NULL;
+             $user->save();
+            
+            
+            
             // Invalidate the user's token
             JWTAuth::invalidate(JWTAuth::getToken());
 
