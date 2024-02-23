@@ -34,7 +34,7 @@ class ProductController extends Controller
              $orderBy = $request->get('order_by') ?? 'desc';
              $orderColumn = $request->get('order_column') ?? 'created_at';
              $isDefaultSort = $request->get('is_default_sort') ;  
-             $isHideOutOfStockItem = $request->get('is_hide_out_of_stock_items') ?? 1;   
+             $isHideOutOfStockItem = $request->get('is_hide_out_of_stock_items');   
              $perPage =  10; // Number of items to load per page
              $desiredCategoryId = $request->get('sub_category_id');
              $searchKey = $request->get('search_key') ;  
