@@ -82,7 +82,7 @@ class NotificationController extends Controller
             
      
         
-                
+              
               
 
             $data = $data->map(function ($notification) {
@@ -233,9 +233,24 @@ class NotificationController extends Controller
             $user = JWTAuth::toUser($token);
             $customerId = (isset($user) && !empty($user)) ? $user->id : '';
             
+            $loginUserData = User::find($customerId);
+            
             $count = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))->count();
             
-        $data = ['notification_count' => $count]; // Corrected the syntax of the array
+            if($loginUserData->is_notification_setting_on == "no"){
+                $notificationOffTime = $loginUserData->notification_off_time; 
+                $data = Notification::where('to_user_id', $customerId)
+                ->where('created_at', '<', $notificationOffTime)->get();
+             }
+             else {
+                $data = Notification::where('to_user_id', $customerId)->get();
+             }
+            
+            
+            
+            
+
+        $data = ['notification_count' => count($data)]; // Corrected the syntax of the array
 
             return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $data]);
 
