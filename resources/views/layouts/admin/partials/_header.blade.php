@@ -67,7 +67,7 @@
                                     <div class="media align-items-center">
                                         <div class="avatar avatar-sm avatar-circle mr-2">
                                             <img class="avatar-img"
-                                                 onerror="this.src='{{asset($assetPrefixPath . 'assets/admin/img/160x160/img1.jpg')}}'"
+                                                 onerror="this.src='{{asset($assetPrefixPath . '/assets/admin/img/160x160/img1.jpg')}}'"
                                                  src="{{$def_image}}"
                                                  alt="Image Description">
                                         </div>

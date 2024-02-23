@@ -35,7 +35,7 @@ class ProductController extends Controller
              $orderColumn = $request->get('order_column') ?? 'created_at';
              $isDefaultSort = $request->get('is_default_sort') ;  
              $isHideOutOfStockItem = $request->get('is_hide_out_of_stock_items') ?? 1;   
-             $perPage = 10; // Number of items to load per page
+             $perPage = $request->get('limit') ?? 10; // Number of items to load per page
              $desiredCategoryId = $request->get('sub_category_id');
              $searchKey = $request->get('search_key') ;  
 
@@ -158,12 +158,21 @@ class ProductController extends Controller
 
                     return $item;
             });
+            
+             // Remove duplicate items based on their IDs
+     //   $items = $items->unique('id');
+            
+         
 
-               
+               // Remove duplicate items based on their IDs
+            $uniqueItems = $items->unique('id')->values()->all();
+            
+            // Convert the collection to a plain PHP array
+            $uniqueItemsArray = $uniqueItems;
             
            
             
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $uniqueItemsArray]);
              
          } catch (\Exception $e) {
 
@@ -722,9 +731,13 @@ class ProductController extends Controller
 
                
             
-           
+               // Remove duplicate items based on their IDs
+            $uniqueItems = $items->unique('id')->values()->all();
             
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+            // Convert the collection to a plain PHP array
+            $uniqueItemsArray = $uniqueItems;
+            
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $uniqueItemsArray]);
              
          } catch (\Exception $e) {
            
