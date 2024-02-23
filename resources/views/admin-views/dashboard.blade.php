@@ -57,7 +57,7 @@
                         <option value="all">All Zones</option>
                         @foreach(\App\Models\Zone::orderBy('name')->get() as $zone)
                             <option
-                                value="{{$zone['id']}}" {{$params['zone_id'] == $zone['id']?'selected':''}}>
+                                value="{{$zone['id']}}">
                                 {{$zone['name']}}
                             </option>
                         @endforeach
