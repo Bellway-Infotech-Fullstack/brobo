@@ -28,7 +28,7 @@ class SystemController extends Controller
 
     public function settings()
     {
-        $adminData = Admin::where('role_id',1)->first();
+        $adminData = auth('admin')->user();
         $admin = Admin::find($adminData->id);
         return view('admin-views.settings',array('admin'=> $admin));
     }
@@ -45,7 +45,7 @@ class SystemController extends Controller
             'l_name.required' => 'Last name is required!',
         ]);
 
-        $adminData = Admin::where('role_id',1)->first();
+        $adminData =auth('admin')->user();
         $admin = Admin::find($adminData->id);
 
         if ($request->has('image')) {
@@ -71,8 +71,8 @@ class SystemController extends Controller
             'password' => 'required|same:confirm_password',
             'confirm_password' => 'required',
         ]);
-        $adminData = User::where('role_id',1)->first();
-        $admin = User::find($adminData->id);
+        $adminData =auth('admin')->user();
+        $admin = Admin::find($adminData->id);
 
 
         $admin->password = bcrypt($request['password']);

@@ -216,7 +216,36 @@
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
                     
-                    
+                     @if(\App\CentralLogics\Helpers::module_permission_check('product'))
+                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/service*')?'active':''}}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                               href="javascript:" title="{{__('messages.service')}}"
+                            >
+                                <i class="tio-premium-outlined nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{__('messages.products')}}</span>
+                            </a>
+                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                style="display: {{Request::is('admin/product*')?'block':'none'}}">
+                                <li class="nav-item {{Request::is('admin/product/add-new')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.product.add-new')}}"
+                                       title="{{__('messages.add')}} {{__('messages.new')}}">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span
+                                            class="text-truncate">{{__('messages.add')}} {{__('messages.new')}}</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item {{Request::is('admin/product/list')?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.product.list')}}"
+                                       title="{{__('messages.service')}} {{__('messages.list')}}">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">{{__('messages.list')}}</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        @endif
 
                     <!-- Category -->
                     @if(\App\CentralLogics\Helpers::module_permission_check('category'))
