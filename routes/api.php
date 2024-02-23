@@ -36,7 +36,7 @@ Route::group(['namespace' => 'API'], function () {
     Route::controller(LocationController::class)->group(function () {
         Route::post('manage-location-data', 'manageLocationData');
         Route::get('get-location-data', 'index');
-        Route::get('match-location-data', 'matchLocationData');
+        Route::post('match-location-data', 'matchLocationData');
     });
 
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth', 'middleware' => 'custom.jwt'], function () {
