@@ -52,8 +52,9 @@ class NotificationController extends Controller
         ];
 
         $adminData = User::where('role_id',1)->first();
+      
 
-        if($userId != 'all'){
+        if($userId['0'] != 'all'){
 
            
             $all_user_id = $userId;
@@ -64,7 +65,7 @@ class NotificationController extends Controller
                 DB::table('notifications')->insert([
                     'title'        =>   $request->notification_title,
                     'description'  =>  $request->description,
-                    'from_user_id' =>  $adminData->id,
+                    'from_user_id' =>  1,
                     'to_user_id'    => $user,
                     'created_at'    => now(),
                     'updated_at'   =>  now()
@@ -77,8 +78,8 @@ class NotificationController extends Controller
         } else {
 
             $allUserData = User::where('role_id', 2)->orderBy('id','desc')->get();
-            
-
+         
+         
             if(isset($allUserData) && !empty($allUserData)){
                 foreach ($allUserData as $user){
                     $userFcmToken = $user->fcm_token;
@@ -86,7 +87,7 @@ class NotificationController extends Controller
                     DB::table('notifications')->insert([
                         'title'        =>   $request->notification_title,
                         'description'  =>  $request->description,
-                        'from_user_id' =>  $adminData->id,
+                        'from_user_id' =>  1,
                         'to_user_id'    => $user->id,
                         'created_at'    => now(),
                         'updated_at'   =>  now()
@@ -133,7 +134,7 @@ class NotificationController extends Controller
 
         $adminData = User::where('role_id',1)->first();
 
-        if($userId != 'all'){
+        if($userId['0'] != 'all'){
             
             $all_user_id = $userId;
             foreach ($all_user_id as $user){
@@ -143,7 +144,7 @@ class NotificationController extends Controller
                 DB::table('notifications')->insert([
                     'title'        =>   $request->notification_title,
                     'description'  =>  $request->description,
-                    'from_user_id' =>  $adminData->id,
+                    'from_user_id' =>  1,
                     'to_user_id'    => $user,
                     'created_at'    => now(),
                     'updated_at'   =>  now()
@@ -161,7 +162,7 @@ class NotificationController extends Controller
                     DB::table('notifications')->insert([
                         'title'        =>   $request->notification_title,
                         'description'  =>  $request->description,
-                        'from_user_id' =>  $adminData->id,
+                        'from_user_id' =>  1,
                         'to_user_id'    => $user->id,
                         'created_at'    => now(),
                         'updated_at'   =>  now()

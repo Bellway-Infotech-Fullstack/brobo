@@ -77,7 +77,7 @@ class CouponController extends Controller
                 DB::table('notifications')->insert([
                     'title' => "New offer",
                     'coupon_id' => $couponId,
-                    'from_user_id' => $adminData->id,
+                    'from_user_id' => 1,
                     'to_user_id' => $value->id,
                     'created_at' => now(),
                     'updated_at' => now()
