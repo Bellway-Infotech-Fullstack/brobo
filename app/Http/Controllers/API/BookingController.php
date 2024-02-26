@@ -140,7 +140,7 @@ class BookingController extends Controller
             if($couponId!=''){
                 $couponMinimumPurchase = $couponData->min_purchase;
                 if($couponMinimumPurchase > $paidAmount){
-                    return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
+                  //  return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
                 } else {
 
                         // Calculate discount price
