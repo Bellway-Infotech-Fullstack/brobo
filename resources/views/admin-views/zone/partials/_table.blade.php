@@ -7,8 +7,6 @@
             {{$zone['name']}}
         </span>
         </td>
-        <td>{{$zone->restaurants_count}}</td>
-        <td>{{$zone->deliverymen_count}}</td>
         <td>
             <label class="toggle-switch toggle-switch-sm" for="stocksCheckbox{{$zone->id}}">
                 <input type="checkbox" onclick="status_form_alert('status-{{$zone['id']}}','Want to change status for this zone ?', event)" class="toggle-switch-input" id="stocksCheckbox{{$zone->id}}" {{$zone->status?'checked':''}}>
