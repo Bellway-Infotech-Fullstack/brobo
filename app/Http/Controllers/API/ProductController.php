@@ -66,7 +66,6 @@ class ProductController extends Controller
                  $orderBy = 'desc';
                  $orderColumn = 'products.created_at';   
             }
- 
 
             $token = JWTAuth::getToken();
             $user = JWTAuth::toUser($token);
@@ -77,10 +76,14 @@ class ProductController extends Controller
                 ->whereHas('category', function ($query) use ($categoryId) {
                     $query->where('parent_id', $categoryId);
                 })
-                ->when($isHideOutOfStockItem == '1', function ($query) {
+               ->when(!empty($isHideOutOfStockItem) && $isHideOutOfStockItem == '1', function ($query) {
                     $query->where('products.total_stock', '>', 0);
-                }, function ($query) {
-                    $query->where('products.total_stock', '=', 0);
+                }, function ($query) use ($isHideOutOfStockItem) {
+                    if (empty($isHideOutOfStockItem)) {
+                        $query->where('products.total_stock', '>', 0);
+                    } else {
+                        $query->where('products.total_stock', '=', 0);
+                    }
                 })
                 ->leftJoin('wishlists', function ($join) use ($userId) {
                     $join->on('products.id', '=', 'wishlists.item_id')

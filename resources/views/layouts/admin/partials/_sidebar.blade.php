@@ -182,7 +182,7 @@
                                         <span class="text-truncate">
                                             Payment Failed
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{\App\Models\Order::Completed()->count()}}
+                                                {{\App\Models\Order::failed()->count()}}
                                             </span>
                                         </span>
                                     </a>

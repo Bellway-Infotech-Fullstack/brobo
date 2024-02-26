@@ -20,7 +20,7 @@
         border: 1px solid #999999!important;
         padding: 4%!important;
         margin-bottom: 2%!important;
-        height:800px;
+        height:900px;
     }
 
     .top_box {
@@ -195,12 +195,40 @@
                 $coupon_discount_amount = $order['coupon_discount_amount'];
                 $totalTaxAmount  = 0;
                 $productSubTotal = 0;
+                $test = 0;
+                $total_gst = 0;
             @endphp
 
             <?php
             if(count($details) > 0){
                 $total_item_price = 0;
                 foreach ($details as $key => $detail){
+                    
+                      
+                         $gstData = \App\Models\BusinessSetting::where('key','gst_percent')->first();
+                                            $gst = $gstData->value;
+                                            $amount = $detail['item_price'] * $detail['quantity'];
+                                           $total_item_price = $total_item_price + $detail['item_price'];
+                                             // Calculate the GST amount
+                                           $gst_amount = 0;
+                                              $start_timestamp = strtotime($order['start_date']);
+                                            $end_timestamp = strtotime($order['end_date']);
+                                            
+                                            // Calculate the difference in seconds
+                                            $difference_in_seconds = $end_timestamp - $start_timestamp;
+                                            
+                                            // Convert seconds to days
+                                             $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
+                                            if($detail['category_id'] == '1'){
+                                                
+                                                 $gst_amount = ($gst / 100) * $detail['item_price'];
+                                                  $total_item_price += $gst_amount;
+
+                                            } else {
+                                                $total_item_price =  $detail['item_price'];
+                                            }
+                                            
+                                            
                     $coupon_data = \App\Models\Coupon::where('id',$order->coupon_id)->first();
                     $coupon_discount_amount = (isset($coupon_data)) ?  $coupon_data['discount'] : 0;
 
@@ -216,22 +244,45 @@
 
                     $amount = $detail['item_price'] * $detail['quantity'];
                     $product_price = $amount;
+                          
+                    $total_gst = $total_gst +  $gst_amount*$difference_in_days;
                     $count++;
-                    $total_item_price = $total_item_price + $detail['item_price'];
+                  //  $total_item_price = $total_item_price + $detail['item_price'];
+
                     ?>
                     <tr>
                         <td>{{$count }}</td>
                         <td> {{$detail['item_name'] ?? ''}}  </td>
                         <td>  {{ $detail['quantity'] ?? ''}}   </td>
-                        <td> Rs. {{$detail['item_price'] / $detail['quantity'] ?? ''}}   </td>
-                        <td> Rs. {{$detail['item_price'] }}  </td>
+                         <td> Rs. {{$detail['item_price']/$detail['quantity'] }}  </td>
+                        <td> 
+                        
+                         <?php
+                                                  if($detail['category_id'] == '1'){
+                                                      $test =  $test + $detail['item_price']*$difference_in_days;
+                                                      ?>
+                                                  
+                                                     Rs . {{ $detail['item_price']*$difference_in_days }} (for {{$difference_in_days }} days)
+                                                    
+                                                    <?php 
+                                                    
+                                                  } else {
+                                                      $test =  $test + $detail['item_price'];
+                                                    ?>
+                                                         Rs  . {{ $detail['item_price'] }}
+                                                    <?php }
+                                                    ?>
+                        </td>
+                       
                     </tr>
                     <?php
                 }
             }
             ?>
         </table>
-        <table align="right" height="82"  border="1" cellpadding="0" cellspacing="0" style="width:50%;margin-top:30px;left:10px;position:relative;">
+        <table align="right" height="92"  border="1" cellpadding="0" cellspacing="0" style="width:50%;margin-top:30px;left:10px;position:relative;">
+
+           
             <tr>
                 <?php
                 $start_timestamp = strtotime($order['start_date']);
@@ -239,9 +290,17 @@
                 $difference_in_seconds = $end_timestamp - $start_timestamp;
                 $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
                 ?>
+           
+                
+                    
                 <td> <strong>  Sub Total : </strong>  </td>
-                <td align="right">  Rs.  {{ $total_item_price*$difference_in_days }}</td>
+                <td align="right">  Rs.  {{ $test }}</td>
             </tr>
+            
+                       <tr>
+                     <td> <strong>  {{ __('messages.gst') }}  :  </strong> </td>
+                          <td align="right">Rs. {{ $total_gst }} </td>
+           </tr>
             <tr>
                 <td> <strong> Delivery Fee : </strong>  </td>
                 <td align="right">  Rs. {{ $deliveryCharge }}</td>
@@ -255,7 +314,7 @@
             <td> <strong>Grand Total :</strong> </td>
             <td align="right">
                 @php
-                    $grandTotal = ($total_item_price*$difference_in_days + $deliveryCharge)  - $coupon_discount_amount
+                    $grandTotal =  $order['paid_amount']-$coupon_discount_amount
                 @endphp
                 Rs.  {{ $grandTotal }}
             </td>

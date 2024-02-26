@@ -28,6 +28,8 @@
     $cartItems = json_decode($order->cart_items,true);  
     $product_price = 0;
     $total_item_price = 0;
+    $test = 0;
+    $total_gst = 0;
     ?>
   
     <div class="content container-fluid">
@@ -214,22 +216,49 @@
                                         <div class="media-body">
                                             @foreach ($cartItems as $key => $value)
                                             <?php
+                                            
+                                            
+                                           
+                                            $gstData = \App\Models\BusinessSetting::where('key','gst_percent')->first();
+                                            $gst = $gstData->value;
                                             $amount = $value['item_price'] * $value['quantity'];
-                                            $total_item_price = $total_item_price + $value['item_price'];
+                                           $total_item_price = $total_item_price + $value['item_price'];
+                                           // Calculate the GST amount
+                                           $gst_amount = 0;
+                                              $start_timestamp = strtotime($order['start_date']);
+                                            $end_timestamp = strtotime($order['end_date']);
+                                            
+                                            // Calculate the difference in seconds
+                                            $difference_in_seconds = $end_timestamp - $start_timestamp;
+                                            
+                                            // Convert seconds to days
+                                             $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
+                                            if($value['category_id'] == '1'){
+                                                
+                                                 $gst_amount = ($gst / 100) * $value['item_price'];
+                                                  $total_item_price += $gst_amount;
+
+                                            } else {
+                                                $total_item_price =  $value['item_price'];
+                                            }
+                                            
+                                           
+                                            
+                                               
+                                           
                                             $itemColorImageId = (isset($value['item_color_image_id']) && !empty($value['item_color_image_id'])) ? $value['item_color_image_id'] :  0 ;
                                             $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
                                             $itemColorImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImageData->image : '';
                                             $itemColorImage = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $itemColorImage) : asset('storage/app/public/product/colored_images/' . $itemColorImage); 
                                             $itemImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImage : $value['item_image'];
 
-
-
+                                            $total_gst = $total_gst +  $gst_amount*$difference_in_days;
 
                                              ?>
                                      
                                                 <img class="img-fluid" src="{{ $itemImage }}"  alt="Product Image" height="100" width="100">
                                             <div class="row">
-                                                <div class="col-md-6 mb-3 mb-md-0">
+                                                <div class="col-md-4 mb-3 mb-md-0">
                                                     <strong>
                                                         {{ Str::limit($value['item_name'], 20, '...') }}</strong><br>
                                                 </div>
@@ -238,13 +267,30 @@
                                                     <h6>    Rs . {{ $value['item_price'] / $value['quantity'] }}
                                                     </h6>
                                                 </div>
-                                                <div class="col col-md-1 align-self-center">
+                                                <div class="col col-md-3 align-self-center">
                                                     <h5>{{ $value['quantity'] }}</h5>
                                                 </div>
 
+                                                
+                                        
+                                                
+                                                
                                                 <div class="col col-md-3 align-self-center text-right">
+                                                  <?php
+                                                  if($value['category_id'] == '1'){
+                                                      $test =  $test + $value['item_price']*$difference_in_days;
+                                                      ?>
                                                   
-                                                    <h5> Rs . {{ $value['item_price'] }}</h5>
+                                                    <h5> Rs . {{ $value['item_price']*$difference_in_days }} (for {{$difference_in_days }} days)</h5>
+                                                    
+                                                    <?php 
+                                                    
+                                                  } else {
+                                                      $test =  $test + $value['item_price'];
+                                                    ?>
+                                                        <h5> Rs  . {{ $value['item_price'] }}</h5>
+                                                    <?php }
+                                                    ?>
                                                 </div>
                                             </div>
                                             @endforeach
@@ -290,24 +336,20 @@
                             <div class="col-md-9 col-lg-8">
                                 <dl class="row text-sm-right">
                                        
-
+                                          
                                         <dt class="col-sm-6">{{ __('messages.subtotal') }}:</dt>
                                         <dd class="col-sm-6">
-                                            
-                                      <?php
-                                            $start_timestamp = strtotime($order['start_date']);
-                                            $end_timestamp = strtotime($order['end_date']);
-                                            
-                                            // Calculate the difference in seconds
-                                            $difference_in_seconds = $end_timestamp - $start_timestamp;
-                                            
-                                            // Convert seconds to days
-                                             $difference_in_days = floor($difference_in_seconds / (60 * 60 * 24));
-                                            //    echo "difference_in_days".$total_item_price;
-                                            
-                                  ?>
-                                            Rs.  {{  $total_item_price*$difference_in_days}}
+                                     
+                                            Rs.  {{  $test }}
                                         </dd>
+                                        
+                                        <dt class="col-sm-6">{{ __('messages.gst') }}:</dt>
+                                        <dd class="col-sm-6">
+                                     
+                                            Rs.  {{  $total_gst }}
+                                        </dd>
+                                        
+                                      
                                       
                                         <dt class="col-sm-6">{{ __('messages.coupon') }}
                                             {{ __('messages.discount') }}:</dt>
@@ -341,7 +383,7 @@
 
                                     <dt class="col-sm-6">{{ __('messages.total') }}:</dt>
                                     <dd class="col-sm-6">
-                                        Rs.  {{ $total_item_price*$difference_in_days + $delivery_charge  - $coupon_discount_amount  }}
+                                        Rs.  {{ $order['paid_amount']-$coupon_discount_amount  }}
                                     </dd>
                                 </dl>
                                 <!-- End Row -->
