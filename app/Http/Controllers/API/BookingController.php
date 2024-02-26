@@ -139,7 +139,6 @@ class BookingController extends Controller
 
             if($couponId!=''){
                 $couponMinimumPurchase = $couponData->min_purchase;
-                $couponMinimumPurchase = $couponData->min_purchase;
                 if($couponMinimumPurchase > $paidAmount){
                     return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
                 } else {
@@ -477,7 +476,7 @@ class BookingController extends Controller
         $paidAmount = $bookingData[0]->final_item_price;
         $totalAmount = $paidAmount + $amount;
     
-        Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'final_item_price' => $totalAmount,'paid_amount' => $totalAmount]);
+           Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'final_item_price' => $totalAmount,'paid_amount' => $totalAmount,'extend_amount' => $amount]);
 
     
         return response()->json(['status' => 'success', 'message' => 'Order extended successfully', 'code' => 200, 'data' => $bookingData]);

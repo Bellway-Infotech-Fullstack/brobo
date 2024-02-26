@@ -65,8 +65,9 @@ class NotificationController extends Controller
              if ($validation->fails()) {
                  return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
              }
-
-
+            
+         //   echo "dd".$loginUserData->is_notification_setting_on;
+            
              if($loginUserData->is_notification_setting_on == "no"){
                 $notificationOffTime = $loginUserData->notification_off_time; 
                 $data = Notification::where('to_user_id', $customerId)
@@ -75,15 +76,16 @@ class NotificationController extends Controller
                 ->paginate($perPage, ['*'], 'page', $page);
              }
              else {
-                $data = Notification::where('to_user_id', $customerId)
+                $data = Notification::where('to_user_id',$customerId)
                 ->orderBy($orderColumn, $orderBy)
                 ->paginate($perPage, ['*'], 'page', $page);
+                    
+               
              }
             
      
         
-              
-              
+          
 
             $data = $data->map(function ($notification) {
                 
@@ -121,6 +123,7 @@ class NotificationController extends Controller
 
                 return $notification;
              });
+          
 
             if(count($data) > 0){
 
@@ -239,11 +242,11 @@ class NotificationController extends Controller
             
             if($loginUserData->is_notification_setting_on == "no"){
                 $notificationOffTime = $loginUserData->notification_off_time; 
-                $data = Notification::where('to_user_id', $customerId)
+                $data = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))
                 ->where('created_at', '<', $notificationOffTime)->get();
              }
              else {
-                $data = Notification::where('to_user_id', $customerId)->get();
+                $data = Notification::where(array('to_user_id'=> $customerId,'is_read' =>'0'))->get();
              }
             
             
