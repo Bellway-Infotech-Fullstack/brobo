@@ -109,106 +109,126 @@ class LocationController extends Controller
         }
     }
 
-    public function matchLocationData(Request $request){
-        $latitudeToCheck = $request->post('latitude');  
-        $longitudeToCheck = $request->post('longitude');  
-            $zoneData = Zone::where('status',1)->get();
-            if(isset($zoneData) && !empty($zoneData)){
-                foreach($zoneData as $key => $value){
-                    $coordinates = $value->coordinates;
-                 //   $isInside = $this->pointInPolygon($pointToCheck, $coordinates);
-
-                    // Initialize a flag to track if the given coordinates fall within the range
-$withinRange = false;
-
-// Parse coordinates into an array of latitude-longitude pairs
-$coordinatePairs = explode(",", $coordinates);
-
-
-
-// Iterate through each coordinate pair
-foreach ($coordinatePairs as $coordinatePair) {
-    // Extract latitude and longitude from the coordinate pair
-    $coordinates = explode(" ", $coordinatePair);
-
- 
-    $latitude = str_replace("(", "", $coordinates[1]);
-
-    $longitude = str_replace("(", "", $coordinates[0]);
-
-
-    $latitude = number_format(floatval($latitude), 4);
-    $longitude = number_format(floatval($longitude), 4);
-
-    $latitudeToCheck = number_format(floatval($latitudeToCheck), 4);
-
-    $latitudeToCheck =abs($latitudeToCheck);
+    public function matchLocationDataold(Request $request){
+    $latitudeToCheck = $request->post('latitude');  
+    $longitudeToCheck = $request->post('longitude');  
     
-    $latitude =abs($latitude);
+    $zoneData = Zone::where('status',1)->get();
     
-  //  echo "latitude".$latitude;
-//    echo "latitudeToCheck".$latitudeToCheck;
-
-  //  echo "longitude".$longitude;
-  //  echo "longitudeToCheck".$longitudeToCheck;
-
-    // Check if the given latitude and longitude fall within the range
-    if ($latitude >= $latitudeToCheck) {
-        $withinRange = true;
-        break; // No need to continue iteration if within range
+    if(isset($zoneData) && !empty($zoneData)){
+        foreach($zoneData as $key => $value){
+            $coordinates = $value->coordinates;
+            // Initialize a flag to track if the given coordinates fall within the range
+            $withinRange = false;
+            
+            // Parse coordinates into an array of latitude-longitude pairs
+            $coordinatePairs = explode(",", $coordinates);
+            
+            // Iterate through each coordinate pair
+            foreach ($coordinatePairs as $coordinatePair) {
+                // Extract latitude and longitude from the coordinate pair
+                $coordinates = explode(" ", $coordinatePair);
+                $latitude = str_replace("(", "", $coordinates[1]);
+                $longitude = str_replace("(", "", $coordinates[0]);
+                
+                // Check if the given latitude and longitude fall within the range
+                if ($latitudeToCheck >= $latitude && $longitudeToCheck >= $longitude) {
+                   /*echo "latitude".$latitude;
+                    echo "latitudeToCheck".$latitudeToCheck;
+                    echo "longitude".$longitude;
+                    echo "longitudeToCheck".$longitudeToCheck;*/
+                    $withinRange = true;
+                    break; // No need to continue iteration if within range
+                }
+            }
+            
+            // Check if the given coordinates fall within the range
+            if ($withinRange) {
+                return response()->json(['status' => 'success','message' => 'Given coordinates are within the range.', 'code' => 200]);
+            } else {
+                return response()->json(['status' => 'error','message' => 'Given coordinates are not within the range.', 'code' => 200]);
+            }
+            
+            /*   if ($isInside) {
+                 return response()->json(['status' => 'error','message' => 'Inside Zone', 'code' => 200]);
+                 } else {
+                 return response()->json(['status' => 'error','message' => 'Out of zone', 'code' => 200]);
+                 }*/
+        }
     }
 }
 
-                // Check if the given coordinates fall within the range
-                if ($withinRange) {
-                    return response()->json(['status' => 'success','message' => 'Given coordinates are within the range.', 'code' => 200]);
+public function matchLocationData(Request $request)
+{
+      // Try to update customer details
+        try {
+             $latitudeToCheck = $request->post('latitude');  
+    $longitudeToCheck = $request->post('longitude');  
 
-                } else {
-                    return response()->json(['status' => 'error','message' => 'Given coordinates are not within the range.', 'code' => 200]);
+    $zoneData = Zone::where('status', 1)->get();
+    $vertices_x = array();
+    $vertices_y = array();
+    if(isset($zoneData) && !empty($zoneData)){
+        foreach($zoneData as $key => $value){
+            $coordinates = $value->coordinates;
+            $coordinates = trim($coordinates, "()"); // Remove parentheses from start and end
+            $coordinatePairs = explode(",", $coordinates);
+            
+      
+            
+            foreach ($coordinatePairs as $pair) {
+                list($longitude, $latitude) = explode(" ", $pair);
+                array_push($vertices_x,(float) $longitude);
+                 array_push($vertices_y,(float) $latitude);
+               
+               }
 
-                }
-
-                 /*   if ($isInside) {
-                        return response()->json(['status' => 'error','message' => 'Inside Zone', 'code' => 200]);
-
-                      
-                    } else {
-                        return response()->json(['status' => 'error','message' => 'Out of zone', 'code' => 200]);
-                    }*/
-
-                  
-                }
-            }
-        }
-
-        private function pointInPolygon($point, $polygon) {
-            $x = $point[0];
-            $y = $point[1];
-            $inside = false;
-            $n = count($polygon);
-            $p1x = $polygon[0][0];
-            $p1y = $polygon[0][1];
-
+            $points_polygon = count($vertices_x);  // number vertices = number of points in a self-closing polygon
+            $longitude_x = $longitudeToCheck;  // x-coordinate of the point to test
+            $latitude_y = $latitudeToCheck;    // y-coordinate of the point to test
           
-
-         
-
-        
-            for ($i = 0, $j = $n - 1; $i < $n; $j = $i++) {
-                $p2x = $polygon[$i][0];
-                $p2y = $polygon[$i][1];
-
-                echo "p2x".$p2x;
-                echo "x".$x;
-
-                if (((($p2y <= $y) && ($y < $p1y)) || (($p1y <= $y) && ($y < $p2y))) &&
-                    ($x < ($p1x - $p2x) * ($y - $p2y) / ($p1y - $p2y) + $p2x))
-                    $inside = !$inside;
-                $p1x = $p2x;
-                $p1y = $p2y;
-            }
-            return $inside;
+    
+            
         }
+    }
+      
+         
+    if ($this->is_in_polygon($points_polygon, $vertices_x, $vertices_y, $longitude_x, $latitude_y)){
+                return response()->json(['status' => 'success', 'message' => 'Given coordinates are within the range.', 'code' => 200]);
+    } else {
+                return response()->json(['status' => 'error', 'message' => 'Given coordinates are not within the range.', 'code' => 200]);
+    }
+            
+        } catch (\Exception $e) {
+            // Handle exceptions, if any
+            return response()->json(['status' => 'error', 'code' => 500, 'message' =>  $e->getMessage()]);
+        }
+   
+    
+}
+
+
+
+
+
+private function is_in_polygon($points_polygon, $vertices_x, $vertices_y, $longitude_x, $latitude_y)
+{
+  $c = false;
+  $j = $points_polygon - 1;
+
+  for ($i = 0; $i < $points_polygon; $i++) {
+    if (($vertices_y[$i] > $latitude_y) != ($vertices_y[$j] > $latitude_y) &&
+        ($longitude_x < ($vertices_x[$j] - $vertices_x[$i]) * ($latitude_y - $vertices_y[$i]) / ($vertices_y[$j] - $vertices_y[$i]) + $vertices_x[$i])) {
+      $c = !$c;
+    }
+    $j = $i;
+  }
+  return $c;
+}
+
+
+
+
 }
 
 

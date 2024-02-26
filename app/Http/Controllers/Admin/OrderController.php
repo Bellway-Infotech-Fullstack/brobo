@@ -35,6 +35,9 @@ class OrderController extends Controller
             $request = json_decode(session('order_filter'));
         }
         
+        
+   
+        
 
         $orders = Order::with(['customer'])
         ->when(isset($request->zone), function($query)use($request){
@@ -64,17 +67,8 @@ class OrderController extends Controller
             return $query->All();
         })
 
-        ->when(isset($request->vendor), function($query)use($request){
-            return $query->whereHas('vendor', function($query)use($request){
-                return $query->whereIn('id',$request->vendor);
-            });
-        })
-        ->when(isset($request->orderStatus) && $status == 'all', function($query)use($request){
-            return $query->whereIn('status',$request->orderStatus);
-        })
-        ->when(isset($request->scheduled) && $status == 'all', function($query){
-            return $query->scheduled();
-        })
+    
+        
       
         ->when(isset($request->from_date)&&isset($request->to_date)&&$request->from_date!=null&&$request->to_date!=null, function($query)use($request){
             return $query->whereBetween('created_at', [$request->from_date." 00:00:00",$request->to_date." 23:59:59"]);
@@ -90,7 +84,30 @@ class OrderController extends Controller
         $zone_ids =isset($request->zone)?$request->zone:[];
         $from_date =isset($request->from_date)?$request->from_date:null;
         $to_date =isset($request->to_date)?$request->to_date:null;
-        $total = $orders->count();
+        if($status == 'all'){
+          $total = Order::All()->count();  
+        }
+        
+        if($status == 'ongoing'){
+          $total = Order::ServiceOngoing()->count();  
+        }
+        
+        if($status == 'completed'){
+          $total = Order::Completed()->count();  
+        }
+        
+        if($status == 'cancelled'){
+          $total = Order::Cancelled()->count();  
+        }
+        
+        if($status == 'refunded'){
+          $total = Order::Refunded()->count();  
+        }
+        
+        if($status == 'failed'){
+          $total = Order::failed()->count();  
+        }
+        
 
 
         return view('admin-views.order.list', compact('orders', 'status', 'orderstatus', 'scheduled', 'vendor_ids', 'zone_ids', 'from_date', 'to_date', 'total'));
