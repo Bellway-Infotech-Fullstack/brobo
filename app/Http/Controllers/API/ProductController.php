@@ -401,6 +401,7 @@ class ProductController extends Controller
 
                     $all_item_colored_images = array();
                     if (isset($coloredImage->images) && !empty($coloredImage->images)) {
+                        array_push($all_item_colored_images, $main_item_image);
                         array_push($all_item_colored_images, $coloredImage->image);
 
                         foreach ($coloredImage->images as $key => $val) {
@@ -408,6 +409,7 @@ class ProductController extends Controller
                             array_push($all_item_colored_images, $item_image);
                         }
                        // array_push($all_item_colored_images, $main_item_image);
+                       
                         $coloredImage->images = $all_item_colored_images;
                     }
 
