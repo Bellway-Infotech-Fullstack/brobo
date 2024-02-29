@@ -34,6 +34,7 @@ class UsersAddressController extends Controller
                  'house_name' => 'required',
                  'zip_code' => 'required',
                  'floor_number' => 'required',
+                 'address_type' => 'required',
              ];
      
              // If it's an update (address_id is provided), validate and update the existing address
@@ -58,7 +59,7 @@ class UsersAddressController extends Controller
              // Create or update the address based on whether 'address_id' is provided
              if ($addressId) {
                  // Update an existing address
-                 $address = UsersAddress::where('customer_id', $customerId)->find($addressId);
+                 $address = UsersAddress::where(array('customer_id' => $customerId,'address_type' => $request->address_type))->find($addressId);
      
                  if ($address) {
                      $address->update([
@@ -67,6 +68,7 @@ class UsersAddressController extends Controller
                          'landmark' => $request->landmark,
                          'area_name' => $request->area_name,
                          'zip_code' => $request->zip_code,
+                         'address_type' => $request->address_type,
                          'customer_id' => $customerId
                      ]);
      
@@ -76,7 +78,7 @@ class UsersAddressController extends Controller
                  }
              } else {
                  // Add a new address
-                 $addressRecord = UsersAddress::where('customer_id', $customerId);
+                 $addressRecord = UsersAddress::where(array('customer_id' => $customerId,'address_type' => $request->address_type));
      
                  if ($addressRecord->exists()) {
                      $addressRecord->update([
@@ -85,6 +87,7 @@ class UsersAddressController extends Controller
                          'landmark' => $request->landmark,
                          'area_name' => $request->area_name,
                          'zip_code' => $request->zip_code,
+                         'address_type' => $request->address_type,
                      ]);
      
                      return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address updated successfully']);
@@ -96,6 +99,7 @@ class UsersAddressController extends Controller
                          'landmark' => $request->landmark,
                          'zip_code' => $request->zip_code,
                          'area_name' => $request->area_name,
+                         'address_type' => $request->address_type,
                          'customer_id' => $customerId
                      ]);
      
@@ -125,18 +129,23 @@ class UsersAddressController extends Controller
            
 
             // Find the user's address by user_id
-            $addressData = UsersAddress::where('customer_id', $customerId)->first();
-
-            if ($addressData) {
-                return response()->json(['status' => 'success', 'code' => 200,'data' => [
-                    'house_name' => $addressData->house_name,
-                    'floor_number' => (int) $addressData->floor_number,
-                    'landmark' => $addressData->landmark,
-                    'zip_code' => $addressData->zip_code,
-                    'area_name' => $addressData->area_name,
-                    'address_id' => $addressData->id
-                ],
-            ]);
+            $addressData = UsersAddress::where('customer_id', $customerId)->get();
+            $allAddresses = [];
+            if (isset($addressData) && !empty($addressData)) {
+               foreach($addressData as $key => $value){
+                $data =  [
+                    'house_name' => $value->house_name,
+                    'floor_number' => (int) $value->floor_number,
+                    'landmark' => $value->landmark,
+                    'zip_code' => $value->zip_code,
+                    'area_name' => $value->area_name,
+                    'address_type' => $value->address_type,
+                    'address_id' => $value->id
+               ];
+               array_push($allAddresses,$data);
+               } 
+               
+                return response()->json(['status' => 'success', 'code' => 200,'data' => $allAddresses]);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User has no address'], 404);
             }
