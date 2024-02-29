@@ -715,7 +715,18 @@
                                 $time_slot_data = explode("-",$value);
                                 $from_time_slot = $time_slot_data[0];
                                 $to_time_slot   = $time_slot_data[1];
-                                $time_slot =   $from_time_slot . "-" . $to_time_slot;
+                                $is_time_slot_enabled   = $time_slot_data[2];
+                                $time_slot =   $from_time_slot . "-" . $to_time_slot  . "-" . $is_time_slot_enabled;
+                                $is_time_slot_checked = "";
+                                 $is_time_slot_checked_not = "";
+                                
+                                if($is_time_slot_enabled == 'yes'){
+                                    $is_time_slot_checked = "checked";
+                                }
+                                
+                                 if($is_time_slot_checked_not == 'no'){
+                                    $is_time_slot_checked_not = "checked";
+                                }
                     
                             ?>
 
@@ -732,21 +743,29 @@
                                             <input type="time" value="{{ $to_time_slot ?? ''}}" name="order_to_time_slots[]" class="form-control">
                                         </div>
                                         @if($key > 0)
-                                        <div  style="float:right;">
-                                            <?php
-                                             
-                                            ?>
-                                            <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot="{{ $time_slot }}" data-count="{{$key+1}}"> Remove </a>
+                                        <div  style="float:right;" class="mt-5">
+                                          <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot="{{ $time_slot }}" data-count="{{$key+1}}"> Remove </a>
                                         </div> 
-                                        @endif                            
+                                        @endif     
+                                        <div style="float:right">
+                                            <input type="hidden"  name="is_time_slot_enabled[]" value ="{{ $is_time_slot_enabled }}"> 
+                                            <input type="radio" value="yes" {{ $is_time_slot_enabled == 'yes' ? "checked" : ''}}  class="is_time_slot_enabled">
+                                            Enable
+                                            <input type="radio" value="no" {{ $is_time_slot_enabled == 'no' ? "checked" : ''}} class="is_time_slot_enabled">
+                                            Disable
+                                        </div>                       
                                     </div>
-                                      
-
+                                    <br>
+                                    
                                 </div>
+                               
+                               
+
+                               
                          
                             
                             <?php }} else { ?>
-                              <div class="row">
+                            <div class="row">
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
@@ -757,9 +776,20 @@
                                     <div class="form-group">
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
                                         <input type="time"  name="order_to_time_slots[]" class="form-control">
-                                    </div>                           
+                                    </div>    
+                                    <div style="float:right">
+                                        <input type="hidden"  name="is_time_slot_enabled[]"> 
+                                        <input type="radio" value="yes" class="is_time_slot_enabled">
+                                        Enable
+                                        <input type="radio" value="no" class="is_time_slot_enabled">
+                                        Disable
+                                    </div>                         
                                 </div>
-                                 </div>
+                                <br>
+                                
+                            </div>
+
+                               
 
 
                             <?php } ?>
@@ -767,9 +797,10 @@
                         
                     </div>
                
-                    <div  style='float:right;'>
+                    <div  style='float:right;' class="mt-5">
                          <a href="javascript:void(0)" class="add-more-time-slot"> Add More </a>
                     </div>
+                    
 
                     <div class="row" style="display:none">
                         <div class="col-sm-6">
@@ -809,7 +840,7 @@
                         </div>
                     </div>
 
-                     <div class="row">
+                     <div class="row mt-5">
                         <div class="form-group col-12" style="margin-left: -15px;">
                                         @php($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first())
                             <label class="input-label d-inline" for="exampleFormControlInput1">Footer
@@ -989,6 +1020,7 @@
           
         function addRow(){
             count++;  
+            
             var timeSlotData = '<div class="row">'+
                                     '<div class="col-md-6 col-12 slot-section'+count+'">'+
                                         '<div class="form-group">'+
@@ -1001,7 +1033,16 @@
                                             '<label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot '+count+'</label>'+
                                             '<input type="time"  name="order_to_time_slots[]" class="form-control">'+
                                         '</div>'+   
-                                    '<div  style="float:right;">'+
+                                        '<br>'+
+                                    '<div style="float:right">'+
+                                        '<input type="hidden"  name="is_time_slot_enabled[]">'+
+                                        
+                                        '<input type="radio" value="yes" class="is_time_slot_enabled"> Enable '+
+                                        
+                                        '<input type="radio" value="no" class="is_time_slot_enabled"> Disable'+
+                                        
+                                    '</div>'+
+                                    '<div  style="float:right;" class="mt-5">'+
                                         '<a href="javascript:void(0)" class="remove-time-slot" data-count="'+count+'"> Remove </a>'+
                                     '</div>'+              
                                 '</div>';
@@ -1112,6 +1153,15 @@
         
          $("#customFileEg2").change(function () {
             previewFavIcon(this);
+        });
+
+        $(document).on("change", ".is_time_slot_enabled", function(e) {          
+           var is_time_slot_enabled = $(this).val(); 
+           var $container = $(this).closest('div');    
+            // Uncheck all other radio buttons within the same container
+           $container.find('.is_time_slot_enabled').not(this).prop('checked', false);
+           $(this).closest('div').find('input[name="is_time_slot_enabled[]"]').val(is_time_slot_enabled);
+
         });
    
 

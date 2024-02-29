@@ -184,10 +184,49 @@ class BusinessSettingsController extends Controller
          DB::table('business_settings')->updateOrInsert(['key' => 'whatsapp_number'], [
             'value' => $request['whatsapp_number']
         ]);
+
         
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
+        $is_time_slot_enabled = $request['is_time_slot_enabled'];
+        $numSlots = count($order_from_time_slots);
+        $isValid = true;
+        $isGreater = false;
+        
+        for ($i = 0; $i < $numSlots; $i++) {
+            $start = date("H:i", strtotime($order_from_time_slots[$i]));
+            $end = date("H:i", strtotime($order_to_time_slots[$i]));
+            
+            if ($start >= $end) {
+                $isGreater = true;
+                break;
+            }
+        
+            // Check if new time slot falls within existing time slot
+            if ($i > 0) {
+                $start = strtotime($order_from_time_slots[$i]);
+                $end = strtotime($order_to_time_slots[$i - 1]);
+                
+                if ($start <= $end) {
+                    $isValid = false;
+                    break;
+                }
+            }
+        }
+        
+        if ($isGreater) {
+             Toastr::error(trans('Slot to time should be greater than from time'));
+             return back();
+
+        } else if (!$isValid) {
+            Toastr::error(trans('Slot already exist'));
+            return back();
+        }
+
         $time_slots = '';
+
+
+       
 
 
         $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
@@ -197,12 +236,8 @@ class BusinessSettingsController extends Controller
 
         if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
-               $time_slot = $value."-".$order_to_time_slots[$key]; 
-               if(in_array($time_slot,$order_time_slot_data)){
-                
-               // Toastr::error(trans('Slot already exist'));
-               // return back();
-               }
+               $time_slot = $value."-".$order_to_time_slots[$key]."-".$is_time_slot_enabled[$key]; 
+              
                $time_slots =  $time_slots . $time_slot  . ",";
                 
             }
@@ -216,6 +251,49 @@ class BusinessSettingsController extends Controller
 
         $min_amount = $request['min_amount'];
         $max_amount = $request['max_amount'];
+
+
+        
+        $isValidSlab = true;
+        $isGreaterSlab = false;
+        
+        $numSlabs = count($min_amount);
+        
+        for ($j = 0; $j < $numSlabs; $j++) {
+            $min = $min_amount[$j];
+            $max = $max_amount[$j];
+            
+            
+            if ($min >= $max) {
+                $isGreaterSlab = true;
+                break;
+            }
+        
+            if ($j > 0) {
+                $min = $min_amount[$j];
+                $max = $max_amount[$j - 1];
+                
+                if ($min <= $max) {
+                    $isValidSlab = false;
+                    break;
+                }
+            }
+        }
+        
+       /* if ($isGreaterSlab) {
+            echo "Greater slab";
+            Toastr::error(trans('Max amount should be greater than min amount'));
+            return back();
+
+
+
+        } else if (!$isValidSlab) {
+            Toastr::error(trans('Delivery charge slab already exist'));
+            return back();
+        }*/
+
+
+
         $delivery_charge = $request['delivery_charge'];
 
         $delivery_charge_slabs = '';
