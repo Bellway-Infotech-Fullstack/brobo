@@ -9,6 +9,6 @@ class UsersAddress extends Model
 {
     protected $table = 'users_addresses';    
         
-    protected $fillable = ['house_name','floor_number','landmark','zip_code','address_id','customer_id','area_name'];
+    protected $fillable = ['house_name','floor_number','landmark','zip_code','address_id','customer_id','area_name','address_type'];
     use HasFactory;
 }

@@ -158,7 +158,11 @@ class SettingController extends Controller
                     $time_slot = explode("-",$time_slot);
                     $from_time_slot = $time_slot[0];
                     $to_time_slot = $time_slot[1];
-                    $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " to " . date("h:i A", strtotime($to_time_slot));
+                    $is_time_slot_enabled = $time_slot[2];
+                    if($is_time_slot_enabled == 'yes'){
+                        $formatted_time_slots[] = date("h:i A", strtotime($from_time_slot)) . " to " . date("h:i A", strtotime($to_time_slot));
+                    }
+                   
                 }
             }
 

@@ -287,15 +287,14 @@
                    }'>
                     <thead class="thead-light">
                     <tr>
-                        <th class="">
-                            {{__('messages.#')}}
-                        </th>
+                        <th class="">{{__('messages.#')}}</th>
                         <th class="table-column-pl-0">{{__('messages.order')}} ID</th>
                         <th>Booking Date</th>
                         <th>{{__('messages.customer')}} Name</th>
                         <th>{{__('messages.customer')}} Mobile Number</th>
                         <th>Delivery Address</th>
                         <th>Pin Location</th>
+                        <th class="">Product Names</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Time Slot</th>
@@ -368,6 +367,22 @@
                              </td>
 
                              <td>{{ $order->pin_location ?? 'N/A'  }} </td>
+                             <td>
+                                <?php
+                                $productNames = '';
+                                $cartItems = json_decode($order->cart_items, true);
+                                if(isset($cartItems) && !empty($cartItems)){
+                                    foreach($cartItems as $key => $value){
+                                        $productNames .= "," . $value['item_name'];
+                                    }
+                                    $productNames = trim($productNames, ',');
+                                }
+                                ?>
+                                
+                                {{ $productNames }}
+                                
+
+                             </td>
                         
                             <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
                             <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
@@ -644,23 +659,46 @@
                 buttons: [
                     {
                         extend: 'copy',
-                        className: 'd-none'
+                        className: 'd-none',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13]
+                        }
                     },
                     {
                         extend: 'excel',
-                        className: 'd-none'
+                        className: 'd-none',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13]
+                        },
+                       
                     },
                     {
                         extend: 'csv',
-                        className: 'd-none'
+                        className: 'd-none',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13]
+                        }
                     },
                     {
                         extend: 'pdf',
-                        className: 'd-none'
+                        className: 'd-none',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13]
+                        },
+                        customize: function (doc) {
+                // Adjust PDF document settings
+                doc.pageMargins = [20, 20, 20, 20]; // Adjust margins: [left, top, right, bottom]
+                doc.defaultStyle.fontSize = 8; // Adjust font size
+                            console.log("doc",doc)
+                // You can also adjust other settings here if needed
+            }
                     },
                     {
                         extend: 'print',
-                        className: 'd-none'
+                        className: 'd-none',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13]
+                        }
                     },
                 ],
                 select: {
