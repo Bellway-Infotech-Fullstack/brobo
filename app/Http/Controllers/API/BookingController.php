@@ -754,7 +754,7 @@ class BookingController extends Controller
             $data = ['referred_discount' => $referredDiscount];
             return response()->json(['status' => 'success', 'message' => 'Referral discount available', 'code' => 200, 'data' => $data]);
         } else {
-            return response()->json(['status' => 'success', 'message' => 'Referral discount already used', 'code' => 200, 'data' => null]);
+            return response()->json(['status' => 'error', 'message' => 'Referral discount already used', 'code' => 200, 'data' => null]);
         }
     }
 
