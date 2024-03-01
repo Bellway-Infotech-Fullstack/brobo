@@ -10,6 +10,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 use App\Models\Wishlist;
 use App\Models\Category;
+use DB;
 
 
 class ProductController extends Controller
@@ -71,8 +72,8 @@ class ProductController extends Controller
             $user = JWTAuth::toUser($token);
             $userId = (isset($user) && !empty($user)) ? $user->id : '';
        
-            $items = Product::select('products.*')
-                ->leftJoin('product_colored_image', 'products.id', '=', 'product_colored_image.product_id')
+            $items = Product::select('products.id','products.name','products.description','products.image','products.category_id','products.category_ids','products.price','products.tax','products.tax_type','products.discount','products.discount_type','products.images','products.total_stock','products.status','products.created_at','products.updated_at')
+             //  ->leftJoin('product_colored_image','product_colored_image.product_id','=', 'products.id' )
                 ->whereHas('category', function ($query) use ($categoryId) {
                     $query->where('parent_id', $categoryId);
                 })
@@ -95,7 +96,13 @@ class ProductController extends Controller
 
                 ->when(!empty($searchKey), function ($query) use ($searchKey) {
                     $query->where('products.name', 'like', '%' . $searchKey . '%')
-                    ->orWhere('product_colored_image.color_name', $searchKey);
+                    ->orWhereExists(function ($subquery) use ($searchKey) {
+                        $subquery->select(DB::raw(1))
+                                ->from('product_colored_image')
+                                ->whereRaw('products.id = product_colored_image.product_id')
+                                ->where('product_colored_image.color_name', 'like', '%' . $searchKey . '%');
+                    });
+                   // ->orWhere('product_colored_image.color_name', $searchKey);
 
                 })
                 ->orderBy($orderColumn, $orderBy)
@@ -159,8 +166,13 @@ class ProductController extends Controller
                 // Remove commas from discounted_price
                 $item->discounted_price = str_replace(',', '', $item->discounted_price);
 
+
                     return $item;
             });
+
+            /*echo "<pre>";
+
+            print_r($items);*/
             
              // Remove duplicate items based on their IDs
      //   $items = $items->unique('id');
@@ -394,14 +406,53 @@ class ProductController extends Controller
                
                
                 // Update colored images paths
-                $item->coloredImages->map(function ($coloredImage)use ($main_item_image) {
+
+                $mainProductColorName = $item->color_name;
+                $mainProductImages = $item->images; 
+
+
+                 //echo "main_item_image".$main_item_image;
+
+                // Create the main item color data
+                $main_item_colored_data = [
+                    'id' => 0,
+                    "product_id" => $item->id,
+                    'color_name' => $mainProductColorName,
+                    'image' => $main_item_image,
+                    'images' => $mainProductImages,
+                    'created_at' => $item->created_at, 
+                    'updated_at' => $item->updated_at, 
+                ];
+
+        // Insert the main item color data at the beginning of the coloredImages array
+        $item->coloredImages->prepend((object)$main_item_colored_data);
+
+                $item->coloredImages->map(function ($coloredImage) use ($mainProductImages,$main_item_image)  {
+
+
+                     //array_push($item->coloredImages, $main_item_colored_data);
                  
                     // Add image path to colored_image
-                    $coloredImage->image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $coloredImage->image) : asset('storage/app/public/product/colored_images/' . $coloredImage->image);
-
                     $all_item_colored_images = array();
-                    if (isset($coloredImage->images) && !empty($coloredImage->images)) {
+                    
+                    if($coloredImage->id == 0){
                         array_push($all_item_colored_images, $main_item_image);
+                       foreach ($mainProductImages as $key => $val) {
+                      /*  $main_item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $main_item_image) : asset('storage/app/public/product/' . $main_item_image);*/
+                      
+                        $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                        array_push($all_item_colored_images, $item_image);
+                    }
+                       
+                       $coloredImage->images = $all_item_colored_images;
+                    } else {
+                        $coloredImage->image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $coloredImage->image) : asset('storage/app/public/product/colored_images/' . $coloredImage->image);
+
+                   
+                    if (isset($coloredImage->images) && !empty($coloredImage->images)) {
+
+                        
+                       // array_push($all_item_colored_images, $main_item_image);
                         array_push($all_item_colored_images, $coloredImage->image);
 
                         foreach ($coloredImage->images as $key => $val) {
@@ -412,6 +463,9 @@ class ProductController extends Controller
                        
                         $coloredImage->images = $all_item_colored_images;
                     }
+                    }
+
+                    
 
                     return $coloredImage;
                 });
@@ -655,7 +709,7 @@ class ProductController extends Controller
             $user = JWTAuth::toUser($token);
             $userId = (isset($user) && !empty($user)) ? $user->id : '';
        
-            $items = Product::select('products.*')
+            $items = Product::select('products.id','products.name','products.description','products.image','products.category_id','products.category_ids','products.price','products.tax','products.tax_type','products.discount','products.discount_type','products.images','products.total_stock','products.status','products.created_at','products.updated_at')
             ->leftJoin('product_colored_image', 'products.id', '=', 'product_colored_image.product_id')
                 
                 ->leftJoin('wishlists', function ($join) use ($userId) {
