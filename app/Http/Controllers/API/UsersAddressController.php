@@ -55,42 +55,53 @@ class UsersAddressController extends Controller
              if ($validation->fails()) {
                  return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
              }
+
+             if (!in_array($request->address_type,array('Home','Office','Other'))) {
+                return response()->json(['status' => 'error', 'code' => 200, 'message' => 'Address type should be either Home,Office or Other']);
+            }
+
+             
      
              // Create or update the address based on whether 'address_id' is provided
              if ($addressId) {
                  // Update an existing address
-                 $address = UsersAddress::where(array('customer_id' => $customerId,'address_type' => $request->address_type))->find($addressId);
      
-                 if ($address) {
-                     $address->update([
-                         'house_name' => $request->house_name,
-                         'floor_number' => $request->floor_number,
-                         'landmark' => $request->landmark,
-                         'area_name' => $request->area_name,
-                         'zip_code' => $request->zip_code,
-                         'address_type' => $request->address_type,
-                         'customer_id' => $customerId
-                     ]);
+
+                 $addressRecord = UsersAddress::where([
+                    'customer_id' => $customerId,
+                    'address_type' => $request->address_type
+                ])->whereNotIn('id', [$addressId])->get();
      
-                     return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address updated successfully']);
+                 if (count($addressRecord) > 0) {
+                    return response()->json(['status' => 'error', 'code' => 200, 'message' => 'Address already exist']);
                  } else {
-                     return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Address not found']);
+                    $address = UsersAddress::where(array('customer_id' => $customerId))->find($addressId);
+
+                    $address->update([
+                        'house_name' => $request->house_name,
+                        'floor_number' => $request->floor_number,
+                        'landmark' => $request->landmark,
+                        'area_name' => $request->area_name,
+                        'zip_code' => $request->zip_code,
+                        'address_type' => $request->address_type,
+                        'customer_id' => $customerId
+                    ]);
+    
+                    return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address updated successfully']);
+
                  }
+
+
+
+
+                     
+                 
              } else {
-                 // Add a new address
+                 
                  $addressRecord = UsersAddress::where(array('customer_id' => $customerId,'address_type' => $request->address_type));
      
                  if ($addressRecord->exists()) {
-                     $addressRecord->update([
-                         'house_name' => $request->house_name,
-                         'floor_number' => $request->floor_number,
-                         'landmark' => $request->landmark,
-                         'area_name' => $request->area_name,
-                         'zip_code' => $request->zip_code,
-                         'address_type' => $request->address_type,
-                     ]);
-     
-                     return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Address updated successfully']);
+                    return response()->json(['status' => 'error', 'code' => 200, 'message' => 'Address already exist']);
                  } else {
                      // Add a new address
                      UsersAddress::create([
