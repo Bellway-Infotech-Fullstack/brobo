@@ -16,7 +16,7 @@ use App\CentralLogics\ProductLogic;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\DB;
 use App\Scopes\VendorScope;
-use App\Models\WishList;
+use App\Models\Wishlist;
 
 
 class ProductController extends Controller
