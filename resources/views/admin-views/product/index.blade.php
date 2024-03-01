@@ -106,6 +106,14 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
                                 <label class="text-dark">{{__('messages.product')}} Main Image</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
                                 <div class="custom-file">
                                     <input type="file" name="image" id="customFileEg1" class="custom-file-input"
