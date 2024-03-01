@@ -16,6 +16,8 @@ use App\CentralLogics\ProductLogic;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\DB;
 use App\Scopes\VendorScope;
+use App\Models\WishList;
+
 
 class ProductController extends Controller
 {
@@ -92,6 +94,8 @@ class ProductController extends Controller
         $Product->total_stock = $request->total_stock;
       
         $Product->price = $request->price;
+
+        $Product->color_name = $request->color_name;
       
 
         $img_names = [];
@@ -269,6 +273,8 @@ class ProductController extends Controller
 
         $p->total_stock = $request->total_stock;
 
+        $p->color_name = $request->color_name;
+
         $item_images = $p['images'];
         $images = [];
 
@@ -318,50 +324,59 @@ class ProductController extends Controller
                      
                        
 
+                    
+                       
+                        for($i = 0; $i < count($request->input('colored_name')); $i++){ 
+                            
+                            $colored_image_id = isset($request->input('colored_image_id')[$i]) ? $request->input('colored_image_id')[$i] : '';
+                            
 
-                       
-                        for($i = 0; $i < count($request->input('colored_name')); $i++){  
-                       
+                            $pci = ProductColoredImage::find($colored_image_id);
+
                             $productColoredImages1 = isset($request->product_colored_images[$i]) && !empty($request->product_colored_images[$i]) ? $request->product_colored_images[$i] : [];
                           
-                        if (!empty($productColoredImages1)) {
-                            $existingImages = array(); // Assuming $existingImages is the first array
-                            $colored_img_names = array(); // Initialize the array to store processed images
-                        
-                            foreach ($productColoredImages1 as $img21) {
-                                // Process each image
-                                $color_image_name = Helpers::upload('product/colored_images/', 'png', $img21);
-                        
-                                // Check if $color_image_name is not in $existingImages
-                                if (!in_array($color_image_name, $existingImages)) {
-                                    array_push($colored_img_names, $color_image_name);
-                                    // Update $existingImages with the new image
-                                    $existingImages[] = $color_image_name;
+                            if (!empty($productColoredImages1)) {
+                                $existingImages = array(); // Assuming $existingImages is the first array
+                                $colored_img_names = array(); // Initialize the array to store processed images
+                            
+                                foreach ($productColoredImages1 as $img21) {
+                                    // Process each image
+                                    $color_image_name = Helpers::upload('product/colored_images/', 'png', $img21);
+                            
+                                    // Check if $color_image_name is not in $existingImages
+                                    if (!in_array($color_image_name, $existingImages)) {
+                                        array_push($colored_img_names, $color_image_name);
+                                        // Update $existingImages with the new image
+                                        $existingImages[] = $color_image_name;
+                                    }
                                 }
-                            }
+                            
                         
-                       
-                           
-                            $pci->images = array_merge($colored_img_names,$item_colored_images);
-                        }    
+                            
+                                $pci->images = array_merge($colored_img_names,$item_colored_images);
+                            }    
     
                        
                 
                     
                         
                         $pci->color_name = $request->input('colored_name')[$i];
+
+             
                         if(isset($request->file('colored_image')[$i]) && !empty($request->file('colored_image')[$i])){
                             $pci->image = Helpers::upload('product/colored_images/', 'png', $request->file('colored_image')[$i]);
                         }
                         
                        
                         $pci->save();
-
-
+                
+                        
                         
                     }
                         
                     } else {
+
+                    
 
                         for($i = 0; $i < count($request->input('colored_name')); $i++){  
 
@@ -420,6 +435,11 @@ class ProductController extends Controller
                 Storage::disk('public')->delete('product/' . $product['image']);
             }
         }
+        
+
+        WishList::where(['item_id'=> $request->id])->delete();
+        ProductColoredImage::where(['product_id'=> $request->id])->delete();
+         
 
         $product->delete();
         Toastr::success(trans('messages.product_deleted_successfully'));
