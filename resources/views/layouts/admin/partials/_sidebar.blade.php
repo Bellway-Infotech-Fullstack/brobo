@@ -212,14 +212,14 @@
 
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="{{__('messages.service')}} {{__('messages.section')}}">Product Management</small>
+                               title="product section">Product Management</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
                     
                      @if(\App\CentralLogics\Helpers::module_permission_check('product'))
                         <li class="navbar-vertical-aside-has-menu {{Request::is('admin/service*')?'active':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
-                               href="javascript:" title="{{__('messages.service')}}"
+                               href="javascript:" title="Product"
                             >
                                 <i class="tio-premium-outlined nav-icon"></i>
                                 <span
@@ -237,7 +237,7 @@
                                 </li>
                                 <li class="nav-item {{Request::is('admin/product/list')?'active':''}}">
                                     <a class="nav-link " href="{{route('admin.product.list')}}"
-                                       title="{{__('messages.service')}} {{__('messages.list')}}">
+                                       title="Product {{__('messages.list')}}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">{{__('messages.list')}}</span>
                                     </a>
