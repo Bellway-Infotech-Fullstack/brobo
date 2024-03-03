@@ -156,7 +156,13 @@ class UsersAddressController extends Controller
                array_push($allAddresses,$data);
                } 
                
-                return response()->json(['status' => 'success', 'code' => 200,'data' => $allAddresses]);
+               if (count($allAddresses) > 0) {
+                return response()->json(['status' => 'success', 'code' => 200,'data' => $allAddresses , 'message' => 'Data found']);
+            } else {
+                return response()->json(['status' => 'error', 'code' => 200, 'message' => 'No data found']);
+            }
+               
+               
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User has no address'], 404);
             }
