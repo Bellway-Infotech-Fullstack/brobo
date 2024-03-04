@@ -56,8 +56,8 @@ class UsersAddressController extends Controller
                  return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
              }
 
-             if (!in_array($request->address_type,array('Home','Office','Other'))) {
-                return response()->json(['status' => 'error', 'code' => 200, 'message' => 'Address type should be either Home,Office or Other']);
+             if (!in_array($request->address_type,array('Home','Work','Other'))) {
+                return response()->json(['status' => 'error', 'code' => 200, 'message' => 'Address type should be either Home,Work or Other']);
             }
 
              
@@ -174,3 +174,4 @@ class UsersAddressController extends Controller
 
 
 }
+
