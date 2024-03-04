@@ -49,6 +49,8 @@ class BookingController extends Controller
             $deliveryCharge = $request->input('delivery_charge');
             $todayDate = date("Y-m-d");
             $pinLocation = $request->input('pin_location');
+            $referralDiscount = $request->input('referral_discount');
+            $couponDiscount = $request->input('coupon_discount');
             
 
             // Define the validation rules
@@ -239,7 +241,9 @@ class BookingController extends Controller
                     'is_building_have_lift' => $isBuildingHaveLift,
                     'referred_code' => $referredCode,
                     'referral_code' => $loginUserReferralCode,
-                    'pin_location' => $pinLocation
+                    'pin_location' => $pinLocation,
+                    'referral_discount' => $referralDiscount,
+                    'coupon_discount' => $couponDiscount
                 ];
 
                 $newOrder = Order::create($requestData);
@@ -370,6 +374,8 @@ class BookingController extends Controller
 
         $bookingId = $request->get('booking_id');
         $bookingData = Order::where(array('order_id' => $bookingId,'user_id' => $customerId))->get();
+
+       
     
         // Check if the order exists
         if (count($bookingData) == 0) {
@@ -434,6 +440,10 @@ class BookingController extends Controller
 
             $finalItemPrice   = $item->final_item_price; 
 
+            
+
+           
+
             array_push($allData,
                 array(
                     'description' => $description,
@@ -448,8 +458,10 @@ class BookingController extends Controller
                     'shipping_address' => $shippingAddress,
                     'pending_amount' => $pendingAmount,
                     'item_details'  => json_decode($item->cart_items,true),
-                    'final_item_price' => $finalItemPrice - $deliveryCharge
-                    
+                    'final_item_price' => $finalItemPrice - $deliveryCharge, 
+                    'referral_discount' =>   $item->referral_discount,
+                    'coupon_discount' =>   $item->referral_discount,
+
                     )
                 );
             return $allData;
