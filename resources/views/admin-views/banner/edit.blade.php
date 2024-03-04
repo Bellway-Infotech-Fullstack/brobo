@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="form-group" style="margin-bottom:0%;">
                                         <center>
-                                            <img style="border: 1px solid; border-radius: 10px;" id="viewer"  src="{{asset($assetPrefixPath .'/storage/banner')}}/{{$banner['image']}}" alt="campaign image"/>
+                                            <img style="width:80%;border: 1px solid; border-radius: 10px;" id="viewer"  src="{{asset($assetPrefixPath .'/storage/banner')}}/{{$banner['image']}}" alt="campaign image"/>
                                         </center>
                                     </div>
                                 </div>
