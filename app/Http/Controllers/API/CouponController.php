@@ -107,6 +107,47 @@ class CouponController extends Controller
             return response()->json(['status' => 'error', 'code' => 404, 'message' => 'No data found'], 404);
         }
      }
+     
+      public function getAllCouponsForWeb(){
+
+        $todayDate = date("Y-m-d");
+
+        $couponData = Coupon::where(['status' => 1])
+        ->whereDate('start_date', '<=', $todayDate)
+        ->whereDate('expire_date', '>=', $todayDate)
+        ->orderBy('created_at', 'desc')->get();  
+        if(count($couponData) > 0) {         
+            $allData = array();    
+            foreach($couponData as $key => $value){
+                $data = array(
+                    
+                        'id' => $value->id,
+                        'title' => $value->title,
+                        'code' => $value->code,
+                        'start_date' => $value->start_date,
+                        'expire_date' => $value->expire_date,
+                        'min_purchase' => $value->min_purchase,
+                        'max_discount' => $value->max_discount,
+                        'discount' => $value->discount,
+                        'discount_type' => $value->discount_type,
+                        'coupon_type' => $value->coupon_type,
+                        'limit' => $value->limit,
+                        'background_image' => (env('APP_ENV') == 'local') ? asset('storage/coupon_background_image/' . $value->background_image) : asset('storage/app/public/coupon_background_image/' . $value->background_image),
+                        'status' => $value->status,
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at
+                                        
+                    );
+
+                    array_push($allData,$data);
+                
+            }
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found','data' => $allData], 200);
+            
+        } else {
+            return response()->json(['status' => 'error', 'code' => 404, 'message' => 'No data found'], 404);
+        }
+     }
 
      public function getCouponDetail(Request $request)
      {
