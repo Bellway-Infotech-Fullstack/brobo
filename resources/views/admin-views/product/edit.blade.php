@@ -125,7 +125,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>{{__('messages.product')}} {{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
+                                <label>{{__('messages.product')}} {{__('messages.main')}} {{__('messages.image')}}</label><small style="color: red">* ( {{__('messages.ratio')}} 1:1 )</small>
                                 <div class="custom-file">
                                     <input type="file" name="image" id="customFileEg1" class="custom-file-input"
                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
