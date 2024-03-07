@@ -110,6 +110,16 @@
                             </div>
                         </div>
                     </div>
+                    
+                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="input-label" for="exampleFormControlInput1">Color Name <small style="color: red"> * </small></label>
+                                <input type="text" name="color_name" class="form-control" value="" required>
+
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-12">
