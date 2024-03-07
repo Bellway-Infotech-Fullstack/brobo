@@ -113,7 +113,6 @@ class ProductController extends Controller
        
         $Product->images = $images;
 
-     
         
         $Product->discount = $request->discount_type == 'amount' ? $request->discount : $request->discount;
         $Product->discount_type = $request->discount_type;

@@ -56,7 +56,7 @@ class BookingController extends Controller
             // Define the validation rules
             $validationRules = [
                 'start_date' => 'required',
-                'end_date' => 'required',
+               // 'end_date' => 'required',
                 'address_id' => 'required',
                 'transaction_id' => 'required',
                 'final_item_price'=> 'required',
@@ -460,7 +460,7 @@ class BookingController extends Controller
                     'item_details'  => json_decode($item->cart_items,true),
                     'final_item_price' => $finalItemPrice - $deliveryCharge, 
                     'referral_discount' =>   $item->referral_discount,
-                    'coupon_discount' =>   $item->referral_discount,
+                    'coupon_discount' =>   $item->coupon_discount,
 
                     )
                 );
@@ -693,6 +693,221 @@ class BookingController extends Controller
             return response()->json(['status' => 'error', 'message' => 'No Data found', 'code' => 404,'data' => $mostOrderedProductDetails]);
         }
     }
+    
+    public function getMostOrderedProductsForWeb(Request $request)
+    {
+        
+        $token = JWTAuth::getToken();
+        
+        
+        if(isset($token) && !empty($token)){
+            $user = JWTAuth::toUser($token);
+            $customerId = $user ? $user->id : '';
+            
+            $orders = Order::get();
+            
+            $productCounts = [];
+            
+            foreach ($orders as $order) {
+            $cartItems = json_decode($order->cart_items);
+            foreach ($cartItems as $item) {
+            $productId = $item->item_id;
+            
+            
+            // Increment the count for each product
+            $productCounts[$productId] = ($productCounts[$productId] ?? 0) + 1;
+            }
+            }
+            
+            // Filter products with counts greater than 2
+            $mostOrderedProducts = collect($productCounts)
+            ->filter(function ($count) {
+            return $count > 2;
+            })
+            ->keys()
+            ->toArray();  // Convert the collection to an array
+            
+            $mostOrderedProducts = array_unique($mostOrderedProducts);
+            
+            
+            $mostOrderedProductDetails = Product::whereIn('id', $mostOrderedProducts)->get();
+            
+            $mostOrderedProductDetails = $mostOrderedProductDetails->map(function ($item) use ($customerId) {
+            
+            $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+            
+            $item->image = $imagePath;
+            
+            $itemId = $item->id;
+            $wishlistItem = Wishlist::where('item_id', $itemId)->where('user_id', $customerId)->first();
+            
+            
+            
+            
+            // Set is_item_in_wishlist to 1 if it's not NULL, otherwise set it to 0
+            $item->is_item_in_wishlist = ($wishlistItem !== null) ? 1 : 0;
+            
+            // Modify the item's image property
+            $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+            if ($item_image === null) {
+            $item_image = '';
+            }
+            
+            $all_item_images = array();
+            if (isset($item->images) && !empty($item->images)) {
+            array_push($all_item_images, $item->image);
+            foreach ($item->images as $key => $val) {
+            $item_images = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+            array_push($all_item_images, $item_images);
+            }
+            $item->images = $all_item_images;
+            }
+            
+            if ($item->images === null) {
+            $item->images = [];
+            }
+            
+            // Check and set description to blank if null
+            if ($item->description === null) {
+            $item->description = '';
+            }
+            
+            // Calculate discount price
+            
+            if ($item->discount_type == 'amount') {
+            $item->discounted_price = number_format($item->price - $item->discount, 2);
+            } else {
+            if($item->discount > 0){
+            
+            $discounted_price = (($item->discount / 100) * $item->price);
+            $item->discounted_price = number_format(($item->price- $discounted_price),2);
+            } else {
+            $item->discounted_price = 0;
+            }
+            
+            
+            }
+            // Remove commas from discounted_price
+            $item->discounted_price = str_replace(',', '', $item->discounted_price);
+            
+            return $item;
+            });
+            
+            if(count($mostOrderedProductDetails) > 0){
+            return response()->json(['status' => 'success', 'message' => 'Data found', 'code' => 200,'data' => $mostOrderedProductDetails]);
+            } else {
+            return response()->json(['status' => 'error', 'message' => 'No Data found', 'code' => 404,'data' => $mostOrderedProductDetails]);
+            }
+        
+            
+            
+        } else {
+         
+            
+            $orders = Order::get();
+            
+            $productCounts = [];
+            
+            foreach ($orders as $order) {
+            $cartItems = json_decode($order->cart_items);
+            foreach ($cartItems as $item) {
+              $productId = $item->item_id;
+            
+            
+            // Increment the count for each product
+              $productCounts[$productId] = ($productCounts[$productId] ?? 0) + 1;
+            }
+            }
+            
+            // Filter products with counts greater than 2
+            $mostOrderedProducts = collect($productCounts)
+            ->filter(function ($count) {
+            return $count > 2;
+            })
+            ->keys()
+            ->toArray();  // Convert the collection to an array
+            
+            $mostOrderedProducts = array_unique($mostOrderedProducts);
+            
+            
+            $mostOrderedProductDetails = Product::whereIn('id', $mostOrderedProducts)->get();
+            
+            $mostOrderedProductDetails = $mostOrderedProductDetails->map(function ($item)  {
+            
+            $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+            
+            $item->image = $imagePath;
+            
+            $itemId = $item->id;
+            
+            
+          
+           
+            
+            
+            
+            
+            // Set is_item_in_wishlist to 1 if it's not NULL, otherwise set it to 0
+            $item->is_item_in_wishlist =  0;
+            
+            // Modify the item's image property
+            $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+            if ($item_image === null) {
+            $item_image = '';
+            }
+            
+            $all_item_images = array();
+            if (isset($item->images) && !empty($item->images)) {
+            array_push($all_item_images, $item->image);
+            foreach ($item->images as $key => $val) {
+            $item_images = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+            array_push($all_item_images, $item_images);
+            }
+            $item->images = $all_item_images;
+            }
+            
+            if ($item->images === null) {
+            $item->images = [];
+            }
+            
+            // Check and set description to blank if null
+            if ($item->description === null) {
+            $item->description = '';
+            }
+            
+            // Calculate discount price
+            
+            if ($item->discount_type == 'amount') {
+            $item->discounted_price = number_format($item->price - $item->discount, 2);
+            } else {
+            if($item->discount > 0){
+            
+            $discounted_price = (($item->discount / 100) * $item->price);
+            $item->discounted_price = number_format(($item->price- $discounted_price),2);
+            } else {
+            $item->discounted_price = 0;
+            }
+            
+            
+            }
+            // Remove commas from discounted_price
+            $item->discounted_price = str_replace(',', '', $item->discounted_price);
+            
+            return $item;
+            });
+            
+            if(count($mostOrderedProductDetails) > 0){
+            return response()->json(['status' => 'success', 'message' => 'Data found', 'code' => 200,'data' => $mostOrderedProductDetails]);
+            } else {
+            return response()->json(['status' => 'error', 'message' => 'No Data found', 'code' => 404,'data' => $mostOrderedProductDetails]);
+            }
+        
+        }
+        
+      
+        
+    }
+    
 
 
     public function payForDueAmount(Request $request){
