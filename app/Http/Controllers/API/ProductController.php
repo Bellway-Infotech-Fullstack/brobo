@@ -175,7 +175,172 @@ class ProductController extends Controller
             print_r($items);*/
             
              // Remove duplicate items based on their IDs
-     //   $items = $items->unique('id');
+            //   $items = $items->unique('id');
+            
+         
+
+               // Remove duplicate items based on their IDs
+            $uniqueItems = $items->unique('id')->values()->all();
+            
+            // Convert the collection to a plain PHP array
+            $uniqueItemsArray = $uniqueItems;
+            
+           
+            
+            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $uniqueItemsArray]);
+             
+         } catch (\Exception $e) {
+
+             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
+         }
+     }
+
+
+     public function getProductListForWeb(Request $request)
+     {
+         try {
+             // Get requested data
+             
+             $categoryId = $request->get('category_id');
+             $page = $request->get('page');
+             $orderBy = $request->get('order_by') ?? 'desc';
+             $orderColumn = $request->get('order_column') ?? 'created_at';
+             $isDefaultSort = $request->get('is_default_sort') ;  
+             $isHideOutOfStockItem = $request->get('is_hide_out_of_stock_items');   
+             $perPage =  10; // Number of items to load per page
+             $desiredCategoryId = $request->get('sub_category_id');
+             $searchKey = $request->get('search_key') ;  
+
+            
+             // Define the validation rules
+             $validationRules = [
+                 'page' => 'required',
+                 'category_id' => 'required',
+             ]; 
+         
+             // Validate the input data
+             $validation = Validator::make($request->all(), $validationRules, [
+                 'page.required' => 'page is required.',
+                 'category_id.required' => 'category id is required.',
+             ]);
+             
+ 
+             // Check for validation errors and return error response if any
+             if ($validation->fails()) {
+                 return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+             }
+ 
+           
+            // Query to retrieve items
+
+
+            if($isDefaultSort == '1'){
+                 $orderBy = 'desc';
+                 $orderColumn = 'products.created_at';   
+            }
+
+       
+            $items = Product::select('products.id','products.name','products.description','products.image','products.category_id','products.category_ids','products.price','products.tax','products.tax_type','products.discount','products.discount_type','products.images','products.total_stock','products.status','products.created_at','products.updated_at')
+             //  ->leftJoin('product_colored_image','product_colored_image.product_id','=', 'products.id' )
+                ->whereHas('category', function ($query) use ($categoryId) {
+                    $query->where('parent_id', $categoryId);
+                })
+               ->when(!empty($isHideOutOfStockItem) && $isHideOutOfStockItem == '1', function ($query) {
+                    $query->where('products.total_stock', '>', 0);
+                }, function ($query) use ($isHideOutOfStockItem) {
+                    if (empty($isHideOutOfStockItem)) {
+                        $query->where('products.total_stock', '>', 0);
+                    } else {
+                        $query->where('products.total_stock', '=', 0);
+                    }
+                })
+                
+                ->when(!empty($desiredCategoryId), function ($query) use ($desiredCategoryId) {
+                    $query->where('products.category_id', '=', $desiredCategoryId);
+                })
+
+                ->when(!empty($searchKey), function ($query) use ($searchKey) {
+                    $query->where('products.name', 'like', '%' . $searchKey . '%')
+                    ->orWhereExists(function ($subquery) use ($searchKey) {
+                        $subquery->select(DB::raw(1))
+                                ->from('product_colored_image')
+                                ->whereRaw('products.id = product_colored_image.product_id')
+                                ->where('product_colored_image.color_name', 'like', '%' . $searchKey . '%');
+                    });
+                   // ->orWhere('product_colored_image.color_name', $searchKey);
+
+                })
+                ->orderBy($orderColumn, $orderBy)
+                ->where('products.status',1)
+                ->paginate($perPage, ['*'], 'page', $page);
+
+                $items = $items->map(function ($item)  {
+
+                    $imagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                    
+                    $item->image = $imagePath;
+
+                    $itemId = $item->id;
+            
+
+    
+
+
+                    // Set is_item_in_wishlist to 1 if it's not NULL, otherwise set it to 0
+                    $item->is_item_in_wishlist =  0;
+
+                     // Modify the item's image property
+                        $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+                        if ($item_image === null) {
+                            $item_image = '';
+                        }
+
+                    $all_item_images = array();
+                    if (isset($item->images) && !empty($item->images)) {
+                        array_push($all_item_images, $item->image);
+                        foreach ($item->images as $key => $val) {
+                            $item_images = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                            array_push($all_item_images, $item_images);
+                        }
+                        $item->images = $all_item_images;
+                    }
+
+                    if ($item->images === null) {
+                        $item->images = [];
+                    }
+
+                    // Check and set description to blank if null
+                    if ($item->description === null) {
+                        $item->description = '';
+                    }
+
+                // Calculate discount price
+             
+                if ($item->discount_type == 'amount') {
+                    $item->discounted_price = number_format($item->price - $item->discount, 2);
+                } else {
+                    if($item->discount > 0){
+                    
+                       $discounted_price = (($item->discount / 100) * $item->price);
+                       $item->discounted_price = number_format(($item->price- $discounted_price),2);
+                    } else {
+                         $item->discounted_price = 0;
+                    }
+    
+                }
+                // Remove commas from discounted_price
+                $item->discounted_price = str_replace(',', '', $item->discounted_price);
+
+
+                    return $item;
+            });
+
+            /*echo "<pre>";
+
+            print_r($items);*/
+            
+             // Remove duplicate items based on their IDs
+            //   $items = $items->unique('id');
             
          
 
@@ -367,6 +532,8 @@ class ProductController extends Controller
     
     public function getProductDetail(Request $request)
     {
+
+
         try {
             // Get requested data
             $itemId = $request->get('item_id');
@@ -535,7 +702,6 @@ class ProductController extends Controller
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
     }
-
 
 
      /**

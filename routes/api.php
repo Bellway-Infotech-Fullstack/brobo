@@ -32,11 +32,36 @@ Route::group(['namespace' => 'API'], function () {
     Route::controller(SettingController::class)->group(function () {
         Route::get('get-setting-data', 'index');
     });
+    
+    Route::controller(CouponController::class)->group(function () {
+        Route::get('get-all-coupons-for-web', 'getAllCoupons');
+   });
+   
+    Route::controller(BannerController::class)->group(function () {
+            Route::get('get-all-banners-for-web', 'index');
+    });
+    
+     Route::controller(CategoryController::class)->group(function () {
+        Route::get('get-popular-services-for-web', 'getPopularServices');
+    });
+    
+     Route::controller(BookingController::class)->group(function () {
+        Route::get('get-most-ordered-products-for-web','getMostOrderedProductsForWeb');  
+    });
+
+    Route::controller(ProductController::class)->group(function () {
+        Route::get('get-product-list-for-web', 'getProductListForWeb'); 
+        Route::get('product-detail-for-web', 'getProductDetail');      
+    });
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('get-all-subcategories-for-web', 'getAllSubCategories');
+    });
 
     Route::controller(LocationController::class)->group(function () {
         Route::post('manage-location-data', 'manageLocationData');
         Route::get('get-location-data', 'index');
         Route::post('match-location-data', 'matchLocationData');
+         Route::post('match-location-data-test', 'matchLocationDataTest');
     });
 
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth', 'middleware' => 'custom.jwt'], function () {
