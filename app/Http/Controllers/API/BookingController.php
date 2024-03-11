@@ -51,6 +51,7 @@ class BookingController extends Controller
             $pinLocation = $request->input('pin_location');
             $referralDiscount = $request->input('referral_discount');
             $couponDiscount = $request->input('coupon_discount');
+            $gstAmount = $request->input('gst_amount');
             
 
             // Define the validation rules
@@ -243,7 +244,8 @@ class BookingController extends Controller
                     'referral_code' => $loginUserReferralCode,
                     'pin_location' => $pinLocation,
                     'referral_discount' => $referralDiscount,
-                    'coupon_discount' => $couponDiscount
+                    'coupon_discount' => $couponDiscount,
+                    'gst_amount' => $gstAmount
                 ];
 
                 $newOrder = Order::create($requestData);
@@ -461,6 +463,7 @@ class BookingController extends Controller
                     'final_item_price' => $finalItemPrice - $deliveryCharge, 
                     'referral_discount' =>   $item->referral_discount,
                     'coupon_discount' =>   $item->coupon_discount,
+                    'gst_amount' => $item->gst_amount
 
                     )
                 );

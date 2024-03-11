@@ -15,6 +15,9 @@ use App\Events\sendSMS;
 use App\Models\Order;
 use App\Models\UserPassword;
 use App\Models\UsersAddress;
+use App\CentralLogics\SMS_module;
+use App\CentralLogics\Helpers;
+
 
 class CustomerAuthController extends Controller
 {
@@ -129,6 +132,9 @@ class CustomerAuthController extends Controller
             // send verification code to user's mobile number
            // event(new SendSMS($request->mobile_number,$message));
 
+            
+             SMS_module::send($request->mobile_number, rand(1000, 9999) , '65eee75bd6fc056f7227ad82','no');
+
               // Find the user by customer_id
               $userData = User::find($user->id);
 
@@ -239,16 +245,24 @@ class CustomerAuthController extends Controller
             $userData = User::where('mobile_number',$mobileNumber)->first();
 
             if ($userData) {
-                // Update verification code 
-                $verificationCode = random_int(1000, 9999);
-                $userData->verification_code = $verificationCode;
-                $userData->save();
+                
                 // send verification code to user's mobile number
-                $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
+              //  $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
               //  event(new SendSMS($mobileNumber,$message));
 
+               $config = Helpers::get_business_settings('msg91_sms');
+               if (isset($config) && $config['status'] == 1) {  
+                 $templatedID = $config['template_id_for_otp']; 
+                 // Update verification code 
+                 $verificationCode = random_int(1000, 9999);        
+                 SMS_module::send($request->mobile_number, $verificationCode , $templatedID,'no');
 
-                return response()->json(['status' => 'success', 'code' => 200, 'data' => $userData, 'message' => 'OTP has been sent to your mobile number to reset password']);
+              
+               
+                 $userData->verification_code = $verificationCode;
+                 $userData->save();
+               }
+                 return response()->json(['status' => 'success', 'code' => 200,  'message' => 'OTP has been sent to your mobile number to reset password','data' => $userData]);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User does not exist']);
             }
@@ -331,14 +345,17 @@ class CustomerAuthController extends Controller
             $userData = User::find($customerId);
 
             if ($userData) {              
-                // Update verification code 
-                $verificationCode = random_int(1000, 9999);
-                $userData->verification_code = $verificationCode;
-                $userData->save();
-                // send verification code to user's mobile number
-                $message = "Hello $userData->name,Your verification code is: $verificationCode.Please enter this code to the reset password .If you didn't request this, please ignore this message.Thank you,Brobo";
-                //  event(new SendSMS($mobileNumber,$message));
-                return response()->json(['status' => 'success', 'code' => 200, 'data' => $userData, 'message' => 'OTP has been sent to your mobile number to reset password']);
+                $config = Helpers::get_business_settings('msg91_sms');
+               if (isset($config) && $config['status'] == 1) {  
+                 $templatedID = $config['template_id_for_otp']; 
+                 // Update verification code 
+                 $verificationCode = random_int(1000, 9999);               
+                 SMS_module::send($userData->mobile_number, $verificationCode ,$templatedID,'yes');
+                
+                 //$userData->verification_code = $verificationCode;
+              //   $userData->save();
+               }
+               return response()->json(['status' => 'success', 'code' => 200,  'message' => 'OTP has been sent to your mobile number to reset password','data' => $userData]);
             } else {
                 return response()->json(['status' => 'error', 'code' => 404, 'message' => 'User not found']);
             }

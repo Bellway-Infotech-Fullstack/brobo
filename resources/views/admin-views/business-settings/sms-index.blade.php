@@ -199,9 +199,16 @@
                             </div>
                             <div class="form-group mb-2">
                                 <label class="text-capitalize"
-                                       style="padding-left: 10px">{{__('messages.template_id')}}</label><br>
-                                <input type="text" class="form-control" name="template_id"
-                                       value="{{env('APP_MODE')!='demo'?$config['template_id']??"":''}}">
+                                       style="padding-left: 10px">{{__('messages.template_id')}} For Signup </label><br>
+                                <input type="text" class="form-control" name="template_id_for_signup"
+                                       value="{{env('APP_MODE')!='demo'?$config['template_id_for_signup']??"":''}}">
+                            </div>
+
+                            <div class="form-group mb-2">
+                                <label class="text-capitalize"
+                                       style="padding-left: 10px">{{__('messages.template_id')}} For OTP </label><br>
+                                <input type="text" class="form-control" name="template_id_for_otp"
+                                       value="{{env('APP_MODE')!='demo'?$config['template_id_for_otp']??"":''}}">
                             </div>
                             <div class="form-group mb-2">
                                 <label class="text-capitalize"
