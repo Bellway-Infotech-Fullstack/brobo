@@ -17,6 +17,7 @@ class SMSModuleController extends Controller
 
     public function sms_update(Request $request, $module)
     {
+       
         if ($module == 'twilio_sms') {
             DB::table('business_settings')->updateOrInsert(['key' => 'twilio_sms'], [
                 'key' => 'twilio_sms',
@@ -62,7 +63,8 @@ class SMSModuleController extends Controller
                 'key' => 'msg91_sms',
                 'value' => json_encode([
                     'status' => $request['status'],
-                    'template_id' => $request['template_id'],
+                    'template_id_for_signup' => $request['template_id_for_signup'],
+                    'template_id_for_otp' => $request['template_id_for_otp'],
                     'authkey' => $request['authkey'],
                 ]),
                 'created_at' => now(),
@@ -71,12 +73,12 @@ class SMSModuleController extends Controller
         }
 
         if ($request['status'] == 1) {
-            if ($module != 'twilio_sms') {
+            if ($module == 'twilio_sms') {
                 $config = Helpers::get_business_settings('twilio_sms');
                 DB::table('business_settings')->updateOrInsert(['key' => 'twilio_sms'], [
                     'key' => 'twilio_sms',
                     'value' => json_encode([
-                        'status' => 0,
+                        'status' => 1,
                         'sid' => $config['sid'],
                         'token' => $config['token'],
                         'from' => $config['from'],
@@ -86,7 +88,7 @@ class SMSModuleController extends Controller
                     'updated_at' => now(),
                 ]);
             }
-            if ($module != 'nexmo_sms') {
+            if ($module == 'nexmo_sms') {
                 $config = Helpers::get_business_settings('nexmo_sms');
                 DB::table('business_settings')->updateOrInsert(['key' => 'nexmo_sms'], [
                     'key' => 'nexmo_sms',
@@ -104,25 +106,26 @@ class SMSModuleController extends Controller
                     'updated_at' => now(),
                 ]);
             }
-            if ($module != '2factor_sms') {
+            if ($module == '2factor_sms') {
                 $config = Helpers::get_business_settings('2factor_sms');
                 DB::table('business_settings')->updateOrInsert(['key' => '2factor_sms'], [
                     'key' => '2factor_sms',
                     'value' => json_encode([
-                        'status' => 0,
+                        'status' => 1,
                         'api_key' => $config['api_key'],
                     ]),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             }
-            if ($module != 'msg91_sms') {
+            if ($module == 'msg91_sms') {
                 $config = Helpers::get_business_settings('msg91_sms');
                 DB::table('business_settings')->updateOrInsert(['key' => 'msg91_sms'], [
                     'key' => 'msg91_sms',
                     'value' => json_encode([
-                        'status' => 0,
-                        'template_id' => $config['template_id'],
+                        'status' => 1,
+                        'template_id_for_signup' => $config['template_id_for_signup'],
+                        'template_id_for_otp' => $config['template_id_for_otp'],
                         'authkey' => $config['authkey'],
                     ]),
                     'created_at' => now(),

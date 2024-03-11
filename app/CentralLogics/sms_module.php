@@ -10,7 +10,7 @@ use Twilio\Rest\Client;
 
 class SMS_module
 {
-    public static function send($receiver, $otp, $templateId = null)
+    public static function send($receiver, $otp, $templateId = null,$resend = null)
     {
         // $config = self::get_settings('twilio_sms');
         // if (isset($config) && $config['status'] == 1) {
@@ -32,7 +32,7 @@ class SMS_module
 
         // $config = self::get_settings('msg91_sms');
         // if (isset($config) && $config['status'] == 1) {
-            $response = self::msg_91($receiver, $otp, $templateId);
+            $response = self::msg_91($receiver, $otp, $templateId,$resend);
             return $response;
         // }
 
@@ -161,35 +161,105 @@ class SMS_module
         return $response;
     }
 
-    public static function msg_91($receiver, $otp, $templateId = null)
+    public static function msg_91($receiver, $otp, $templateId = null, $resend = null)
     {
         $config = self::get_settings('msg91_sms');
         $response = 'error';
-        if (isset($config) && $config['status'] == 1) {
+        if (isset($config) && $config['status'] == 1) {  
+
+        
+
+            if($resend == 'yes'){
+              
+                $receiver =  str_replace("+",'',$receiver);
+                $curl = curl_init();
+                curl_setopt_array($curl, [
+                    CURLOPT_URL => "https://control.msg91.com/api/v5/otp/retry?authkey=".$config['authkey']."&retrytype=text&mobile=".$receiver."",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "GET",
+                    CURLOPT_POSTFIELDS => json_encode(array("OTP" => $otp)), // Update the OTP value
+                ]);
+                  
+                  $response = curl_exec($curl);
+                  $err = curl_error($curl);
+                  
+                  curl_close($curl);
+
+
+
+
+                if (!$err) {
+                    $response = 'success';
+                } else {
+                    $response = 'error';
+                }
+            }
+
+           
             
-            $receiver = str_replace("+", "", $receiver);
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://api.msg91.com/api/v5/otp?template_id=" . $templateId . "&mobile=" . $receiver . "&authkey=" . $config['authkey'] . "",
+
+            else if($templateId == '65eee75bd6fc056f7227ad82'){
+                $curl = curl_init();
+            
+                curl_setopt_array($curl, [
+                CURLOPT_URL => "https://control.msg91.com/api/v5/flow/",
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_POSTFIELDS => "{\"OTP\":\"$otp\"}",
-                CURLOPT_HTTPHEADER => array(
-                    "content-type: application/json"
-                ),
-            ));
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-            curl_close($curl);
-            if (!$err) {
-                $response = 'success';
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => "{\n  \"template_id\":\"65eee75bd6fc056f7227ad82\",\n  \"short_url\": \"0\",\n  \"recipients\": [\n    {\n      \"mobiles\": \"918982578473\",\n      \"MOBILENUMBER\": \"VALUE 1\",\n      \"PASSWORD\": \"VALUE 2\"\n    }\n  ]\n}",
+                CURLOPT_HTTPHEADER => [
+                    "authkey: ",
+                    "content-type: application/JSON"
+                ],
+                ]);
+                
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+                curl_close($curl);
+                if (!$err) {
+                    $response = 'success';
+                } else {
+                    $response = 'error';
+                }
+               
             } else {
-                $response = 'error';
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://api.msg91.com/api/v5/otp?template_id=" . $templateId . "&mobile=" . $receiver . "&authkey=" . $config['authkey'] . "",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "GET",
+                    CURLOPT_POSTFIELDS => "{\"OTP\":\"$otp\"}",
+                    CURLOPT_HTTPHEADER => array(
+                        "content-type: application/json"
+                    ),
+                ));
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+                curl_close($curl);
+                if (!$err) {
+                    $response = 'success';
+                } else {
+                    $response = 'error';
+                }
             }
+
+            
+
+            
+
+
+
         } elseif (empty($config)) {
             DB::table('business_settings')->updateOrInsert(['key' => 'msg91_sms'], [
                 'key' => 'msg91_sms',
