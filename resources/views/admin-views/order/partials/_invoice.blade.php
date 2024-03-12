@@ -70,7 +70,7 @@
                                 }
                             }
 
-                            $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                            $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
                             } else {
                                 $deliveryAddress = '';
                             }
@@ -223,8 +223,30 @@
                             
                             <dt class="col-6">{{__('messages.subtotal')}}:</dt>
                             <dd class="col-6">Rs.  {{$test}}</dd>
+                            <dt class="col-6">Coupon Discount:</dt>
+                            <dd class="col-6">
+                                <?php
+                                if(isset($coupon_data)){
+                                      if($coupon_data->discount_type == 'amount' ){
+                                  ?>
+                                  
+                                  -  Rs. {{ $coupon_discount_amount }}
+                                 <?php } else { ?>   
+                                  -   {{ $coupon_discount_amount }} %
+                                  <?php } ?>
+            
+            
+                                  <?php } else{ ?>
+            
+                                 - Rs. 0
+            
+                                  <?php } ?>
+                            
+                            
+                            </dd>      
+                            
                              <dt class="col-sm-6">{{ __('messages.gst') }}  :</dt>
-                            <dd class="col-sm-6">Rs. {{ $total_gst }} </dd>
+                            <dd class="col-sm-6">+ Rs. {{  $order['gst_amount'] ?? 0 }} </dd>
                                 
                                 
                                 
@@ -235,10 +257,9 @@
                             <dt class="col-6">{{__('messages.delivery_charge')}}:</dt>
                             <dd class="col-6">
                                 @php($del_c=$order['delivery_charge'])
-                               Rs. {{$del_c}}
+                              + Rs. {{$del_c}}
                             </dd>      
-                            <dt class="col-6">Coupon Discount:</dt>
-                            <dd class="col-6">- {{($coupon_discount_amount)}}</dd>      
+                            
                                 
                             <dt class="col-sm-6">Pending Amount:</dt>
                             <dd class="col-sm-6"> Rs.  {{ $order['pending_amount'] }} </dd>
@@ -248,7 +269,7 @@
 
                             <dt class="col-6" style="font-size: 20px">{{__('messages.total')}}:</dt>
                             <dd class="col-6" style="font-size: 20px">
-                               <?php  $grandTotal = $order['paid_amount']-$coupon_discount_amount;?>
+                               <?php  $grandTotal = $order['paid_amount'];?>
                                Rs.  {{ $grandTotal }}
                             
                             </dd>

@@ -242,7 +242,7 @@
                                                     href="{{route('admin.order.details',['id'=>$order['id']])}}" title="{{__('messages.view')}}"><i
                                                             class="tio-visible"></i></a>
                                         <a class="btn btn-sm btn-white" target="_blank"
-                                                    href="{{route('admin.order.generate-invoice',[$order['id']])}}" title="{{__('messages.invoice')}}"><i
+                                                    href="{{route('admin.order.download-invoice',[$order['id']])}}" title="Download {{__('messages.invoice')}}"><i
                                                             class="tio-download"></i> </a>
                                     </td>
                                 </tr>
