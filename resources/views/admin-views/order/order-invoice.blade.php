@@ -97,6 +97,13 @@
                     <td width="50%">Invoice </td>
                     <td width="50%">#{{ $order['order_id'] }}</td>
                 </tr>
+
+                @if($order['damage_amount'] > 0)
+                    <tr>
+                        <td width="50%">Damage Amount</td>
+                        <td width="50%">Rs. {{ $order['damage_amount'] }}</td>
+                    </tr>
+                 @endif
             </table>
         </div>
     </div>
@@ -162,6 +169,8 @@
                                     }
                                 @endphp
                                 <td width="82%">  {!! $deliveryAddress !!}</td>
+
+                                
                             </tr>
                         </table>
                     </td>
@@ -311,6 +320,14 @@
                     {{ $coupon_discount_amount }}
                 </td>
             </tr>
+            <tr>
+                <td> <strong>Pening Amount :</strong> </td>
+                <td align="right">
+                    Rs. {{ $order['pending_amount'] }}
+                </td>
+            </tr>
+
+           
             <td> <strong>Grand Total :</strong> </td>
             <td align="right">
                 @php

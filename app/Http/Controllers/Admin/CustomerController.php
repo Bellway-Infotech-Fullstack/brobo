@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\UserPassword;
 use App\Models\UsersAddress;
+use Illuminate\Support\Str;
 
 class CustomerController extends Controller
 {
@@ -52,16 +53,18 @@ class CustomerController extends Controller
 
         ]);
 
-       $userId =  DB::table('users')->insertGetId([
-            'name' => $request->name,
-            'mobile_number' => $request->mobile_number,
-            'gender' => $request->gender,
-            'email' => $request->email,
-            'role_id' => 2,
-            'password' => bcrypt($request->password),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $referralCode = Str::random(10);
+        $userId =  DB::table('users')->insertGetId([
+                'name' => $request->name,
+                'mobile_number' => $request->mobile_number,
+                'gender' => $request->gender,
+                'email' => $request->email,
+                'role_id' => 2,
+                'password' => bcrypt($request->password),
+                'referral_code' => $referralCode,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         
          // Save password in user's password table
 
@@ -70,6 +73,9 @@ class CustomerController extends Controller
             "password" =>  bcrypt($request->password),
 
         ]);
+
+        
+
 
         Toastr::success('Customer added succesfully');
         return redirect()->route('admin.customer.list');
