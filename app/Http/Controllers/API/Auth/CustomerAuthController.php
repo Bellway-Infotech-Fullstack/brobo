@@ -133,7 +133,7 @@ class CustomerAuthController extends Controller
            // event(new SendSMS($request->mobile_number,$message));
 
             
-             SMS_module::send($request->mobile_number, rand(1000, 9999) , '65eee75bd6fc056f7227ad82','no');
+            // SMS_module::send($request->mobile_number, rand(1000, 9999) , '65eee75bd6fc056f7227ad82','no');
 
               // Find the user by customer_id
               $userData = User::find($user->id);
