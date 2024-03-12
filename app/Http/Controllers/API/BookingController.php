@@ -510,7 +510,7 @@ class BookingController extends Controller
         $user = JWTAuth::toUser($token);
         $customerId = (isset($user) && !empty($user)) ? $user->id : '';
 
-        $loginUserData = User::find( $customerId);
+        $loginUserData = User::find($customerId);
     
         // Check if the order exists
         if (count($bookingData) == 0) {
@@ -527,7 +527,7 @@ class BookingController extends Controller
            $loginUserFcmToken = $loginUserData->fcm_token ?? '';
 
            $data = [
-               'title' => 'Order Placed',
+               'title' => 'Order Cancelled',
                'description' => 'Order cancelled successfully. Please contact admin to refund your amount',
                'order_id' => $bookingId,
                'image' => '',

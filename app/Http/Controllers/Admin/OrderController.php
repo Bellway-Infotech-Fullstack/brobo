@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Support\Facades\DB;
 use Razorpay\Api\Api;
+use App\Models\User;
 
 use PDF;
 
@@ -208,6 +209,55 @@ class OrderController extends Controller
             return back();
         }
     }
+    
+     public function detailstest(Request $request, $id)
+    {
+        $order = Order::where(['id' => $id])->first();
+
+        if (isset($order)) {
+
+
+            $category = $request->query('category_id', 0);
+            // $sub_category = $request->query('sub_category', 0);
+            $categories = Category::active()->get();
+            $keyword = $request->query('keyword', false);
+            $key = explode(' ', $keyword);
+            $products = Product::
+            when($category, function($query)use($category){
+                $query->whereHas('category',function($q)use($category){
+                    return $q->whereId($category)->orWhere('parent_id', $category);
+                });
+            })
+            ->when($keyword, function($query)use($key){
+                return $query->where(function ($q) use ($key) {
+                    foreach ($key as $value) {
+                        $q->orWhere('name', 'like', "%{$value}%");
+                    }
+                });
+            })
+            ->latest()->paginate(10);
+            $editing=false;
+            if($request->session()->has('order_cart'))
+            {
+                $cart = session()->get('order_cart');
+                if(count($cart)>0 && $cart[0]->order_id == $order->id)
+                {
+                    $editing=true;
+                }
+                else
+                {
+                    session()->forget('order_cart');
+                }
+                
+            }
+            
+            // $deliveryMen=Helpers::deliverymen_list_formatting($deliveryMen);
+            return view('admin-views.order.order-view-test', compact('order','categories', 'products','category', 'keyword', 'editing'));
+        } else {
+            Toastr::info(trans('messages.no_more_orders'));
+            return back();
+        }
+    }
 
     public function search(Request $request){
         $key = explode(' ', $request['search']);
@@ -268,8 +318,17 @@ class OrderController extends Controller
     public function status(Request $request)
     {
         $order = Order::find($request->id);
-        
 
+        if($request->status == $order->status){
+            Toastr::warning('Order is already '.$request->status);
+                return back(); 
+
+        }
+        
+        
+        
+        
+        $order_description = '';
         
         if($request->status == 'completed'){
             if($order->pending_amount > 0){
@@ -281,9 +340,51 @@ class OrderController extends Controller
             
         }
         
-        if($request->status == 'cancelled'){
-            $order_description = "Your order has been cancelled";
+        if($order->status == 'cancelled'){
+             if($request->status ==  'ongoing' || $request->status ==  'completed'){
+                Toastr::warning('You cannot change status of cancelled order');
+                return back(); 
+            }
+
         }
+
+        if($request->status == 'cancelled'){
+            
+           // send push notification 
+
+        
+
+          $bookingUserData = User::find($order->user_id);
+
+          $bookingUserFcmToken = $bookingUserData->fcm_token ?? '';
+
+          $data = [
+              'title' => 'Order Cancelled',
+              'description' => 'Your order has been cancelled by admin. Please contact admin to refund your amount',
+              'order_id' => $order->order_id,
+              'image' => '',
+              'type'=> 'order_status'
+          ];
+
+          Helpers::send_push_notif_to_device($bookingUserFcmToken,$data);
+
+
+          // send system notification
+     
+           DB::table('notifications')->insert([
+              'title' => "Order Cancelled",
+              'description' => "Order No. #$order->order_id has been cancelled by admin. Please contact admin to refund your amount",
+              'coupon_id' => NULL,
+              'from_user_id' => auth('admin')->user()->id,
+              'to_user_id' =>  $order->user_id,
+              'created_at' => now(),
+              'updated_at' => now()
+           ]);
+           
+           $order_description = "Your order has been cancelled";
+       }
+        
+        
 
         
         $order->status = $request->status;
@@ -480,6 +581,36 @@ class OrderController extends Controller
         // Handle the refund response
         if (isset($refundResult['status'])) {
            Order::where('id', $orderId)->update(['refunded' => 'yes']);
+
+            // send push notification 
+
+            $bookingUserData = User::find($orderData->user_id);
+
+            $bookingUserFcmToken = $bookingUserData->fcm_token ?? '';
+
+            $data = [
+                'title' => 'Order Cancelled',
+                'description' => 'Your amount has been refunded in your account.',
+                'order_id' => $orderData->order_id,
+                'image' => '',
+                'type'=> 'order_status'
+            ];
+
+            Helpers::send_push_notif_to_device($bookingUserFcmToken,$data);
+
+
+            // send system notification
+
+            DB::table('notifications')->insert([
+                'title' => "Order Refunded",
+                'description' => "Amount of Order No. #$orderData->order_id has been refunded by admin.",
+                'coupon_id' => NULL,
+                'from_user_id' => auth('admin')->user()->id,
+                'to_user_id' =>  $orderData->user_id,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+                        
 
             
             // Refund processed successfully
