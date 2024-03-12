@@ -347,29 +347,36 @@
                                             Rs.  {{  $test }}
                                         </dd>
                                         
-                                        <dt class="col-sm-6">{{ __('messages.gst') }}:</dt>
-                                        <dd class="col-sm-6">
-                                     
-                                            Rs.  {{  $total_gst }}
-                                        </dd>
-                                        
-                                      
-                                      
-                                        <dt class="col-sm-6">{{ __('messages.coupon') }}
+                                          <dt class="col-sm-6">{{ __('messages.coupon') }}
                                             {{ __('messages.discount') }}:</dt>
                                         <dd class="col-sm-6">
                                           <?php
                                           if(isset($coupon_data)){
-
+                                                if($coupon_data->discount_type == 'amount' ){
                                             ?>
-                                            - {{ $coupon_data->discount_type == 'amount' ? ' Rs.' : '(%)' }}    {{ $coupon_discount_amount }}
+                                            
+                                            -  Rs. {{ $coupon_discount_amount }}
+                                           <?php } else { ?>   
+                                            -   {{ $coupon_discount_amount }} %
+                                            <?php } ?>
+
 
                                             <?php } else{ ?>
 
-                                            0
+                                           - Rs. 0
 
                                             <?php } ?>
                                         </dd>
+                                        
+                                        <dt class="col-sm-6">{{ __('messages.gst') }}:</dt>
+                                        <dd class="col-sm-6">
+                                     
+                                          +  Rs.  {{  $order['gst_amount'] ?? 0 }}
+                                        </dd>
+                                        
+                                      
+                                      
+                                      
                                      
                                       
                                         <dt class="col-sm-6">{{ __('messages.delivery') }}
@@ -387,7 +394,7 @@
 
                                         <dt class="col-sm-6">{{ __('messages.total') }}:</dt>
                                         <dd class="col-sm-6">
-                                            Rs.  {{ $order['paid_amount']-$coupon_discount_amount  }}
+                                            Rs.  {{ $order['paid_amount']  }}
                                         </dd>
                                 </dl>
                                 <!-- End Row -->
@@ -571,7 +578,7 @@
                                             }
                                         }
 
-                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
 
                                     } else {
                                         $deliveryAddress = '';
