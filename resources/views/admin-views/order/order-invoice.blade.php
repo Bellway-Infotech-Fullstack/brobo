@@ -20,7 +20,7 @@
         border: 1px solid #999999!important;
         padding: 4%!important;
         margin-bottom: 2%!important;
-        height:900px;
+        height:925px;
     }
 
     .top_box {
@@ -163,7 +163,7 @@
                                             }
                                         }
 
-                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". " floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
                                     } else {
                                         $deliveryAddress = '';
                                     }
@@ -306,22 +306,41 @@
                 <td align="right">  Rs.  {{ $test }}</td>
             </tr>
             
-                       <tr>
-                     <td> <strong>  {{ __('messages.gst') }}  :  </strong> </td>
-                          <td align="right">Rs. {{ $total_gst }} </td>
-           </tr>
-            <tr>
-                <td> <strong> Delivery Fee : </strong>  </td>
-                <td align="right">  Rs. {{ $deliveryCharge }}</td>
-            </tr>
-            <tr>
+                          <tr>
                 <td> <strong>Coupon Discount :</strong> </td>
                 <td align="right">
-                    {{ $coupon_discount_amount }}
+                    <?php
+                    if(isset($coupon_data)){
+                          if($coupon_data->discount_type == 'amount' ){
+                      ?>
+                      
+                      -  Rs. {{ $coupon_discount_amount }}
+                     <?php } else { ?>   
+                      -   {{ $coupon_discount_amount }} %
+                      <?php } ?>
+
+
+                      <?php } else{ ?>
+
+                     - Rs. 0
+
+                      <?php } ?>
                 </td>
             </tr>
+           
+            
+                     <tr>
+                     <td> <strong>  {{ __('messages.gst') }}  :  </strong> </td>
+                          <td align="right">+ Rs. {{  $order['gst_amount'] ?? 0 }} </td>
+           </tr>
+           
             <tr>
-                <td> <strong>Pening Amount :</strong> </td>
+                <td> <strong> Delivery Fee : </strong>  </td>
+                <td align="right">  + Rs. {{ $deliveryCharge }}</td>
+            </tr>
+
+            <tr>
+                <td> <strong>Pending Amount :</strong> </td>
                 <td align="right">
                     Rs. {{ $order['pending_amount'] }}
                 </td>
@@ -331,7 +350,7 @@
             <td> <strong>Grand Total :</strong> </td>
             <td align="right">
                 @php
-                    $grandTotal =  $order['paid_amount']-$coupon_discount_amount
+                    $grandTotal =  $order['paid_amount'];
                 @endphp
                 Rs.  {{ $grandTotal }}
             </td>
