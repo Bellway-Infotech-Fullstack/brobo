@@ -71,7 +71,7 @@ class ProductController extends Controller
             $token = JWTAuth::getToken();
             $user = JWTAuth::toUser($token);
             $userId = (isset($user) && !empty($user)) ? $user->id : '';
-       
+
             $items = Product::select('products.id','products.name','products.description','products.image','products.category_id','products.category_ids','products.price','products.tax','products.tax_type','products.discount','products.discount_type','products.images','products.total_stock','products.status','products.created_at','products.updated_at')
              //  ->leftJoin('product_colored_image','product_colored_image.product_id','=', 'products.id' )
                 ->whereHas('category', function ($query) use ($categoryId) {
@@ -81,9 +81,7 @@ class ProductController extends Controller
                     $query->where('products.total_stock', '>', 0);
                 }, function ($query) use ($isHideOutOfStockItem) {
                     if (empty($isHideOutOfStockItem)) {
-                        $query->where('products.total_stock', '>', 0);
-                    } else {
-                        $query->where('products.total_stock', '=', 0);
+                        $query->where('products.total_stock', '>=', 0);
                     }
                 })
                 ->leftJoin('wishlists', function ($join) use ($userId) {
@@ -249,9 +247,7 @@ class ProductController extends Controller
                     $query->where('products.total_stock', '>', 0);
                 }, function ($query) use ($isHideOutOfStockItem) {
                     if (empty($isHideOutOfStockItem)) {
-                        $query->where('products.total_stock', '>', 0);
-                    } else {
-                        $query->where('products.total_stock', '=', 0);
+                        $query->where('products.total_stock', '>=', 0);
                     }
                 })
                 
@@ -821,9 +817,13 @@ class ProductController extends Controller
                            return $item;
                        });
                         
-           
+            if(count($items) > 0){
+                return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+            } else {
+                return response()->json(['status' => 'error', 'code' => 200, 'message' => 'No data found','data' => $items]);
+            }
             
-            return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Data found successfully','data' => $items]);
+            
              
          } catch (\Exception $e) {
              return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);

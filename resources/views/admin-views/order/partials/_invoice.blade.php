@@ -78,6 +78,13 @@
                         @endphp
                             <h5>Delivery Address : {!! $deliveryAddress !!}</h5>
 
+                            @if($order['damage_amount'] > 0)
+
+                            <h5>Damage Amount : Rs.  {{ $order['damage_amount'] }}</h5>
+                            @endif
+
+                            
+
                     </div>
                     
                   
@@ -217,7 +224,7 @@
                             <dt class="col-6">{{__('messages.subtotal')}}:</dt>
                             <dd class="col-6">Rs.  {{$test}}</dd>
                              <dt class="col-sm-6">{{ __('messages.gst') }}  :</dt>
-                            <dd class="col-sm-6">Rs . {{ $total_gst }} </dd>
+                            <dd class="col-sm-6">Rs. {{ $total_gst }} </dd>
                                 
                                 
                                 
@@ -229,11 +236,13 @@
                             <dd class="col-6">
                                 @php($del_c=$order['delivery_charge'])
                                Rs. {{$del_c}}
-                                <hr>
                             </dd>      
                             <dt class="col-6">Coupon Discount:</dt>
-                            <dd class="col-6">
-                                - {{($coupon_discount_amount)}}</dd>                          
+                            <dd class="col-6">- {{($coupon_discount_amount)}}</dd>      
+                                
+                            <dt class="col-sm-6">Pending Amount:</dt>
+                            <dd class="col-sm-6"> Rs.  {{ $order['pending_amount'] }} </dd>
+                          
                             @endif
 
 
