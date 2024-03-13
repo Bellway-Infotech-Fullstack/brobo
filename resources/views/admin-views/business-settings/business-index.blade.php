@@ -849,6 +849,14 @@
                         </div>
                     </div>
 
+                    <div class="row mt-5">
+                        <div class="form-group col-12">
+                        @php($contact_address=\App\Models\BusinessSetting::where('key','contact_address')->first())
+                            <label class="input-label d-inline" for="exampleFormControlInput1">Address</label>
+                            <textarea  name="contact_address" class="form-control"  placeholder="" required="">{{  $contact_address->value??''  }}</textarea>
+                        </div>
+                    </div>
+
 
                 
                     <div class="row">
