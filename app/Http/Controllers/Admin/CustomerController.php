@@ -15,6 +15,9 @@ use App\Models\Order;
 use App\Models\UserPassword;
 use App\Models\UsersAddress;
 use Illuminate\Support\Str;
+use PDF;
+use Rap2hpoutre\FastExcel\FastExcel;
+use App\CentralLogics\OrderLogic;
 
 class CustomerController extends Controller
 {
@@ -84,6 +87,7 @@ class CustomerController extends Controller
     function list()
     {
         $user_list = User::where('role_id', '!=','1')->latest()->paginate(config('default_pagination'));
+      
         return view('admin-views.customer.list', compact('user_list'));
     }
 
@@ -312,6 +316,56 @@ class CustomerController extends Controller
        
         session()->forget('customer_order_filter');
         return back();
+    }
+
+    public function export(Request $request)
+    {
+        // Get all users data
+        $users = User::where('role_id', '!=', '1')->latest()->get();
+
+        // Check the requested format (pdf or csv)
+        $format = $request->query('format');
+        
+
+        // Export to PDF format
+        if ($format === 'pdf') {
+            $pdf = PDF::loadView('admin-views.customer.export_pdf',compact('users'));
+
+
+            return $pdf->download('customer_list.pdf');
+        }
+
+        // Export to CSV format
+        if ($format === 'csv') {
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="customer_list.csv"',
+            ];
+
+            // Using Symfony's StreamedResponse to efficiently stream large CSV files
+            return response()->stream(function () use ($users) {
+                $handle = fopen('php://output', 'w');
+                // Write CSV headers
+                fputcsv($handle, ['#','Name', 'Email', 'Phone']);
+
+                // Write CSV rows
+                foreach ($users as $k => $user) {
+                    fputcsv($handle, [$k+1,$user->name, $user->email ?? 'N/A', $user->mobile_number]);
+                }
+
+                fclose($handle);
+            }, 200, $headers);
+        }
+
+        if ($format == 'excel') {    
+
+            return (new FastExcel(OrderLogic::format_export_data($users)))->download('customer_listDD.xlsx');
+
+
+        }
+
+        // If the requested format is not supported or not specified, return an error response
+        return response()->json(['error' => 'Unsupported format'], 400);
     }
 
     

@@ -232,13 +232,26 @@
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2, 3]
+                        },
+                        action: function (e, dt, node, config)
+                        {
+                            window.location.href = "{{ route('admin.customer.export',['format'=>'excel']) }}";
                         }
                     },
+                       
+
+                    
+                    
+                    
                     {
                         extend: 'csv',
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2, 3]
+                        },
+                        action: function (e, dt, node, config)
+                        {
+                            window.location.href = "{{ route('admin.customer.export',['format'=>'pdf']) }}";
                         }
                     },
                     {
@@ -278,15 +291,20 @@
             });
 
             $('#export-excel').click(function () {
-                datatable.button('.buttons-excel').trigger()
+               // datatable.button('.buttons-excel').trigger()
+                window.location.href = "{{ route('admin.customer.export',['format'=>'csv']) }}";
             });
 
+
+
+
+
             $('#export-csv').click(function () {
-                datatable.button('.buttons-csv').trigger()
+                window.location.href = "{{ route('admin.customer.export',['format'=>'csv']) }}";
             });
 
             $('#export-pdf').click(function () {
-                datatable.button('.buttons-pdf').trigger()
+                window.location.href = "{{ route('admin.customer.export',['format'=>'pdf']) }}";
             });
 
             $('#export-print').click(function () {
@@ -321,6 +339,30 @@
                 });
             });
         });
+
+        function exportData(format) {
+            // Send a request to the server to get all data
+            var url = "{{ route('admin.customer.export') }}?format=" + format;
+            $.get(url, function(data) {
+                // Create a temporary hidden anchor element
+                var downloadAnchor = document.createElement('a');
+                if (format === 'pdf') {
+                    downloadAnchor.href = 'data:application/pdf;base64,' + data;
+                    downloadAnchor.download = 'customer_list.pdf';
+                } else if (format === 'csv') {
+                    downloadAnchor.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
+                    downloadAnchor.download = 'customer_list.csv';
+                }
+                downloadAnchor.style.display = 'none';
+                document.body.appendChild(downloadAnchor);
+                
+                // Trigger the click event on the anchor element
+                downloadAnchor.click();
+
+                // Clean up
+                document.body.removeChild(downloadAnchor);
+            });
+        }
         
     </script>
 @endpush
