@@ -117,6 +117,10 @@ class BusinessSettingsController extends Controller
             'value' => $request['schedule_order']
         ]);
 
+        DB::table('business_settings')->updateOrInsert(['key' => 'contact_address'], [
+            'value' => $request['contact_address']
+        ]);
+
         DB::table('business_settings')->updateOrInsert(['key' => 'order_confirmation_model'], [
             'value' => $request['order_confirmation_model']
         ]);
@@ -427,6 +431,16 @@ class BusinessSettingsController extends Controller
         DB::table('business_settings')->updateOrInsert(['key' => 'address'], [
             'value' => $request['address']
         ]);
+
+
+        DB::table('business_settings')->updateOrInsert(['key' => 'contact_address'], [
+            'value' => $request['contact_address']
+        ]);
+
+
+
+
+        
 
         DB::table('business_settings')->updateOrInsert(['key' => 'footer_text'], [
             'value' => $request['footer_text']
