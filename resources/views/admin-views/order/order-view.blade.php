@@ -258,13 +258,20 @@
 
                                             $total_gst = $total_gst +  $gst_amount*$difference_in_days;
 
+                                            $itemData = \App\Models\Product::where('id',$value['item_id'])->first();
+
+                                            $colorName = ($itemColorImageId == 0) ? $itemData->color_name : $itemColorImageData->color_name ;
+
                                              ?>
                                      
                                                 <img class="img-fluid" src="{{ $itemImage }}"  alt="Product Image" height="100" width="100">
                                             <div class="row">
                                                 <div class="col-md-4 mb-3 mb-md-0">
                                                     <strong>
-                                                        {{ Str::limit($value['item_name'], 20, '...') }}</strong><br>
+                                                      
+                                                        {{ Str::limit($value['item_name'], 20, '...') }} 
+                                                        ({{ $colorName }}) 
+                                                    </strong><br>
                                                 </div>
 
                                                 <div class="col col-md-2 align-self-center">
