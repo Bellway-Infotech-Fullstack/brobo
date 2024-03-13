@@ -1481,6 +1481,100 @@ class Helpers
         return false;
     }
 
+    public static function format_export_data($data,$type)
+    {
+        $alldata = [];
+        if($type == 'customer_list'){
+            foreach($data as $key=>$value){
+                $alldata[]=[
+                    '#'=>$key+1,
+                    'Name' => $value->name,
+                    'Email' => $value->email ?? 'N/A',
+                    'Phone' => $value->mobile_number,
+                ];
+            }
+        }
+
+
+        if($type == 'refereed_list'){
+            foreach($data as $key=>$value){
+                $referrer = \APP\Models\User::select('id', 'name')
+                ->where('referral_code', $value->referred_code)
+                ->first();
+                    $alldata[]=[
+                        '#'=>$key+1,
+                        'Refer By' => $referrer->name,
+                        'Refer To' => $value->name ?? 'N/A',
+                    ];
+            }
+        }
+
+
+        if($type == 'order_list'){           
+
+            foreach ($data as $key => $order) {
+                $addressData = \App\Models\UsersAddress::where('id', $order->delivery_address_id)->first();
+
+                $floorNumber = '';
+                $deliveryAddress = '';
+                if (isset($addressData) && !empty($addressData)) {
+                    $floorNumber = $addressData->floor_number;
+                    if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                        $suffix = 'th';
+                    } else {
+                        switch ($floorNumber % 10) {
+                            case 1:
+                                $suffix = 'st';
+                                break;
+                            case 2:
+                                $suffix = 'nd';
+                                break;
+                            case 3:
+                                $suffix = 'rd';
+                                break;
+                            default:
+                                $suffix = 'th';
+                                break;
+                        }
+                    }
+
+                    $deliveryAddress = $addressData->house_name . "," . $floorNumber . "" . $suffix . "" . "floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->pin_code;
+                } else {
+                    $deliveryAddress = 'N/A';
+                }
+
+                $productNames = '';
+                $cartItems = json_decode($order->cart_items, true);
+                if (isset($cartItems) && !empty($cartItems)) {
+                    foreach ($cartItems as $item) {
+                        $productNames .= "," . $item['item_name'];
+                    }
+                    $productNames = trim($productNames, ',');
+                }
+
+                    $alldata[] = [
+                        '#' => $key + 1,
+                        'Booking ID' => $order['order_id'],
+                        'Booking Date' => date('d M Y', strtotime($order['created_at'])),
+                        'Customer Name' => $order->customer ? $order->customer['name'] : __('messages.invalid') . ' ' . __('messages.customer') . ' ' . __('messages.data'),
+                        'Customer Mobile Number' => $order->customer['mobile_number'] ?? '',
+                        'Delivery Address' => $deliveryAddress,
+                        'Pin Location' => $order->pin_location ?? 'N/A',
+                        'Product Names' => $productNames,
+                        'Start Date' => date('d M Y', strtotime($order['start_date'])),
+                        'End Date' => date('d M Y', strtotime($order['end_date'])),
+                        'Time Slot' => $order['time_duration'],
+                        'Paid Amount' => 'Rs. ' . ($order->paid_amount ?? ''),
+                        'Payment Status' => 'Paid',
+                        'Booking Status' => $order['status'], 
+                    ];  
+            }
+
+        }
+        
+        return $alldata;
+    }
+
     
 
 }

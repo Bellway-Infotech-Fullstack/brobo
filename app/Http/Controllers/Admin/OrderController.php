@@ -20,6 +20,8 @@ use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Support\Facades\DB;
 use Razorpay\Api\Api;
 use App\Models\User;
+use Rap2hpoutre\FastExcel\FastExcel;
+
 
 use PDF;
 
@@ -477,8 +479,7 @@ class OrderController extends Controller
     } 
 
 
-  public function initiateRefund(Request $request)
-{
+  public function initiateRefund(Request $request){
     try {
         $orderId = $request->post('order_id');
         $payment_keys_data = BusinessSetting::where(['key' => 'razor_pay'])->first();
@@ -623,6 +624,185 @@ class OrderController extends Controller
         // Handle exceptions
         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
     }
+  }
+
+  public function exportOrderList(Request $request){
+        
+    // Get all orders data   
+
+    $status = $request->query('order_status');
+   
+
+    $orders = Order::with(['customer'])
+        ->when(isset($request->zone), function($query)use($request){
+            return $query->whereHas('vendor', function($q)use($request){
+                return $q->whereIn('zone_id',$request->zone);
+            });
+        })
+   
+        
+        ->when($status == 'ongoing', function($query){
+            return $query->ServiceOngoing();
+        })
+        ->when($status == 'completed', function($query){
+            return $query->Completed();
+        })
+        ->when($status == 'cancelled', function($query){
+            return $query->Cancelled();
+        })
+        ->when($status == 'failed', function($query){
+            return $query->failed();
+        })
+        ->when($status == 'refunded', function($query){
+            return $query->Refunded();
+        })
+
+        ->when($status == 'all', function($query){
+            return $query->All();
+        })
+
+    
+        
+      
+        ->when(isset($request->from_date)&&isset($request->to_date)&&$request->from_date!=null&&$request->to_date!=null, function($query)use($request){
+            return $query->whereBetween('created_at', [$request->from_date." 00:00:00",$request->to_date." 23:59:59"]);
+        })
+        
+        ->orderBy('id', 'desc')->get();
+
+
+        $orderstatus = isset($request->orderStatus)?$request->orderStatus:[];
+        $scheduled =isset($request->scheduled)?$request->scheduled:0;
+        $vendor_ids =isset($request->vendor)?$request->vendor:[];
+        $zone_ids =isset($request->zone)?$request->zone:[];
+        $from_date =isset($request->from_date)?$request->from_date:null;
+        $to_date =isset($request->to_date)?$request->to_date:null;
+        if($status == 'all'){
+          $total = Order::All()->count();  
+        }
+        
+        if($status == 'ongoing'){
+          $total = Order::ServiceOngoing()->count();  
+        }
+        
+        if($status == 'completed'){
+          $total = Order::Completed()->count();  
+        }
+        
+        if($status == 'cancelled'){
+          $total = Order::Cancelled()->count();  
+        }
+        
+        if($status == 'refunded'){
+          $total = Order::Refunded()->count();  
+        }
+        
+        if($status == 'failed'){
+          $total = Order::failed()->count();  
+        }
+        
+
+    // Check the requested format (pdf or csv)
+    $format = $request->query('format');
+    
+
+    // Export to PDF format
+    if ($format === 'pdf') {
+        $pdf = PDF::loadView('admin-views.order.order-list-pdf',compact('orders'));
+        return $pdf->download('order_list.pdf');
+    }
+
+    // Export to CSV format
+    if ($format === 'csv') {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="order_list.csv"',
+        ];
+
+        // Using Symfony's StreamedResponse to efficiently stream large CSV files
+        return response()->stream(function () use ($orders) {
+          
+            $handle = fopen('php://output', 'w');
+            // Write CSV headers
+            $headers = ['#', 'Booking ID', 'Booking Date', 'Customer Name', 'Customer Mobile Number', 'Delivery Address', 'Pin Location', 'Product Names', 'Start Date', 'End Date', 'Time Slot', 'Paid Amount', 'Payment Status', 'Booking Status'];
+
+            // Write headers to CSV
+            fputcsv($handle, $headers);
+
+            // Write CSV rows
+            foreach ($orders as $k => $order) {
+                $addressData = \App\Models\UsersAddress::where('id', $order->delivery_address_id)->first();
+
+                $floorNumber = '';
+                $deliveryAddress = '';
+                if (isset($addressData) && !empty($addressData)) {
+                    $floorNumber = $addressData->floor_number;
+                    if ($floorNumber % 100 >= 11 && $floorNumber % 100 <= 13) {
+                        $suffix = 'th';
+                    } else {
+                        switch ($floorNumber % 10) {
+                            case 1:
+                                $suffix = 'st';
+                                break;
+                            case 2:
+                                $suffix = 'nd';
+                                break;
+                            case 3:
+                                $suffix = 'rd';
+                                break;
+                            default:
+                                $suffix = 'th';
+                                break;
+                        }
+                    }
+
+                    $deliveryAddress = $addressData->house_name . "," . $floorNumber . "" . $suffix . "" . "floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->pin_code;
+                } else {
+                    $deliveryAddress = 'N/A';
+                }
+
+                $productNames = '';
+                $cartItems = json_decode($order->cart_items, true);
+                if (isset($cartItems) && !empty($cartItems)) {
+                    foreach ($cartItems as $item) {
+                        $productNames .= "," . $item['item_name'];
+                    }
+                    $productNames = trim($productNames, ',');
+                }
+                $rowData = [
+                    $k + 1,
+                    $order['order_id'],
+                    date('d M Y', strtotime($order['created_at'])),
+                    $order->customer ? $order->customer['name'] : __('messages.invalid') . ' ' . __('messages.customer') . ' ' . __('messages.data'),
+                    $order->customer['mobile_number'] ?? '',
+                    $deliveryAddress,
+                    $order->pin_location ?? 'N/A',
+                    $productNames,
+                    date('d M Y', strtotime($order['start_date'])),
+                    date('d M Y', strtotime($order['end_date'])),
+                    $order['time_duration'],
+                    'Rs. ' . ($order->paid_amount ?? ''),
+                    'Paid',
+                    $order['status']
+                ];
+            
+                // Write the row to CSV
+                fputcsv($handle, $rowData);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
+    if ($format == 'excel') {    
+
+        return (new FastExcel(Helpers::format_export_data($orders,'order_list')))->download('order_list.xlsx');
+
+
+    }
+
+    // If the requested format is not supported or not specified, return an error response
+    return response()->json(['error' => 'Unsupported format'], 400);
 }
 
 }
