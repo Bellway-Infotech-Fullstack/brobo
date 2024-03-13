@@ -332,7 +332,6 @@ class CustomerController extends Controller
             $pdf = PDF::loadView('admin-views.customer.export_pdf',compact('users'));
 
 
-          //  $pdf = PDF::loadView('admin-views.customer.export_pdf', ['users' => $users]);
             return $pdf->download('customer_list.pdf');
         }
 
