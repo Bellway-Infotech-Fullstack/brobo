@@ -37,6 +37,9 @@ class OrderController extends Controller
         {
             $request = json_decode(session('order_filter'));
         }
+
+
+        Order::where(['checked' => 0])->update(['checked' => 1]);
         
         
    
