@@ -51,11 +51,13 @@ Route::group(['namespace' => 'API'], function () {
 
     Route::controller(ProductController::class)->group(function () {
         Route::get('get-product-list-for-web', 'getProductListForWeb'); 
-        Route::get('product-detail-for-web', 'getProductDetail');      
+        Route::get('product-detail-for-web', 'getProductDetail');   
+        Route::get('get-all-product-list-for-web', 'getAllProductListForWeb');   
     });
     Route::controller(CategoryController::class)->group(function () {
         Route::get('get-all-subcategories-for-web', 'getAllSubCategories');
     });
+
 
     Route::controller(LocationController::class)->group(function () {
         Route::post('manage-location-data', 'manageLocationData');

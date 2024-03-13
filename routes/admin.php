@@ -65,6 +65,8 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
         Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customer']], function () {
             Route::get('add-new', 'CustomerController@add_new')->name('add-new');
+            Route::get('export', 'CustomerController@export')->name('export');
+
             Route::post('add-new', 'CustomerController@store');
             Route::get('list', 'CustomerController@list')->name('list');
             Route::get('update/{id}', 'CustomerController@edit')->name('edit');
