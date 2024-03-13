@@ -258,10 +258,15 @@
                     $count++;
                   //  $total_item_price = $total_item_price + $detail['item_price'];
 
+                  $itemColorImageId = (isset($detail['item_color_image_id']) && !empty($detail['item_color_image_id'])) ? $value['item_color_image_id'] :  0 ;
+                  $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
+                  $itemData = \App\Models\Product::where('id',$detail['item_id'])->first();
+
+                  $colorName = ($itemColorImageId == 0) ? $itemData->color_name : $itemColorImageData->color_name ;
                     ?>
                     <tr>
                         <td>{{$count }}</td>
-                        <td> {{$detail['item_name'] ?? ''}}  </td>
+                        <td> {{$detail['item_name'] ?? ''}} ({{ $colorName }})   </td>
                         <td>  {{ $detail['quantity'] ?? ''}}   </td>
                          <td> Rs. {{$detail['item_price']/$detail['quantity'] }}  </td>
                         <td> 
