@@ -17,7 +17,6 @@ use App\Models\UsersAddress;
 use Illuminate\Support\Str;
 use PDF;
 use Rap2hpoutre\FastExcel\FastExcel;
-use App\CentralLogics\OrderLogic;
 
 class CustomerController extends Controller
 {
@@ -329,7 +328,7 @@ class CustomerController extends Controller
 
         // Export to PDF format
         if ($format === 'pdf') {
-            $pdf = PDF::loadView('admin-views.customer.export_pdf',compact('users'));
+            $pdf = PDF::loadView('admin-views.customer.customer-list-pdf',compact('users'));
 
 
             return $pdf->download('customer_list.pdf');
@@ -359,7 +358,67 @@ class CustomerController extends Controller
 
         if ($format == 'excel') {    
 
-            return (new FastExcel(OrderLogic::format_export_data($users)))->download('customer_listDD.xlsx');
+            return (new FastExcel(Helpers::format_export_data($users,'customer_list')))->download('customer_list.xlsx');
+
+
+        }
+
+        // If the requested format is not supported or not specified, return an error response
+        return response()->json(['error' => 'Unsupported format'], 400);
+    }
+
+
+    public function exportRefereedList(Request $request){
+        
+        // Get all users data   
+
+        $users  =  User::select('id', 'name', 'referral_code', 'referred_code')
+        ->whereNotNull('referred_code')
+        ->whereExists(function ($query) {
+            $query->select(DB::raw(1))
+                ->from('users as referrer')
+                ->whereColumn('referrer.referral_code', '=', 'users.referred_code');
+        })->get();
+
+        // Check the requested format (pdf or csv)
+        $format = $request->query('format');
+        
+
+        // Export to PDF format
+        if ($format === 'pdf') {
+            $pdf = PDF::loadView('admin-views.customer.refer-list-pdf',compact('users'));
+            return $pdf->download('referred_list.pdf');
+        }
+
+        // Export to CSV format
+        if ($format === 'csv') {
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="referred_list.csv"',
+            ];
+
+            // Using Symfony's StreamedResponse to efficiently stream large CSV files
+            return response()->stream(function () use ($users) {
+              
+                $handle = fopen('php://output', 'w');
+                // Write CSV headers
+                fputcsv($handle, ['#','Refer By', 'Refer To']);
+
+                // Write CSV rows
+                foreach ($users as $k => $user) {
+                    $referrer = \APP\Models\User::select('id', 'name')
+                    ->where('referral_code', $user->referred_code)
+                    ->first();
+                    fputcsv($handle, [$k+1, $referrer->name,$user['name'] ?? 'N/A',]);
+                }
+
+                fclose($handle);
+            }, 200, $headers);
+        }
+
+        if ($format == 'excel') {    
+
+            return (new FastExcel(Helpers::format_export_data($users,'refereed_list')))->download('referred_list.xlsx');
 
 
         }

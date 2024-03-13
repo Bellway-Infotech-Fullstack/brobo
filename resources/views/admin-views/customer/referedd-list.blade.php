@@ -142,8 +142,8 @@
                             
                             @php
                                    $referrer = \APP\Models\User::select('id', 'name')
-        ->where('referral_code', $e->referred_code)
-        ->first();
+                                ->where('referral_code', $e->referred_code)
+                                ->first();
                             @endphp
                                 <tr>
                                     <th scope="row">{{$k+$user_list->firstItem()}}</th>
@@ -191,7 +191,8 @@
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2]
-                        }
+                        },
+                        
                     },
                     {
                         extend: 'csv',
@@ -205,6 +206,10 @@
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2]
+                        },
+                        action: function (e, dt, node, config)
+                        {
+                            window.location.href = "{{ route('admin.customer.export-refereed-list',['format'=>'pdf']) }}";
                         }
                     },
                     {
@@ -237,11 +242,12 @@
             });
 
             $('#export-excel').click(function () {
-                datatable.button('.buttons-excel').trigger()
+               // datatable.button('.buttons-excel').trigger()
+               window.location.href = "{{ route('admin.customer.export-refereed-list',['format'=>'excel']) }}";
             });
 
             $('#export-csv').click(function () {
-                datatable.button('.buttons-csv').trigger()
+                window.location.href = "{{ route('admin.customer.export-refereed-list',['format'=>'csv']) }}";
             });
 
             $('#export-pdf').click(function () {

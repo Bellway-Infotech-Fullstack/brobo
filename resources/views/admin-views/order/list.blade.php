@@ -58,7 +58,7 @@
                                 </div>
                                 <input id="datatableSearch_" type="search" name="search" class="form-control"
                                        placeholder="{{__('messages.search')}}" aria-label="{{__('messages.search')}}" required>
-                                       <input type="hidden" name="status" value="{{ request('status') }}" />
+                                       <input type="hidden" name="status" id="status" value="{{ request('status') }}" />
                                 <button type="submit" class="btn btn-light">{{__('messages.search')}}</button>
 
                             </div>
@@ -686,13 +686,17 @@
                             columns: [0, 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13]
                         },
                         customize: function (doc) {
-                // Adjust PDF document settings
-                doc.pageMargins = [20, 20, 20, 20]; // Adjust margins: [left, top, right, bottom]
-                doc.defaultStyle.fontSize = 8; // Adjust font size
-                            console.log("doc",doc)
-                // You can also adjust other settings here if needed
-            }
-                    },
+                            // Adjust PDF document settings
+                            doc.pageMargins = [20, 20, 20, 20]; // Adjust margins: [left, top, right, bottom]
+                            doc.defaultStyle.fontSize = 8; // Adjust font size
+                                        console.log("doc",doc)
+                        // You can also adjust other settings here if needed
+                        },
+                        action: function (e, dt, node, config)
+                        {
+                            var order_status = $("#status").val();                            
+                              window.location.href = "{!! route('admin.order.export-order-list', ['format' => 'pdf', 'order_status' => '']) !!}" + order_status;                        }
+                        },
                     {
                         extend: 'print',
                         className: 'd-none',
@@ -723,11 +727,15 @@
             });
 
             $('#export-excel').click(function () {
-                datatable.button('.buttons-excel').trigger()
+                var order_status = $("#status").val();
+                window.location.href = "{!! route('admin.order.export-order-list', ['format' => 'excel', 'order_status' => '']) !!}" + order_status;
+                //datatable.button('.buttons-excel').trigger()
             });
 
             $('#export-csv').click(function () {
-                datatable.button('.buttons-csv').trigger()
+                //datatable.button('.buttons-csv').trigger()
+                var order_status = $("#status").val();
+                window.location.href = "{!! route('admin.order.export-order-list', ['format' => 'csv', 'order_status' => '']) !!}" + order_status;
             });
 
             $('#export-pdf').click(function () {

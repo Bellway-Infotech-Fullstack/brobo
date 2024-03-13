@@ -320,21 +320,4 @@ class OrderLogic
     //         $user->increment('order_count');
     //     }
     // }
-
-
-    public static function format_export_data($orders)
-    {
-        $data = [];
-        foreach($orders as $key=>$order)
-        {
-
-            $data[]=[
-                '#'=>$key+1,
-                'Name' => $order->name,
-                'Email' => $order->email ?? 'N/A',
-                'Phone' => $order->mobile_number,
-            ];
-        }
-        return $data;
-    }
 }
