@@ -232,26 +232,14 @@
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2, 3]
-                        },
-                        action: function (e, dt, node, config)
-                        {
-                            window.location.href = "{{ route('admin.customer.export',['format'=>'excel']) }}";
                         }
                     },
                        
-
-                    
-                    
-                    
-                    {
+                     {
                         extend: 'csv',
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2, 3]
-                        },
-                        action: function (e, dt, node, config)
-                        {
-                            window.location.href = "{{ route('admin.customer.export',['format'=>'pdf']) }}";
                         }
                     },
                     {
@@ -259,6 +247,10 @@
                         className: 'd-none',
                         exportOptions: {
                             columns: [0, 1, 2, 3]
+                        },
+                        action: function (e, dt, node, config)
+                        {
+                            window.location.href = "{{ route('admin.customer.export',['format'=>'pdf']) }}";
                         }
                     },
                     {
@@ -292,7 +284,7 @@
 
             $('#export-excel').click(function () {
                // datatable.button('.buttons-excel').trigger()
-                window.location.href = "{{ route('admin.customer.export',['format'=>'csv']) }}";
+                window.location.href = "{{ route('admin.customer.export',['format'=>'excel']) }}";
             });
 
 
@@ -304,7 +296,7 @@
             });
 
             $('#export-pdf').click(function () {
-                window.location.href = "{{ route('admin.customer.export',['format'=>'pdf']) }}";
+                datatable.button('.buttons-pdf').trigger()
             });
 
             $('#export-print').click(function () {
