@@ -66,7 +66,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customer']], function () {
             Route::get('add-new', 'CustomerController@add_new')->name('add-new');
             Route::get('export', 'CustomerController@export')->name('export');
-
+            Route::get('export-refereed-list', 'CustomerController@exportRefereedList')->name('export-refereed-list');
             Route::post('add-new', 'CustomerController@store');
             Route::get('list', 'CustomerController@list')->name('list');
             Route::get('update/{id}', 'CustomerController@edit')->name('edit');
@@ -165,6 +165,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         Route::group(['prefix' => 'booking', 'as' => 'order.', 'middleware' => ['module:order']], function () {
             Route::get('list/{status}', 'OrderController@list')->name('list');
             Route::get('details/{id}', 'OrderController@details')->name('details');
+            Route::get('export-order-list', 'OrderController@exportOrderList')->name('export-order-list');
             Route::get('status', 'OrderController@status')->name('status');
             // Route::put('status-update/{id}', 'OrderController@status')->name('status-update');
             Route::get('download-invoice/{id}', 'OrderController@downloadInvoice')->name('download-invoice');
