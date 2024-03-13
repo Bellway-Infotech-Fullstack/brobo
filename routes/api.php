@@ -31,6 +31,7 @@ Route::group(['namespace' => 'API'], function () {
 
     Route::controller(SettingController::class)->group(function () {
         Route::get('get-setting-data', 'index');
+        Route::get('get-order-settings-for-web', 'getOrderSettings');
     });
     
     Route::controller(CouponController::class)->group(function () {
