@@ -336,7 +336,6 @@
 <script>
     @php($admin_order_notification=\App\Models\BusinessSetting::where('key','admin_order_notification')->first())
     @php($admin_order_notification=$admin_order_notification?$admin_order_notification->value:0)
-    @if($admin_order_notification)
     setInterval(function () {
         $.get({
             url: '{{route('admin.get-restaurant-data')}}',
@@ -354,7 +353,7 @@
     function check_order() {
         location.href = '{{route('admin.order.list',['status'=>'all'])}}';
     }
-    @endif
+
     function route_alert(route, message, title='Are you sure?') {
         Swal.fire({
             title: title,
