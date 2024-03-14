@@ -353,27 +353,10 @@
                                      
                                             Rs.  {{  $test }}
                                         </dd>
-                                        
-                                          <dt class="col-sm-6">{{ __('messages.coupon') }}
-                                            {{ __('messages.discount') }}:</dt>
-                                        <dd class="col-sm-6">
-                                          <?php
-                                          if(isset($coupon_data)){
-                                                if($coupon_data->discount_type == 'amount' ){
-                                            ?>
-                                            
-                                            -  Rs. {{ $coupon_discount_amount }}
-                                           <?php } else { ?>   
-                                            -   {{ $coupon_discount_amount }} %
-                                            <?php } ?>
-
-
-                                            <?php } else{ ?>
-
-                                           - Rs. 0
-
-                                            <?php } ?>
-                                        </dd>
+                                        <dt class="col-sm-6">Refrrral {{ __('messages.discount') }}:</dt>
+                                        <dd class="col-sm-6">-  Rs.  {{  $order['referral_discount'] ?? 0 }}</dd>
+                                        <dt class="col-sm-6">{{ __('messages.coupon') }} {{ __('messages.discount') }}:</dt>
+                                        <dd class="col-sm-6">-  Rs. {{  $order['coupon_discount'] ?? 0 }}</dd>
                                         
                                         <dt class="col-sm-6">{{ __('messages.gst') }}:</dt>
                                         <dd class="col-sm-6">
