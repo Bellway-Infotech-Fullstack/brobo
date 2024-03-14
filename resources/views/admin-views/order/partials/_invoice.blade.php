@@ -162,7 +162,7 @@
                                             $total_gst = $total_gst +  $gst_amount*$difference_in_days;
                                             
                                             
-                  $itemColorImageId = (isset($detail['item_color_image_id']) && !empty($detail['item_color_image_id'])) ? $value['item_color_image_id'] :  0 ;
+                  $itemColorImageId = (isset($detail['item_color_image_id']) && !empty($detail['item_color_image_id'])) ? $detail['item_color_image_id'] :  0 ;
                   $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
                   $itemData = \App\Models\Product::where('id',$detail['item_id'])->first();
 
