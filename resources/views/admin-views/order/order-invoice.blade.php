@@ -310,26 +310,16 @@
                 <td> <strong>  Sub Total : </strong>  </td>
                 <td align="right">  Rs.  {{ $test }}</td>
             </tr>
+                     <tr>
+                         
+                     <td><strong> Refrrral {{ __('messages.discount') }} :</strong</td>
+                      <td align="right">- Rs. {{  $order['referral_discount'] ?? 0 }} </td>
+         </tr>
             
                           <tr>
                 <td> <strong>Coupon Discount :</strong> </td>
                 <td align="right">
-                    <?php
-                    if(isset($coupon_data)){
-                          if($coupon_data->discount_type == 'amount' ){
-                      ?>
-                      
-                      -  Rs. {{ $coupon_discount_amount }}
-                     <?php } else { ?>   
-                      -   {{ $coupon_discount_amount }} %
-                      <?php } ?>
-
-
-                      <?php } else{ ?>
-
-                     - Rs. 0
-
-                      <?php } ?>
+                  -  Rs. {{  $order['coupon_discount'] ?? 0 }}
                 </td>
             </tr>
            
