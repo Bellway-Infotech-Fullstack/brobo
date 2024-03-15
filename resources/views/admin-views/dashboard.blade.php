@@ -48,7 +48,7 @@
                     <p class="page-header-text">{{__('messages.welcome_message')}}</p>
                 </div>
 
-                <div class="col-sm-auto" style="width: 306px;">
+                <div class="col-sm-auto" style="width: 306px;display:none">
                     <label class="badge badge-soft-success float-right">
                         {{__('messages.software_version')}} : {{env('SOFTWARE_VERSION')}}
                     </label>

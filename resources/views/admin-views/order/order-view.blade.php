@@ -260,7 +260,7 @@
 
                                             $itemData = \App\Models\Product::where('id',$value['item_id'])->first();
 
-                                            $colorName = ($itemColorImageId == 0) ? $itemData->color_name : $itemColorImageData->color_name ;
+                                            $colorName = ($itemColorImageId == 0) ? ($itemData->color_name ?? 'N/A') : ($itemColorImageData->color_name ?? 'N/A') ;
 
                                              ?>
                                      
