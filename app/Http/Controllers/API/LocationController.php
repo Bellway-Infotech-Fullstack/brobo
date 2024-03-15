@@ -179,9 +179,9 @@ public function matchLocationData(Request $request)
             foreach ($coordinatePairs as $pair) {
                 list($longitude, $latitude) = explode(" ", $pair);
                 array_push($vertices_x,(float) $longitude);
-                 array_push($vertices_y,(float) $latitude);
+                array_push($vertices_y,(float) $latitude);
                
-               }
+            }
 
             $points_polygon = count($vertices_x);  // number vertices = number of points in a self-closing polygon
             $longitude_x = $longitudeToCheck;  // x-coordinate of the point to test
@@ -196,6 +196,7 @@ public function matchLocationData(Request $request)
     if ($this->is_in_polygon($points_polygon, $vertices_x, $vertices_y, $longitude_x, $latitude_y)){
                 return response()->json(['status' => 'success', 'message' => 'Given coordinates are within the range.', 'code' => 200]);
     } else {
+       
                 return response()->json(['status' => 'error', 'message' => 'Given coordinates are not within the range.', 'code' => 200]);
     }
             
@@ -213,13 +214,21 @@ public function matchLocationData(Request $request)
 
 private function is_in_polygon($points_polygon, $vertices_x, $vertices_y, $longitude_x, $latitude_y)
 {
+
+
+
   $c = false;
   $j = $points_polygon - 1;
 
   for ($i = 0; $i < $points_polygon; $i++) {
+ 
+
+
+
     if (($vertices_y[$i] > $latitude_y) != ($vertices_y[$j] > $latitude_y) &&
         ($longitude_x < ($vertices_x[$j] - $vertices_x[$i]) * ($latitude_y - $vertices_y[$i]) / ($vertices_y[$j] - $vertices_y[$i]) + $vertices_x[$i])) {
       $c = !$c;
+      break;
     }
     $j = $i;
   }
