@@ -20,6 +20,7 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('register', 'register');
             Route::post('login', 'login');
             Route::post('forget-password', 'forgotPassword');
+            Route::post('send-signup-otp','sendOTP');
             Route::post('verify-otp', 'verifyOTP');
             Route::post('resend-otp', 'resendOTP');
             Route::put('reset-password', 'resetPassword');
