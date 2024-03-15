@@ -40,6 +40,13 @@ class OrderController extends Controller
 
 
         Order::where(['checked' => 0])->update(['checked' => 1]);
+
+        $orderstatus = isset($request->orderStatus)?$request->orderStatus:[];
+        $scheduled =isset($request->scheduled)?$request->scheduled:0;
+        $vendor_ids =isset($request->vendor)?$request->vendor:[];
+        $zone_ids =isset($request->zone)?$request->zone:[];
+        $from_date =isset($request->from_date)?$request->from_date:null;
+        $to_date =isset($request->to_date)?$request->to_date:null;
         
         
    
@@ -79,17 +86,23 @@ class OrderController extends Controller
         ->when(isset($request->from_date)&&isset($request->to_date)&&$request->from_date!=null&&$request->to_date!=null, function($query)use($request){
             return $query->whereBetween('created_at', [$request->from_date." 00:00:00",$request->to_date." 23:59:59"]);
         })
+
+        ->when(isset($request->orderStatus) && $status == 'all', function ($query) use ($request) {
+           
+            if($request->orderStatus[0] == 'refunded'){
+                return $query->where('refunded','yes');
+               
+            } else {
+                return $query->whereIn('status', $request->orderStatus)->where('refunded','yes');;
+            }
+            
+        })
         
         ->orderBy('id', 'desc')
         ->paginate(config('default_pagination'));
 
 
-        $orderstatus = isset($request->orderStatus)?$request->orderStatus:[];
-        $scheduled =isset($request->scheduled)?$request->scheduled:0;
-        $vendor_ids =isset($request->vendor)?$request->vendor:[];
-        $zone_ids =isset($request->zone)?$request->zone:[];
-        $from_date =isset($request->from_date)?$request->from_date:null;
-        $to_date =isset($request->to_date)?$request->to_date:null;
+       
         if($status == 'all'){
           $total = Order::All()->count();  
         }
@@ -113,6 +126,8 @@ class OrderController extends Controller
         if($status == 'failed'){
           $total = Order::failed()->count();  
         }
+
+        $total = $orders->total();
         
 
 
