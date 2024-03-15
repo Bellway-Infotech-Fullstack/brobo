@@ -510,16 +510,34 @@ class BookingController extends Controller
         $user = JWTAuth::toUser($token);
         $customerId = (isset($user) && !empty($user)) ? $user->id : '';
 
-        $loginUserData = User::find($customerId);
+        $loginUserData = User::find( $customerId);
     
         // Check if the order exists
         if (count($bookingData) == 0) {
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
+        
+        
+        
     
 
 
         Order::where('order_id', $bookingId)->update(['status' => 'cancelled', 'description' => 'Your order has been cancelled']);
+          
+          
+           $order = Order::find($bookingData[0]->id);
+
+          $cartItems = json_decode($order->cart_items,true);  
+
+          if(isset($cartItems) && !empty($cartItems)){
+            foreach ($cartItems as $key => $value){
+                $productData = Product::find($value['item_id']);   
+                $productCartQuantity = $value['quantity'];
+                $totalStock = $productData->total_stock;
+                $productData->total_stock =  $totalStock + $productCartQuantity; 
+                $productData->save();           
+            }
+          }
     
 
            // send push notification 
@@ -527,7 +545,7 @@ class BookingController extends Controller
            $loginUserFcmToken = $loginUserData->fcm_token ?? '';
 
            $data = [
-               'title' => 'Order Cancelled',
+               'title' => 'Order Placed',
                'description' => 'Order cancelled successfully. Please contact admin to refund your amount',
                'order_id' => $bookingId,
                'image' => '',
