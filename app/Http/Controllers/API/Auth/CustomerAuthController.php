@@ -45,6 +45,7 @@ class CustomerAuthController extends Controller
                         ->symbols()
                 ],
                 'fcm_token' => 'required',
+                'otp' => 'required',
         
                 
             ], [
@@ -52,10 +53,11 @@ class CustomerAuthController extends Controller
                 'name.regex' => 'Name should only contain letters and spaces.',
                 'mobile_number.required' => 'Please enter mobile number.',
                 'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
-                'mobile_number.unique' => 'The mobile number is already in use. Please choose another.',
+                'mobile_number.unique' => 'The mobile number is already registered.',
                 'password.required' => 'Please enter a password.',
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
                 'fcm_token.required' => 'Please send fcm token.',
+                'otp.required' => 'Please enter otp.',
             ]);
             
             if ($validation->fails()) {
@@ -72,6 +74,18 @@ class CustomerAuthController extends Controller
             $request['fcm_token'] = $request->fcm_token;
             $referralCode = Str::random(10);
             $request['referral_code'] = $referralCode;
+            $verificationCode= $request->otp;
+
+
+            $smsResponse = SMS_module::send($request->mobile_number, $verificationCode ,'1','no');
+            $smsResponse = json_decode($smsResponse);
+            
+         
+            if($smsResponse->type == 'error'){
+               return response()->json(['code' => 500,'status' => 'error','message' => $smsResponse->message]);
+            }
+
+            
 
             /*
 
@@ -818,5 +832,45 @@ class CustomerAuthController extends Controller
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()]);
         }
     }
-}
 
+
+    public function sendOTP(Request $request){
+        $config = Helpers::get_business_settings('msg91_sms');
+        if (isset($config) && $config['status'] == 1) {  
+            $templatedID = $config['template_id_for_otp']; 
+            $mobileNUmber = $request->mobile_number;
+
+            $validation = Validator::make($request->all(), [
+                'mobile_number' => 'required|regex:/\+91[0-9]{10}/|unique:users',
+        
+                
+            ], [
+                'mobile_number.required' => 'Please enter mobile number.',
+                'mobile_number.regex' => 'The mobile number should start with +91 and have 10 digits.',
+                'mobile_number.unique' => 'The mobile number is already registered.',
+            ]);
+            
+            if ($validation->fails()) {
+                return response()->json(['status' => 'error', 'code' => 422, 'message' => $validation->errors()->first()]);
+            }
+
+
+
+           
+
+            $verificationCode = random_int(1000, 9999);       
+            $smsResponse = SMS_module::send($request->mobile_number, $verificationCode , $templatedID,'no');
+            if($smsResponse == 'success'){
+                return response()->json(['code' => 200,'status' => 'success','message' => 'OTP sent successfully. Please verify otp to register',
+                ]);
+            } else {
+                return response()->json([
+                    'code' => 500,
+                    'status' => 'error',
+                    'message' => 'Failed ! Please try again',
+                ]);
+            }
+
+        }
+    }
+}

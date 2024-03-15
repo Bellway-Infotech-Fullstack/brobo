@@ -229,7 +229,39 @@ class SMS_module
                     $response = 'error';
                 }
                
-            } else {
+            } else if($templateId == '1'){
+                $curl = curl_init();
+
+                curl_setopt_array($curl, [
+                CURLOPT_URL => "https://control.msg91.com/api/v5/otp/verify?otp=$otp&mobile=$receiver",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => [
+                    "authkey: " . $config['authkey']
+                ],
+                ]);
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
+
+                if ($err) {                   
+                    $response = 'error';		
+               
+                } else {
+                    $response = $response;
+                    
+                }
+            }
+            
+            
+            
+            else {
                 $curl = curl_init();
                 curl_setopt_array($curl, array(
                     CURLOPT_URL => "https://api.msg91.com/api/v5/otp?template_id=" . $templateId . "&mobile=" . $receiver . "&authkey=" . $config['authkey'] . "",
@@ -252,7 +284,7 @@ class SMS_module
                 } else {
                     $response = 'error';
                 }
-            }
+            } 
 
             
 
