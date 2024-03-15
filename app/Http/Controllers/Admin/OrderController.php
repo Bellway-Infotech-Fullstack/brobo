@@ -378,6 +378,22 @@ class OrderController extends Controller
 
           $bookingUserFcmToken = $bookingUserData->fcm_token ?? '';
 
+         
+
+          $cartItems = json_decode($order->cart_items,true);  
+
+          if(isset($cartItems) && !empty($cartItems)){
+            foreach ($cartItems as $key => $value){
+                $productData = Product::find($value['item_id']);   
+                $productCartQuantity = $value['quantity'];
+                $totalStock = $productData->total_stock;
+                $productData->total_stock =  $totalStock + $productCartQuantity; 
+                $productData->save();           
+            }
+          }
+
+    
+
           $data = [
               'title' => 'Order Cancelled',
               'description' => 'Your order has been cancelled by admin. Please contact admin to refund your amount',
