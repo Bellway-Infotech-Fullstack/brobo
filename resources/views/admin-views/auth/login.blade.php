@@ -60,7 +60,7 @@ $favIconPath =  $favIconData->value ? $favIconPath : '';
                         <div class="text-center">
                             <div class="mb-5">
                                 <h2 class="text-capitalize">{{__('messages.signin')}}</h2>
-                                <span class="badge badge-soft-info">( {{__('messages.admin_or_employee_signin')}} )</span>
+                                <span class="badge badge-soft-info">(Admin or Employee Sign in)</span>
                             </div>
                             {{--<a class="btn btn-lg btn-block btn-white mb-4" href="#">
                                 <span class="d-flex justify-content-center align-items-center">
@@ -247,4 +247,5 @@ if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) document.write('<script sr
 </script>
 </body>
 </html>
+
 

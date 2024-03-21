@@ -93,7 +93,7 @@ class OrderController extends Controller
                 return $query->where('refunded','yes');
                
             } else {
-                return $query->whereIn('status', $request->orderStatus)->where('refunded','yes');;
+                return $query->whereIn('status', $request->orderStatus);
             }
             
         })
@@ -356,7 +356,7 @@ class OrderController extends Controller
                 return back(); 
             }
             
-            $order_description = "Your order has been completed";
+            $order_description = "Your order has been completed. We hope you enjoy our services. If you have any questions or concerns, feel free to reach out. We appreciate your business and look forward to serving you again in the future";
             
         }
         

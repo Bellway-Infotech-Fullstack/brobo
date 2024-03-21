@@ -59,7 +59,7 @@
                     <label class="badge badge-danger">{{__('messages.invalid')}} {{__('messages.customer')}} {{__('messages.data')}}</label>
                 @endif
             </td>
-            <td> {{ $order->customer['mobile_number'] }}</td>
+            <td> {{ $order->customer['mobile_number'] ?? 'N/A' }}</td>
             <td>
                 <?php
                 $addressData  =   \App\Models\UsersAddress::where('id' , $order->delivery_address_id)->first();
@@ -154,3 +154,4 @@
         @endforeach
     </tbody>
 </table>
+

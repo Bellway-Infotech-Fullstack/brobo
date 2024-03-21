@@ -1,5 +1,5 @@
 @extends('layouts.admin.app')
-@section('title','Refereed Customer List')
+@section('title','Referred Customer List')
 @push('css_or_js')
 
 <style>
@@ -26,7 +26,7 @@
     <div class="d-md-flex_ align-items-center justify-content-between mb-2">
         <div class="row">
             <div class="col-md-8">
-                <h3 class="h3 mb-0 text-black-50">Refereed Customer {{trans('messages.list')}}</h3>
+                <h3 class="h3 mb-0 text-black-50">Referred Customer {{trans('messages.list')}}</h3>
             </div>
 
           
@@ -141,14 +141,14 @@
                             @foreach($user_list as $k=>$e)
                             
                             @php
-                                   $referrer = \APP\Models\User::select('id', 'name')
+                                   $referrer = \APP\Models\User::select('id', 'name','mobile_number')
                                 ->where('referral_code', $e->referred_code)
                                 ->first();
                             @endphp
                                 <tr>
                                     <th scope="row">{{$k+$user_list->firstItem()}}</th>
-                                    <td class="text-capitalize">{{$referrer->name}}</td>
-                                    <td >{{$e['name'] ?? 'N/A'}}</td>
+                                    <td class="text-capitalize">{{$referrer->name}} ({{$referrer->mobile_number}})</td>
+                                    <td >{{$e['name'] ?? 'N/A'}} ({{$e['mobile_number'] ?? 'N/A'}})</td>
                                 </tr>
                             @endforeach
                             </tbody>
