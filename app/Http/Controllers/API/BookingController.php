@@ -482,6 +482,7 @@ class BookingController extends Controller
         $transactionId = $request->post('extended_order_transaction_id');
         $bookingData = Order::where('order_id',$bookingId)->get();
         $amount = $request->post('amount');
+        $gstAmount = $request->post('gst_amount');
     
         // Check if the order exists
         if (count($bookingData) == 0) {
@@ -490,8 +491,10 @@ class BookingController extends Controller
 
         $paidAmount = $bookingData[0]->final_item_price;
         $totalAmount = $paidAmount + $amount;
+        
+        $gstAmount =  $bookingData[0]->gst_amount + $gstAmount;
     
-           Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'final_item_price' => $totalAmount,'paid_amount' => $totalAmount,'extend_amount' => $amount]);
+           Order::where('order_id', $bookingId)->update(['extended_order_transaction_id' => $transactionId , 'end_date' => $endDate,'final_item_price' => $totalAmount,'paid_amount' => $totalAmount,'extend_amount' => $amount,'gst_amount' => $gstAmount]);
 
            $bookingData = Order::where('order_id',$bookingId)->get();
 
@@ -545,7 +548,7 @@ class BookingController extends Controller
            $loginUserFcmToken = $loginUserData->fcm_token ?? '';
 
            $data = [
-               'title' => 'Order Placed',
+               'title' => 'Order Cancelled',
                'description' => 'Order cancelled successfully. Please contact admin to refund your amount',
                'order_id' => $bookingId,
                'image' => '',

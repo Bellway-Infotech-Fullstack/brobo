@@ -177,13 +177,15 @@ class CustomerController extends Controller
 
     public function refereddsearch(Request $request){
         $key = explode(' ', $request['search']);
-        $user_list = User::select('users.id', 'users.name', 'users.referral_code', 'users.referred_code')
+        $user_list = User::select('users.id', 'users.name', 'users.referral_code', 'users.referred_code','users.mobile_number')
             ->join('users as referrer', 'users.referred_code', '=', 'referrer.referral_code')
             ->whereNotNull('users.referred_code')
             ->where(function ($q) use ($key) {
                 foreach ($key as $value) {
                     $q->orWhere('referrer.name', 'like', "%{$value}%")
-                    ->orWhere('users.name', 'like', "%{$value}%");
+                    ->orWhere('users.name', 'like', "%{$value}%")
+                    ->orWhere('referrer.mobile_number', '=', "$value")
+                    ->orWhere('users.mobile_number', '=', "$value");
                 }
             })
             ->paginate(config('default_pagination'));
@@ -199,7 +201,7 @@ class CustomerController extends Controller
    
     function refereed_list()
     {
-        $user_list  =  User::select('id', 'name', 'referral_code', 'referred_code')
+        $user_list  =  User::select('id', 'name', 'referral_code', 'referred_code','mobile_number')
     ->whereNotNull('referred_code')
     ->whereExists(function ($query) {
         $query->select(DB::raw(1))
@@ -372,7 +374,7 @@ class CustomerController extends Controller
         
         // Get all users data   
 
-        $users  =  User::select('id', 'name', 'referral_code', 'referred_code')
+        $users  =  User::select('id', 'name', 'referral_code', 'referred_code','mobile_number')
         ->whereNotNull('referred_code')
         ->whereExists(function ($query) {
             $query->select(DB::raw(1))
@@ -406,10 +408,11 @@ class CustomerController extends Controller
 
                 // Write CSV rows
                 foreach ($users as $k => $user) {
-                    $referrer = \APP\Models\User::select('id', 'name')
+                    $refer_to_mobile_number = $user['mobile_number'] ?? 'N/A';
+                    $referrer = \APP\Models\User::select('id', 'name','mobile_number')
                     ->where('referral_code', $user->referred_code)
                     ->first();
-                    fputcsv($handle, [$k+1, $referrer->name,$user['name'] ?? 'N/A',]);
+                    fputcsv($handle, [$k+1, $referrer->name. " (" .$referrer->mobile_number . ")" , ($user['name'] ?? 'N/A') . " (" . $refer_to_mobile_number  .  ")"]);
                 }
 
                 fclose($handle);

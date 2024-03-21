@@ -119,6 +119,7 @@ class CustomerAuthController extends Controller
             }
 
             $request['referred_code'] = $request->referred_code;
+            $request['is_notification_setting_on'] = 'yes';
 
 
 

@@ -1498,13 +1498,14 @@ class Helpers
 
         if($type == 'refereed_list'){
             foreach($data as $key=>$value){
-                $referrer = \APP\Models\User::select('id', 'name')
+                $referrer = \APP\Models\User::select('id', 'name','mobile_number')
                 ->where('referral_code', $value->referred_code)
                 ->first();
+                    $refer_to_mobile_number = $value->mobile_number ?? 'N/A';
                     $alldata[]=[
                         '#'=>$key+1,
-                        'Refer By' => $referrer->name,
-                        'Refer To' => $value->name ?? 'N/A',
+                        'Refer By' => $referrer->name . " (" . $referrer->mobile_number.  ")",
+                        'Refer To' => ($value->name ?? 'N/A') . " (" . $refer_to_mobile_number  .  ")",
                     ];
             }
         }

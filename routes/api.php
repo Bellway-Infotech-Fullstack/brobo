@@ -54,7 +54,9 @@ Route::group(['namespace' => 'API'], function () {
     Route::controller(ProductController::class)->group(function () {
         Route::get('get-product-list-for-web', 'getProductListForWeb'); 
         Route::get('product-detail-for-web', 'getProductDetail');   
-        Route::get('get-all-product-list-for-web', 'getAllProductListForWeb');   
+        Route::get('get-all-product-list-for-web', 'getAllProductListForWeb');
+        Route::get('get-product-recommendation-list-for-web', 'getProductRecommendationList');
+
     });
     Route::controller(CategoryController::class)->group(function () {
         Route::get('get-all-subcategories-for-web', 'getAllSubCategories');

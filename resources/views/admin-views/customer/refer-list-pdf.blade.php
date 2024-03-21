@@ -18,7 +18,7 @@
 </style>
 </head>
 <body>
-<h1>Refereed Customer List List</h1>
+<h1>Referred Customer List</h1>
 <table>
     <thead>
         <tr>
@@ -31,14 +31,14 @@
         @foreach($users as $k=>$e)
                             
         @php
-               $referrer = \APP\Models\User::select('id', 'name')
+               $referrer = \APP\Models\User::select('id', 'name','mobile_number')
             ->where('referral_code', $e->referred_code)
             ->first();
         @endphp
             <tr>
                 <td>{{ $k+1 }}</td>
-                <td>{{$referrer->name}}</td>
-                <td >{{$e['name'] ?? 'N/A'}}</td>
+                   <td style="text-transform:capitalize">{{$referrer->name}} ({{$referrer->mobile_number}})</td>
+                <td >{{$e['name'] ?? 'N/A'}} ({{$e['mobile_number'] ?? 'N/A'}})</td>
             </tr>
         @endforeach
     </tbody>
