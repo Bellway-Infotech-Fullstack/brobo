@@ -61,6 +61,17 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::delete('delete/{id}', 'EmployeeController@distroy')->name('delete');
             Route::post('search', 'EmployeeController@search')->name('search');
         });
+
+        Route::group(['prefix' => 'pos', 'as' => 'pos.', 'middleware' => ['module:pos']], function () {
+            Route::get('create', 'POSController@create')->name('create');
+            Route::post('create', 'POSController@store');
+            Route::post('getsubcategories', 'POSController@getSubCategories')->name('getsubcategories');
+            Route::post('getproducts', 'POSController@getProductList')->name('getproducts');
+            Route::post('addproductsincart', 'POSController@addProductInCart')->name('addproductsincart');
+            Route::get('booking-list', 'POSController@list')->name('booking-list');
+            
+        });
+
         Route::post('item/variant-price', 'ItemController@variant_price')->name('item.variant-price');
 
         Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customer']], function () {
