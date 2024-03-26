@@ -106,10 +106,44 @@
                         </li>
                 @endif
                 <!-- End customer -->
+                <li class="nav-item">
+                    <small class="nav-subtitle"
+                           title="product section">POS System</small>
+                    <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                
+                @if(\App\CentralLogics\Helpers::module_permission_check('pos'))
+                <li class="navbar-vertical-aside-has-menu {{Request::is('admin/service*')?'active':''}}">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                       href="javascript:" title="POS"
+                    >
+                        <i class="tio-shopping nav-icon"></i>
+                        <span
+                            class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{__('messages.pos')}}</span>
+                    </a>
+                    <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                        style="display: {{Request::is('admin/pos*')?'block':'none'}}">
+                        <li class="nav-item {{Request::is('admin/pos/create')?'active':''}}">
+                            <a class="nav-link " href="{{route('admin.pos.create')}}"
+                               title="{{__('messages.pos')}}">
+                                <span class="tio-circle nav-indicator-icon"></span>
+                                <span class="text-truncate">{{__('messages.pos')}}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{Request::is('admin/pos/bookings')?'active':''}}">
+                            <a class="nav-link " href="{{route('admin.pos.booking-list')}}"
+                               title="POS {{__('messages.bookings')}}">
+                                <span class="tio-circle nav-indicator-icon"></span>
+                                <span class="text-truncate">{{__('messages.bookings')}}</span>
+                            </a>
+                        </li>
 
+                    </ul>
+                </li>
+                @endif
 
                     <!-- Orders -->
-                    @if(\App\CentralLogics\Helpers::module_permission_check('customer'))
+                    @if(\App\CentralLogics\Helpers::module_permission_check('booking'))
                         <li class="nav-item">
                             <small
                                 class="nav-subtitle">{{__('messages.booking')}} {{__('messages.section')}}</small>

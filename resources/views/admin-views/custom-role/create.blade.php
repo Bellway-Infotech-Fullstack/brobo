@@ -116,6 +116,14 @@
                                     <label class="form-check-label qcont text-dark" for="zone">{{__('messages.zone')}}</label>
                                 </div>
                             </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group form-check">
+                                    <input type="checkbox" name="modules[]" value="pos" class="form-check-input"
+                                           id="pos">
+                                    <label class="form-check-label qcont text-dark" for="pos">{{__('messages.pos')}}</label>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
