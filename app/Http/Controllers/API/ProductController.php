@@ -587,8 +587,8 @@ class ProductController extends Controller
                     'updated_at' => $item->updated_at, 
                 ];
 
-        // Insert the main item color data at the beginning of the coloredImages array
-        $item->coloredImages->prepend((object)$main_item_colored_data);
+                // Insert the main item color data at the beginning of the coloredImages array
+                $item->coloredImages->prepend((object)$main_item_colored_data);
 
                 $item->coloredImages->map(function ($coloredImage) use ($mainProductImages,$main_item_image)  {
 
