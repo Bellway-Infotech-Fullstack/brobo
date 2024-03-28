@@ -31,7 +31,192 @@
         color: #FFFFFF;
         border:none;
     }
+    .image-list {
+        list-style-type: none;
+        padding: 0;
+        margin-top: 10px;
+        margin-left: 15px;
+    }
+
+    .image-list li {
+        margin-right: 10px; 
+        display: inline-block;
+    }
+
+    .image-list img {
+        height: 100px;
+        width: 100px;
+        border-radius: 5%;
+        cursor: pointer;
+    }
+    .current-image{
+        border: 1px solid black;
+    }
 </style>
+@php
+  $appEnv = env('APP_ENV');
+  $assetPrefixPath = ($appEnv == 'local') ? '' : 'public';
+  $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $product['image']) : asset('storage/app/public/product/' . $product['image']);  
+  $productData = \App\Models\Product::find($product['id']);
+
+  $itemDetail = \App\Models\Product::where('id', $product['id'])
+                ->with('coloredImages')
+                ->select('*')
+                ->get();  
+
+           
+
+$items = $itemDetail->map(function ($item) {
+        // Modify the item's image property
+        $main_item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+        if ($main_item_image === null) {
+            $main_item_image = '';
+        }
+    
+    
+    // Update colored images paths
+
+    $mainProductColorName = $item->color_name;
+    $mainProductImages = $item->images; 
+
+
+        //echo "main_item_image".$main_item_image;
+
+    // Create the main item color data
+    $main_item_colored_data = [
+        'id' => 0,
+        "product_id" => $item->id,
+        'color_name' => $mainProductColorName,
+        'image' => $main_item_image,
+        'images' => $mainProductImages,
+        'created_at' => $item->created_at, 
+        'updated_at' => $item->updated_at, 
+    ];
+
+    // Insert the main item color data at the beginning of the coloredImages array
+    $item->coloredImages->prepend((object)$main_item_colored_data);
+
+    $item->coloredImages->map(function ($coloredImage) use ($mainProductImages,$main_item_image)  {
+
+
+            //array_push($item->coloredImages, $main_item_colored_data);
+        
+        // Add image path to colored_image
+        $all_item_colored_images = array();
+        
+        if($coloredImage->id == 0){
+            array_push($all_item_colored_images, $main_item_image);
+            foreach ($mainProductImages as $key => $val) {
+            /*  $main_item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $main_item_image) : asset('storage/app/public/product/' . $main_item_image);*/
+            
+            $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+            array_push($all_item_colored_images, $item_image);
+        }
+            
+            $coloredImage->images = $all_item_colored_images;
+        } else {
+            $coloredImage->image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $coloredImage->image) : asset('storage/app/public/product/colored_images/' . $coloredImage->image);
+
+        
+        if (isset($coloredImage->images) && !empty($coloredImage->images)) {
+
+            
+            // array_push($all_item_colored_images, $main_item_image);
+            array_push($all_item_colored_images, $coloredImage->image);
+
+            foreach ($coloredImage->images as $key => $val) {
+                $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $val) : asset('storage/app/public/product/colored_images/' . $val);
+                array_push($all_item_colored_images, $item_image);
+            }
+            // array_push($all_item_colored_images, $main_item_image);
+            
+            $coloredImage->images = $all_item_colored_images;
+        }
+        }
+
+        
+
+        return $coloredImage;
+    });
+
+        // Modify the item's image property
+        $item->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $item->image) : asset('storage/app/public/product/' . $item->image);
+        if ($item->image === null) {
+            $item->image = '';
+        }
+
+    $all_item_images = array();
+    if (isset($item->images) && !empty($item->images)) {
+        array_push($all_item_images, $item->image);
+        foreach ($item->images as $key => $val) {
+            $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+            array_push($all_item_images, $item_image);
+        }
+        $item->images = $all_item_images;
+    }
+
+    if ($item->images === null) {
+        $item->images = [];
+    }
+
+    // Check and set description to blank if null
+    if ($item->description === null) {
+        $item->description = '';
+    }
+
+        // Calculate discount price
+    
+    if ($item->discount_type == 'amount') {
+        $item->discounted_price = number_format($item->price - $item->discount, 2);
+    } else {
+        if($item->discount > 0){
+            $discounted_price = (($item->discount / 100) * $item->price);
+            $item->discounted_price = number_format(($item->price- $discounted_price),2);
+        } else {
+                $item->discounted_price = 0;
+        }
+    }
+    // Remove commas from discounted_price
+    $item->discounted_price = str_replace(',', '', $item->discounted_price);
+
+    // get sub catefory name
+
+    $item->sub_category_id = $item->category_id;
+
+    $category_data = \App\Models\Category::find($item->category_id);
+    if($category_data){
+            $item->category_id = $category_data->parent_id;
+
+    $item->sub_category_name = $category_data->name ?? '';
+    } else {
+        $item->category_id =  '';
+        $item->sub_category_name = '';
+    }
+
+    
+
+    return $item;
+});
+
+$mainProductDifferentAngleImages = $items[0]->images;
+
+
+
+  if ($productData->discount_type == 'amount') {
+        $productData->discounted_price = number_format($productData->price - $productData->discount, 2);
+    } else {
+        if($productData->discount > 0){
+        
+            $discounted_price = (($productData->discount / 100) * $productData->price);
+            $productData->discounted_price = number_format(($productData->price- $discounted_price),2);
+        } else {
+            $productData->discounted_price = $productData->price;
+        }
+
+    }
+    // Remove commas from discounted_price
+    $discounted_price = str_replace(',', '', $productData->discounted_price);
+@endphp
 <div class="modal-header p-0">
     <h4 class="modal-title product-title">
     </h4>
@@ -44,25 +229,26 @@
         <!-- Product gallery-->
         <div class="d-flex align-items-center justify-content-center active" style="height:9.5rem;">
             <img class="img-responsive" style="height:100%;width:auto;overflow:hidden;border-radius: 5%;"
-                src="{{asset($item_type=='food'?'storage/app/public/product':'storage/app/public/campaign')}}/{{$product['image']}}" 
-                onerror="this.src='{{asset($assetPrefixPath . '/admin/img/160x160/img2.jpg')}}'"
-                    alt="Product image" width="">
+                src="{{ $itemImage }}" 
+           
+                    alt="Product image" width="" id="main_image">
             <div class="cz-image-zoom-pane"></div>
         </div>
         <!-- Product details-->
         <div class="details pl-2">
             @if ($item_type=='food')
-            <a href="{{route('vendor.food.view',$product->id)}}" class="h3 mb-2 product-title">{{$item_type=='food'?$product->name:$product->title}}</a>
+            <a href="#" class="h3 mb-2 product-title">{{$product->name}}</a>
             @else
-            <div class="h3 mb-2 product-title">{{$item_type=='food'?$product->name:$product->title}}</div>
+            <div class="h3 mb-2 product-title">{{ $product->name }}</div>
             @endif
             <div class="mb-3 text-dark">
                 <span class="h3 font-weight-normal text-accent mr-1">
-                    {{\App\CentralLogics\Helpers::get_price_range($product, true)}}
+                    {{ $discounted_price }}  
                 </span>
-                @if($product->discount > 0)
+                @if($productData->discount > 0)
                     <strike style="font-size: 12px!important;">
-                    {{\App\CentralLogics\Helpers::get_price_range($product)}}
+                        {{ $product->price }}
+                       
                     </strike>
                 @endif
             </div>
@@ -70,18 +256,64 @@
             @if($product->discount > 0)
                 <div class="mb-3 text-dark">
                     <strong>Discount : </strong>
-                    <strong id="set-discount-amount">{{\App\CentralLogics\Helpers::get_product_discount($product)}}</strong>
+                    <?php
+                       $discount_type =  $productData->discount_type;
+                       if($discount_type == 'percent'){
+                    ?>
+                    <strong id="set-discount-amount">{{ $product->discount  }} % </strong>
+
+                    <?php } else { ?>
+                    <strong id="set-discount-amount">Rs. {{ $product->discount  }} </strong>
+                    <?php }?>
                 </div>
             @endif
             <!-- Product panels-->
             {{--<div style="margin-left: -1%" class="sharethis-inline-share-buttons"></div>--}}
         </div>
     </div>
+    <div class="row">
+        <ul class="image-list" id="main_image_section">
+            <?php
+          
+             if(isset($mainProductDifferentAngleImages) && !empty($mainProductDifferentAngleImages)){
+                foreach($mainProductDifferentAngleImages as $key => $value){
+                    $className = ($key === 0) ? "current-image" : "";
+            ?>
+            <li>            
+                <img class="img-responsive {{$className}}" src="{{$value}}"  alt="Product image" onclick="displayImage('{{$value}}',this)">
+            </li>
+    
+            <?php }} ?>
+        </ul>
+    
+       
+    </div>
+    <strong class="h3">Variants : </strong>
+    <div class="row">
+     
+        <ul class="image-list">
+    
+            <?php
+               $coloredImages =  $items[0]->coloredImages;
+               
+              
+                 if(isset($coloredImages) && !empty($coloredImages)){
+                    foreach($coloredImages as $key => $value){
+                        $className = ($key === 0) ? "current-image" : "";
+                ?>
+                <li>            
+                    <img class="img-responsive {{$className}}" src="{{$value->image}}"  alt="Product image" onclick="getProductColorImageDetail('{{$value->image}}','{{$value->id}}','{{$value->product_id}}',this)">
+                    <p style="margin-left:35px;"> {{ $value->color_name }} </p>
+                </li>
+             
+            <?php }} ?>
+        </ul>
+    </div>
     <div class="row pt-2">
         <div class="col-12">
             <h2>{{__('messages.description')}}</h2>
             <span class="d-block text-dark">
-                {!! $product->description !!}
+                {!! $product->description ?? 'N/A' !!}
             </span>
             <form id="add-to-cart-form" class="mb-2">
                 @csrf
@@ -89,25 +321,9 @@
                 <input type="hidden" name="cart_item_key" value="{{ $item_key }}">
                 <input type="hidden" name="item_type" value="{{ $item_type }}">
                 <input type="hidden" name="order_details_id" value="{{ $cart_item['id'] }}">
-                <input type="hidden" name="order_id" value="{{ $order_id }}">
-                
-                @php($temp = json_decode($cart_item->variation, true))
-                @php($variations = count($temp)>0?explode('-',$temp[0]['type']):[])
-                @foreach (json_decode($product->choice_options) as $key => $choice)
-                <div class="h3 p-0 pt-2">{{ $choice->title }}
-                </div>
-
-                <div class="d-flex justify-content-left flex-wrap">
-                    @foreach ($choice->options as $option)
-                        <input class="btn-check" type="radio"
-                                id="{{ $choice->name }}-{{ $option }}"
-                                name="{{ $choice->name }}" value="{{ $option }}"
-                                {{ (count($temp)>0 && str_replace(' ','',$option) == $variations[$key])?'checked':'' }} autocomplete="off" >
-                        <label class="btn btn-sm check-label mx-1 choice-input"
-                            for="{{ $choice->name }}-{{ $option }}">{{ $option }}</label>
-                    @endforeach
-                </div>
-                @endforeach
+                <input type="hidden" name="order_id" value="{{ $order_id }}">                
+                <input type="hidden" name="item_price" value="{{ $discounted_price }}">
+                <input type="hidden" name="item_color_image_id" id="item_color_image_id" value="{{ $item_color_image_id }}">
 
                 <!-- Quantity + Add to cart -->
                 <div class="d-flex justify-content-between">
@@ -134,34 +350,11 @@
                         </div>
                     </div>
                 </div>
-                @php($add_ons = json_decode($product->add_ons))
-                @if(count($add_ons)>0)
-                <div class="h3 p-0 pt-2">{{ __('messages.addon') }}
-                </div>
+              
                 
                 <div class="d-flex justify-content-left flex-wrap">
-                @php($addons = array_column(json_decode($cart_item['add_ons'], true), 'quantity','id'))
-                @foreach (\App\Models\AddOn::whereIn('id', $add_ons)->get() as $key => $add_on)
-                    @php($checked = array_key_exists($add_on->id, $addons))
-                    <div class="flex-column pb-2">
-                        <input type="hidden" name="addon-price{{ $add_on->id }}" value="{{$add_on->price}}">
-                        <input class="btn-check addon-chek" type="checkbox"
-                                id="addon{{ $key }}" onchange="addon_quantity_input_toggle(event)"
-                                name="addon_id[]" value="{{ $add_on->id }}" {{$checked?'checked':''}}
-                                autocomplete="off">
-                        <label class="d-flex align-items-center btn btn-sm check-label mx-1 addon-input" 
-                            for="addon{{ $key }}">{{ $add_on->name }} <br> {{ \App\CentralLogics\Helpers::format_currency($add_on->price) }}</label>
-                        <label class="input-group addon-quantity-input mx-1 shadow bg-white rounded px-1" for="addon{{ $key }}" @if($checked) style="visibility:visible;" @endif>
-                            <button class="btn btn-sm h-100 text-dark px-0" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown(), getVariantPrice()"><i class="tio-remove  font-weight-bold"></i></button>
-                            <input type="number" name="addon-quantity{{ $add_on->id }}"
-                                        class="form-control text-center border-0 h-100"
-                                        placeholder="1" value="{{$checked?$addons[$add_on->id]:1}}" min="1" max="100" readonly>
-                            <button class="btn btn-sm h-100 text-dark px-0" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp(), getVariantPrice()"><i class="tio-add  font-weight-bold"></i></button>
-                        </label>
-                    </div>
-                @endforeach
+              
                 </div>
-                @endif
                 <div class="row no-gutters d-none mt-2 text-dark" id="chosen_price_div" >
                     <div class="col-2">
                         <div class="product-description-label">{{__('Total Price')}}:</div>
@@ -197,9 +390,56 @@
 
 <script type="text/javascript">
     cartQuantityInitialize();
-    getVariantPrice();
+    var img_src = "<?=$itemImage?>";
+    var color_image_id = "<?=$item_color_image_id?>";
+    var product_id = "<?=$item_color_image_id?>";
+    getProductColorImageDetail(img_src,color_image_id,product_id,this);
+  //  getVariantPrice();
     $('#add-to-cart-form input').on('change', function () {
-        getVariantPrice();
+       // getVariantPrice();
     });
+
+    function displayImage(img_src,ele){
+        $(".image-list").find("img").removeClass("current-image");
+        $(ele).addClass("current-image");
+        $("#main_image").attr("src",img_src);
+    }
+
+     function getProductColorImageDetail(img_src,color_image_id,product_id,ele){
+        var tokenValue = $('input[name="_token"]').val();
+        $(".image-list").find("img").removeClass("current-image");
+        $("#item_color_image_id").val(color_image_id);
+          
+        $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': tokenValue
+                }
+            });
+            $.post({
+                url: '{{ route('admin.order.get-product-color-image-detail') }}',
+                data: {"color_image_id":color_image_id,"product_id":product_id},
+                beforeSend: function() {
+                    $('#loading').show();
+                },
+                success: function(data) {
+                    var images = data.data.images;
+                    var htmlData = '';
+                    if (images.length > 0) {
+                        $.each(images, function(k, val) {
+                            var className = (k === 0) ? "current-image" : "";
+                            htmlData += '<li><img class="img-responsive ' + className + '" src="' + val + '" alt="Product image" onclick="displayImage(\'' + val + '\', this)"></li>';
+
+
+                        });
+                    }
+                    $("#main_image_section").html(htmlData);
+                    $(ele).addClass("current-image");  
+                    $("#main_image").attr("src",img_src);
+                },
+                complete: function() {
+                    $('#loading').hide();
+                }
+            });
+    }
 </script>
 

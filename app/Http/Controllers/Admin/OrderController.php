@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\DB;
 use Razorpay\Api\Api;
 use App\Models\User;
 use Rap2hpoutre\FastExcel\FastExcel;
-
-
+use App\Models\Cart;
+use App\Models\ProductColoredImage;
 use PDF;
 
 class OrderController extends Controller
@@ -184,6 +184,8 @@ class OrderController extends Controller
     public function details(Request $request, $id)
     {
         $order = Order::where(['id' => $id])->first();
+        /*session()->forget('order_cart');
+        $editing = 0;*/
 
         if (isset($order)) {
 
@@ -211,7 +213,10 @@ class OrderController extends Controller
             if($request->session()->has('order_cart'))
             {
                 $cart = session()->get('order_cart');
-                if(count($cart)>0 && $cart[0]->order_id == $order->id)
+               
+                
+               
+                if(count($cart)>0 && $cart[0]['order_id'] == $order->id)
                 {
                     $editing=true;
                 }
@@ -222,7 +227,6 @@ class OrderController extends Controller
                 
             }
             
-            // $deliveryMen=Helpers::deliverymen_list_formatting($deliveryMen);
             return view('admin-views.order.order-view', compact('order','categories', 'products','category', 'keyword', 'editing'));
         } else {
             Toastr::info(trans('messages.no_more_orders'));
@@ -230,8 +234,7 @@ class OrderController extends Controller
         }
     }
     
-     public function detailstest(Request $request, $id)
-    {
+     public function detailstest(Request $request, $id){
         $order = Order::where(['id' => $id])->first();
 
         if (isset($order)) {
@@ -482,8 +485,8 @@ class OrderController extends Controller
     public function quick_view(Request $request)
     {
 
-        $product = $product = Food::findOrFail($request->product_id);
-        $item_type = 'food';
+        $product =  Product::findOrFail($request->product_id);
+        $item_type = 'product';
         $order_id = $request->order_id;
         
         return response()->json([
@@ -660,7 +663,7 @@ class OrderController extends Controller
     }
   }
 
-  public function exportOrderList(Request $request){
+   public function exportOrderList(Request $request){
         
     // Get all orders data   
 
@@ -837,6 +840,306 @@ class OrderController extends Controller
 
     // If the requested format is not supported or not specified, return an error response
     return response()->json(['error' => 'Unsupported format'], 400);
-}
+   }
+
+    public function edit(Request $request, Order $order){
+        $order = Order::where('id', $order->id)->first();
+
+
+
+        // Load relationships
+        $order->load([
+            'customer' => function ($query) {
+                $query->withCount('orders');
+            },
+        ]);
+        
+        if ($request->cancel) {
+            if ($request->session()->has('order_cart')) {
+                $request->session()->forget('order_cart');
+            }
+            return back();
+        }
+        
+        $cart = collect([]);
+        $cartItems = json_decode($order->cart_items,true);  
+        
+        foreach ($cartItems as $details) {
+            unset($details['item_details']);
+            $details['status'] = true;
+            $details['order_id'] = $order->id;
+            $cart->push($details);
+        }
+     
+        if ($request->session()->has('order_cart')) {
+            session()->forget('order_cart');
+        } else {
+            $request->session()->put('order_cart', $cart);
+        }
+        return back();
+        
+    }
+
+    public function update(Request $request, Order $order){
+        $order = Order::with(['details'=> function ($query) {
+        }, 'details.item' => function ($query) {
+            return $query->withoutGlobalScope(StoreScope::class);
+        }, 'details.campaign' => function ($query) {
+            return $query->withoutGlobalScope(StoreScope::class);
+        }])->where(['id' => $order->id])->first();
+
+        if (!$request->session()->has('order_cart')) {
+            Toastr::error(__('messages.order_data_not_found'));
+            return back();
+        }
+        $cart = $request->session()->get('order_cart', collect([]));
+        $store = $order->store;
+        $coupon = null;
+        $total_addon_price = 0;
+        $product_price = 0;
+        $store_discount_amount = 0;
+        if ($order->coupon_code) {
+            $coupon = Coupon::where(['code' => $order->coupon_code])->first();
+        }
+        foreach ($cart as $c) {
+            if ($c['status'] == true) {
+                unset($c['status']);
+                //  echo "<pre>";
+                // print_r($c);
+                    $product = Product::find($c['item_id']);
+                    if ($product) {
+
+                        $price = $c['item_price'];
+
+                    //    $product = Helpers::product_data_formatting($product);
+
+                        //$c->item_details = '';
+                    //  $c->updated_at = now();
+                        if (isset($c->id)) {
+                            OrderDetail::where('id', $c->id)->update(
+                                [
+                                    'item_id' => $c->item_id,
+                                    'item_details' => $c->item_details,
+                                    'quantity' => $c->quantity,
+                                    'price' => $c->price,
+                                    'tax_amount' => $c->tax_amount,
+                                    'discount_on_item' => $c->discount_on_item,
+                                    'discount_type' => $c->discount_type,
+                                
+                                    'updated_at' => $c->updated_at
+                                ]
+                            );
+                        } else {
+                        //    $c->save();
+                        }
+
+                        $product_price += $price * $c['quantity'];
+                    //  $store_discount_amount += $c['discount_on_item'] * $c['quantity'];
+                    } else {
+                        Toastr::error(__('messages.item_not_found'));
+                        return back();
+                    }
+                
+            } else {
+                $c->delete();
+            }
+        }
+
+
+        $order->delivery_charge = $order->original_delivery_charge;
+        
+
+
+
+        $coupon_discount_amount = $coupon ? CouponLogic::get_discount($coupon, $product_price + $total_addon_price - $store_discount_amount) : 0;
+        $total_price = $product_price + $total_addon_price - $store_discount_amount - $coupon_discount_amount;
+
+
+
+        $total_order_ammount = $total_price;
+        $adjustment = $order->order_amount - $total_order_ammount;
+
+        $order->paid_amount = $total_order_ammount;
+        $order->edited = true;
+        $order->save();
+        session()->forget('order_cart');
+        Toastr::success(__('messages.order_updated_successfully'));
+        return back();
+    }
+
+    public function quick_view_cart_item(Request $request){
+        $cart_item = session('order_cart')[$request->key];
+        $order_id = $request->order_id;
+        $item_key = $request->key;
+
+        $product_id = $cart_item['item_id'];
+
+        $product =  Product::find($cart_item['item_id']);
+        $item_type =  'item';
+
+        $cartData = session()->get('order_cart');
+
+       
+
+
+      
+        $item_color_image_id = $cartData[$item_key]['item_color_image_id'];
+        $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $product['image']) : asset('storage/app/public/product/' . $product['image']);  
+
+        $itemColorImageId = $item_color_image_id;
+        $itemColorImageData = \App\Models\ProductColoredImage::where('id',$itemColorImageId)->first();
+        $itemColorImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImageData->image : '';
+        $itemColorImage = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $itemColorImage) : asset('storage/app/public/product/colored_images/' . $itemColorImage); 
+        $itemImage = (isset($itemColorImageData) && !empty($itemColorImageData)) ? $itemColorImage : $productImagePath;
+
+
+
+        return response()->json([
+            'success' => 1,
+            'view' => view('admin-views.order.partials._quick-view-cart-item', compact('order_id', 'product', 'cart_item', 'item_key', 'item_type','itemImage','item_color_image_id','product_id'))->render(),
+        ]);
+    }
+
+    public function add_to_cart(Request $request){
+        $product = Product::find($request->id);
+
+        $data = [];
+    
+
+        $data['item_id'] =  $request->id;
+        $data['order_id'] = $request->order_id;
+        $orderData = Order::find($request->order_id);
+        $str = '';
+        $price = 0;
+
+
+        //Gets all the choice values of customer choice option and generate a string like Black-S-Cotton
+        
+        if ($request->session()->has('order_cart') && !isset($request->cart_item_key)) {
+            if (count($request->session()->get('order_cart')) > 0) {
+                foreach ($request->session()->get('order_cart') as $key => $cartItem) {
+                    if ($cartItem['item_id'] == $request['id'] && $cartItem['status'] == true) {
+                        return response()->json([
+                            'data' => 1
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $price = $request->item_price*$request->quantity;   
+   
+
+        $customerId = $orderData->user_id;
+        $itemId = $request->id;
+
+        $data['quantity'] = $request->quantity;
+        $data['item_price'] = $price;
+        $data['status'] = true;
+        $data['item_color_image_id'] = $request->item_color_image_id;
+        $data['category_id'] = $request->category_id;
+        $data['customer_id'] = $customerId;
+    
+        
+        $existingCartItem = Cart::where('customer_id', $customerId)->where('item_id', $itemId)->first();
+     
+        if($existingCartItem) {
+            // If the cart item already exists, update the quantity
+            $existingCartItem->quantity = $request->quantity;
+            $existingCartItem->save();
+            $data['id'] = $existingCartItem->id;            
+
+        } else {
+            $newCartItem = Cart::create($data);
+            $data['id'] = $newCartItem->id;            
+        }
+
+        $productImagePath = (env('APP_ENV') == 'local') ? asset('storage/product/' . $product->image) : asset('storage/app/public/product/' . $product->image);   
+        $data['item_image'] = $productImagePath;
+        $data['item_name'] = $product->name;
+
+
+       
+
+        $cart = $request->session()->get('order_cart', collect([]));
+
+        if (isset($request->cart_item_key)) {
+            $cart[$request->cart_item_key] = $data;
+            return response()->json([
+                'data' => 2
+            ]);
+        } else {
+            
+            $cart->push($data);
+        }
+
+        return response()->json([
+            'data' => 0
+        ]);
+    }
+
+    public function remove_from_cart(Request $request){
+        $cart = $request->session()->get('order_cart', collect([]));
+        $cart[$request->key]->status = false;
+        $request->session()->put('order_cart', $cart);
+
+        return response()->json([], 200);
+    }
+
+
+    public function getProductColorImageDetail(Request $request){
+        $colorImageId = $request->color_image_id;
+        $productId = $request->product_id;
+        $coloreImageData = ProductColoredImage::find($colorImageId);
+        if($colorImageId > 0){
+            $all_item_images = array();
+            
+            $coloreImageData->image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $coloreImageData->image) : asset('storage/app/public/product/colored_images/' . $coloreImageData->image);
+            if ($coloreImageData->image === null) {
+                $coloreImageData->image = '';
+            }
+            if (isset($coloreImageData->images) && !empty($coloreImageData->images)) {
+                array_push($all_item_images, $coloreImageData->image);
+                foreach ($coloreImageData->images as $key => $val) {
+                    $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/colored_images/' . $val) : asset('storage/app/public/product/colored_images/' . $val);
+                    array_push($all_item_images, $item_image);
+                }
+                $coloreImageData->images = $all_item_images;
+            }
+        
+            if ($coloreImageData->images === null) {
+                $coloreImageData->images = [];
+            }
+
+        } else {
+            
+
+            $coloreImageData = Product::find($productId);
+            $all_item_images = array();
+            
+            $coloreImageData->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $coloreImageData->image) : asset('storage/app/public/product/' . $coloreImageData->image);
+            if ($coloreImageData->image === null) {
+                $coloreImageData->image = '';
+            }
+            if (isset($coloreImageData->images) && !empty($coloreImageData->images)) {
+                array_push($all_item_images, $coloreImageData->image);
+                foreach ($coloreImageData->images as $key => $val) {
+                    $item_image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $val) : asset('storage/app/public/product/' . $val);
+                    array_push($all_item_images, $item_image);
+                }
+                $coloreImageData->images = $all_item_images;
+            }
+        
+            if ($coloreImageData->images === null) {
+                $coloreImageData->images = [];
+            }
+
+
+        }
+        
+        return response()->json(['data' => $coloreImageData]);
+
+    }
+
 
 }
