@@ -8,8 +8,8 @@
 @push('css_or_js')
     <style>
         .item-box {
-            height: 261px;
-            width: 165px;
+            height: 250px;
+            width: 150px;
             padding: 3px;
         }
 
@@ -26,21 +26,6 @@
     $parcel_order = $order->order_type == 'parcel' ? true : false;
  
     $cartItems = json_decode($order->cart_items,true);  
-    $cartItems =$order->details;
-    $cartItems = json_decode($order->cart_items,true); 
-    if ($editing) {
-      
-        $cartItems = session('order_cart');
-    } else {
-        foreach ($cartItems as $key => $item) {
-            //$cartItems[$key]->status = true;
-        }
-    }  
-/*echo "<pre>";
-    print_r($cartItems);
-    die;*/
-
-
     $product_price = 0;
     $total_item_price = 0;
     $test = 0;
@@ -70,8 +55,6 @@
                             <span class="badge badge-soft-success ml-sm-3">
                                 <span class="legend-indicator bg-success"></span>{{ __('messages.paid') }}
                             </span>
-
-                             
                         
 
                         @if ($order['status'] == 'ongoing')
@@ -204,71 +187,16 @@
                         <div class="row">
                             <div class="col-12 pb-2 border-bottom  d-flex justify-content-between">
                                 <h4 class="card-header-title">
+                                   
+                                  
                                     {{ __('messages.order') }} {{ __('messages.details') }}
-                                    <span class="badge badge-soft-dark rounded-circle ml-1">  {{ (count($cartItems))}} </span>
+                                    <span
+                                        class="badge badge-soft-dark rounded-circle ml-1">  {{ (count($cartItems))}} </span>
                                 </h4>
-                                <?php
-                                    if($order->status!='completed'){
-                                ?>
-                                <button class="btn btn-sm btn-primary" type="button" onclick="edit_order()">
-                                    <i class="tio-edit"></i> {{ __('messages.edit') }}
-                                </button> 
-                                <?php } ?>
+                           
                             </div>
-                             <!-- item cart -->
-                        @if ($editing && !$campaign_order)
-                            <div class="row border-top pt-1">
-                                <div class="col-12 d-flex flex-wrap justify-content-between ">
-                                    <form id="search-form" class="header-item">
-                                        <!-- Search -->
-                                        <div class="input-group input-group-merge input-group-flush">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="tio-search"></i>
-                                                </div>
-                                            </div>
-                                            <input id="datatableSearch" type="search" value="{{ $keyword ? $keyword : '' }}"
-                                                name="search" class="form-control" placeholder="Search here"
-                                                aria-label="Search here">
-                                        </div>
-                                        <!-- End Search -->
-                                    </form>
-                                    <div class="input-group header-item">
-                                        <select name="category" id="category" class="form-control js-select2-custom mx-1"
-                                            title="{{ __('messages.select') }} {{ __('messages.category') }}"
-                                            onchange="set_category_filter(this.value)">
-                                            <option value="">{{ __('messages.all') }} {{ __('messages.categories') }}
-                                            </option>
-                                            @foreach ($categories as $item)
-                                                <option value="{{ $item->id }}"
-                                                    {{ $category == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                </div>
-                                <div class="col-12" id="items">
-                                    <div class="d-flex flex-wrap mt-2 mb-3" style="justify-content: space-around;">
-                                        @foreach ($products as $product)
-                                            <div class="item-box">
-                             
-                                                @include(
-                                                    'admin-views.order.partials._single_product',
-                                                    [
-                                                        'product' => $product,
-                                                    ]
-                                                )
-                                                {{-- <hr class="d-sm-none"> --}}
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    {!! $products->withQueryString()->links() !!}
-                                </div>
-                            </div>
-                        @endif
-                        </div>                     
+                        </div>
+                     
                     </div>
                     <!-- End Header -->
 
@@ -292,7 +220,8 @@
                                         <div class="media-body">
                                             @foreach ($cartItems as $key => $value)
                                             <?php
-                                                
+                                            
+                                            
                                            
                                             $gstData = \App\Models\BusinessSetting::where('key','gst_percent')->first();
                                             $gst = $gstData->value;
@@ -332,65 +261,49 @@
                                             $itemData = \App\Models\Product::where('id',$value['item_id'])->first();
 
                                             $colorName = ($itemColorImageId == 0) ? ($itemData->color_name ?? 'N/A') : ($itemColorImageData->color_name ?? 'N/A') ;
-                                            $class = "d-none";
+
                                              ?>
-                                              @if ($editing)
-                                            <div class="avatar avatar-xl mr-3 cursor-pointer "
-                                                onclick="quick_view_cart_item({{ $key }})"
-                                                title="{{ __('messages.click_to_edit_this_item') }}" >
-                                                <span class="avatar-status avatar-lg-status avatar-status-dark"><i
-                                                        class="tio-edit"></i></span>
                                      
                                                 <img class="img-fluid" src="{{ $itemImage }}"  alt="Product Image" height="100" width="100">
+                                            <div class="row">
+                                                <div class="col-md-4 mb-3 mb-md-0">
+                                                    <strong>
+                                                      
+                                                        {{ Str::limit($value['item_name'], 20, '...') }} 
+                                                        ({{ $colorName }}) 
+                                                    </strong><br>
                                                 </div>
-                                                @else
-                                            <a class=" avatar avatar-xl mr-3"
-                                                href="">
-                                                <img class="img-fluid"
-                                                    src="{{ $itemImage }}"
-                                                    
-                                                    alt="Image Description">
-                                            </a>
-                                        @endif
-                                        <div class="row">
-                                            <div class="col-md-4 mb-3 mb-md-0">
-                                                <strong>
+
+                                                <div class="col col-md-2 align-self-center">
+                                                    <h6>    Rs . {{ $value['item_price'] / $value['quantity'] }}
+                                                    </h6>
+                                                </div>
+                                                <div class="col col-md-3 align-self-center">
+                                                    <h5>{{ $value['quantity'] }}</h5>
+                                                </div>
+
+                                                
+                                        
+                                                
+                                                
+                                                <div class="col col-md-3 align-self-center text-right">
+                                                  <?php
+                                                  if($value['category_id'] == '1'){
+                                                      $test =  $test + $value['item_price']*$difference_in_days;
+                                                      ?>
                                                   
-                                                    {{ Str::limit($value['item_name'], 20, '...') }} 
-                                                    ({{ $colorName }}) 
-                                                </strong><br>
+                                                    <h5> Rs . {{ $value['item_price']*$difference_in_days }} (for {{$difference_in_days }} days)</h5>
+                                                    
+                                                    <?php 
+                                                    
+                                                  } else {
+                                                      $test =  $test + $value['item_price'];
+                                                    ?>
+                                                        <h5> Rs  . {{ $value['item_price'] }}</h5>
+                                                    <?php }
+                                                    ?>
+                                                </div>
                                             </div>
-
-                                            <div class="col col-md-2 align-self-center">
-                                                <h6>    Rs . {{ $value['item_price'] / $value['quantity'] }}
-                                                </h6>
-                                            </div>
-                                            <div class="col col-md-3 align-self-center">
-                                                <h5>{{ $value['quantity'] }}</h5>
-                                            </div>
-
-                                            
-                                    
-                                            
-                                            
-                                            <div class="col col-md-3 align-self-center text-right">
-                                              <?php
-                                              if($value['category_id'] == '1'){
-                                                  $test =  $test + $value['item_price']*$difference_in_days;
-                                                  ?>
-                                              
-                                                <h5> Rs . {{ $value['item_price']*$difference_in_days }} (for {{$difference_in_days }} days)</h5>
-                                                
-                                                <?php 
-                                                
-                                              } else {
-                                                  $test =  $test + $value['item_price'];
-                                                ?>
-                                                    <h5> Rs  . {{ $value['item_price'] }}</h5>
-                                                <?php }
-                                                ?>
-                                            </div>
-                                        </div>
                                             @endforeach
                                         </div>
                                       
@@ -957,7 +870,7 @@
     <!-- End Modal -->
 
     <div class="modal fade" id="quick-view" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content" id="quick-view-modal">
 
             </div>
@@ -1119,88 +1032,6 @@
                     e.preventDefault();
                 }
             });
-        }
-
-
-        function update_order_item(form_id = 'add-to-cart-form') {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                }
-            });
-            $.post({
-                url: '{{ route('admin.order.add-to-cart') }}',
-                data: $('#' + form_id).serializeArray(),
-                beforeSend: function() {
-                    $('#loading').show();
-                },
-                success: function(data) {
-                    if (data.data == 1) {
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Cart',
-                            text: "{{ __('messages.product_already_added_in_cart') }}"
-                        });
-                        return false;
-                    } else if (data.data == 0) {
-                        toastr.success('{{ __('messages.product_has_been_added_in_cart') }}', {
-                            CloseButton: true,
-                            ProgressBar: true
-                        });
-                     //  location.reload();
-                        return false;
-                    }
-                    $('.call-when-done').click();
-
-                    toastr.success('{{ __('messages.order_updated_successfully') }}', {
-                        CloseButton: true,
-                        ProgressBar: true
-                    });
-                 //   location.reload();
-                },
-                complete: function() {
-                    $('#loading').hide();
-                }
-            });
-        }
-
-        function removeFromCart(key) {
-            Swal.fire({
-                title: '{{ __('messages.are_you_sure') }}',
-                text: '{{ __('messages.you_want_to_remove_this_order_item') }}',
-                type: 'warning',
-                showCancelButton: true,
-                cancelButtonColor: 'default',
-                confirmButtonColor: '#FC6A57',
-                cancelButtonText: '{{ __('messages.no') }}',
-                confirmButtonText: '{{ __('messages.yes') }}',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.post('{{ route('admin.order.remove-from-cart') }}', {
-                        _token: '{{ csrf_token() }}',
-                        key: key,
-                        order_id: '{{ $order->id }}'
-                    }, function(data) {
-                        if (data.errors) {
-                            for (var i = 0; i < data.errors.length; i++) {
-                                toastr.error(data.errors[i].message, {
-                                    CloseButton: true,
-                                    ProgressBar: true
-                                });
-                            }
-                        } else {
-                            toastr.success('{{ __('messages.item_has_been_removed_from_cart') }}', {
-                                CloseButton: true,
-                                ProgressBar: true
-                            });
-                            location.reload();
-                        }
-
-                    });
-                }
-            })
-
         }
 
 
