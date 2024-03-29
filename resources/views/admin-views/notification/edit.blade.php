@@ -34,7 +34,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="input-label" for="tergat">{{__('messages.send')}} {{__('messages.to')}}</label>
-                                <select name="target_user_id[]" id="tergat"  class="form-control js-select2-custom" multiple>
+                                <select name="target_user_id[]" id="tergat"  class="form-control js-select2-custom" multiple required>
                                     <option value="all" {{ $notification['user_ids'] == 'all' ? "selected=selected" : ''}}>All Users</option>
                                     <?php
                                     $notification_user_ids = $notification['user_ids'];
@@ -47,7 +47,6 @@
                                         if($notification_user_ids!='all'){
                                             
                                             foreach($notification_user_ids as $key => $value){
-                                                echo "value". $value;
                                                 if($user->id == $value){
                                                     $selected = "selected=selected";
                                                 } else {
@@ -58,7 +57,7 @@
                                         
 
                                     ?>
-                                        <option value="{{ $user->id }}" {{ $selected }}>{{ $user->name }}</option>
+                                        <option value="{{ $user->id }}" {{ $selected }}>{{ $user->name }} ( {{ $user->mobile_number }} )</option>
 
                                     <?php } } } ?>
                                    

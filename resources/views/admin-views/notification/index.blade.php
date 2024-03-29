@@ -42,10 +42,10 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="input-label" for="tergat">{{__('messages.send')}} {{__('messages.to')}}</label>
-                                <select name="target_user_id[]" id="tergat"  class="form-control js-select2-custom" multiple>
+                                <select name="target_user_id[]" id="tergat"  class="form-control js-select2-custom" multiple required>
                                     <option value="all" data-user-name="all users">All Users</option>
                                     @foreach (\App\Models\User::where('role_id', 2)->orderBy('id','desc')->get() as $user)
-                                        <option value="{{ $user->id }}" data-user-name="{{ $user->name }}" >{{ $user->name }}</option>
+                                        <option value="{{ $user->id }}" data-user-name="{{ $user->name }}" >{{ $user->name }} ( {{ $user->mobile_number }} )</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -177,6 +177,8 @@
             // =======================================================
             $('.js-select2-custom').select2();
 
+            
+
             $('.js-select2-custom').on('select2:close', function (e) {
                 if ($(this).val().length === 0) {
                     $(this).find('option').prop('disabled', false);
@@ -242,8 +244,10 @@
             if(selectedText == ''){
                 selectedText = 'all users';
             } else {
+                console.log(selectedText)
                 var selectedValues = selectedText.split(", ");
                 var selectedText = selectedValues.join(", ");
+   
             }
 
            

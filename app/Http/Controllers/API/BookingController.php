@@ -1009,5 +1009,109 @@ class BookingController extends Controller
         }
     }
 
+    public function getTimeSlots(Request $request){
+       
+        $slot_date = date("Y-m-d",strtotime($request->slot_date));
+
+
+        $order_time_slot_data = DB::table('order_time_slots')->get();  
+        if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+            foreach($order_time_slot_data as $key => $value){
+                $day_wise_order_time_slot_data = DB::table('day_wise_order_time_slots')->where(array('time_slot_id' => $value->id, 'slot_date' => $slot_date))->first(); 
+
+                $from_time_slot = $value->from_time;
+                $to_time_slot =$value->to_time;
+                if(isset($day_wise_order_time_slot_data) && !empty($day_wise_order_time_slot_data)){
+                    $order_time_slot_data[$key]->is_time_slot_enabled = $day_wise_order_time_slot_data->is_enabled;
+                    $order_time_slot_data[$key]->time_slot  =  date("h:i A", strtotime($from_time_slot)) . " to " . date("h:i A", strtotime($to_time_slot));
+
+                    unset($order_time_slot_data[$key]->id);
+                    unset($order_time_slot_data[$key]->from_time);
+                    unset($order_time_slot_data[$key]->to_time);
+                } else {
+                    $order_time_slot_data = [];
+                }
+            }
+        }
+     
+       
+       
+     
+
+        if (count($order_time_slot_data) > 0 ) {
+            return response()->json(['status' => 'success', 'message' => 'Data Found', 'code' => 200, 'data' => $order_time_slot_data]);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'No Data Found', 'code' => 200, 'data' => []]);
+        }
+    }
+
+    public function addTotalOrdersInGgoogleAnalytics(Request $request){
+        // Google Analytics Measurement Protocol endpoint
+            $endpoint = 'https://www.google-analytics.com/collect';
+
+            $measurementId = 'G-WQ6WQVYZDZ'; // Your Google Analytics tracking ID
+            $clientId = '1234567890'; // Unique ID for the user/session
+
+            $orderCount = Order::count();
+    
+ 
+
+                 // Data to be sent
+                $data = array(
+                    'measurement_id' => $measurementId, // Measurement ID
+                    'client_id' => $clientId, // Client ID
+                    'events' => json_encode(array(
+                        array(
+                            'name' => 'add_new_transaction', // Event name for viewing a list of items
+                            'params' => array(
+                                'items' => array(
+                                    array(
+                                        'item_id' => 'total_transactions', // Unique ID for the total transactions item
+                                        'item_name' => 'Total Transactions', // Name of the item
+                                        'quantity' => $orderCount, // Quantity (total transactions)
+                                        'item_category' => 'Total', // Category of the item
+                                    )
+                                )
+                            )
+                        )
+                    ))
+                );
+
+            // Build query string
+            $payload = http_build_query($data);
+
+            // Initialize cURL session
+            $ch = curl_init($endpoint);
+
+            // Set cURL options
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+            // Execute cURL session
+            $response = curl_exec($ch);
+
+            // Close cURL session
+            curl_close($ch);
+
+          
+
+
+     
+    
+            // Check response
+            if ($response === false) {
+                echo 'Failed to send data to Google Analytics.';
+            } else {
+                echo 'Data sent to Google Analytics successfully.';
+            }
+        
+
+        // Example usage
+       
+    
+        return response()->json(['status' => 'success', 'message' => 'Transactions added successfully', 'code' => 200]);
+    }
+
 }
 
