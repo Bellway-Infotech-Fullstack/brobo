@@ -228,6 +228,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         });
 
         Route::group(['prefix' => 'web-app-settings', 'as' => 'business-settings.', 'middleware' => ['module:settings','actch']], function () {
+            Route::get('get-time-slots', 'BusinessSettingsController@get_time_slots')->name('get-time-slots');
             Route::get('business-setup', 'BusinessSettingsController@business_index')->name('business-setup');
             Route::get('apis', 'BusinessSettingsController@config_setup')->name('config-setup');
             Route::post('config-update', 'BusinessSettingsController@config_update')->name('config-update');
