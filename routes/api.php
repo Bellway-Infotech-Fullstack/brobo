@@ -48,7 +48,8 @@ Route::group(['namespace' => 'API'], function () {
     });
     
      Route::controller(BookingController::class)->group(function () {
-        Route::get('get-most-ordered-products-for-web','getMostOrderedProductsForWeb');  
+        Route::get('get-most-ordered-products-for-web','getMostOrderedProductsForWeb'); 
+        Route::get('get-time-slots-for-web', 'getTimeSlots'); 
     });
 
     Route::controller(ProductController::class)->group(function () {
@@ -141,7 +142,9 @@ Route::group(['namespace' => 'API'], function () {
             Route::put('pay-for-damage','payForDamage');
             Route::put('pay-for-due-amount','payForDueAmount');
             Route::get('get-most-ordered-products','getMostOrderedProducts');  
-            Route::get('get-referral-discount', 'getReferrallDiscount');          
+            Route::get('get-referral-discount', 'getReferrallDiscount');   
+            Route::post('add-total-orders-in-google-analytics','addTotalOrdersInGgoogleAnalytics');    
+            Route::get('get-time-slots', 'getTimeSlots');
         });
 
         Route::controller(NotificationController::class)->group(function () {
@@ -155,6 +158,7 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('manage-bank-details','manageBankDetails');
             Route::get('get-bank-details','getBankDetails');
         });
+        
     });
 });
 
