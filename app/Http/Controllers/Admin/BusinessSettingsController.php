@@ -192,7 +192,6 @@ class BusinessSettingsController extends Controller
         
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
-        $is_time_slot_enabled = $request['is_time_slot_enabled'];
         $numSlots = count($order_from_time_slots);
         $isValid = true;
         $isGreater = false;
@@ -227,30 +226,65 @@ class BusinessSettingsController extends Controller
             return back();
         }
 
-        $time_slots = '';
 
-
-       
-
-
-        $order_time_slot_data = BusinessSetting::where('key','order_time_slots')->first();
-        $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ?  explode(",",$order_time_slot_data->value) : array();
 
 
 
         if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
-               $time_slot = $value."-".$order_to_time_slots[$key]."-".$is_time_slot_enabled[$key]; 
-              
-               $time_slots =  $time_slots . $time_slot  . ",";
+                $existingRecord = DB::table('order_time_slots')
+                ->where('from_time', $value)
+                ->where('to_time', $order_to_time_slots[$key])
+                ->exists();
+                if (!$existingRecord) {
+                    DB::table('order_time_slots')->insert([
+                        'from_time' => $value,
+                        'to_time' => $order_to_time_slots[$key]
+        
+                    ]);
+                }
+        
                 
             }
-            $time_slots = rtrim($time_slots, ',');
-            //die;
-            DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
-                'value' => $time_slots
-            ]);
+        }
+        $is_time_slot_enabled = $request['is_time_slot_enabled'];
+        $time_slot_id = $request['time_slot_id'];
+        $slot_date = $request['slot_date'];
 
+      
+
+        if(isset($time_slot_id) && !empty($time_slot_id)){
+            foreach($time_slot_id as $key1 => $value){
+
+                
+                $existingRecord = DB::table('day_wise_order_time_slots')
+                ->where('slot_date', $slot_date)
+                ->where('is_enabled', $is_time_slot_enabled[$key1])
+                ->exists();
+
+             
+
+               
+
+                if (!$existingRecord) {
+                  
+                    DB::table('day_wise_order_time_slots')->insert([
+                        'time_slot_id' => $value,
+                        'slot_date' => $slot_date,
+                        'is_enabled' => $is_time_slot_enabled[$key1],
+        
+                    ]);
+
+                } else {
+                    DB::table('day_wise_order_time_slots')
+                    ->where('time_slot_id', $value)
+                    ->where('slot_date', $slot_date)
+                    ->update(['is_enabled' => $is_time_slot_enabled[$key]]);
+
+                }
+               
+                
+            }
         }
 
         $min_amount = $request['min_amount'];
@@ -1605,6 +1639,25 @@ class BusinessSettingsController extends Controller
 
         Toastr::success("Shipping policy updated");
         return back();
+    }
+
+
+    public function get_time_slots(Request $request)
+    {
+        $slot_date = date("Y-m-d",strtotime($request->slot_date));
+
+
+        $order_time_slot_data = DB::table('order_time_slots')->get();  
+        if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+            foreach($order_time_slot_data as $key => $value){
+                $day_wise_order_time_slot_data = DB::table('day_wise_order_time_slots')->where(array('time_slot_id' => $value->id, 'slot_date' => $slot_date))->first(); 
+
+                if(isset($day_wise_order_time_slot_data) && !empty($day_wise_order_time_slot_data)){
+                    $order_time_slot_data[$key]->is_enabled = $day_wise_order_time_slot_data->is_enabled;
+                }
+            }
+        }
+        return response()->json($order_time_slot_data);
     }
 }
 

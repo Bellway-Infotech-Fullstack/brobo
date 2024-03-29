@@ -696,9 +696,9 @@
                     
                   <?php
 
-                        $order_time_slot_data = DB::table('order_time_slots')->get();  
+                        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();  
                         
-                       
+                            $order_time_slot_data = (isset($order_time_slot_data) && !empty($order_time_slot_data)) ? explode(",",$order_time_slot_data->value) : array();
 
                     
 
@@ -712,11 +712,21 @@
                          if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
                                     
                             foreach($order_time_slot_data as $key => $value){
-                            
-                                $from_time_slot = $value->from_time;
-                                $to_time_slot   = $value->to_time;
-                                $time_slot_id = $value->id;
-                               
+                                $time_slot_data = explode("-",$value);
+                                $from_time_slot = $time_slot_data[0];
+                                $to_time_slot   = $time_slot_data[1];
+                                $is_time_slot_enabled   = $time_slot_data[2];
+                                $time_slot =   $from_time_slot . "-" . $to_time_slot  . "-" . $is_time_slot_enabled;
+                                $is_time_slot_checked = "";
+                                 $is_time_slot_checked_not = "";
+                                
+                                if($is_time_slot_enabled == 'yes'){
+                                    $is_time_slot_checked = "checked";
+                                }
+                                
+                                 if($is_time_slot_checked_not == 'no'){
+                                    $is_time_slot_checked_not = "checked";
+                                }
                     
                             ?>
 
@@ -734,10 +744,16 @@
                                         </div>
                                         @if($key > 0)
                                         <div  style="float:right;" class="mt-5">
-                                          <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot-id="{{ $time_slot_id }}" data-count="{{$key+1}}"> Remove </a>
+                                          <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot="{{ $time_slot }}" data-count="{{$key+1}}"> Remove </a>
                                         </div> 
                                         @endif     
-                                                           
+                                        <div style="float:right">
+                                            <input type="hidden"  name="is_time_slot_enabled[]" value ="{{ $is_time_slot_enabled }}"> 
+                                            <input type="radio" value="yes" {{ $is_time_slot_enabled == 'yes' ? "checked" : ''}}  class="is_time_slot_enabled">
+                                            Enable
+                                            <input type="radio" value="no" {{ $is_time_slot_enabled == 'no' ? "checked" : ''}} class="is_time_slot_enabled">
+                                            Disable
+                                        </div>                       
                                     </div>
                                     <br>
                                     
@@ -761,7 +777,13 @@
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
                                         <input type="time"  name="order_to_time_slots[]" class="form-control">
                                     </div>    
-                                                       
+                                    <div style="float:right">
+                                        <input type="hidden"  name="is_time_slot_enabled[]"> 
+                                        <input type="radio" value="yes" class="is_time_slot_enabled">
+                                        Enable
+                                        <input type="radio" value="no" class="is_time_slot_enabled">
+                                        Disable
+                                    </div>                         
                                 </div>
                                 <br>
                                 
@@ -817,18 +839,6 @@
                             <div id="location_map_canvas"></div>
                         </div>
                     </div>
-
-
-                    <div class="row mt-5 border p-5">
-                        <div class="form-group col-12" style="margin-left: -15px;">
-                            <label class="input-label d-inline" for="exampleFormControlInput1">Manage Slots</label>
-                           <input type="date" class="form-control col-md-4" id="slot_date" name="slot_date">
-                        </div>
-
-                        <div id="timeSlotData"></div>
-                    </div>
-
-                   
 
                      <div class="row mt-5">
                         <div class="form-group col-12" style="margin-left: -15px;">
@@ -1032,8 +1042,14 @@
                                             '<input type="time"  name="order_to_time_slots[]" class="form-control">'+
                                         '</div>'+   
                                         '<br>'+
+                                    '<div style="float:right">'+
+                                        '<input type="hidden"  name="is_time_slot_enabled[]">'+
                                         
-                                  
+                                        '<input type="radio" value="yes" class="is_time_slot_enabled"> Enable '+
+                                        
+                                        '<input type="radio" value="no" class="is_time_slot_enabled"> Disable'+
+                                        
+                                    '</div>'+
                                     '<div  style="float:right;" class="mt-5">'+
                                         '<a href="javascript:void(0)" class="remove-time-slot" data-count="'+count+'"> Remove </a>'+
                                     '</div>'+              
@@ -1113,56 +1129,6 @@
             })
         @endif
         };
-
-
-        $("#slot_date").on("change",function(){
-            var slot_date = $(this).val();
-            $.get({
-                        url: '{{route('admin.business-settings.get-time-slots')}}',
-                        data: {"slot_date": slot_date},
-                        beforeSend: function () {
-                            $('#loading').show();
-                        },
-                        success: function (data) {
-                            $("#timeSlotData").html('');
-                                
-                            $.each(data,function(k,val){
-                                console.log("val",val);
-                                var from_time_slot = val.from_time;
-                                var to_time_slot = val.to_time;
-                                var time_slot_id = val.id;
-                                var is_enabled = val.is_enabled;
-                              
-                                var timeSlotData = '<div class="row">'+
-                                    '<div class="col-md-4 col-12 slot-section">'+
-                                        '<div class="form-group">'+
-                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot</label>'+
-                                            '<input type="text"  class="form-control" value="'+from_time_slot+'" disabled>'+
-                                        '</div>'+                    
-                                    '</div>'+
-                                    '<div class="col-md-4 col-12 slot-section">'+
-                                        '<div class="form-group">'+
-                                            '<label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot </label>'+
-                                            '<input type="text"  class="form-control" value="'+to_time_slot+'" disabled>'+
-                                        '</div>'+   
-                                        '<br>'+
-                                  '</div>'+
-                                  '<div style="float:right" class="col-md-4 col-12 slot-section">'+
-                                        '<input type="hidden"  name="is_time_slot_enabled[]">'+
-                                        '<input type="hidden"  name="time_slot_id[]" value="'+time_slot_id+'">'+
-                                        '<input type="radio" value="yes" class="is_time_slot_enabled" ' + (is_enabled === 'yes' ? 'checked' : '') + '> Enable '+
-                                         '<input type="radio" value="no" class="is_time_slot_enabled" ' + (is_enabled === 'no' ? 'checked' : '') + '> Disable'+
-                                '</div>'+         
-                                '</div>';
-
-                                $("#timeSlotData").append(timeSlotData);
-                            });
-                        },
-                        complete: function () {
-                            $('#loading').hide();
-                        },
-                    });
-        });
 
         function readURL(input) {
             if (input.files && input.files[0]) {
