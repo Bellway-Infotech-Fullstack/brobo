@@ -816,7 +816,7 @@ class OrderController extends Controller
                     $order->pin_location ?? 'N/A',
                     $productNames,
                     date('d M Y', strtotime($order['start_date'])),
-                    date('d M Y', strtotime($order['end_date'])),
+                    (!empty($order['end_date'])) ? date('d M Y', strtotime($order['end_date'])) : 'N/A',
                     $order['time_duration'],
                     'Rs. ' . ($order['paid_amount'] ?? ''),
                     $order['gst_number'] ?? 'N/A',
