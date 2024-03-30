@@ -33,7 +33,16 @@
 
                 <div class="row mt-3">
                     <div class="col-12">
-                        <h5>Booking From {{date('d M Y',strtotime($order['start_date']))}} To  {{date('d M Y',strtotime($order['end_date']))}}</h5>
+                        <h5>Booking From {{date('d M Y',strtotime($order['start_date']))}} To  
+                            
+                            <?php
+                            if(!empty($order['end_date'])){
+                        ?>
+                        {{date('d M Y',strtotime($order['end_date']))}}
+                        <?php } else{ ?>
+                            N/A
+                        <?php } ?>
+                        </h5>
                     </div>
                  </div>
 
@@ -84,7 +93,7 @@
                             @endif
 
                             
-
+                            <h5>  GST Number - {{ $order['gst_number'] ?? 'N/A' }} </h5>
                     </div>
                     
                   

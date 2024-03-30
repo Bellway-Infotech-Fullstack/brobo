@@ -1565,7 +1565,8 @@ class Helpers
                         'Start Date' => date('d M Y', strtotime($order['start_date'])),
                         'End Date' => date('d M Y', strtotime($order['end_date'])),
                         'Time Slot' => $order['time_duration'],
-                        'Paid Amount' => 'Rs. ' . ($order->paid_amount ?? ''),
+                        'Paid Amount' => 'Rs. ' . ($order['paid_amount'] ?? ''),
+                        'GST Number'  => $order['gst_number'] ?? 'N/A',
                         'Payment Status' => 'Paid',
                         'Booking Status' => $order['status'], 
                     ];  

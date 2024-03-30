@@ -59,11 +59,34 @@
     ?>
      </td>
       <td>{{ $order->pin_location ?? 'N/A'  }} </td>
+       <td>
+                                <?php
+                                $productNames = '';
+                                $cartItems = json_decode($order->cart_items, true);
+                                if(isset($cartItems) && !empty($cartItems)){
+                                    foreach($cartItems as $key => $value){
+                                        $productNames .= "," . $value['item_name'];
+                                    }
+                                    $productNames = trim($productNames, ',');
+                                }
+                                ?>
+                                
+                                {{ $productNames }}
+                                
+
+                             </td>
 
     <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
+        <?php
+        if(!empty($order['end_date'])){
+    ?>
     <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
+    <?php } else{ ?>
+        <td>N/A</td>
+    <?php } ?>
     <td>{{ $order['time_duration'] }}</td>
     <td>Rs. {{ number_format($order->paid_amount)  }} </td>
+    <td> {{ $order['gst_number'] ?? 'N/A'  }} </td>
     <td>
       
         <span class="badge badge-soft-success">

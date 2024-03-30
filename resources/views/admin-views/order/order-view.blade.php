@@ -112,7 +112,14 @@
                         </span>
                         
                          <span class="ml-2 ml-sm-3">
-                           End Date - {{ date('d M Y ' , strtotime($order['end_date'])) }}
+                            <?php
+                            if(!empty($order['end_date'])){
+                        ?>
+                         End Date - {{ date('d M Y ' , strtotime($order['end_date'])) }}
+                        <?php } else{ ?>
+                            End Date - N/A
+                        <?php } ?>
+                          
                         </span>
                         
                         <span class="ml-2 ml-sm-3">
@@ -125,7 +132,9 @@
                         <span class="ml-2 ml-sm-3"> Damage Amount - Rs.  {{ $order->damage_amount }} </span>
                         @endif
 
-                        
+                        <span class="ml-2 ml-sm-3">
+                            GST Number - {{ $order['gst_number'] ?? 'N/A'  }}
+                          </span>
                         
                     </div>
 
@@ -210,7 +219,7 @@
                                 <?php
                                     if($order->status!='completed'){
                                 ?>
-                                <button class="btn btn-sm btn-primary" type="button" onclick="edit_order()">
+                                <button class="btn btn-sm btn-primary d-none" type="button" onclick="edit_order()">
                                     <i class="tio-edit"></i> {{ __('messages.edit') }}
                                 </button> 
                                 <?php } ?>
