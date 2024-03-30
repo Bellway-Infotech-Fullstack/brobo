@@ -259,10 +259,10 @@ class BusinessSettingsController extends Controller
                 
                 $existingRecord = DB::table('day_wise_order_time_slots')
                 ->where('slot_date', $slot_date)
-                ->where('is_enabled', $is_time_slot_enabled[$key1])
+                ->where('time_slot_id', $value)
                 ->exists();
 
-             
+            
 
                
 
@@ -279,13 +279,15 @@ class BusinessSettingsController extends Controller
                     DB::table('day_wise_order_time_slots')
                     ->where('time_slot_id', $value)
                     ->where('slot_date', $slot_date)
-                    ->update(['is_enabled' => $is_time_slot_enabled[$key]]);
+                    ->update(['is_enabled' => $is_time_slot_enabled[$key1]]);
 
                 }
                
                 
             }
         }
+
+        
 
         $min_amount = $request['min_amount'];
         $max_amount = $request['max_amount'];
@@ -342,7 +344,7 @@ class BusinessSettingsController extends Controller
                $delivery_charge_slabs =  $delivery_charge_slabs . $delivery_charge_slab  . ",";    
             }
             $delivery_charge_slabs = rtrim($delivery_charge_slabs, ',');
-            //die;
+          
             DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge_slabs'], [
                 'value' => $delivery_charge_slabs
             ]);
@@ -644,7 +646,6 @@ class BusinessSettingsController extends Controller
 
 
  
-        die;
 
         if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
@@ -658,7 +659,7 @@ class BusinessSettingsController extends Controller
                 
             }
             $time_slots = rtrim($time_slots, ',');
-            //die;
+         
             DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
                 'value' => $time_slots
             ]);
@@ -677,7 +678,7 @@ class BusinessSettingsController extends Controller
                $delivery_charge_slabs =  $delivery_charge_slabs . $delivery_charge_slab  . ",";    
             }
             $delivery_charge_slabs = rtrim($delivery_charge_slabs, ',');
-            //die;
+         
             DB::table('business_settings')->updateOrInsert(['key' => 'delivery_charge_slabs'], [
                 'value' => $delivery_charge_slabs
             ]);
@@ -1514,29 +1515,9 @@ class BusinessSettingsController extends Controller
     public function removeDynamicTimeSlot(Request $request)
     {
 
-        $timeSlot = $request->time_slot;
-
-        $order_time_slot_data = \App\Models\BusinessSetting::where('key','order_time_slots')->first();
-        $order_time_slot_data = explode(",",$order_time_slot_data->value);
-
-
-       
- 
-
-        if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
-            foreach($order_time_slot_data as $key => $value){
-                if($value == $timeSlot){
-                    unset($order_time_slot_data[$key]);
-
-                }
-            } 
-        }
-      
-        BusinessSetting::updateOrInsert(['key' => 'order_time_slots'],
-        [
-            'value' => isset($order_time_slot_data) && !empty($order_time_slot_data) ? implode(",",$order_time_slot_data) : '',
-            'updated_at' => now()
-        ]);
+        $timeSlotId = $request->time_slot_id;
+        DB::table('order_time_slots')->where('id', $timeSlotId)->delete();
+        DB::table('day_wise_order_time_slots')->where('time_slot_id', $timeSlotId)->delete();
         return json_encode(['status' => true,'message' => 'Slot removed successfully']);
        
     }

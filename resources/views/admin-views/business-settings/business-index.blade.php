@@ -981,12 +981,13 @@
 
             $("#time_slot_data").on("click", "a.remove-dynamic-time-slot", function(e) {
                 //e.preventDefault();
-                var time_slot = $(this).attr("data-time-slot");
+                var time_slot_id = $(this).attr("data-time-slot-id");
+                
               
                 $.post({
                     url: '{{route('admin.business-settings.remove-dynamic-time-slot')}}',
                     data: {
-                            "time_slot": time_slot,
+                            "time_slot_id": time_slot_id,
                             "_token": "{{csrf_token()}}"
                            
                         },
@@ -1148,7 +1149,7 @@
                                         '<br>'+
                                   '</div>'+
                                   '<div style="float:right" class="col-md-4 col-12 slot-section">'+
-                                        '<input type="hidden"  name="is_time_slot_enabled[]">'+
+                                        '<input type="hidden"  name="is_time_slot_enabled[]" value="'+is_enabled+'">'+
                                         '<input type="hidden"  name="time_slot_id[]" value="'+time_slot_id+'">'+
                                         '<input type="radio" value="yes" class="is_time_slot_enabled" ' + (is_enabled === 'yes' ? 'checked' : '') + '> Enable '+
                                          '<input type="radio" value="no" class="is_time_slot_enabled" ' + (is_enabled === 'no' ? 'checked' : '') + '> Disable'+
