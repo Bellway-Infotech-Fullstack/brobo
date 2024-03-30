@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Order Placed</title>
+    <title>{{__('Email Verification')}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
         /**
@@ -100,21 +100,13 @@
         }
     </style>
 </head>
-<body style="">
+<body style="background-color: #e9ecef;">
 <!-- end preheader -->
 <div class="card">
     <div class="card-header">
-        New Order has been placed.
-        <p>
-        Order ID : {{$id}}.
-    </p>
-        <p>
-        <a href="{{ route('admin.order.details', ['id' => $id]) }}">View Order</a>
-        </p>
-
+        {{__('mail_received_successfully')}}.
     </div>
 </div>
-
 </body>
 </html>
 
