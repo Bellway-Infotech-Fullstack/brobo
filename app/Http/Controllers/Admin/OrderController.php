@@ -663,7 +663,7 @@ class OrderController extends Controller
     }
   }
 
-   public function exportOrderList(Request $request){
+  public function exportOrderList(Request $request){
         
     // Get all orders data   
 
@@ -761,7 +761,7 @@ class OrderController extends Controller
           
             $handle = fopen('php://output', 'w');
             // Write CSV headers
-            $headers = ['#', 'Booking ID', 'Booking Date', 'Customer Name', 'Customer Mobile Number', 'Delivery Address', 'Pin Location', 'Product Names', 'Start Date', 'End Date', 'Time Slot', 'Paid Amount', 'Payment Status', 'Booking Status'];
+            $headers = ['#', 'Booking ID', 'Booking Date', 'Customer Name', 'Customer Mobile Number', 'Delivery Address', 'Pin Location', 'Product Names', 'Start Date', 'End Date', 'Time Slot', 'Paid Amount','GST Number', 'Payment Status', 'Booking Status'];
 
             // Write headers to CSV
             fputcsv($handle, $headers);
@@ -818,7 +818,8 @@ class OrderController extends Controller
                     date('d M Y', strtotime($order['start_date'])),
                     date('d M Y', strtotime($order['end_date'])),
                     $order['time_duration'],
-                    'Rs. ' . ($order->paid_amount ?? ''),
+                    'Rs. ' . ($order['paid_amount'] ?? ''),
+                    $order['gst_number'] ?? 'N/A',
                     'Paid',
                     $order['status']
                 ];
@@ -840,7 +841,7 @@ class OrderController extends Controller
 
     // If the requested format is not supported or not specified, return an error response
     return response()->json(['error' => 'Unsupported format'], 400);
-   }
+}
 
     public function edit(Request $request, Order $order){
         $order = Order::where('id', $order->id)->first();
