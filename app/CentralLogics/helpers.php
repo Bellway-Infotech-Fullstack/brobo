@@ -1563,7 +1563,7 @@ class Helpers
                         'Pin Location' => $order->pin_location ?? 'N/A',
                         'Product Names' => $productNames,
                         'Start Date' => date('d M Y', strtotime($order['start_date'])),
-                        'End Date' => date('d M Y', strtotime($order['end_date'])),
+                        'End Date' =>   (!empty($order['end_date'])) ? date('d M Y', strtotime($order['end_date'])) : 'N/A',
                         'Time Slot' => $order['time_duration'],
                         'Paid Amount' => 'Rs. ' . ($order['paid_amount'] ?? ''),
                         'GST Number'  => $order['gst_number'] ?? 'N/A',
