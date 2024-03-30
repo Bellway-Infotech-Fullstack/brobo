@@ -145,6 +145,8 @@ Route::group(['namespace' => 'API'], function () {
             Route::get('get-referral-discount', 'getReferrallDiscount');   
             Route::post('add-total-orders-in-google-analytics','addTotalOrdersInGgoogleAnalytics');    
             Route::get('get-time-slots', 'getTimeSlots');
+            Route::get('send-mail', 'send_mail')->name('mail.send');
+
         });
 
         Route::controller(NotificationController::class)->group(function () {

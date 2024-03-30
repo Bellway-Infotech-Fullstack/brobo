@@ -83,7 +83,13 @@
                 </tr>
                 <tr>
                     <td> End Date</td>
-                    <td>{{ date('d M Y',strtotime($order['end_date'])) }}</td>
+                    <?php
+                                if(!empty($order['end_date'])){
+                            ?>
+                            <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
+                            <?php } else{ ?>
+                                <td>N/A</td>
+                            <?php } ?>
                 </tr>
                 <tr>
                     <td> Time Slot</td>
@@ -104,6 +110,12 @@
                         <td width="50%">Rs. {{ $order['damage_amount'] }}</td>
                     </tr>
                  @endif
+                 
+                  <tr>
+                    <td width="50%">GST Number </td>
+                    <td width="50%">{{ $order['gst_number'] ?? 'N/A'  }}</td>
+                </tr>
+
             </table>
         </div>
     </div>

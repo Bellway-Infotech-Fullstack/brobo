@@ -299,6 +299,7 @@
                         <th>End Date</th>
                         <th>Time Slot</th>
                         <th>Paid Amount</th>
+                        <th>GST Number</th>
                         <th>{{__('messages.payment')}} {{__('messages.status')}}</th>                       
                         <th>{{__('messages.order')}} {{__('messages.status')}}</th>
                         <th>{{__('messages.actions')}}</th>
@@ -385,9 +386,16 @@
                              </td>
                         
                             <td>{{date('d M Y',strtotime($order['start_date']))}}</td>
+                            <?php
+                                if(!empty($order['end_date'])){
+                            ?>
                             <td>{{date('d M Y',strtotime($order['end_date']))}}</td>
+                            <?php } else{ ?>
+                                <td>N/A</td>
+                            <?php } ?>
                             <td>{{ $order['time_duration'] }}</td>
                             <td>Rs. {{ ($order->paid_amount)  }} </td>
+                            <td> {{ $order->gst_number ?? 'N/A'  }} </td>
                             <td>
                               
                                 <span class="badge badge-soft-success">

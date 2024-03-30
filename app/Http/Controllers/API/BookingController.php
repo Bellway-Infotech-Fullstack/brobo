@@ -16,6 +16,7 @@ use App\Models\Wishlist;
 use App\Models\User;
 use App\CentralLogics\Helpers;
 use DB;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -253,6 +254,10 @@ class BookingController extends Controller
                
 
                 $orderId = "BRO".$newOrder->id;
+
+                Mail::to("broboyouchoose@gmail.com")->send(new \App\Mail\OrderPlaced($newOrder->id));
+
+
                 Order::where('id', $newOrder->id)->update(['order_id' => $orderId]);
 
                 // clear cart
@@ -1112,6 +1117,22 @@ class BookingController extends Controller
     
         return response()->json(['status' => 'success', 'message' => 'Transactions added successfully', 'code' => 200]);
     }
+
+         //Send Mail
+         public function send_mail(Request $request)
+         {
+             
+             $response_flag = 0;
+             try {
+                 Mail::to($request->email)->send(new \App\Mail\OrderPlaced("333"));
+                 $response_flag = 1;
+             } catch (\Exception $exception) {
+                 print_r($exception);
+                 $response_flag = 2;
+             }
+     
+             return response()->json(['success' => $response_flag]);
+         }
 
 }
 
