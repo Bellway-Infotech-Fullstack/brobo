@@ -49,7 +49,7 @@
                     }
                 }
 
-                $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name;
+                $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name;
 
             } else {
                 $deliveryAddress = 'N/A';

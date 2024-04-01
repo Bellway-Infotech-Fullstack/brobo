@@ -1539,7 +1539,7 @@ class Helpers
                         }
                     }
 
-                    $deliveryAddress = $addressData->house_name . "," . $floorNumber . "" . $suffix . "" . "floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->pin_code;
+                    $deliveryAddress = $addressData->house_name . "," . $floorNumber . "" . $suffix . "" . " floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->pin_code;
                 } else {
                     $deliveryAddress = 'N/A';
                 }

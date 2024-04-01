@@ -16,6 +16,9 @@
         .header-item {
             width: 10rem;
         }
+        sup{
+            right:unset;
+        }
 
     </style>
 @endpush
@@ -664,7 +667,7 @@
                                             }
                                         }
 
-                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
+                                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
 
                                     } else {
                                         $deliveryAddress = '';
@@ -1156,16 +1159,16 @@
                             CloseButton: true,
                             ProgressBar: true
                         });
-                     //  location.reload();
+                       location.reload();
                         return false;
                     }
                     $('.call-when-done').click();
 
-                    toastr.success('{{ __('messages.order_updated_successfully') }}', {
+                    toastr.success('Quantity updated in cart successfully', {
                         CloseButton: true,
                         ProgressBar: true
                     });
-                 //   location.reload();
+                    location.reload();
                 },
                 complete: function() {
                     $('#loading').hide();
