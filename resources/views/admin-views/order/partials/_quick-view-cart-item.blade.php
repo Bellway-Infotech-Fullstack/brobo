@@ -392,7 +392,7 @@ $mainProductDifferentAngleImages = $items[0]->images;
     cartQuantityInitialize();
     var img_src = "<?=$itemImage?>";
     var color_image_id = "<?=$item_color_image_id?>";
-    var product_id = "<?=$item_color_image_id?>";
+    var product_id = "<?=$product_id?>";
     getProductColorImageDetail(img_src,color_image_id,product_id,this);
   //  getVariantPrice();
     $('#add-to-cart-form input').on('change', function () {

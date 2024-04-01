@@ -392,6 +392,10 @@ class BusinessSettingsController extends Controller
             'value' => $request['restaurant_self_registration']
         ]);
 
+        DB::table('business_settings')->updateOrInsert(['key' => 'google_analytic_id'], [
+            'value' => $request['google_analytic_id']
+        ]);
+
         Toastr::success(trans('messages.successfully_updated_to_changes_restart_user_app'));
         return back();
     }

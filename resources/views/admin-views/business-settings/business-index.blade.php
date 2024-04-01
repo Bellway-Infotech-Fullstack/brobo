@@ -614,171 +614,147 @@
                             </div>
                         </div>
                     </div>
-                    <?php
-                    $delivery_charge_slab_data = \App\Models\BusinessSetting::where('key','delivery_charge_slabs')->first();
-                    $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
-
-                    ?>
-
-                    <div id="delivery_charge_section">
-                        <input type="hidden" id="delivery_charge_section_count_length"  value="{{count($delivery_charge_slab_data)}}">
-
-                    <?php
-                    if(isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)){
-                           foreach($delivery_charge_slab_data as $key => $value){
-                                $delivery_charge_slab = explode("-",$value);
-                                
-                                $delivery_charge = $delivery_charge_slab[0];
-                                $min_amount = $delivery_charge_slab[1];
-                                $max_amount   = $delivery_charge_slab[2];
-
+                    <fieldset class="border p-5">
+                        <legend class="w-auto">Add/Remove Delivery Charge Slab</legend>
+                    
+                        <?php
+                        $delivery_charge_slab_data = \App\Models\BusinessSetting::where('key','delivery_charge_slabs')->first();
+                        $delivery_charge_slab_data = (isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)) ? explode(",",$delivery_charge_slab_data->value) : array();
                         ?>
-                        <div class="row">
-                            <div class="col-md-4 col-12">
-                                <div class="form-group">
-                                    <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
-                                    <input type="text"  name="min_amount[]" class="form-control" value="{{ $min_amount ?? ''}}">
-                                </div>                         
+                    
+                        <div id="delivery_charge_section">
+                            <input type="hidden" id="delivery_charge_section_count_length" value="{{count($delivery_charge_slab_data)}}">
+                    
+                            <?php
+                            if(isset($delivery_charge_slab_data) && !empty($delivery_charge_slab_data)){
+                                foreach($delivery_charge_slab_data as $key => $value){
+                                    $delivery_charge_slab = explode("-",$value);
+                    
+                                    $delivery_charge = $delivery_charge_slab[0];
+                                    $min_amount = $delivery_charge_slab[1];
+                                    $max_amount = $delivery_charge_slab[2];
+                            ?>
+                            <div class="row">
+                                <div class="col-md-4 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                        <input type="text" name="min_amount[]" class="form-control" value="{{ $min_amount ?? ''}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                        <input type="text" name="max_amount[]" class="form-control" value="{{ $max_amount ?? ''}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                        <input type="text" name="delivery_charge[]" class="form-control" value="{{ $delivery_charge ?? ''}}">
+                                    </div>
+                                    @if($key > 0)
+                                    <div style="float:right;">
+                                        <a href="javascript:void(0)" class="remove-delivery-charge-slab remove-dynamic-delivery-charge-slab" data-min-amount="{{ $min_amount ?? '' }}" data-count="{{$key+1}}"> Remove </a>
+                                    </div>
+                               
+                                @endif
+                                </div>
+                                
                             </div>
-                            <div class="col-md-4 col-12">
-                                <div class="form-group">
-                                    <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
-                                    <input type="text"  name="max_amount[]" class="form-control" value="{{ $max_amount ?? ''}}">
-                                </div>                           
-                            </div>
-                            <div class="col-md-4 col-12">
-                                <div class="form-group">
-                                    <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
-                                    <input type="text" 
-                                        name="delivery_charge[]" class="form-control" placeholder="" value="{{ $delivery_charge ?? ''}}">
+                            <?php }} else { ?>
+                            <div class="row">
+                                <div class="col-md-4 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
+                                        <input type="text" name="min_amount[]" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
+                                        <input type="text" name="max_amount[]" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
+                                        <input type="text" name="delivery_charge[]" class="form-control">
+                                    </div>
                                 </div>
                             </div>
-                            @if($key > 0)
-                            <div  style="float:right;">
-                                <?php
-                                 
-                                ?>
-                                <a href="javascript:void(0)" class="remove-delivery-charge-slab remove-dynamic-delivery-charge-slab" data-min-amount="{{ $min_amount ?? '' }}" data-count="{{$key+1}}"> Remove </a>
-                            </div> 
-                            @endif  
+                            <?php } ?>
                         </div>
-                    <?php }} else { ?>
+                    
                         <div class="row">
-                            <div class="col-md-4 col-12">
-                                <div class="form-group">
-                                    <label class="input-label d-inline" for="exampleFormControlInput1">Min. Amount</label>
-                                    <input type="text"  name="min_amount[]" class="form-control">
-                                </div>                         
-                            </div>
-                            <div class="col-md-4 col-12">
-                                <div class="form-group">
-                                    <label class="input-label d-inline" for="exampleFormControlInput1">Max. Amount</label>
-                                    <input type="text"  name="max_amount[]" class="form-control">
-                                </div>                           
-                            </div>
-                            <div class="col-md-4 col-12">
-                                <div class="form-group">
-                                    <label class="input-label d-inline" for="exampleFormControlInput1">Delivery Charge</label>
-                                    <input type="text" 
-                                        name="delivery_charge[]" class="form-control" placeholder="">
+                            <div class="col-md-12 col-12">
+                                <div style="float:right;">
+                                    <a href="javascript:void(0)" class="add-more-section"> Add More </a>
                                 </div>
                             </div>
-                            
                         </div>
-
-                    <?php } ?>
-             
-                    </div>
-                            <div>
-                             <a href="javascript:void(0)" class="add-more-section"> Add More </a>
-                    </div>
+                    </fieldset>
+                    
                     
                     
                   <?php
-
-                        $order_time_slot_data = DB::table('order_time_slots')->get();  
-                        
-                       
-
+                    $order_time_slot_data = DB::table('order_time_slots')->get();  
+                   ?>
+                    <fieldset class="border p-5">
+                        <legend class="w-auto">Add/Remove Order Time Slot</legend>
                     
-
-                    ?>
-                    <input type="hidden" id="time_slot_length"  value="{{count($order_time_slot_data)}}">
-
-                    <div  id="time_slot_data">
-                        
+                        <input type="hidden" id="time_slot_length" value="{{count($order_time_slot_data)}}">
+                        <div id="time_slot_data">
                             <?php
-     
-                         if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
-                                    
-                            foreach($order_time_slot_data as $key => $value){
-                            
-                                $from_time_slot = $value->from_time;
-                                $to_time_slot   = $value->to_time;
-                                $time_slot_id = $value->id;
-                               
-                    
+                            if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
+                                foreach($order_time_slot_data as $key => $value){
+                                    $from_time_slot = $value->from_time;
+                                    $to_time_slot   = $value->to_time;
+                                    $time_slot_id = $value->id;
                             ?>
-
-                                <div class="row">
-                                    <div class="col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot {{$key+1}} </label>
-                                            <input type="time" value="{{ $from_time_slot ?? ''}}" name="order_from_time_slots[]" class="form-control">
-                                        </div>                         
+                            <div class="row">
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot {{$key+1}} </label>
+                                        <input type="time" value="{{ $from_time_slot ?? ''}}" name="order_from_time_slots[]" class="form-control">
                                     </div>
-                                    <div class="col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot {{$key+1}}</label>
-                                            <input type="time" value="{{ $to_time_slot ?? ''}}" name="order_to_time_slots[]" class="form-control">
-                                        </div>
-                                        @if($key > 0)
-                                        <div  style="float:right;" class="mt-5">
-                                          <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot-id="{{ $time_slot_id }}" data-count="{{$key+1}}"> Remove </a>
-                                        </div> 
-                                        @endif     
-                                                           
-                                    </div>
-                                    <br>
-                                    
                                 </div>
-                               
-                               
-
-                               
-                         
-                            
+                                <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                        <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot {{$key+1}}</label>
+                                        <input type="time" value="{{ $to_time_slot ?? ''}}" name="order_to_time_slots[]" class="form-control">
+                                    </div>
+                                    @if($key > 0)
+                                    <div style="float:right;" class="mt-5">
+                                        <a href="javascript:void(0)" class="remove-time-slot remove-dynamic-time-slot" data-time-slot-id="{{ $time_slot_id }}" data-count="{{$key+1}}"> Remove </a>
+                                    </div>
+                                    @endif
+                                </div>
+                                <br>
+                            </div>
                             <?php }} else { ?>
                             <div class="row">
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot 1</label>
-                                        <input type="time"  name="order_from_time_slots[]" class="form-control">
-                                    </div>                         
+                                        <input type="time" name="order_from_time_slots[]" class="form-control">
+                                    </div>
                                 </div>
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order To Time Slot 1</label>
-                                        <input type="time"  name="order_to_time_slots[]" class="form-control">
-                                    </div>    
-                                                       
+                                        <input type="time" name="order_to_time_slots[]" class="form-control">
+                                    </div>
                                 </div>
                                 <br>
-                                
                             </div>
-
-                               
-
-
                             <?php } ?>
-                            
-                        
-                    </div>
-               
-                    <div  style='float:right;' class="mt-5">
-                         <a href="javascript:void(0)" class="add-more-time-slot"> Add More </a>
-                    </div>
+                        </div>
                     
+                        <div style='float:right;'>
+                            <a href="javascript:void(0)" class="add-more-time-slot"> Add More </a>
+                        </div>
+                    </fieldset>
+                
 
                     <div class="row" style="display:none">
                         <div class="col-sm-6">
@@ -819,25 +795,35 @@
                     </div>
 
 
-                    <div class="row mt-5 border p-5">
-                        <div class="form-group col-12" style="margin-left: -15px;">
-                            <label class="input-label d-inline" for="exampleFormControlInput1">Manage Slots</label>
-                           <input type="date" class="form-control col-md-4" id="slot_date" name="slot_date">
+                   
+                    <fieldset class="border p-5">
+                        <legend class="w-auto">Manage Order Time Slots</legend>
+                        <div class="row mt-3">
+                            <div class="form-group col-md-4">
+                                <label class="input-label d-inline" for="exampleFormControlInput1">Date</label>
+                                <input type="date" class="form-control" id="slot_date" name="slot_date">
+                            </div>
                         </div>
-
-                        <div id="timeSlotData"></div>
-                    </div>
-
+                    
+                        <div id="timeSlotData" class="mt-3"></div>
+                    </fieldset>
+                    
                    
 
                      <div class="row mt-5">
-                        <div class="form-group col-12" style="margin-left: -15px;">
+                        <div class="form-group col-6">
                                         @php($footer_text=\App\Models\BusinessSetting::where('key','footer_text')->first())
                             <label class="input-label d-inline" for="exampleFormControlInput1">Footer
                                 Text</label>
                             <textarea  name="footer_text" class="form-control"  placeholder="" required="">{{  $footer_text->value??''  }}</textarea>
                         </div>
+
+                        <div class="form-group col-6">
+                            @php($google_analytic_id=\App\Models\BusinessSetting::where('key','google_analytic_id')->first())
+                        <label class="input-label d-inline" for="exampleFormControlInput1">Google Analytic ID</label>
+                        <input  name="google_analytic_id" class="form-control"  placeholder="Google Analytic ID" required value="{{  $google_analytic_id->value??''  }}">
                     </div>
+                            </div>
 
                     <div class="row mt-5">
                         <div class="form-group col-12">
@@ -948,6 +934,7 @@
                         success: function (data) {
                             var json_data = JSON.parse(data);
                             toastr.success(json_data.message);
+                            location.reload();
                         },
                         complete: function () {
                             $('#loading').hide();
@@ -997,6 +984,7 @@
                         success: function (data) {
                             var json_data = JSON.parse(data);
                             toastr.success(json_data.message);
+                            location.reload();
                         },
                         complete: function () {
                             $('#loading').hide();
@@ -1148,7 +1136,7 @@
                                         '</div>'+   
                                         '<br>'+
                                   '</div>'+
-                                  '<div style="float:right" class="col-md-4 col-12 slot-section">'+
+                                  '<div style="float:right;margin-top: 27px;" class="col-md-4 col-12 slot-section">'+
                                         '<input type="hidden"  name="is_time_slot_enabled[]" value="'+is_enabled+'">'+
                                         '<input type="hidden"  name="time_slot_id[]" value="'+time_slot_id+'">'+
                                         '<input type="radio" value="yes" class="is_time_slot_enabled" ' + (is_enabled === 'yes' ? 'checked' : '') + '> Enable '+

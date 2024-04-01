@@ -2,6 +2,9 @@
     #printableArea *:not(input, a){
         color: black;
     }
+    sup{
+            right:unset;
+        }
 </style>
 <div class="content container-fluid">
         <div class="row" id="printableArea" style="font-family: emoji;">

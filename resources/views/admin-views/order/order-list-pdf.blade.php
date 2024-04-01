@@ -14,6 +14,9 @@
         background-color: #f2f2f2;
         font-weight: bold;
     }
+    sup{
+            right:unset;
+        }
 </style>
 </head>
 <body>
@@ -88,7 +91,7 @@
                             }
                         }
 
-                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;&nbsp;&nbsp;&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
+                        $deliveryAddress .= $floorNumber . "<sup>". $suffix .  "</sup>". "&nbsp;floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->zip_code;
 
                     } else {
                         $deliveryAddress = 'N/A';

@@ -213,12 +213,12 @@ class OrderController extends Controller
             if($request->session()->has('order_cart'))
             {
                 $cart = session()->get('order_cart');
-               
+           
+
                 
-               
                 if(count($cart)>0 && $cart[0]['order_id'] == $order->id)
                 {
-                    $editing=true;
+                     $editing=true;
                 }
                 else
                 {
@@ -507,11 +507,18 @@ class OrderController extends Controller
           
            $path = base_path($businessSettingLogoPath);;
            $type = pathinfo($path,PATHINFO_EXTENSION);
+
           
            $data = file_get_contents($path);
            $logoPath = 'data:image/'. $type .';base64,'. base64_encode($data);
            $pdf = PDF::setOptions(['debugKeepTemp' => true,'defaultFont' => 'sans-serif','isHtml5ParserEnabled' => true, 'isPhpEnabled' => true])->loadView('admin-views.order.order-invoice',compact('order','logoPath'));
           return $pdf->download('Invoice'.'# '.$orderId.'.pdf');
+
+            
+
+
+
+
          }
     } 
 
@@ -793,7 +800,7 @@ class OrderController extends Controller
                         }
                     }
 
-                    $deliveryAddress = $addressData->house_name . "," . $floorNumber . "" . $suffix . "" . "floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->pin_code;
+                    $deliveryAddress = $addressData->house_name . "," . $floorNumber . "" . $suffix . "" . " floor " . "," . $addressData->landmark . "," . $addressData->area_name . "," . $addressData->pin_code;
                 } else {
                     $deliveryAddress = 'N/A';
                 }
@@ -1080,11 +1087,13 @@ class OrderController extends Controller
     }
 
     public function remove_from_cart(Request $request){
-        $cart = $request->session()->get('order_cart', collect([]));
-        $cart[$request->key]->status = false;
-        $request->session()->put('order_cart', $cart);
-
-        return response()->json([], 200);
+        $cart = $request->session()->get('order_cart'); 
+        if ($cart instanceof \Illuminate\Support\Collection) {
+            $cart->forget($request->key);
+            $request->session()->put('order_cart', $cart);
+            return response()->json([], 200);
+        }       
+       
     }
 
 
@@ -1117,7 +1126,7 @@ class OrderController extends Controller
 
             $coloreImageData = Product::find($productId);
             $all_item_images = array();
-            
+          
             $coloreImageData->image = (env('APP_ENV') == 'local') ? asset('storage/product/' . $coloreImageData->image) : asset('storage/app/public/product/' . $coloreImageData->image);
             if ($coloreImageData->image === null) {
                 $coloreImageData->image = '';
