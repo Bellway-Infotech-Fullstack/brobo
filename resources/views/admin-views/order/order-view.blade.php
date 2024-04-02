@@ -20,6 +20,44 @@
             right:unset;
         }
 
+
+
+        .best-available-offer {
+            align-items: center;
+            background-color: #e6e6e6;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            margin: 10px;
+            padding: 10px;
+        }
+
+        .offer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .offer-details {
+            flex-grow: 1;
+        }
+
+        .offer-select {
+            flex-shrink: 0;
+        }
+
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        label {
+            cursor: pointer;
+        }
+
+
     </style>
 @endpush
 
@@ -222,7 +260,7 @@
                                 <?php
                                     if($order->status!='completed'){
                                 ?>
-                                <button class="btn btn-sm btn-primary d-none" type="button" onclick="edit_order()">
+                                <button class="btn btn-sm btn-primary" type="button" onclick="edit_order()">
                                     <i class="tio-edit"></i> {{ __('messages.edit') }}
                                 </button> 
                                 <?php } ?>
@@ -286,7 +324,7 @@
 
                     <!-- Body -->
                     <div class="card-body">
-                    
+                    <input type="hidden" id="customer_id" value="{{ $order->user_id }}">
 
                                <?php
                                   $delivery_charge = $order->delivery_charge;
@@ -440,11 +478,68 @@
                          
 
                             ?>
-                     
+
+                        <?php
+                              /*  if($editing){*/
+                        ?>
+                     <div class="row justify-content-md-end mb-3">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="panel-group">
+                                <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" href="#collapse1" class="best-available-offer">
+                                            View best available offers
+                                            <i class="tio-caret-right" style="font-size:40px;"></i> <!-- Right arrow icon -->
+
+                                        </a>
+                                    </h4>
+                                    
+                                  </div>
+                                  <div id="collapse1" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <?php
+                                        if(isset($available_offers) && !empty($available_offers)) {
+                                            foreach($available_offers as $key => $value) {
+                                        ?>
+                                        <div class="offer-item">
+                                            <div class="offer-details">
+                                                <div>{{ $value['code']}}</div>
+                                                <div>Apply this coupon to get Rs. {{ $value['discount']}} OFF</div>
+                                            </div>
+                                            <div class="offer-select">
+                                                <input type="radio" name="offer" id="offer_<?php echo $key; ?>" value="<?php echo $value['discount']; ?>">
+                                                <label for="offer_<?php echo $key; ?>"></label>
+                                            </div>
+                                        </div>
+                                        <?php }} ?>
+                                    </div>
+                                </div>
+                                
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div class="row justify-content-md-end mb-3">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="input-group">
+                                <input type="text" id="coupon_code" placeholder="Enter Coupon Code" class="form-control">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary apply_coupon" type="button">Apply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php /*}*/ ?>
+
+                   
+                    
 
                         <div class="row justify-content-md-end mb-3">
                             <div class="col-md-9 col-lg-8">
                                 <dl class="row text-sm-right">
+                                    <input type="hidden" class="paid_amount" value="{{ $order['paid_amount']  }}" >
                                        
                                           
                                         <dt class="col-sm-6">{{ __('messages.subtotal') }}:</dt>
@@ -455,20 +550,14 @@
                                         <dt class="col-sm-6">Refrrral {{ __('messages.discount') }}:</dt>
                                         <dd class="col-sm-6">-  Rs.  {{  $order['referral_discount'] ?? 0 }}</dd>
                                         <dt class="col-sm-6">{{ __('messages.coupon') }} {{ __('messages.discount') }}:</dt>
-                                        <dd class="col-sm-6">-  Rs. {{  $order['coupon_discount'] ?? 0 }}</dd>
+                                        <dd class="col-sm-6">-  Rs. <span id="coupon_discount">{{  $order['coupon_discount'] ?? 0 }} </span></dd>
                                         
                                         <dt class="col-sm-6">{{ __('messages.gst') }}:</dt>
                                         <dd class="col-sm-6">
                                      
                                           +  Rs.  {{  $order['gst_amount'] ?? 0 }}
                                         </dd>
-                                        
-                                      
-                                      
-                                      
-                                     
-                                      
-                                        <dt class="col-sm-6">{{ __('messages.delivery') }}
+                                       <dt class="col-sm-6">{{ __('messages.delivery') }}
                                             {{ __('messages.fee') }}:</dt>
                                         <dd class="col-sm-6">
                                             +  Rs. {{ $delivery_charge }}
@@ -483,8 +572,9 @@
 
                                         <dt class="col-sm-6">{{ __('messages.total') }}:</dt>
                                         <dd class="col-sm-6">
-                                            Rs.  {{ $order['paid_amount']  }}
+                                            Rs.  <span id="paid_amount">{{ $order['paid_amount']  }} </span>
                                         </dd>
+
                                 </dl>
                                 <!-- End Row -->
                             </div>
@@ -980,6 +1070,66 @@
 @push('script_2')
 
     <script>
+    $(document).ready(function(){
+        $('#collapse1').on('show.bs.collapse', function(){
+            $(this).prev().find('.tio-caret-right').removeClass('tio-caret-right').addClass('tio-caret-down');
+        });
+        $('#collapse1').on('hide.bs.collapse', function(){
+            $(this).prev().find('.tio-caret-down').removeClass('tio-caret-down').addClass('tio-caret-right');
+        });
+
+        $(".offer-item").on("click", function() {
+            // Find the radio button within the clicked offer-item
+            var radioButton = $(this).find(".offer-select input[name='offer']");
+            // Retrieve the value of the checked radio button
+            var checkedValue = radioButton.val();
+
+            $("#coupon_discount").html(checkedValue);
+
+            var paid_amount = $(".paid_amount").val();
+            paid_amount = paid_amount - checkedValue;
+            $("#paid_amount").html(paid_amount);
+            // Check the radio button
+            radioButton.prop("checked", true);
+        });
+
+
+        $(".apply_coupon").on("click",function(){
+            var code = $("#coupon_code").val();
+            var customer_id = $("#customer_id").val();
+            $.get('{{ route('admin.order.get-coupon-detail') }}', {
+            _token: '{{ csrf_token() }}',
+            code: code,
+            customer_id:customer_id
+        }, function(data) {
+            console.log("STATUS",data.status);
+                console.log("dd",data)
+            if (data.status == 'error') {
+                toastr.error(data.message, {
+                    CloseButton: true,
+                    ProgressBar: true
+                });
+            } else {
+                console.log("dd",data.status);
+                console.log("dd",JSON.parse(data))
+
+                var data = JSON.parse(data);
+                var discount = data.data.discount;
+                $("#coupon_discount").html(discount);
+
+                var paid_amount = $(".paid_amount").val();
+                paid_amount = paid_amount - discount;
+                $("#paid_amount").html(paid_amount);
+                toastr.success('Coupon applied successfully', {
+                    CloseButton: true,
+                    ProgressBar: true
+                });
+            }
+
+        });
+        });
+
+    });
         $('#search-form').on('submit', function(e) {
             e.preventDefault();
             var keyword = $('#datatableSearch').val();
