@@ -175,6 +175,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
         Route::group(['prefix' => 'booking', 'as' => 'order.', 'middleware' => ['module:order']], function () {
             Route::get('list/{status}', 'OrderController@list')->name('list');
+            Route::get('get-coupon-detail', 'OrderController@getCouponDetail')->name('get-coupon-detail');
             Route::get('details/{id}', 'OrderController@details')->name('details');
             Route::get('export-order-list', 'OrderController@exportOrderList')->name('export-order-list');
             Route::get('status', 'OrderController@status')->name('status');

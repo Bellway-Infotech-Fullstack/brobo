@@ -226,8 +226,45 @@ class OrderController extends Controller
                 }
                 
             }
+
+            $todayDate = date("Y-m-d");
+
+            $couponData = Coupon::where(['status' => 1])
+            ->whereDate('start_date', '<=', $todayDate)
+            ->whereDate('expire_date', '>=', $todayDate)
+            ->orderBy('created_at', 'desc')->get();  
+            $allData = array();
+            if(count($couponData) > 0) {         
+                    
+                foreach($couponData as $key => $value){
+                    $data = array(
+                        
+                            'id' => $value->id,
+                            'title' => $value->title,
+                            'code' => $value->code,
+                            'start_date' => $value->start_date,
+                            'expire_date' => $value->expire_date,
+                            'min_purchase' => $value->min_purchase,
+                            'max_discount' => $value->max_discount,
+                            'discount' => $value->discount,
+                            'discount_type' => $value->discount_type,
+                            'coupon_type' => $value->coupon_type,
+                            'limit' => $value->limit,
+                            'background_image' => (env('APP_ENV') == 'local') ? asset('storage/coupon_background_image/' . $value->background_image) : asset('storage/app/public/coupon_background_image/' . $value->background_image),
+                            'status' => $value->status,
+                            'created_at' => $value->created_at,
+                            'updated_at' => $value->updated_at
+                                            
+                        );
+    
+                        array_push($allData,$data);
+                    
+                }
+            }
+
+            $available_offers = $allData;
             
-            return view('admin-views.order.order-view', compact('order','categories', 'products','category', 'keyword', 'editing'));
+            return view('admin-views.order.order-view', compact('order','categories', 'products','category', 'keyword', 'editing','available_offers'));
         } else {
             Toastr::info(trans('messages.no_more_orders'));
             return back();
@@ -1150,6 +1187,79 @@ class OrderController extends Controller
         return response()->json(['data' => $coloreImageData]);
 
     }
+
+
+    public function getCouponDetail(Request $request)
+     {
+         try {            
+        
+             // get coupon data 
+
+             $code = $request->code;
+             $todayDate = date("Y-m-d");
+
+        
+
+            
+             
+            $couponData = Coupon::where(['status' => 1])->where('code', $code)
+            
+            ->whereDate('start_date', '<=', $todayDate)
+            ->whereDate('expire_date', '>=', $todayDate)->first();  
+
+            if (isset($couponData) && !empty($couponData)) {
+                $couponLimit = $couponData->limit;
+
+                $couponId = $couponData->id;
+
+                $customerId = $request->customer_id;
+    
+                $userOrderedCouponIdsCount = Order::where(array('user_id' => $customerId , 'coupon_id' => $couponId))->count();
+
+                if($userOrderedCouponIdsCount >= $couponLimit){
+                    return response()->json(['status' => 'error', 'message' => 'You can not apply this coupon', 'data' => null]);
+                }
+          
+    
+                
+    
+                
+                 $data = array(
+                    "status"=> "success",
+                    "data" => array(
+                     'id' => $couponData->id,
+                     'title' => $couponData->title,
+                     'code' => $couponData->code,
+                     'start_date' => $couponData->start_date,
+                     'expire_date' => $couponData->expire_date,
+                     'min_purchase' => $couponData->min_purchase,
+                     'max_discount' => $couponData->max_discount,
+                     'discount' => $couponData->discount,
+                     'discount_type' => $couponData->discount_type,
+                     'coupon_type' => $couponData->coupon_type,
+                     'limit' => $couponData->limit,
+                     'background_image' => (env('APP_ENV') == 'local') ? asset('storage/coupon_background_image/' . $couponData->background_image) : asset('storage/app/public/coupon_background_image/' . $couponData->background_image),
+                     'status' => $couponData->status,
+                     'created_at' => $couponData->created_at,
+                     'updated_at' => $couponData->updated_at
+                    )                     
+                 );
+             
+                 // Ensure that $data is not already encoded before calling json_encode
+                 $jsonData = json_encode($data);
+                 
+               // Use str_replace to remove backslashes
+                $withoutBackslashes = str_replace('\\', '', $jsonData);
+
+                return $withoutBackslashes;
+             } else {
+                 return response()->json(['status' => 'error','message' => 'Coupon code is either expired or invalid']);
+             }
+         } catch (\Exception $e) {
+             // Handle exceptions, if any
+             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+         }
+     }
 
 
 }
