@@ -89,9 +89,20 @@
                                         <option value="Female">Female</option>
                                     </select>
                                 </div>
+
+                                
                             </div>
                         </div>          
                         
+                        <div class="form-group">
+                            <div class="row">                            
+                                <div class="col-md-4">
+                                    <label class="input-label qcont" for="password">Home City</label>
+                                    <input type="text" name="home_city" class="form-control" id="home_city" value="{{old('home_city')}}"
+                                           placeholder="Home City" required>
+                                </div>
+                             </div>
+                        </div>   
                        
 
                         <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>

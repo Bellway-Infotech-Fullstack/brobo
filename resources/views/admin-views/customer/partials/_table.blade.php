@@ -6,6 +6,7 @@
         {{$e['email']}}
     </td>
     <td>{{$e['mobile_number']}}</td>
+    <td>{{$e['home_city'] ?? 'N/A'}}</td>
     <td>
         <a class="btn btn-sm btn-white"
             href="{{route('admin.customer.edit',[$e['id']])}}" title="{{__('messages.edit')}} {{__('messages.customer')}}"><i class="tio-edit"></i>
