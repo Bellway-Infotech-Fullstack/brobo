@@ -64,6 +64,7 @@ class CustomerController extends Controller
                 'role_id' => 2,
                 'password' => bcrypt($request->password),
                 'referral_code' => $referralCode,
+                'home_city' => $request->home_city,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -133,6 +134,7 @@ class CustomerController extends Controller
             'mobile_number' => $request->mobile_number,
             'email' => $request->email,
             'gender' => $request->gender,
+            'home_city' => $request->home_city,
             'updated_at' => now(),
         ]);
         
@@ -347,11 +349,11 @@ class CustomerController extends Controller
             return response()->stream(function () use ($users) {
                 $handle = fopen('php://output', 'w');
                 // Write CSV headers
-                fputcsv($handle, ['#','Name', 'Email', 'Phone']);
+                fputcsv($handle, ['#','Name', 'Email', 'Phone','Home City']);
 
                 // Write CSV rows
                 foreach ($users as $k => $user) {
-                    fputcsv($handle, [$k+1,$user->name, $user->email ?? 'N/A', $user->mobile_number]);
+                    fputcsv($handle, [$k+1,$user->name, $user->email ?? 'N/A', $user->mobile_number,$user->home_city ?? 'N/A']);
                 }
 
                 fclose($handle);

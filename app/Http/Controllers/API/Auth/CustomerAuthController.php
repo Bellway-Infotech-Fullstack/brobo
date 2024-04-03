@@ -46,6 +46,7 @@ class CustomerAuthController extends Controller
                 ],
                 'fcm_token' => 'required',
                 'otp' => 'required',
+                'home_city' => 'required',
         
                 
             ], [
@@ -58,6 +59,7 @@ class CustomerAuthController extends Controller
                 'password.*' => 'The password must meet the following criteria: at least 8 characters long, contain at least one uppercase and one lowercase letter, at least one letter, at least one number, and at least one special character.',
                 'fcm_token.required' => 'Please send fcm token.',
                 'otp.required' => 'Please enter otp.',
+                'home_city.required' => 'Please enter home city.',
             ]);
             
             if ($validation->fails()) {
@@ -75,7 +77,7 @@ class CustomerAuthController extends Controller
             $referralCode = Str::random(10);
             $request['referral_code'] = $referralCode;
             $verificationCode= $request->otp;
-
+            $request['home_city'] = $request->home_city;
 
             $smsResponse = SMS_module::send($request->mobile_number, $verificationCode ,'1','no');
             $smsResponse = json_decode($smsResponse);
@@ -570,7 +572,7 @@ class CustomerAuthController extends Controller
                 $userData->email = $request->post('email');
                 $userData->gender = $request->post('gender');
                 $userData->mobile_number = $request->post('mobile_number');
-
+                $userData->home_city = $request->post('home_city');
                 $userData->save();
 
                 return response()->json(['status' => 'success', 'code' => 200, 'message' => 'Profile updated successfully']);

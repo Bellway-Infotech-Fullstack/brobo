@@ -163,6 +163,7 @@
                                 <th>{{trans('messages.name')}}</th>
                                 <th>{{trans('messages.email')}}</th>
                                 <th>{{trans('messages.phone')}}</th>
+                                <th>Home City</th>
                                 <th style="width: 50px">{{trans('messages.action')}}</th>
                             </tr>
                             </thead>
@@ -173,6 +174,7 @@
                                     <td class="text-capitalize">{{$e['name']}}</td>
                                     <td >{{$e['email'] ?? 'N/A'}}</td>
                                     <td>{{$e['mobile_number'] ?? 'N/A'}}</td>
+                                    <td>{{$e['home_city'] ?? 'N/A'}}</td>
                                     <td>
                                         <a class="btn btn-sm btn-white"
                                             href="{{route('admin.customer.edit',[$e['id']])}}" title="{{__('messages.edit')}} {{__('messages.customer')}}"><i class="tio-edit"></i>

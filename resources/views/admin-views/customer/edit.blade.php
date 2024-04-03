@@ -81,12 +81,16 @@
                                             <option value="Female" {{ ($user_record['gender'] == 'Female') ? 'selected' : '' }}>Female</option>
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label class="input-label qcont" for="password">Home City</label>
+                                        <input type="text" name="home_city" class="form-control" id="home_city" value="{{$user_record['home_city']}}"
+                                               placeholder="Home City" required>
+                                    </div>
                                   
                                 </div>
                             </div>          
                             
-                            <br>
-
+                           
     
                             <button type="submit" class="btn btn-primary">{{__('messages.submit')}}</button>
                         </form> 
