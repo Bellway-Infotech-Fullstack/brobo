@@ -196,7 +196,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             //order update
             Route::post('add-to-cart', 'OrderController@add_to_cart')->name('add-to-cart');
             Route::post('remove-from-cart', 'OrderController@remove_from_cart')->name('remove-from-cart');
-            Route::get('update/{order}', 'OrderController@update')->name('update');
+            Route::post('update', 'OrderController@update')->name('update');
             Route::get('edit-order/{order}', 'OrderController@edit')->name('edit');
             Route::get('quick-view', 'OrderController@quick_view')->name('quick-view');
             Route::get('quick-view-cart-item', 'OrderController@quick_view_cart_item')->name('quick-view-cart-item');
