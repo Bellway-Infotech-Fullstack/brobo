@@ -1491,6 +1491,7 @@ class Helpers
                     'Name' => $value->name,
                     'Email' => $value->email ?? 'N/A',
                     'Phone' => $value->mobile_number,
+                    'Home City' => $value->home_city ?? 'N/A',
                 ];
             }
         }
