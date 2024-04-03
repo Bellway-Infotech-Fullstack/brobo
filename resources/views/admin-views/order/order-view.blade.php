@@ -480,7 +480,7 @@
                             ?>
 
                         <?php
-                              /*  if($editing){*/
+                               if($editing){
                         ?>
                      <div class="row justify-content-md-end mb-3">
                         <div class="col-md-12 col-lg-12">
@@ -531,7 +531,7 @@
                         </div>
                     </div>
 
-                    <?php /*}*/ ?>
+                    <?php } ?>
 
                    
                     
@@ -1418,9 +1418,38 @@
                 reverseButtons: true
             }).then((result) => {
                 if (result.value) {
-                    location.href = '{{ route('admin.order.update', $order->id) }}';
+                    var coupon_discount = $("#coupon_discount").html();
+                    var paid_amount = $("#paid_amount").html();                    
+                    updateOrder('{{ $order->id }}',paid_amount,coupon_discount);
+
+                  //  location.href = '{{ route('admin.order.update', $order->id) }}';
                 }
             })
+        }
+
+        function updateOrder(order_id,paid_amount,coupon_discount){
+            $.post('{{ route('admin.order.update') }}', {
+                        _token: '{{ csrf_token() }}',
+                        paid_amount: paid_amount,
+                        coupon_discount: coupon_discount,
+                        order_id: order_id,
+                    }, function(data) {
+                        if (data.errors) {
+                            for (var i = 0; i < data.errors.length; i++) {
+                                toastr.error(data.errors[i].message, {
+                                    CloseButton: true,
+                                    ProgressBar: true
+                                });
+                            }
+                        } else {
+                            toastr.success('{{ __('messages.order_updated_successfully') }}', {
+                                CloseButton: true,
+                                ProgressBar: true
+                            });
+                            location.reload();
+                        }
+
+                    });
         }
     
 
