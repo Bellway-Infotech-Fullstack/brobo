@@ -146,6 +146,8 @@ Route::group(['namespace' => 'API'], function () {
             Route::post('add-total-orders-in-google-analytics','addTotalOrdersInGgoogleAnalytics');    
             Route::get('get-time-slots', 'getTimeSlots');
             Route::get('send-mail', 'send_mail')->name('mail.send');
+            Route::get('get-booking-detail-added-by-admin','getBookingDetailAddedByAdmin');
+            Route::post('book-items-added-by-admin','bookItemsAddedByAdmin');
 
         });
 
