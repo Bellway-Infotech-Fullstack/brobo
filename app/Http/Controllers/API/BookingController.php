@@ -99,7 +99,7 @@ class BookingController extends Controller
 
             
             $itemNames = "";
-            if(isset($cartItems) && !empty($cartItems)){
+            if(isset($_COOKIE) && !empty($cartItems)){
                 foreach($cartItems as $key => $val){
                     $itemName = $val['item_name'];
                     $itemId = $val['item_id'];
@@ -1277,7 +1277,7 @@ class BookingController extends Controller
             $starDate = $orderData->start_date;
             $endDate = $orderData->end_date;
             $timeDuration = $orderData->time_duration;
-            $cartItems = $bookingData->item_details;
+            $cartItems = json_decode($bookingData->item_details);
             $addressId = $orderData->address_id;
             $couponId = $orderData->coupon_id;
             $orderInstallmentPercent = $orderData->order_installment_percent;
@@ -1291,15 +1291,12 @@ class BookingController extends Controller
             $couponDiscount = $bookingData->coupon_discount;
             $gstAmount = $bookingData->gst_amount;
 
+       
 
-
-            /*
-            if($todayDate1 <= $todayDate){
-                return response()->json(['status' => 'error', 'code' => 422, 'message' => 'Start date should be greater than or equal to current date']);
-            }*/
+    
               
 
-            if($couponId!=''){
+          /*  if($couponId!=''){
                 $couponData = Coupon::where(['status' => 1,'id' => $couponId])->first();   
                 if (empty($couponData)) {
                     return response()->json(['status' => 'error', 'code' => 404, 'message' => 'Invalid coupon id']);
@@ -1311,16 +1308,17 @@ class BookingController extends Controller
                 if($orderCouponDataCount == $couponLimit){
                     return response()->json(['status' => 'error', 'code' => 400, 'message' => 'You have crossed apply coupon limit']);
                 }
-            }
+            }*/
             $cartTotalItemAmount = 0;
 
             
             $itemNames = "";
             if(isset($cartItems) && !empty($cartItems)){
                 foreach($cartItems as $key => $val){
-                    $itemName = $val['item_name'];
-                    $itemId = $val['item_id'];
-                    $quantity = $val['quantity'];
+                   
+                    $itemName = $val->item_name;
+                    $itemId = $val->item_id;
+                    $quantity = $val->quantity;
                     $productData =  Product::find($itemId);
                     $productName = $productData->name;
                      $productStock = $productData->total_stock;
@@ -1330,7 +1328,7 @@ class BookingController extends Controller
                     $remainingStock = $productStock - $quantity;
                     Product::where('id', $itemId)->update(['total_stock' => $remainingStock]);
                     $itemNames = $itemNames." ".$itemName;
-                    $cartTotalItemAmount = $cartTotalItemAmount + $val['item_price'];
+                    $cartTotalItemAmount = $cartTotalItemAmount + $val->item_price;
                 }
             }            
                 
@@ -1358,7 +1356,7 @@ class BookingController extends Controller
             }
                
 
-            if($couponId!=''){
+          /*  if($couponId!=''){
                 $couponMinimumPurchase = $couponData->min_purchase;
                 if($couponMinimumPurchase > $paidAmount){
                   //  return response()->json(['status' => 'error', 'code' => 400, 'message' => 'Minimum amount to apply this coupon is Rs. '.$couponMinimumPurchase]);
@@ -1374,7 +1372,7 @@ class BookingController extends Controller
                     }
                   //  $paidAmount = $discountedPrice;
                 }
-            }
+            }*/
 
             
                 $allCustomers = User::where('role_id','2')->get();
@@ -1388,6 +1386,8 @@ class BookingController extends Controller
               ->pluck('referral_code') 
               ->toArray();
           
+             
+
           
            $usedReferredCodes = Order::where('user_id', $customerId)
               ->pluck('referred_code') 
@@ -1413,19 +1413,7 @@ class BookingController extends Controller
 
                
 
-               /* if(!in_array($referredCode,$userOrderData)){
-                    if($isReferred == '1'){
-                        $discountData  = BusinessSetting::where('key','referred_discount')->first();
-                        $referredDiscount =  $discountData->value;                  
-    
-                        $discountedPrice = number_format(($referredDiscount / 100) * $paidAmount, 2);
-                        $discountedPrice = number_format(($paidAmount - $discountedPrice),2);
-                       // $paidAmount =  $discountedPrice;
-    
-                    } 
-                } else {
-                    $referredCode = NULL;
-                }   */
+        
 
 
                 if($orderInstallmentPercent == ''){
@@ -1435,9 +1423,7 @@ class BookingController extends Controller
                     $pendingAmount = $totalAmount - $paidAmount;
                 }
 
-               // echo "referred_code".$referredCode;
-            //    die;
-
+         
                
                 
                 $requestData = [
@@ -1466,12 +1452,35 @@ class BookingController extends Controller
                     'gst_amount' => $gstAmount
                 ];
 
+
+
+                $orderCartItems = json_decode($orderData->cart_items);
+
+
+                $cartItems =  json_encode($cartItems, true);
+
+                $tempOrderCartItems = json_decode($cartItems);
+            
+              
+
+                $finalArray = array_merge($orderCartItems,$tempOrderCartItems);
+     
+
+                DB::table('orders')
+                ->where('id', $bookingData->order_id)->update([
+                    'cart_items' => json_encode($finalArray, true),
+                    'paid_amount' => $bookingData->paid_amount,
+                    'final_item_price' => $bookingData->paid_amount,
+                    'coupon_discount' => $bookingData->coupon_discount,
+                    
+                ]);
+
+
                 DB::table('temp_orders')
-                ->where('order_id', $order->id)->update([
-                    'item_details' => json_encode($cart, true),
-                    'paid_amount' => $request->paid_amount,
-                    'final_item_price' => $request->paid_amount,
-                    'coupon_discount' => $request->coupon_discount,
+                ->where('order_id', $bookingData->order_id)->update([
+                   'payment_status' => 'paid',
+                   'transaction_id' => $transactionId
+                 
                 ]);
 
                 $newOrder = Order::create($requestData);
@@ -1495,8 +1504,8 @@ class BookingController extends Controller
                 $loginUserFcmToken = $loginUserData->fcm_token ?? '';
 
                 $data = [
-                    'title' => 'Order Placed',
-                    'description' => 'Order placed successfully',
+                    'title' => 'Order Payment Done',
+                    'description' => "Order No. #$orderId  payment done successfully",
                     'order_id' => $orderId,
                     'image' => '',
                     'type'=> 'order_status'
@@ -1508,8 +1517,8 @@ class BookingController extends Controller
                 // send system notification
 
                 DB::table('notifications')->insert([
-                    'title' => "Order Placed",
-                    'description' => "Order No. #$orderId  placed successfully",
+                    'title' => "Order Payment Done",
+                    'description' => "Order No. #$orderId  payment done successfully",
                     'coupon_id' => NULL,
                     'from_user_id' => $customerId,
                     'to_user_id' => $customerId,
@@ -1520,7 +1529,7 @@ class BookingController extends Controller
                
 
 
-            return response()->json(['status' => 'success','message' => 'Order placed successfully', 'code' => 200]);
+            return response()->json(['status' => 'success','message' => 'Order payment done successfully', 'code' => 200]);
         } catch (\Exception $e) {
             // Handle exceptions, if any
             return response()->json(['status' => 'error', 'code' => 500, 'message' => $e->getMessage()], 500);

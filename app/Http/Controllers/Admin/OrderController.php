@@ -946,11 +946,55 @@ class OrderController extends Controller
         ->where('order_id', $order->id)
         ->where('payment_status','unpaid')
         ->first();
+
+
+        $orderCartItems = $order->cart_items;
+
+
+
+     $decodedItems = json_decode($orderCartItems);
+
+        // Array to store item prices
+        $itemPrices = array();
+
+        // Loop through the original array
+        foreach ($decodedItems as $item) {
+            // Add item_price to itemPrices array
+            $itemPrices[] = $item->item_price;
+        }
+
+
+        // Array to store unique item prices
+        $uniquePrices = $itemPrices;
+
+        // Array to store final result
+        $finalArray = array();
+
+        $cartItems = json_decode($cart);
+
+
+        // Loop through the original array
+        foreach ($cartItems as $item) {
+            // Check if item_price is already present in uniquePrices array
+            if (!in_array($item->item_price, $uniquePrices)) {
+                // Add item_price to uniquePrices array
+                $uniquePrices[] = $item->item_price;
+                // Add the item to finalArray
+                $finalArray[] = $item;
+            }
+        }
+
+        // Print the final result
+      
+
+
     
     if (!$existingRecord) {
+
+        
         DB::table('temp_orders')->insert([
             'order_id' => $order->id,
-            'item_details' => json_encode($cart, true),
+            'item_details' => json_encode($finalArray, true),
             'paid_amount' => $request->paid_amount,
             'final_item_price' => $request->paid_amount,
             'coupon_discount' => $request->coupon_discount,
@@ -960,7 +1004,7 @@ class OrderController extends Controller
         DB::table('temp_orders')
         ->where('order_id', $order->id)
         ->update([
-            'item_details' => json_encode($cart, true),
+            'item_details' => json_encode($finalArray, true),
             'paid_amount' => $request->paid_amount,
             'final_item_price' => $request->paid_amount,
             'coupon_discount' => $request->coupon_discount,
