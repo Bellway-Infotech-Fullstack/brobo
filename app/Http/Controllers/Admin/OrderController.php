@@ -925,18 +925,14 @@ class OrderController extends Controller
         
     }
 
-    public function update(Request $request, Order $order){
-        $order = Order::with(['details'=> function ($query) {
-        }, 'details.item' => function ($query) {
-            return $query->withoutGlobalScope(StoreScope::class);
-        }, 'details.campaign' => function ($query) {
-            return $query->withoutGlobalScope(StoreScope::class);
-        }])->where(['id' => $order->id])->first();
+    public function update(Request $request){
+        $order = Order::where(['id' => $request->order_id])->first();
 
         if (!$request->session()->has('order_cart')) {
             Toastr::error(__('messages.order_data_not_found'));
             return back();
         }
+
         $cart = $request->session()->get('order_cart', collect([]));
         $store = $order->store;
         $coupon = null;
@@ -946,7 +942,36 @@ class OrderController extends Controller
         if ($order->coupon_code) {
             $coupon = Coupon::where(['code' => $order->coupon_code])->first();
         }
-        foreach ($cart as $c) {
+        $existingRecord = DB::table('temp_orders')
+        ->where('order_id', $order->id)
+        ->where('payment_status','unpaid')
+        ->first();
+    
+    if (!$existingRecord) {
+        DB::table('temp_orders')->insert([
+            'order_id' => $order->id,
+            'item_details' => json_encode($cart, true),
+            'paid_amount' => $request->paid_amount,
+            'final_item_price' => $request->paid_amount,
+            'coupon_discount' => $request->coupon_discount,
+            'payment_status'   => 'unpaid'
+        ]);
+    } else {
+        DB::table('temp_orders')
+        ->where('order_id', $order->id)
+        ->update([
+            'item_details' => json_encode($cart, true),
+            'paid_amount' => $request->paid_amount,
+            'final_item_price' => $request->paid_amount,
+            'coupon_discount' => $request->coupon_discount,
+        ]);
+
+    }
+
+       
+
+    /*    foreach ($cart as $c) {
+
             if ($c['status'] == true) {
                 unset($c['status']);
                 //  echo "<pre>";
@@ -961,19 +986,17 @@ class OrderController extends Controller
                         //$c->item_details = '';
                     //  $c->updated_at = now();
                         if (isset($c->id)) {
-                            OrderDetail::where('id', $c->id)->update(
-                                [
-                                    'item_id' => $c->item_id,
-                                    'item_details' => $c->item_details,
-                                    'quantity' => $c->quantity,
-                                    'price' => $c->price,
-                                    'tax_amount' => $c->tax_amount,
-                                    'discount_on_item' => $c->discount_on_item,
-                                    'discount_type' => $c->discount_type,
-                                
-                                    'updated_at' => $c->updated_at
-                                ]
-                            );
+                            DB::table('temp_orders')->insert([
+                                'item_id' => $c->item_id,
+                                'item_details' => $c->item_details,
+                                'quantity' => $c->quantity,
+                                'price' => $c->price,
+                                'tax_amount' => $c->tax_amount,
+                                'discount_on_item' => $c->discount_on_item,
+                                'discount_type' => $c->discount_type,
+                                'updated_at' => $c->updated_at
+                            ]);
+                            
                         } else {
                         //    $c->save();
                         }
@@ -988,25 +1011,9 @@ class OrderController extends Controller
             } else {
                 $c->delete();
             }
-        }
+        }*/
 
 
-        $order->delivery_charge = $order->original_delivery_charge;
-        
-
-
-
-        $coupon_discount_amount = $coupon ? CouponLogic::get_discount($coupon, $product_price + $total_addon_price - $store_discount_amount) : 0;
-        $total_price = $product_price + $total_addon_price - $store_discount_amount - $coupon_discount_amount;
-
-
-
-        $total_order_ammount = $total_price;
-        $adjustment = $order->order_amount - $total_order_ammount;
-
-        $order->paid_amount = $total_order_ammount;
-        $order->edited = true;
-        $order->save();
         session()->forget('order_cart');
         Toastr::success(__('messages.order_updated_successfully'));
         return back();
