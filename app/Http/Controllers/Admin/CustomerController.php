@@ -17,6 +17,7 @@ use App\Models\UsersAddress;
 use Illuminate\Support\Str;
 use PDF;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerController extends Controller
 {
@@ -76,6 +77,10 @@ class CustomerController extends Controller
             "password" =>  bcrypt($request->password),
 
         ]);
+
+
+
+        Mail::to($request->email)->send(new \App\Mail\NewCustomerRegistration($userId,$request->email,$request->password));
 
         
 
