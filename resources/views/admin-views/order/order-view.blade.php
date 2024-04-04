@@ -163,7 +163,21 @@
                         ?>
                          End Date - {{ date('d M Y ' , strtotime($order['end_date'])) }}
                         <?php } else{ ?>
-                            End Date - N/A
+                            <?php
+                               if($editing){
+                                if(!empty($end_date)){
+                                    $end_date = date('d M Y ' , strtotime($end_date));
+                                }else {
+                                 $end_date = 'N/A';
+                               } 
+                                
+                                  
+                                           
+                               } else {
+                                 $end_date = 'N/A';
+                               } 
+                            ?>
+                            End Date - {{ $end_date  }}
                         <?php } ?>
                           
                         </span>
@@ -290,9 +304,9 @@
                                     </form>
                                     <div class="input-group header-item">
                                         <select name="category" id="category" class="form-control js-select2-custom mx-1"
-                                            title="{{ __('messages.select') }} {{ __('messages.category') }}"
+                                            title="{{ __('messages.select') }} {{ __('messages.category') }}  / subcategories"
                                             onchange="set_category_filter(this.value)">
-                                            <option value="">{{ __('messages.all') }} {{ __('messages.categories') }}
+                                            <option value="">{{ __('messages.all') }} {{ __('messages.categories') }} / subcategories
                                             </option>
                                             @foreach ($categories as $item)
                                                 <option value="{{ $item->id }}"
@@ -357,6 +371,9 @@
                                            $gst_amount = 0;
                                               $start_timestamp = strtotime($order['start_date']);
                                             $end_timestamp = strtotime($order['end_date']);
+                                            if(empty($order['end_date'])){
+                                                $end_timestamp = strtotime($end_date);
+                                            }
                                             
                                             // Calculate the difference in seconds
                                             $difference_in_seconds = $end_timestamp - $start_timestamp;
@@ -532,6 +549,15 @@
                                 <div class="input-group-append">
                                     <button class="btn btn-primary apply_coupon" type="button">Apply</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-md-end mb-3 end_date_section">
+                        <div class="col-md-12 col-lg-12">
+                            <label for="end_date">End Date</label>
+                            <div class="input-group">                                
+                                <input type="date" id="end_date"  class="form-control" v>                               
                             </div>
                         </div>
                     </div>
@@ -1076,19 +1102,79 @@
 
     <script>
     $(document).ready(function(){
+           var start_date = "<?=$start_date?>"; 
+             var dtToday = new Date(start_date);
+    
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if(month < 10)
+            month = '0' + month.toString();
+            if(day < 10)
+            day = '0' + day.toString();
+            
+            var maxDate = year + '-' + month + '-' + day;
+
+
+            $('#end_date').attr('min', maxDate);
+
+             // Get today's date
+                var today = new Date();
+                
+                // Format date to YYYY-MM-DD (required format for <input type="date">)
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var yyyy = today.getFullYear();
+                
+                today = yyyy + '-' + mm + '-' + dd;
+                
+                // Set the value of the input field to today's date
+                var end_date = "<?=$end_date?>";
+
+              
+                if(end_date !=''){
+                    var end_date = new Date(end_date);
+                    var dd = String(end_date.getDate()).padStart(2, '0');
+                    var mm = String(end_date.getMonth() + 1).padStart(2, '0'); // January is 0!
+                    var yyyy = end_date.getFullYear();
+                    
+                    end_date = yyyy + '-' + mm + '-' + dd;
+
+                    document.getElementById('end_date').value = end_date;
+                } else {
+                    document.getElementById('end_date').value = today;
+                }
+               
+
+
+
         var booking_count =  $(".booking-count").html();
+       
         for(var i = 0; i<booking_count; i++){
             var category_id = $(".price-"+i).attr("data-category-id");
             var price = $(".price-"+i).html();
             var gst_for_rented_items = "<?php echo $gst_for_rented_items; ?>";
+            
             if(category_id == '1'){
                 var gst_amount = (price*gst_for_rented_items)/100;
+                $(".end_date_section").show();
+                
+               
+               
                 $("#gst_amount").html(gst_amount);
+            } else {
+                $(".end_date_section").hide();
+              
             }
             
            
             
         }
+
+        $('#add-to-cart-form').on('submit', function(e) {
+            e.preventDefault();
+            
+        });
         
                var sub_total = $("#sub_total").html();
                         var referral_discount = $("#referral_discount").html();
@@ -1337,26 +1423,45 @@
                             CloseButton: true,
                             ProgressBar: true
                         });
+
+                        var end_date = $('#end_date').val();
+                        var nurl = new URL('{!! url()->full() !!}');
+                        nurl.searchParams.set('end_date', end_date);
+                    
+                        location.href = nurl;
                         
                         
                  
                         
-                       location.reload();
+                     //  location.reload();
                         return false;
                     }
                     $('.call-when-done').click();
+                    var end_date = $('#end_date').val();
+                    var nurl = new URL('{!! url()->full() !!}');
+                    nurl.searchParams.set('end_date', end_date);
+                    location.href = nurl;
 
                     toastr.success('Quantity updated in cart successfully', {
                         CloseButton: true,
                         ProgressBar: true
                     });
-                    location.reload();
+                    //location.reload();
                 },
                 complete: function() {
                     $('#loading').hide();
                 }
             });
         }
+
+
+        $("#end_date").on("change",function(){
+            var end_date = $(this).val();
+                var nurl = new URL('{!! url()->full() !!}');
+                nurl.searchParams.set('end_date', end_date);
+            
+                location.href = nurl;
+        })
 
         function removeFromCart(key) {
             Swal.fire({
@@ -1388,7 +1493,11 @@
                                 CloseButton: true,
                                 ProgressBar: true
                             });
-                            location.reload();
+                            var end_date = $('#end_date').val();
+                            var nurl = new URL('{!! url()->full() !!}');
+                            nurl.searchParams.set('end_date', end_date);
+                            location.href = nurl;
+                           // location.reload();
                         }
 
                     });

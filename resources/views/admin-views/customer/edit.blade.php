@@ -57,12 +57,12 @@
                                     <div class="col-md-4">
                                         <label class="input-label qcont" for="phmobile_numberone">Mobile Number</label>
                                         <input type="text" name="mobile_number" value="{{$user_record['mobile_number']}}"  class="form-control" id="mobile_number"
-                                               placeholder="Ex : +91017********" required>
+                                               placeholder="Ex : +91017********" required readonly>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="input-label qcont" for="email">{{__('messages.email')}}</label>
                                         <input type="email" name="email"  class="form-control" id="email"
-                                               placeholder="Ex : ex@gmail.com"  value="{{$user_record['email']}}">
+                                               placeholder="Ex : ex@gmail.com"  value="{{$user_record['email']}}" required readonly>
                                     </div>                                
                                 </div>
                             </div>
