@@ -61,7 +61,7 @@
                                 <div class="col-md-4">
                                     <label class="input-label qcont" for="email">{{__('messages.email')}}</label>
                                     <input type="email" name="email" value="{{old('email')}}" class="form-control" id="email"
-                                           placeholder="Ex : ex@gmail.com">
+                                           placeholder="Ex : ex@gmail.com" required>
                                 </div>                                
                             </div>
                         </div>

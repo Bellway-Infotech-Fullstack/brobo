@@ -263,8 +263,10 @@ class OrderController extends Controller
             }
 
             $available_offers = $allData;
+            $end_date = $request->query('end_date','');
+            $start_date = $order->start_date;
             
-            return view('admin-views.order.order-view', compact('order','categories', 'products','category', 'keyword', 'editing','available_offers'));
+            return view('admin-views.order.order-view', compact('order','categories', 'products','category', 'keyword', 'editing','available_offers','end_date','start_date'));
         } else {
             Toastr::info(trans('messages.no_more_orders'));
             return back();

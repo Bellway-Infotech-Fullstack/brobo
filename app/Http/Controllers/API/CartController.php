@@ -149,6 +149,7 @@ class CartController extends Controller
                     'item_name' => $product->name,
                     'item_image' => $itemImage,
                     'customer_id' => $customerId,
+                     'is_pos' => $cartItem->is_pos,
                     'item_price' => $cartItem->quantity*$product->discounted_price,
                 ];
             });
