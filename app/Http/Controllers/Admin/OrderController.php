@@ -992,12 +992,13 @@ class OrderController extends Controller
     if (!$existingRecord) {
 
         
-        DB::table('temp_orders')->insert([
+        $bookingId =   DB::table('temp_orders')->insertGetId([
             'order_id' => $order->id,
             'item_details' => json_encode($finalArray, true),
             'paid_amount' => $request->paid_amount,
             'final_item_price' => $request->paid_amount,
             'coupon_discount' => $request->coupon_discount,
+            'gst_amount' => $request->gst_amount,
             'payment_status'   => 'unpaid'
         ]);
     } else {
@@ -1008,55 +1009,23 @@ class OrderController extends Controller
             'paid_amount' => $request->paid_amount,
             'final_item_price' => $request->paid_amount,
             'coupon_discount' => $request->coupon_discount,
+             'gst_amount' => $request->gst_amount,
         ]);
+
+        $bookingId =  $existingRecord->id;
 
     }
 
-       
-
-    /*    foreach ($cart as $c) {
-
-            if ($c['status'] == true) {
-                unset($c['status']);
-                //  echo "<pre>";
-                // print_r($c);
-                    $product = Product::find($c['item_id']);
-                    if ($product) {
-
-                        $price = $c['item_price'];
-
-                    //    $product = Helpers::product_data_formatting($product);
-
-                        //$c->item_details = '';
-                    //  $c->updated_at = now();
-                        if (isset($c->id)) {
-                            DB::table('temp_orders')->insert([
-                                'item_id' => $c->item_id,
-                                'item_details' => $c->item_details,
-                                'quantity' => $c->quantity,
-                                'price' => $c->price,
-                                'tax_amount' => $c->tax_amount,
-                                'discount_on_item' => $c->discount_on_item,
-                                'discount_type' => $c->discount_type,
-                                'updated_at' => $c->updated_at
-                            ]);
-                            
-                        } else {
-                        //    $c->save();
-                        }
-
-                        $product_price += $price * $c['quantity'];
-                    //  $store_discount_amount += $c['discount_on_item'] * $c['quantity'];
-                    } else {
-                        Toastr::error(__('messages.item_not_found'));
-                        return back();
-                    }
-                
-            } else {
-                $c->delete();
-            }
-        }*/
-
+        DB::table('notifications')->insert([
+            'title' => "Booking payment request for order #$order->order_id",
+            'description' => "New booking payment request for order #$order->order_id by admin",
+            'coupon_id' => NULL,
+            'from_user_id' => auth('admin')->user()->id,
+            'to_user_id' =>  $order->user_id,
+            'booking_id' => $bookingId,
+            'created_at' => now(),
+            'updated_at' => now()
+         ]);
 
         session()->forget('order_cart');
         Toastr::success(__('messages.order_updated_successfully'));
@@ -1124,6 +1093,8 @@ class OrderController extends Controller
         }
 
         $price = $request->item_price*$request->quantity;   
+        
+        $categoryData = Category::find($product->category_id);
    
 
         $customerId = $orderData->user_id;
@@ -1133,7 +1104,7 @@ class OrderController extends Controller
         $data['item_price'] = $price;
         $data['status'] = true;
         $data['item_color_image_id'] = $request->item_color_image_id;
-        $data['category_id'] = $request->category_id;
+        $data['category_id'] = $categoryData->parent_id;
         $data['customer_id'] = $customerId;
     
         

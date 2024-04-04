@@ -1483,16 +1483,16 @@ class BookingController extends Controller
                  
                 ]);
 
-                $newOrder = Order::create($requestData);
+               // $newOrder = Order::create($requestData);
 
                
 
-                $orderId = "BRO".$newOrder->id;
+                $orderId = "BRO".$bookingData->order_id;
 
-                Mail::to("broboyouchoose@gmail.com")->send(new \App\Mail\OrderPlaced($newOrder->id));
+               // Mail::to("broboyouchoose@gmail.com")->send(new \App\Mail\OrderPlaced($newOrder->id));
 
 
-                Order::where('id', $newOrder->id)->update(['order_id' => $orderId]);
+         //       Order::where('id', $newOrder->id)->update(['order_id' => $orderId]);
 
                 // clear cart
 
