@@ -86,7 +86,12 @@
     $total_item_price = 0;
     $test = 0;
     $total_gst = 0;
+    $gst_for_rented_items = \App\Models\BusinessSetting::where(['key' => 'gst_percent'])->first();
+    $gst_for_rented_items = $gst_for_rented_items->value;
     ?>
+    
+    
+    
   
     <div class="content container-fluid">
         <!-- Page Header -->
@@ -255,10 +260,10 @@
                             <div class="col-12 pb-2 border-bottom  d-flex justify-content-between">
                                 <h4 class="card-header-title">
                                     {{ __('messages.order') }} {{ __('messages.details') }}
-                                    <span class="badge badge-soft-dark rounded-circle ml-1">  {{ (count($cartItems))}} </span>
+                                    <span class="badge badge-soft-dark rounded-circle ml-1 booking-count">  {{ (count($cartItems))}} </span>
                                 </h4>
                                 <?php
-                                    if($order->status!='completed'){
+                                    if($order->status!='completed' && $order->status!='cancelled'){
                                 ?>
                                 <button class="btn btn-sm btn-primary" type="button" onclick="edit_order()">
                                     <i class="tio-edit"></i> {{ __('messages.edit') }}
@@ -429,14 +434,14 @@
                                                   $test =  $test + $value['item_price']*$difference_in_days;
                                                   ?>
                                               
-                                                <h5> Rs . {{ $value['item_price']*$difference_in_days }} (for {{$difference_in_days }} days)</h5>
+                                                <h5> Rs . <span class="price-{{ $key }}" data-category-id="{{$value['category_id']}}"> {{ $value['item_price']*$difference_in_days }} </span> (for {{$difference_in_days }} days)</h5>
                                                 
                                                 <?php 
                                                 
                                               } else {
                                                   $test =  $test + $value['item_price'];
                                                 ?>
-                                                    <h5> Rs  . {{ $value['item_price'] }}</h5>
+                                                    <h5> Rs  . <span class="price-{{ $key }}" data-category-id="{{$value['category_id']}}">{{ $value['item_price'] }} </span></h5>
                                                 <?php }
                                                 ?>
                                             </div>
@@ -545,27 +550,27 @@
                                         <dt class="col-sm-6">{{ __('messages.subtotal') }}:</dt>
                                         <dd class="col-sm-6">
                                      
-                                            Rs.  {{  $test }}
+                                            Rs.  <span id="sub_total">{{  $test }}</span>
                                         </dd>
                                         <dt class="col-sm-6">Refrrral {{ __('messages.discount') }}:</dt>
-                                        <dd class="col-sm-6">-  Rs.  {{  $order['referral_discount'] ?? 0 }}</dd>
+                                        <dd class="col-sm-6">-  Rs.  <span id="referral_discount">{{  $order['referral_discount'] ?? 0 }}</span></dd>
                                         <dt class="col-sm-6">{{ __('messages.coupon') }} {{ __('messages.discount') }}:</dt>
-                                        <dd class="col-sm-6">-  Rs. <span id="coupon_discount">{{  $order['coupon_discount'] ?? 0 }} </span></dd>
+                                        <dd class="col-sm-6">-  Rs. <span id="coupon_discount">{{  $order['coupon_discount'] ?? 0 }}</span> </span></dd>
                                         
                                         <dt class="col-sm-6">{{ __('messages.gst') }}:</dt>
                                         <dd class="col-sm-6">
                                      
-                                          +  Rs.  {{  $order['gst_amount'] ?? 0 }}
+                                          +  Rs.  <span id="gst_amount">{{  $order['gst_amount'] ?? 0 }}</span>
                                         </dd>
                                        <dt class="col-sm-6">{{ __('messages.delivery') }}
                                             {{ __('messages.fee') }}:</dt>
                                         <dd class="col-sm-6">
-                                            +  Rs. {{ $delivery_charge }}
+                                            +  Rs. <span id="delivery_charge">{{ $delivery_charge }}</span>
                                             <hr>
                                         </dd>
                                         <dt class="col-sm-6">Pending Amount:</dt>
                                         <dd class="col-sm-6">
-                                              Rs.  {{ $order->pending_amount }}
+                                              Rs.  <span id="pending_amount">{{ $order->pending_amount }}</span>
                                         </dd>
                                         
                                       
@@ -1071,6 +1076,29 @@
 
     <script>
     $(document).ready(function(){
+        var booking_count =  $(".booking-count").html();
+        for(var i = 0; i<booking_count; i++){
+            var category_id = $(".price-"+i).attr("data-category-id");
+            var price = $(".price-"+i).html();
+            var gst_for_rented_items = "<?php echo $gst_for_rented_items; ?>";
+            if(category_id == '1'){
+                var gst_amount = (price*gst_for_rented_items)/100;
+                $("#gst_amount").html(gst_amount);
+            }
+            
+           
+            
+        }
+        
+               var sub_total = $("#sub_total").html();
+                        var referral_discount = $("#referral_discount").html();
+                        var coupon_discount = $("#coupon_discount").html();
+                        var delivery_charge = $("#delivery_charge").html();
+                        var gst_amount = $("#gst_amount").html();
+                        var paid_amount = sub_total - parseInt(referral_discount) - parseInt(coupon_discount) + parseInt(gst_amount) + parseInt(delivery_charge);
+                        
+                        $("#paid_amount").html(paid_amount)
+        
         $('#collapse1').on('show.bs.collapse', function(){
             $(this).prev().find('.tio-caret-right').removeClass('tio-caret-right').addClass('tio-caret-down');
         });
@@ -1309,6 +1337,10 @@
                             CloseButton: true,
                             ProgressBar: true
                         });
+                        
+                        
+                 
+                        
                        location.reload();
                         return false;
                     }
@@ -1419,19 +1451,21 @@
             }).then((result) => {
                 if (result.value) {
                     var coupon_discount = $("#coupon_discount").html();
-                    var paid_amount = $("#paid_amount").html();                    
-                    updateOrder('{{ $order->id }}',paid_amount,coupon_discount);
+                    var paid_amount = $("#paid_amount").html();        
+                   var gst_amount =  $("#gst_amount").html();
+                    updateOrder('{{ $order->id }}',paid_amount,coupon_discount,gst_amount);
 
                   //  location.href = '{{ route('admin.order.update', $order->id) }}';
                 }
             })
         }
 
-        function updateOrder(order_id,paid_amount,coupon_discount){
+        function updateOrder(order_id,paid_amount,coupon_discount,gst_amount){
             $.post('{{ route('admin.order.update') }}', {
                         _token: '{{ csrf_token() }}',
                         paid_amount: paid_amount,
                         coupon_discount: coupon_discount,
+                        gst_amount: gst_amount,
                         order_id: order_id,
                     }, function(data) {
                         if (data.errors) {
