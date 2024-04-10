@@ -36,20 +36,20 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label class="input-label" for="customer_id"> Select Customer</label>
-                                    <select name="customer_id" id="customer_id" class="form-control js-example-theme-single">
+                                    <select name="customer_id" id="customer_id" class="form-control js-example-theme-single" required>
                                         <option value="">Select Customer</option>
                                         @foreach($customers as $key => $value)
-                                          <option value="{{$value->id}}">{{$value->name}}</option>
+                                          <option value="{{$value->id}}" {{ old('customer_id') == $value->id ? 'selected' : '' }}>{{$value->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label class="input-label" for="category_id"> Select Category</label>
-                                    <select name="category_id" id="category_id" class="form-control js-example-theme-single">
+                                    <select name="category_id" id="category_id" class="form-control js-example-theme-single" required>
                                         <option value="">Select Category</option>
                                         @foreach($categories as $key => $value)
-                                          <option value="{{$value->id}}">{{$value->name}}</option>
+                                          <option value="{{$value->id}}" {{ old('category_id') == $value->id ? 'selected' : '' }}>{{$value->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -97,6 +97,9 @@
     <script>
 
         $(document).ready(function(){
+            var category_id = $("#category_id").val();
+            var sub_category_id = $("#sub_category_id").val();
+            getProducts(category_id,sub_category_id,0);
             var i = 1;
             $("#add_more").on("click", function() {
                 var category_id = $("#category_id").val();
@@ -170,7 +173,7 @@
                 var category_id = $("#category_id").val();
                 var sub_category_id = $(this).val();
                 getProducts(category_id,sub_category_id,0);
-                $.ajaxSetup({
+               /* $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
@@ -199,7 +202,7 @@
                     complete: function () {
                         $('#loading').hide();
                     },
-                });
+                });*/
             });
 
 

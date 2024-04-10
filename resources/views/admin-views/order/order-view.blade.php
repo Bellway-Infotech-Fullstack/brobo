@@ -1129,9 +1129,13 @@
                 today = yyyy + '-' + mm + '-' + dd;
                 
                 // Set the value of the input field to today's date
+                var order_end_date = "<?=$order_end_date?>";
                 var end_date = "<?=$end_date?>";
+           
+                if(end_date == ''){
+                    end_date =order_end_date;
+                }    
 
-              
                 if(end_date !=''){
                     var end_date = new Date(end_date);
                     var dd = String(end_date.getDate()).padStart(2, '0');
