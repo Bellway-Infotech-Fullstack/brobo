@@ -107,9 +107,24 @@ class POSController extends Controller
         $productId = $request->input('product_id');
         $quantities  =  $request->input('quantity');
         $customerId  =  $request->input('customer_id');
+        
+
+
+       
 
         if(isset($productId) && !empty($productId)){
             foreach($productId as $key => $value){
+                if(empty($value)){
+                   
+                    Toastr::error('Please select product');
+                    return redirect()->back()->withInput();
+                }
+
+                if(empty($quantities[$key])){
+                   
+                    Toastr::error('Please enter quantity');
+                    return redirect()->back()->withInput();
+                }
                
                 $existingCartItem = Cart::where('customer_id', $customerId)
                 ->where(array('item_id' => $value,'is_pos' => '1'))
@@ -123,15 +138,24 @@ class POSController extends Controller
                 $requestData = [
                     'item_id' => $value,
                     'quantity' => $quantities[$key],
+                    'item_color_image_id' => 0,
                     'customer_id' => $customerId,
                     'is_pos' => '1'
                 ];
                   Cart::create($requestData);
                 }
             }
+
+            DB::table('notifications')->insert([
+                'title' => "New items have been added by admin for POS",
+                'description' => "New items have been added by admin for POS",
+                'coupon_id' => NULL,
+                'from_user_id' => auth('admin')->user()->id,
+                'to_user_id' =>  $customerId,
+                'created_at' => now(),
+                'updated_at' => now()
+             ]);
             Toastr::success('POS added successfully');
-        } else {
-            Toastr::error('Please select at least one product');
         }
 
         
