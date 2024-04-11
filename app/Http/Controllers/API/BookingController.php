@@ -265,6 +265,7 @@ class BookingController extends Controller
                 // clear cart
 
                 Cart::where('customer_id',$customerId)->delete();
+                
 
 
                 // send push notification 
@@ -1036,8 +1037,13 @@ class BookingController extends Controller
                     unset($order_time_slot_data[$key]->from_time);
                     unset($order_time_slot_data[$key]->to_time);
                 } else {
-                    $order_time_slot_data = [];
-                }
+                    $order_time_slot_data[$key]->is_time_slot_enabled = "yes";
+                    $order_time_slot_data[$key]->time_slot  =  date("h:i A", strtotime($from_time_slot)) . " to " . date("h:i A", strtotime($to_time_slot));
+
+                    unset($order_time_slot_data[$key]->id);
+                    unset($order_time_slot_data[$key]->from_time);
+                    unset($order_time_slot_data[$key]->to_time);
+                } 
             }
         }
      
@@ -1241,7 +1247,7 @@ class BookingController extends Controller
                     'final_item_price' => $finalItemPrice - $deliveryCharge, 
                     'referral_discount' =>   $orderData->referral_discount,
                     'coupon_discount' =>   $item->coupon_discount,
-                    'gst_amount' => $orderData->gst_amount
+                    'gst_amount' => $item->gst_amount
 
                     )
                 );
