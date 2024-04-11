@@ -991,17 +991,59 @@ class OrderController extends Controller
       
 
 
+   
     
-    if (!$existingRecord) {
+      $sum = 0;
+        foreach($finalArray as $key => $value){
+            $sum = $sum + $value->item_price;
+        }
 
+      $gst_amount = $request->gst_amount - $order['gst_amount'];
+      
+      $total_sum = $sum + $gst_amount;
+      
+             $businessSettingData = BusinessSetting::where('key','mininum_order_amount')->first(); 
+             $mininum_order_amount = $businessSettingData->value ?? 0;
+          
+             if($mininum_order_amount > $total_sum){
+                 return "error";
+                   //  return response()->json(['status' => 'error','message' => 'Coupon code is either expired or invalid']);
+             }
+      
+             $delivery_charge = 200;
+
+             $total_amount = $sum + $gst_amount;
+             
+
+
+             $deliveryChargeSlabData  = BusinessSetting::where('key','delivery_charge_slabs')->first();
+             $deliveryChargeSlabData = (isset($deliveryChargeSlabData)) ? $deliveryChargeSlabData->value : ''; 
+             if(isset($deliveryChargeSlabData) && !empty($deliveryChargeSlabData)){
+                 $deliveryChargeSlabData = explode(",",$deliveryChargeSlabData);
+                 foreach ($deliveryChargeSlabData as $slab) {
+                     $slab = explode("-",$slab);
+                     $slab_data = array('delivery_charge' => $slab[0],'min_amount' => $slab[1],'max_amount' => $slab[2]);
+                     if($total_amount > $slab[1] && $total_amount < $slab[2]){
+                        
+                        $delivery_charge = $slab[0];
+                      }
+                 }
+            }
+
+
+    if (!$existingRecord) {
+        
+     
+        
         
         $bookingId =   DB::table('temp_orders')->insertGetId([
             'order_id' => $order->id,
             'item_details' => json_encode($finalArray, true),
-            'paid_amount' => $request->paid_amount,
-            'final_item_price' => $request->paid_amount,
+            'paid_amount' => $sum + $gst_amount,
+            'final_item_price' => $sum + $gst_amount,
             'coupon_discount' => $request->coupon_discount,
-            'gst_amount' => $request->gst_amount,
+            'delivery_charge' => $delivery_charge,
+            'gst_amount' => $gst_amount,
             'payment_status'   => 'unpaid'
         ]);
     } else {
@@ -1009,10 +1051,11 @@ class OrderController extends Controller
         ->where('order_id', $order->id)
         ->update([
             'item_details' => json_encode($finalArray, true),
-            'paid_amount' => $request->paid_amount,
-            'final_item_price' => $request->paid_amount,
+                  'paid_amount' => $sum + $gst_amount,
+                  'delivery_charge' => $delivery_charge,
+            'final_item_price' => $sum + $gst_amount,
             'coupon_discount' => $request->coupon_discount,
-             'gst_amount' => $request->gst_amount,
+             'gst_amount' => $gst_amount,
         ]);
 
         $bookingId =  $existingRecord->id;

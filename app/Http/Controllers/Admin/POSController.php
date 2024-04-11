@@ -147,7 +147,7 @@ class POSController extends Controller
             }
 
             DB::table('notifications')->insert([
-                'title' => "New items have been added by admin for POS",
+                'title' => "New items for POS",
                 'description' => "New items have been added by admin for POS",
                 'coupon_id' => NULL,
                 'from_user_id' => auth('admin')->user()->id,
