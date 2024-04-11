@@ -1636,10 +1636,13 @@ class BusinessSettingsController extends Controller
         if(isset($order_time_slot_data) && !empty($order_time_slot_data)){
             foreach($order_time_slot_data as $key => $value){
                 $day_wise_order_time_slot_data = DB::table('day_wise_order_time_slots')->where(array('time_slot_id' => $value->id, 'slot_date' => $slot_date))->first(); 
-
                 if(isset($day_wise_order_time_slot_data) && !empty($day_wise_order_time_slot_data)){
                     $order_time_slot_data[$key]->is_enabled = $day_wise_order_time_slot_data->is_enabled;
+                } else{
+                    $order_time_slot_data[$key]->is_enabled = "yes";
                 }
+
+              
             }
         }
         return response()->json($order_time_slot_data);

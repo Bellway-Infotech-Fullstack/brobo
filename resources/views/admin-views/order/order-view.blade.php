@@ -88,6 +88,12 @@
     $total_gst = 0;
     $gst_for_rented_items = \App\Models\BusinessSetting::where(['key' => 'gst_percent'])->first();
     $gst_for_rented_items = $gst_for_rented_items->value;
+
+    $minimum_order_amount = \App\Models\BusinessSetting::where(['key' => 'mininum_order_amount'])->first();
+    $minimum_order_amount = $minimum_order_amount->value;
+    $delivery_charge_slabs = \App\Models\BusinessSetting::where(['key' => 'delivery_charge_slabs'])->first();
+    $delivery_charge_slabs = $delivery_charge_slabs->value;
+    
     ?>
     
     
@@ -164,10 +170,23 @@
                          End Date - {{ date('d M Y ' , strtotime($order['end_date'])) }}
                         <?php } else{ ?>
                             <?php
+                            
+                            
+                            
+                            
                                if($editing){
+
+                               
+        
+           
+                                if(empty($end_date)){
+                                   // $end_date = $order_end_date;
+                                }    
+
                                 if(!empty($end_date)){
                                     $end_date = date('d M Y ' , strtotime($end_date));
                                 }else {
+                                    
                                  $end_date = 'N/A';
                                } 
                                 
@@ -370,10 +389,27 @@
                                            // Calculate the GST amount
                                            $gst_amount = 0;
                                               $start_timestamp = strtotime($order['start_date']);
-                                            $end_timestamp = strtotime($order['end_date']);
-                                            if(empty($order['end_date'])){
-                                                $end_timestamp = strtotime($end_date);
-                                            }
+
+                                              
+                                            
+                                            if($editing){
+                                                
+                                                if(!empty($end_date)){
+                                                      $end_timestamp = strtotime($end_date);
+                                                } else {
+                                                    $end_timestamp = strtotime($order['end_date']);
+                                                }
+                                                
+                                              
+                                               
+                                                
+                                            }  else {
+                                                $end_timestamp = strtotime($order['end_date']);
+                                               
+                                            } 
+
+
+                                            
                                             
                                             // Calculate the difference in seconds
                                             $difference_in_seconds = $end_timestamp - $start_timestamp;
@@ -571,14 +607,15 @@
                             <div class="col-md-9 col-lg-8">
                                 <dl class="row text-sm-right">
                                     <input type="hidden" class="paid_amount" value="{{ $order['paid_amount']  }}" >
-                                       
+                                         <input type="hidden" class="gst_amount"  >
+                                         <input type="hidden" class="sub_total"  value="{{ $test }}">
                                           
                                         <dt class="col-sm-6">{{ __('messages.subtotal') }}:</dt>
                                         <dd class="col-sm-6">
                                      
                                             Rs.  <span id="sub_total">{{  $test }}</span>
                                         </dd>
-                                        <dt class="col-sm-6">Refrrral {{ __('messages.discount') }}:</dt>
+                                        <dt class="col-sm-6">Referral {{ __('messages.discount') }}:</dt>
                                         <dd class="col-sm-6">-  Rs.  <span id="referral_discount">{{  $order['referral_discount'] ?? 0 }}</span></dd>
                                         <dt class="col-sm-6">{{ __('messages.coupon') }} {{ __('messages.discount') }}:</dt>
                                         <dd class="col-sm-6">-  Rs. <span id="coupon_discount">{{  $order['coupon_discount'] ?? 0 }}</span> </span></dd>
@@ -1102,6 +1139,14 @@
 
     <script>
     $(document).ready(function(){
+       
+
+
+
+     //   sub_total_new =  sum - sub_total;
+     
+       
+              
            var start_date = "<?=$start_date?>"; 
              var dtToday = new Date(start_date);
     
@@ -1148,32 +1193,64 @@
                 } else {
                     document.getElementById('end_date').value = today;
                 }
-               
 
 
+        
 
         var booking_count =  $(".booking-count").html();
-       
+       var total = 0;
+       var total_price = 0;
         for(var i = 0; i<booking_count; i++){
             var category_id = $(".price-"+i).attr("data-category-id");
-            var price = $(".price-"+i).html();
-            var gst_for_rented_items = "<?php echo $gst_for_rented_items; ?>";
             
+       
             if(category_id == '1'){
-                var gst_amount = (price*gst_for_rented_items)/100;
-                $(".end_date_section").show();
+                var price = $(".price-"+i).html();
                 
+              //  price = parseInt(price) - parseInt($("#coupon_discount").html());
+               // var gst_amount = (price*gst_for_rented_items)/100;
+                $(".end_date_section").show();
+               // gst_amount +=gst_amount; 
+             total_price = parseInt(total_price) + parseInt(price);
+              // alert(price)
+               total = parseInt(total) + parseInt(gst_amount);
+           
                
+                $(".gst_amount").val(Math.abs(gst_amount));
+              
+                
+             //   $("#gst_amount").html(total);
+
+                var gst_for_rented_items = "<?php echo $gst_for_rented_items; ?>";
+        
+        var sub_total = $("#sub_total").html();
+            
+  
+              var total_price1 = total_price - parseInt($("#coupon_discount").html());
+                  var gst_amount = (total_price1*gst_for_rented_items)/100;
+           $(".gst_amount").val(Math.abs(gst_amount));
                
-                $("#gst_amount").html(gst_amount);
+               $("#gst_amount").html(gst_amount);
+            
+               
+       
+
+
             } else {
                 $(".end_date_section").hide();
-              
+                  // $(".gst_amount").val(0);
+                 //  $("#gst_amount").html('');
+                         //  $("#gst_amount").html(0);
+                
             }
             
            
             
         }
+        
+     
+    
+             // alert(gst_amount)
 
         $('#add-to-cart-form').on('submit', function(e) {
             e.preventDefault();
@@ -1185,9 +1262,27 @@
                         var coupon_discount = $("#coupon_discount").html();
                         var delivery_charge = $("#delivery_charge").html();
                         var gst_amount = $("#gst_amount").html();
-                        var paid_amount = sub_total - parseInt(referral_discount) - parseInt(coupon_discount) + parseInt(gst_amount) + parseInt(delivery_charge);
-                        
+                        var paid_amount = parseInt(sub_total) - parseInt(referral_discount) - parseInt(coupon_discount) + parseInt(gst_amount) + parseInt(delivery_charge);
                         $("#paid_amount").html(paid_amount)
+                         $(".paid_amount").val(paid_amount)
+
+                         var paid_amount = $("#paid_amount").html();
+
+                         var delivery_charge_slabs = "<?=$delivery_charge_slabs?>"
+        console.log(delivery_charge_slabs.split(","))
+
+        var delivery_charge_slabs = delivery_charge_slabs.split(",");
+        $.each(delivery_charge_slabs, function(k,val){
+              console.log("val",val)
+              var slab = val.split("-");
+              if(paid_amount > slab[1] && paid_amount < slab[2]){
+                console.log("slab",slab[0]);
+                $("#delivery_charge").html(slab[0])
+               
+              }
+           
+             
+         });
         
         $('#collapse1').on('show.bs.collapse', function(){
             $(this).prev().find('.tio-caret-right').removeClass('tio-caret-right').addClass('tio-caret-down');
@@ -1205,6 +1300,7 @@
             $("#coupon_discount").html(checkedValue);
 
             var paid_amount = $(".paid_amount").val();
+           // alert(paid_amount)
             paid_amount = paid_amount - checkedValue;
             $("#paid_amount").html(paid_amount);
             // Check the radio button
@@ -1565,15 +1661,19 @@
                 if (result.value) {
                     var coupon_discount = $("#coupon_discount").html();
                     var paid_amount = $("#paid_amount").html();        
-                   var gst_amount =  $("#gst_amount").html();
+                   var gst_amount =  $(".gst_amount").val();
+                   
+
                     updateOrder('{{ $order->id }}',paid_amount,coupon_discount,gst_amount);
 
-                  //  location.href = '{{ route('admin.order.update', $order->id) }}';
+                  
                 }
             })
         }
 
         function updateOrder(order_id,paid_amount,coupon_discount,gst_amount){
+            var  minimum_order_amount =  "<?=$minimum_order_amount?>";
+            
             $.post('{{ route('admin.order.update') }}', {
                         _token: '{{ csrf_token() }}',
                         paid_amount: paid_amount,
@@ -1581,19 +1681,20 @@
                         gst_amount: gst_amount,
                         order_id: order_id,
                     }, function(data) {
-                        if (data.errors) {
-                            for (var i = 0; i < data.errors.length; i++) {
-                                toastr.error(data.errors[i].message, {
-                                    CloseButton: true,
-                                    ProgressBar: true
-                                });
-                            }
+                        console.log("data",data);
+                        if (data == "error") {
+                              toastr.error('You can not order less than ' +minimum_order_amount, {
+                                CloseButton: true,
+                                ProgressBar: true
+                            });
                         } else {
                             toastr.success('{{ __('messages.order_updated_successfully') }}', {
                                 CloseButton: true,
                                 ProgressBar: true
                             });
                             location.reload();
+                                                  
+
                         }
 
                     });
