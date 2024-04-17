@@ -20,6 +20,6 @@ storage/*.key
 Homestead.yaml
 Homestead.json
 /.vagrant
-composer.json
-composer.lock
+#composer.json
+#composer.lock
 .phpunit.result.cache
