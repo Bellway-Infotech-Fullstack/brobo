@@ -1239,7 +1239,7 @@ class BookingController extends Controller
                     'end_date' => $orderData->end_date,
                     'time_duration' => $orderData->time_duration,
                     'total_items_price' => $cartTotalItemAmount,
-                    'delivery_charge' => $deliveryCharge,
+		    'delivery_charge' => $item->delivery_charge,
                     'total_order_price' => $totalOrderPrice,
                     'shipping_address' => $shippingAddress,
                     'pending_amount' => $pendingAmount,
