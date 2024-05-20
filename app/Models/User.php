@@ -33,7 +33,8 @@ class User extends Authenticatable implements JWTSubject
         'referral_code',
         'referred_code',
         'is_notification_setting_on',
-        'notification_off_time'
+        'notification_off_time',
+        'home_city'
     ];
 
     /**
