@@ -39,7 +39,6 @@ class SystemController extends Controller
             'f_name' => 'required',
             'l_name' => 'required',
             'email' => 'required',
-            'phone' => 'required',
         ], [
             'f_name.required' => 'First name is required!',
             'l_name.required' => 'Last name is required!',
