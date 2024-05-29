@@ -712,6 +712,7 @@
                                     $time_slot_id = $value->id;
                             ?>
                             <div class="row">
+                            <input type="hidden" value="{{ $time_slot_id ?? ''}}" name="time_slot_id_for_slot[]" class="form-control">
                                 <div class="col-md-6 col-12">
                                     <div class="form-group">
                                         <label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot {{$key+1}} </label>
@@ -1009,6 +1010,7 @@
             count++;  
             
             var timeSlotData = '<div class="row">'+
+            '<input type="hidden" name="time_slot_id_for_slot[]" class="form-control">'+
                                     '<div class="col-md-6 col-12 slot-section'+count+'">'+
                                         '<div class="form-group">'+
                                             '<label class="input-label d-inline" for="exampleFormControlInput1">Order From Time Slot '+count+'</label>'+

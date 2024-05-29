@@ -192,6 +192,9 @@ class BusinessSettingsController extends Controller
         
         $order_from_time_slots = $request['order_from_time_slots'];
         $order_to_time_slots = $request['order_to_time_slots'];
+        $time_slot_id = $request['time_slot_id'];
+        $time_slot_id_for_slot = $request['time_slot_id_for_slot'];
+        
         $numSlots = count($order_from_time_slots);
         $isValid = true;
         $isGreater = false;
@@ -233,22 +236,29 @@ class BusinessSettingsController extends Controller
         if(isset($order_from_time_slots) && !empty($order_from_time_slots)){
             foreach($order_from_time_slots as $key => $value){
                 $existingRecord = DB::table('order_time_slots')
-                ->where('from_time', $value)
-                ->where('to_time', $order_to_time_slots[$key])
+                ->where('id', $time_slot_id_for_slot[$key])
                 ->exists();
                 if (!$existingRecord) {
+
                     DB::table('order_time_slots')->insert([
                         'from_time' => $value,
                         'to_time' => $order_to_time_slots[$key]
         
                     ]);
+                } else {
+                    DB::table('order_time_slots')
+                    ->where('id', $time_slot_id_for_slot[$key])
+                    ->update([
+                        'from_time' => $value,
+                        'to_time' => $order_to_time_slots[$key]
+                        ]);
                 }
         
                 
             }
         }
         $is_time_slot_enabled = $request['is_time_slot_enabled'];
-        $time_slot_id = $request['time_slot_id'];
+        
         $slot_date = $request['slot_date'];
 
       
@@ -663,7 +673,7 @@ class BusinessSettingsController extends Controller
                 
             }
             $time_slots = rtrim($time_slots, ',');
-         
+            
             DB::table('business_settings')->updateOrInsert(['key' => 'order_time_slots'], [
                 'value' => $time_slots
             ]);
