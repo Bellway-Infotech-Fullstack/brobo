@@ -209,26 +209,44 @@ class BusinessSettingsController extends Controller
             }
         
             // Check if new time slot falls within existing time slot
-            if ($i > 0) {
+           /* if ($i > 0) {
                 $start = strtotime($order_from_time_slots[$i]);
-                $end = strtotime($order_to_time_slots[$i - 1]);
+                $end = strtotime($order_to_time_slots[$i-1]);
+                echo "start time".$order_from_time_slots[$i];
+                echo "end time".$order_to_time_slots[$i];
                 
                 if ($start <= $end) {
                     $isValid = false;
                     break;
                 }
-            }
+            }*/
+            $start1 = strtotime($order_from_time_slots[$i]);
+            $end1 = strtotime($order_to_time_slots[$i]);
+            // Compare current slot with all previous slots to check for overlaps
+    for ($j = 0; $j < $i; $j++) {
+        $start2 = strtotime($order_from_time_slots[$j]);
+        $end2 = strtotime($order_to_time_slots[$j]);
+
+        if ($this->time_slots_overlap($start1, $end1, $start2, $end2)) {
+            $isValid = false;
+            break 2; // Exit both loops if an overlap is found
         }
-        
+    }
+
+        }
+        echo "isValid".$isValid;
+     //  die;
         if ($isGreater) {
              Toastr::error(trans('Slot to time should be greater than from time'));
              return back();
 
         } else if (!$isValid) {
+            echo "here";
+         //   die;
             Toastr::error(trans('Slot already exist'));
             return back();
         }
-
+     //   die;
 
 
 
@@ -1524,6 +1542,10 @@ class BusinessSettingsController extends Controller
 
         Toastr::success('Updated Successfully');
         return back();
+    }
+
+   private function time_slots_overlap($start1, $end1, $start2, $end2) {
+        return ($start1 < $end2 && $start2 < $end1);
     }
 
     public function removeDynamicTimeSlot(Request $request)
