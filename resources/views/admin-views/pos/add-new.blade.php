@@ -12,7 +12,7 @@
     float: right;
     top: 86px;
     position: relative;
-    left: 451px;
+    left: 248px;
 }
 
         </style>
@@ -75,8 +75,10 @@
                                         <input name="quantity[]"  class="form-control" type="number" min="0">
                                     </div>
                                 </div>
-                                <a href="javascript:void(0)" style="margin-top: 18px;left:1416px;
-                                position: relative;" title="Add More" id="add_more">Add More + </a>
+                                <div style="float:right">
+                                <a href="javascript:void(0)" style="margin-top: 18px" title="Add More" id="add_more">Add More + </a>
+
+                                </div>
                             </div>
                         </div>
                         
