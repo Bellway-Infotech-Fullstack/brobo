@@ -158,44 +158,18 @@
 
             // Check if the file is an image
             
-            if (file.type.startsWith('image/')) {
+           
                 const reader = new FileReader();
 
                 reader.onload = function (e) {
-                    const img = new Image();
-
-                    img.onload = function () {
-                        // Get the width and height of the image
-                        const width = this.width;
-                        const height = this.height;
-
-                        // Check if the dimensions meet your criteria         
-
-                        if (width != 343 || height != 100) {
-                                // Dimensions are not allowed, handle accordingly (e.g., show an error message)
-                                alert('Invalid dimensions. Width must be  343px and height must be <= 100px.');
-                                // Optionally clear the file input if needed
-                                input.value = '';
-                                isequal = 1;
-                            } else {
-                            // Dimensions are within the allowed range, you can proceed with your logic
-                            // ...
-                            }
-                        };
-                            img.src = e.target.result;
-                            if(isequal == 1){
-                                $('#viewer').attr('src', e.target.result);
-                            }
+                   const img = new Image();
+		 $('#viewer').attr('src', e.target.result);
                     
+
                 };
 
                 reader.readAsDataURL(file);
-            } else {
-                // File is not an image, handle accordingly (e.g., show an error message)
-                alert('Invalid file type. Please upload an image.');
-                // Optionally clear the file input if needed
-                input.value = '';
-            }
+           
         }
         function readURL(input) {
             if (input.files && input.files[0]) {
