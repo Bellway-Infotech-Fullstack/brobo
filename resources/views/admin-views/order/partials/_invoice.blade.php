@@ -17,7 +17,7 @@
                 <hr class="non-printable">
             </div>
             <div class="col-5">
-             
+                                     <img src="{{ $logoPath }}" height="100">
                 <div class="row mt-3">
                     <div class="col-6">
                         <h5>Booking ID : {{$order['order_id']}}</h5>
@@ -280,6 +280,9 @@
                 <span>---------------------------------------------------------------------------------</span>
                 <h5 class="text-center pt-3">
                     """{{__('THANK YOU')}}"""
+                </h5>
+                <h5>
+                   {{ SYstem Generated }}
                 </h5>
                 <span>---------------------------------------------------------------------------------</span>
             </div>
