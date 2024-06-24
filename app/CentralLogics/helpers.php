@@ -461,38 +461,79 @@ class Helpers
 
         return $currency_symbol_position=='right'?$value.' '.self::currency_symbol():self::currency_symbol().' '.$value;
     }
+
+    public static function generateAccessToken($serviceAccountKeyFile)
+{
+    $jwtHeader = base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+    $now = time();
+    $expiry = $now + 3600; // Token valid for 1 hour
+    $jwtClaimSet = base64_encode(json_encode([
+        'iss' => $serviceAccountKeyFile['client_email'],
+        'scope' => 'https://www.googleapis.com/auth/cloud-platform', // Replace with your required scope
+        'aud' => 'https://oauth2.googleapis.com/token',
+        'iat' => $now,
+        'exp' => $expiry,
+    ]));
+
+    $jwtSignatureInput = $jwtHeader . '.' . $jwtClaimSet;
+    $signature = '';
+    $privateKey =  $serviceAccountKeyFile['private_key'];
+    openssl_sign($jwtSignatureInput, $signature, $privateKey, 'sha256');
+
+    $jwt = $jwtSignatureInput . '.' . base64_encode($signature);
+    $token_url = 'https://oauth2.googleapis.com/token';
+    $post_fields = [
+        'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        'assertion' => $jwt,
+    ];
+
+    $ch = curl_init($token_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_fields));
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $token_info = json_decode($response, true);
+    if (isset($token_info['access_token'])) {
+        return $token_info['access_token'];
+    } else {
+        return 'Error retrieving access token';
+    }
+
+
+}
+
     public static function send_push_notif_to_device($fcm_token, $data)
     {
-        $key = BusinessSetting::where(['key' => 'push_notification_key'])->first()->value;
-        $url = "https://fcm.googleapis.com/fcm/send";
-        $header = array("authorization: key=" . $key . "",
-            "content-type: application/json"
-        );
+          $serviceAccountKeyFile = json_decode(file_get_contents('/var/www/html/cp/app/CentralLogics/service-account-file.json'), true);
+          $token = Helpers::generateAccessToken($serviceAccountKeyFile);
+          $url =  "https://fcm.googleapis.com/v1/projects/brobo-99cc7/messages:send";
 
-        $postdata = '{
-            "to" : "' . $fcm_token . '",
-            "mutable_content": true,
-            "data" : {
-                "title":"' . $data['title'] . '",
-                "body" : "' . $data['description'] . '",
-                "image" : "' . $data['image'] . '",
-                "order_id":"' . $data['order_id'] . '",
-                "type":"' . $data['type'] . '",
-                "is_read": 0
+          $header = array("authorization: Bearer " . $token . "",
+            "content-type: application/json"
+           );
+
+           $postdata = '{
+        "message": {
+            "token": "' . $fcm_token . '",
+            "notification": {
+                 "body": "' . $data['description'] . '",
+                 "title": "' . $data['title'] . '",
+
             },
-            "notification" : {
-                "title" :"' . $data['title'] . '",
-                "body" : "' . $data['description'] . '",
-                "image" : "' . $data['image'] . '",
-                "order_id":"' . $data['order_id'] . '",
-                "title_loc_key":"' . $data['order_id'] . '",
-                "body_loc_key":"' . $data['type'] . '",
-                "type":"' . $data['type'] . '",
-                "is_read": 0,
-                "icon" : "new",
-                "sound" : "default"
+            "android":{
+                "notification": {
+                 "body": "' . $data['description'] . '",
+                 "title": "' . $data['title'] . '",
+                  "sound" : "default"
+            },
+
+
             }
-        }';
+        }
+    }';
+
+
         $ch = curl_init();
         $timeout = 120;
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -504,11 +545,12 @@ class Helpers
 
         // Get URL content
         $result = curl_exec($ch);
-        // close handle to release resources
+       // close handle to release resources
         curl_close($ch);
 
         return $result;
-    }
+
+}
 
     public static function send_push_notif_to_topic($data, $topic, $type)
     {
@@ -589,33 +631,33 @@ class Helpers
 
     public static function sendPushNotificationToCustomer($data, $fcmToken)
     {
-        $key = BusinessSetting::where(['key' => 'push_notification_key'])->first()->value;
+        $serviceAccountKeyFile = json_decode(file_get_contents('/var/www/html/cp/app/CentralLogics/service-account-file.json'), true);
+          $token = Helpers::generateAccessToken($serviceAccountKeyFile);
+          $url =  "https://fcm.googleapis.com/v1/projects/brobo-99cc7/messages:send";
 
-        $url = "https://fcm.googleapis.com/fcm/send";
-        $header = array("authorization: key=" . $key . "",
+          $header = array("authorization: Bearer " . $token . "",
             "content-type: application/json"
-        );
-        $url = "https://fcm.googleapis.com/fcm/send";
-        $header = array("authorization: key=" . $key . "",
-            "content-type: application/json"
-        );
-       
-        $postdata = '{
-            "to" : "' . $fcmToken . '",
-            "mutable_content": true,
-            "data" : {
-                "title":"' . $data['title'] . '",
-                "body" : "' . $data['body'] . '",
-                "is_read": 0
+           );
+
+           $postdata = '{
+        "message": {
+            "token": "' . $fcmToken . '",
+            "notification": {
+                 "body": "' . $data['body'] . '",
+                 "title": "' . $data['title'] . '",
+
             },
-            "notification" : {
-                "title" :"' . $data['title'] . '",
-                "body" : "' . $data['body'] . '",
-                "is_read": 0,
-                "icon" : "new",
-                "sound" : "default"
+            "android":{
+                "notification": {
+                 "body": "' . $data['body'] . '",
+                 "title": "' . $data['title'] . '",
+                  "sound" : "default"
+            },
+
+
             }
-        }';
+        }
+    }';
 
 
         $ch = curl_init();
@@ -629,7 +671,7 @@ class Helpers
 
         // Get URL content
         $result = curl_exec($ch);
-        // close handle to release resources
+       // close handle to release resources
         curl_close($ch);
 
         return $result;
