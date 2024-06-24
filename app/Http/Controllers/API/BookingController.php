@@ -974,11 +974,13 @@ class BookingController extends Controller
         }
         
         $oldDueAmount = $bookingData[0]['pending_amount'];
+        $oldPaidAmount = $bookingData[0]['paid_amount'];
     
         $dueAmount = $oldDueAmount - $dueAmount;
+        $paidAmount = $oldPaidAmount + $request->post('due_amount');
 
 
-        Order::where('order_id', $bookingId)->update(['due_amount_transaction_id' => $transactionId, 'pending_amount' => $dueAmount]);
+        Order::where('order_id', $bookingId)->update(['due_amount_transaction_id' => $transactionId, 'pending_amount' => $dueAmount, 'paid_amount' => $paidAmount]);
     
         return response()->json(['status' => 'success', 'message' => 'Amount paid successfully', 'code' => 200]);
     }
