@@ -1,7 +1,7 @@
 
 
 
-        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
         <link href="{{asset('public/css/custom.css')}}" rel="stylesheet">
         <style type="text/css">
             body {
@@ -352,6 +352,7 @@
 
             
             </div>
+            <div class="row" style="float:right">System Generated</div>
         </div>
     </body>
 
