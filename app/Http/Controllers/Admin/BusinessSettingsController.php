@@ -234,14 +234,14 @@ class BusinessSettingsController extends Controller
     }
 
         }
-      //  echo "isValid".$isValid;
+        echo "isValid".$isValid;
      //  die;
         if ($isGreater) {
              Toastr::error(trans('Slot to time should be greater than from time'));
              return back();
 
         } else if (!$isValid) {
-          //  echo "here";
+            echo "here";
          //   die;
             Toastr::error(trans('Slot already exist'));
             return back();
