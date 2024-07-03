@@ -64,9 +64,9 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group form-check">
-                                    <input type="checkbox" name="modules[]" value="customerList" class="form-check-input"
-                                           id="customerList">
-                                    <label class="form-check-label qcont text-dark" for="customerList">{{__('messages.customers')}}</label>
+                                    <input type="checkbox" name="modules[]" value="customer" class="form-check-input"
+                                           id="customer">
+                                    <label class="form-check-label qcont text-dark" for="customer">{{__('messages.customers')}}</label>
                                 </div>
                             </div>
                           
@@ -81,7 +81,7 @@
                                 <div class="form-group form-check">
                                     <input type="checkbox" name="modules[]" value="product" class="form-check-input"
                                            id="product">
-                                    <label class="form-check-label qcont text-dark" for="service">Products</label>
+                                    <label class="form-check-label qcont text-dark" for="product">Products</label>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -122,6 +122,14 @@
                                     <input type="checkbox" name="modules[]" value="pos" class="form-check-input"
                                            id="pos">
                                     <label class="form-check-label qcont text-dark" for="pos">{{__('messages.pos')}}</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group form-check">
+                                    <input type="checkbox" name="modules[]" value="faqs" class="form-check-input"
+                                           id="faqs">
+                                    <label class="form-check-label qcont text-dark" for="faqs">FAQS</label>
                                 </div>
                             </div>
                         </div>
@@ -178,11 +186,20 @@
                                     <td scope="row">{{$k+$rl->firstItem()}}</td>
                                     <td>{{$r['name']}}</td>
                                     <td class="text-capitalize">
-                                        @if($r['modules']!=null)
-                                            @foreach((array)json_decode($r['modules']) as $key=>$m)
-                                               {{str_replace('_',' ',$m)}},
-                                            @endforeach
-                                        @endif
+                                    @if($r['modules'] != null)
+                                                @php
+                                                    $modules = json_decode($r['modules']);
+                                                    $lastModule = end($modules); // Get the last module
+                                                @endphp
+
+                                                @foreach($modules as $key => $m)
+                                                    {{ str_replace('_', ' ', $m) }}
+                                                    @if(!$loop->last) {{-- Check if it's not the last iteration --}}
+                                                        , {{-- Add comma if it's not the last item --}}
+                                                    @endif
+                                                @endforeach
+                                            @endif
+
                                     </td>
                                     <td>{{date('d-M-y',strtotime($r['created_at']))}}</td>
                                     <td>
