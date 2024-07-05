@@ -17,11 +17,16 @@ use Illuminate\Support\Facades\Artisan;
 // Route::get('pppp', function(){
 //             session()->flush();
 //         });
+
 Route::get('clear-all-cache', function () {
-    echo "all cache cleared";
-    Artisan::call("optimize:clear");
+    Artisan::call('optimize:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('config:cache');
     
+    echo "All cache cleared and configuration cache rebuilt.";
 });
+
+
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('terms-and-conditions', 'HomeController@terms_and_conditions')->name('terms-and-conditions');
 Route::get('about-us', 'HomeController@about_us')->name('about-us');
