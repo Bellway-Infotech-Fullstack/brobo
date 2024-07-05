@@ -276,8 +276,15 @@
                         cache: false,
                         contentType: false,
                         processData: false,
+                        beforeSend: function() {
+                          // Show the loader before sending the request
+                            $('#loading').show();
+                        },
+
                         success: function (data) {
-                            if (data.errors) {
+$('#loading').hide();
+                          
+  if (data.errors) {
                                 for (var i = 0; i < data.errors.length; i++) {
                                     toastr.error(data.errors[i].message, {
                                         CloseButton: true,
