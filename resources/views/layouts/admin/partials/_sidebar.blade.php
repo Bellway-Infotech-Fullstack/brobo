@@ -106,13 +106,14 @@
                         </li>
                 @endif
                 <!-- End customer -->
+                @if(\App\CentralLogics\Helpers::module_permission_check('pos'))
                 <li class="nav-item">
                     <small class="nav-subtitle"
                            title="product section">POS System</small>
                     <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
                 
-                @if(\App\CentralLogics\Helpers::module_permission_check('pos'))
+                
                 <li class="navbar-vertical-aside-has-menu {{Request::is('admin/service*')?'active':''}}">
                     <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                        href="javascript:" title="POS"
@@ -243,14 +244,14 @@
                 <!-- End Orders -->
               
                     <!-- End Restaurant -->
-
+                    @if(\App\CentralLogics\Helpers::module_permission_check('product'))    
                     <li class="nav-item">
                         <small class="nav-subtitle"
                                title="product section">Product Management</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
                     
-                     @if(\App\CentralLogics\Helpers::module_permission_check('product'))
+                     
                         <li class="navbar-vertical-aside-has-menu {{Request::is('admin/service*')?'active':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                href="javascript:" title="Product"
@@ -338,11 +339,16 @@
             
               
                     <!-- Marketing section -->
+                    @if (\App\CentralLogics\Helpers::modules_permission_check(['banner', 'coupon','faqs','notification']))
+                 
+
+
                     <li class="nav-item">
                         <small class="nav-subtitle"
-                               title="{{__('messages.customer_handle')}}">{{__('messages.marketing')}} {{__('messages.section')}}</small>
+                               title="{{__('messages.marketing')}} {{__('messages.section')}}">{{__('messages.marketing')}} {{__('messages.section')}}</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
+                    @endif
 
                     <!-- Banner -->
                     @if(\App\CentralLogics\Helpers::module_permission_check('banner'))
@@ -373,6 +379,8 @@
 
                 <!-- FAQ -->
 
+                @if(\App\CentralLogics\Helpers::module_permission_check('faqs'))
+
                 <li class="navbar-vertical-aside-has-menu {{Request::is('admin/faq*')?'active':''}}">
                     <a class="js-navbar-vertical-aside-menu-link nav-link"
                        href="{{route('admin.faq.faq-add-new')}}" title="FAQ"
@@ -382,6 +390,7 @@
                             class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">FAQS</span>
                     </a>
                 </li>
+                @endif
                 <!-- FAQ -->
                     <!-- Notification -->
                     @if(\App\CentralLogics\Helpers::module_permission_check('notification'))

@@ -66,9 +66,9 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group form-check">
-                                    <input type="checkbox" name="modules[]" value="customerList" class="form-check-input"
-                                           id="customerList"  {{in_array('customerList',(array)json_decode($role['modules']))?'checked':''}}>
-                                    <label class="form-check-label qcont text-dark" for="customerList">{{__('messages.customers')}}</label>
+                                    <input type="checkbox" name="modules[]" value="customer" class="form-check-input"
+                                           id="customer"  {{in_array('customer',(array)json_decode($role['modules']))?'checked':''}}>
+                                    <label class="form-check-label qcont text-dark" for="customer">{{__('messages.customers')}}</label>
                                 </div>
                             </div>
                           
@@ -81,9 +81,9 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group form-check">
-                                    <input type="checkbox" name="modules[]" value="service" class="form-check-input"
-                                           id="service"  {{in_array('service',(array)json_decode($role['modules']))?'checked':''}}>
-                                    <label class="form-check-label qcont text-dark" for="service">{{__('messages.service')}}</label>
+                                    <input type="checkbox" name="modules[]" value="product" class="form-check-input"
+                                           id="product"  {{in_array('product',(array)json_decode($role['modules']))?'checked':''}}>
+                                    <label class="form-check-label qcont text-dark" for="product">Products</label>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -124,6 +124,15 @@
                                     <input type="checkbox" name="modules[]" value="pos" class="form-check-input"
                                            id="pos"  {{in_array('pos',(array)json_decode($role['modules']))?'checked':''}}>
                                     <label class="form-check-label qcont text-dark" for="pos">{{__('messages.pos')}}</label>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3">
+                                <div class="form-group form-check">
+                                    <input type="checkbox" name="modules[]" value="faqs" class="form-check-input"
+                                           id="faqs" {{in_array('faqs',(array)json_decode($role['modules']))?'checked':''}}>
+                                    <label class="form-check-label qcont text-dark" for="faqs">FAQS</label>
                                 </div>
                             </div>
                         </div>

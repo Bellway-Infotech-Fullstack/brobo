@@ -19,8 +19,9 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         Route::get('/get-restaurant-data', 'SystemController@restaurant_data')->name('get-restaurant-data');
 
         //dashboard
-        Route::get('/', 'DashboardController@dashboard')->name('dashboard');
 
+            Route::get('/', 'DashboardController@dashboard')->name('dashboard');
+        
         Route::resource('account-transaction', 'AccountTransactionController')->middleware('module:account');
 
         Route::resource('provide-deliveryman-earnings', 'ProvideDMEarningController')->middleware('module:provide_dm_earning');
@@ -75,6 +76,9 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         Route::post('item/variant-price', 'ItemController@variant_price')->name('item.variant-price');
 
         Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customer']], function () {
+            Route::get('view/{user_id}', 'CustomerController@view')->name('view');
+            Route::get('status/{customer}/{status}', 'CustomerController@status')->name('status');
+           
             Route::get('add-new', 'CustomerController@add_new')->name('add-new');
             Route::get('export', 'CustomerController@export')->name('export');
             Route::get('export-refereed-list', 'CustomerController@exportRefereedList')->name('export-refereed-list');
@@ -139,7 +143,8 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('search', 'CouponController@search')->name('search');
         });
 
-        Route::group(['prefix' => 'faq', 'as' => 'faq.', 'middleware' => ['module:coupon']], function () {
+
+        Route::group(['prefix' => 'faq', 'as' => 'faq.','middleware' => ['module:faqs']], function () {
             Route::get('add-new', 'FAQController@add_new')->name('faq-add-new');
             Route::post('store', 'FAQController@store')->name('faq-store');
             Route::get('update/{id}', 'FAQController@edit')->name('faq-update');
@@ -173,7 +178,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             });
         });
 
-        Route::group(['prefix' => 'booking', 'as' => 'order.', 'middleware' => ['module:order']], function () {
+        Route::group(['prefix' => 'booking', 'as' => 'order.', 'middleware' => ['module:booking']], function () {
             Route::get('list/{status}', 'OrderController@list')->name('list');
             Route::get('get-coupon-detail', 'OrderController@getCouponDetail')->name('get-coupon-detail');
             Route::get('details/{id}', 'OrderController@details')->name('details');
@@ -301,7 +306,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
 
 
-        Route::group(['prefix' => 'reviews', 'as' => 'reviews.', 'middleware' => ['module:customerList']], function () {
+        Route::group(['prefix' => 'reviews', 'as' => 'reviews.'], function () {
             Route::get('list', 'ReviewsController@list')->name('list');
             Route::post('search', 'ReviewsController@search')->name('search');
         });
@@ -316,12 +321,6 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('set-date', 'ReportController@set_date')->name('set-date');
         });
 
-        Route::group(['prefix' => 'customer', 'as' => 'customer.', 'middleware' => ['module:customerList']], function () {
-            Route::get('list', 'CustomerController@list')->name('list');
-            Route::get('view/{user_id}', 'CustomerController@view')->name('view');
-            Route::post('search', 'CustomerController@search')->name('search');
-            Route::get('status/{customer}/{status}', 'CustomerController@status')->name('status');
-        });
 
 
         Route::group(['prefix' => 'file-manager', 'as' => 'file-manager.'], function () {
