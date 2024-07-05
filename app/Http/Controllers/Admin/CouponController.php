@@ -30,7 +30,7 @@ class CouponController extends Controller
             'coupon_type' => 'required|in:zone_wise,default',
             'zone_ids' => 'required_if:coupon_type,zone_wise',
             'product_ids' => 'required_if:coupon_type,product_wise',
-            'coupon_background_image' => 'mimes:jpeg,jpg,png,bmp,gif,svg,webp',
+            'coupon_background_image' => 'required|mimes:jpeg,jpg,png,bmp,gif,svg,webp',
 
         ]);
         $data  = '';

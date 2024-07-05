@@ -83,7 +83,10 @@ class NotificationController extends Controller
             if(isset($allUserData) && !empty($allUserData)){
                 foreach ($allUserData as $user){
                     $userFcmToken = $user->fcm_token;
-                    Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+                  $notifictionResponse =   Helpers::sendPushNotificationToCustomer($data, $userFcmToken);
+//	              echo "<pre>";
+//                      print_r($notifictionResponse);
+//die;
                     DB::table('notifications')->insert([
                         'title'        =>   $request->notification_title,
                         'description'  =>  $request->description,

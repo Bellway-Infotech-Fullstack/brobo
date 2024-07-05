@@ -53,7 +53,7 @@ class BookingController extends Controller
             $referralDiscount = $request->input('referral_discount');
             $couponDiscount = $request->input('coupon_discount');
             $gstAmount = $request->input('gst_amount');
-            $isOrderPos = $request->input('is_order_pos') ?? "0";
+            $isOrderPos = $request->input('is_order_pos') ?? '0';
             
 
             // Define the validation rules
@@ -616,7 +616,7 @@ class BookingController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Order not found', 'code' => 404]);
         }
     
-
+         
 
         Order::where('order_id', $bookingId)->update(['damage_order_transaction_id' => $transactionId, 'damage_amount' => $damageAmount]);
     
@@ -974,13 +974,17 @@ class BookingController extends Controller
         }
         
         $oldDueAmount = $bookingData[0]['pending_amount'];
-        $oldPaidAmount = $bookingData[0]['paid_amount'];
+
+         $oldPaidAmount =  $bookingData[0]['paid_amount'];
     
         $dueAmount = $oldDueAmount - $dueAmount;
-        $paidAmount = $oldPaidAmount + $request->post('due_amount');
+        
 
+         $paidAmount =   $oldPaidAmount + $request->post('due_amount');
 
-        Order::where('order_id', $bookingId)->update(['due_amount_transaction_id' => $transactionId, 'pending_amount' => $dueAmount, 'paid_amount' => $paidAmount]);
+//echo "paid amount".$paidAmount;
+
+          Order::where('order_id', $bookingId)->update(['due_amount_transaction_id' => $transactionId, 'pending_amount' => $dueAmount,'paid_amount' => $paidAmount]);
     
         return response()->json(['status' => 'success', 'message' => 'Amount paid successfully', 'code' => 200]);
     }

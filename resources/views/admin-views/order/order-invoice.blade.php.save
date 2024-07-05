@@ -346,13 +346,17 @@
                                 Rs. {{ $grandTotal }}
                             </td>
                         </tr>
+<tr> 
 
+<td style="border"></td>                   
+<td>System Generated </td>
+</tr>
                     </table>
                     
                 </div>
                   
             </div>
-<div class="row" style="float:right">System Generated </div>
+
         </div>
     </body>
 
