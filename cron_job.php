@@ -91,7 +91,7 @@ function sendPushNotifcation($fcmToken, $data){
 
     $key = $row['value'];
     
-/*    $url = "https://fcm.googleapis.com/fcm/send";
+    $url = "https://fcm.googleapis.com/fcm/send";
     $header = array("authorization: key=" . $key . "",
         "content-type: application/json"
     );
@@ -114,47 +114,7 @@ function sendPushNotifcation($fcmToken, $data){
             "icon" : "new",
             "sound" : "default"
         }
-    }';*/
-
-
-  //$token = $this->generateAccessToken($serviceAccountKeyFile);
-          $url =  "https://fcm.googleapis.com/v1/projects/brobo-99cc7/messages:send";
-          
-                    $serviceAccountKeyFile = json_decode(file_get_contents('/var/www/html/cp/app/CentralLogics/service-account-file.json'), true);
-                    
-       //                       $token = Helpers::generateAccessToken($serviceAccountKeyFile);
-
-
-    
-$token = $this->generateAccessToken($serviceAccountKeyFile);
-
-
-      $header = array("authorization: Bearer " . $token . "",
-            "content-type: application/json"
-           );
-           
-           $postdata = '{
-        "message": {
-            "token": "' . $fcm_token . '",
-            "notification": {
-                 "body": "' . $data['body'] . '",
-                 "title": "' . $data['title'] . '",
-
-            },
-            "android":{
-                "notification": {
-                 "body": "' . $data['body'] . '",
-                 "title": "' . $data['title'] . '",
-                  "sound" : "default"
-            },
-
-
-            }
-        }
     }';
-
-
-
     $ch = curl_init();
     $timeout = 120;
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -173,48 +133,6 @@ $token = $this->generateAccessToken($serviceAccountKeyFile);
     // return $result;
 }
 
-
- function generateAccessToken($serviceAccountKeyFile)
-{
-    $jwtHeader = base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
-    $now = time();
-    $expiry = $now + 3600; // Token valid for 1 hour
-  $jwtClaimSet = base64_encode(json_encode([
-        'iss' => $serviceAccountKeyFile['client_email'],
-        'scope' => 'https://www.googleapis.com/auth/cloud-platform', // Replace with your required scope
-        'aud' => 'https://oauth2.googleapis.com/token',
-        'iat' => $now,
-        'exp' => $expiry,
-    ]));
-    
-     $jwtSignatureInput = $jwtHeader . '.' . $jwtClaimSet;
-    $signature = '';
-    $privateKey =  $serviceAccountKeyFile['private_key'];
-    openssl_sign($jwtSignatureInput, $signature, $privateKey, 'sha256');
-
-    $jwt = $jwtSignatureInput . '.' . base64_encode($signature);
-    $token_url = 'https://oauth2.googleapis.com/token';
-    $post_fields = [
-        'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        'assertion' => $jwt,
-    ];
-    
-     $ch = curl_init($token_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_fields));
-    $response = curl_exec($ch);
-    curl_close($ch);
-    $token_info = json_decode($response, true);
-    if (isset($token_info['access_token'])) {
-        return $token_info['access_token'];
-    } else {
-        return 'Error retrieving access token';
-    }
-    
-   }
-
-
-sendNotificationOfPendingDueAmountOrder();
+//sendNotificationOfPendingDueAmountOrder();
 sendNotificationOfCompletedOrder();
 ?>

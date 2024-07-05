@@ -38,7 +38,7 @@ class SystemController extends Controller
         $request->validate([
             'f_name' => 'required',
             'l_name' => 'required',
-            'email' => 'required'
+            'email' => 'required',
         ], [
             'f_name.required' => 'First name is required!',
             'l_name.required' => 'Last name is required!',

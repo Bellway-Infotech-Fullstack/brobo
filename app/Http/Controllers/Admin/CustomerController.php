@@ -15,18 +15,9 @@ use App\Models\Order;
 use App\Models\UserPassword;
 use App\Models\UsersAddress;
 use Illuminate\Support\Str;
-use \PDF;
-
-// use Barryvdh\DomPDF\Facade\Pdf;
-
-// use Barryvdh\DomPDF\Facade\Pdf as PDF;
-
-
+use PDF;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Mail;
-use ZipArchive;
-
-
 
 class CustomerController extends Controller
 {
@@ -375,63 +366,10 @@ class CustomerController extends Controller
         }
 
         if ($format == 'excel') {    
-//dd("here");
-          
 
-try{
-//echo "<pre>";
-
-$formatted_data = Helpers::format_export_data($users,'customer_list');
-
-//print_r($formated_data);
-//die;
-
-/*
-$formatted_data = array(
-    array(
-        '#' => 1,
-        'Name' => 'Ahmed',
-        'Email' => 'N/A',
-        'Phone' => '+919741655376',
-        'Home City' => 'Bangalore',
-    ),
-    array(
-        '#' => 2,
-        'Name' => 'Ankit Bhagat',
-        'Email' => 'N/A',
-        'Phone' => '+918092000108',
-        'Home City' => 'Giridih',
-    ),
-);
-
-*/
-
-// Create a temporary file path
-$filePath = 'exports/customer_list.xlsx';
-
-// Generate the Excel file and store it temporarily
-(new FastExcel($formatted_data))->export(storage_path("app/public/{$filePath}"));
-
-// Return the file as a download response
-return response()->download(storage_path("app/public/{$filePath}"))->deleteFileAfterSend(true);
+            return (new FastExcel(Helpers::format_export_data($users,'customer_list')))->download('customer_list.xlsx');
 
 
-//print_r($formated_data);
-//die;
-
-
-//dd("here");
- // return (new FastExcel($formated_data));
-
-}catch(Exception $e){
-
-//dd("here");
-//print_r($e->getMessage());  
-        return response()->json(['error' => $e->getMessage()], 400);
-
-
-}
-  
         }
 
         // If the requested format is not supported or not specified, return an error response

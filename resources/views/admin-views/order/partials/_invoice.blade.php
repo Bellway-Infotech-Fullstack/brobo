@@ -17,25 +17,7 @@
                 <hr class="non-printable">
             </div>
             <div class="col-5">
-             
-<?php
-$logoPath = '';
-
-     $businessSettingData = \App\Models\BusinessSetting::where('key','logo')->first(); 
-           $businessSettingLogoPath = (isset($businessSettingData) && !empty($businessSettingData)) ? "/storage/app/public/business/".$businessSettingData->value : '';
-           
-          
-           $path = base_path($businessSettingLogoPath);;
-           $type = pathinfo($path,PATHINFO_EXTENSION);
-
-          
-           $data = file_get_contents($path);
-           $logoPath = 'data:image/'. $type .';base64,'. base64_encode($data);
-
-?>
-
                                      <img src="{{ $logoPath }}" height="100">
-
                 <div class="row mt-3">
                     <div class="col-6">
                         <h5>Booking ID : {{$order['order_id']}}</h5>
@@ -300,13 +282,12 @@ $logoPath = '';
                     """{{__('THANK YOU')}}"""
                 </h5>
                 <span>---------------------------------------------------------------------------------</span>
-  <span>---------------------------------------------------------------------------------</span>
-                <h5 class="text-center pt-3">
-                   System Generated
-                </h5>
                 <span>---------------------------------------------------------------------------------</span>
 
-
+                <h5 class="text-center pt-3">
+                    System Generated 
+                </h5>
+                <span>---------------------------------------------------------------------------------</span>
             </div>
         </div>
     </div>

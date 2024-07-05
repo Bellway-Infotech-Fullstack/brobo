@@ -23,5 +23,3 @@ Homestead.json
 #composer.json
 #composer.lock
 .phpunit.result.cache
-
-app/centralLogics/service-account-file.json
