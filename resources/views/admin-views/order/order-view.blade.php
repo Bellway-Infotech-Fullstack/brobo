@@ -617,6 +617,7 @@
                                         </dd>
                                         <dt class="col-sm-6">Referral {{ __('messages.discount') }}:</dt>
                                         <dd class="col-sm-6">-  Rs.  <span id="referral_discount">{{  $order['referral_discount'] ?? 0 }}</span></dd>
+
                                         <dt class="col-sm-6">{{ __('messages.coupon') }} {{ __('messages.discount') }}:</dt>
                                         <dd class="col-sm-6">-  Rs. <span id="coupon_discount">{{  $order['coupon_discount'] ?? 0 }}</span> </span></dd>
                                         
@@ -631,17 +632,29 @@
                                             +  Rs. <span id="delivery_charge">{{ $delivery_charge }}</span>
                                             <hr>
                                         </dd>
-                                        <dt class="col-sm-6">Pending Amount:</dt>
+                                        
+
+                                        <dt class="col-sm-6">Grand {{ __('messages.total') }}:</dt>
                                         <dd class="col-sm-6">
+				         <?php
+
+						$grandTotal =  $test  -  ($order['referral_discount']??0) -  ($order['coupon_discount']??0) + ( $order['gst_amount']??0)  + $delivery_charge;  
+                                          ?>
+                                            Rs.  <span id="paid_amount">{{ $grandTotal  }} </span>
+                                        </dd>
+                                          
+					 <dt class="col-sm-6">Paid Amount:</dt>
+
+
+
+                                        <dd class="col-sm-6">
+                                            Rs.  <span id="paid_amount3">{{ $order['paid_amount']  }} </span>
+                                        </dd>
+                                        <dt class="col-sm-6">Pending Amount:</dt>
+					<dd class="col-sm-6">
                                               Rs.  <span id="pending_amount">{{ $order->pending_amount }}</span>
                                         </dd>
-                                        
-                                      
 
-                                        <dt class="col-sm-6">{{ __('messages.total') }}:</dt>
-                                        <dd class="col-sm-6">
-                                            Rs.  <span id="paid_amount">{{ $order['paid_amount']  }} </span>
-                                        </dd>
 
                                 </dl>
                                 <!-- End Row -->

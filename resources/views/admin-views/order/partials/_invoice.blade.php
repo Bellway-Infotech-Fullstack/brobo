@@ -280,18 +280,37 @@ $logoPath = '';
                             </dd>      
                             
                                 
+
+                            <dt class="col-6" style="font-size: 20px">Grand {{__('messages.total')}}:</dt>
+                            <dd class="col-6" style="font-size: 20px">
+                               <?php
+//  $grandTotal = 0;
+$grandTotal =  $test  -  ($order['referral_discount']??0) -  ($order['coupon_discount']??0) + ( $order['gst_amount'] ?? 0)  + $del_c;
+
+
+?>
+
+
+                               Rs.  {{ $grandTotal }}
+</dd>
+
+
+
+
+                            <dt class="col-sm-6">Paid Amount:</dt>
+
+
+
+                            <dd class="col-sm-6"> Rs.  {{ $order['paid_amount'] }} </dd>
                             <dt class="col-sm-6">Pending Amount:</dt>
-                            <dd class="col-sm-6"> Rs.  {{ $order['pending_amount'] }} </dd>
+
+
+                             <dd class="col-sm-6"> Rs.  {{ $order['pending_amount'] }} </dd>
                           
                             @endif
 
 
-                            <dt class="col-6" style="font-size: 20px">{{__('messages.total')}}:</dt>
-                            <dd class="col-6" style="font-size: 20px">
-                               <?php  $grandTotal = $order['paid_amount'];?>
-                               Rs.  {{ $grandTotal }}
-                            
-                            </dd>
+                           
                         </dl>
                     </div>
                 </div>

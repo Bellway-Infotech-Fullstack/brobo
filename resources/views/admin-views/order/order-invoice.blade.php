@@ -333,19 +333,29 @@
                             <td><strong>Delivery Fee:</strong></td>
                             <td align="right">+ Rs. {{ $deliveryCharge }}</td>
                         </tr>
-                        <tr>
-                            <td><strong>Pending Amount:</strong></td>
-                            <td align="right">Rs. {{ $order['pending_amount'] }}</td>
-                        </tr>
-                        <tr>
+
+
+ <tr>
                             <td><strong>Grand Total:</strong></td>
-                            <td align="right">
+ <td align="right">
                                 @php
-                                    $grandTotal = $order['paid_amount'];
+                                    $grandTotal  =  $test  -  ($order['referral_discount']??0) -  ($order['coupon_discount']??0) + ( $order['gst_amount'] ?? 0)  + $deliveryCharge;
+
                                 @endphp
                                 Rs. {{ $grandTotal }}
                             </td>
                         </tr>
+
+                       <tr>
+				<td><strong>Paid Amount:</strong></td>
+                                 <td align="right">Rs. {{ $order['paid_amount'] }} </td>
+                        </tr>
+
+			 <tr>
+                            <td><strong>Pending Amount:</strong></td>
+                            <td align="right">Rs. {{ $order['pending_amount'] }}</td>
+                        </tr>
+                        
 
                     </table>
                     
